@@ -1,0 +1,5 @@
+# db_admin passwords etc
+db_admin.py
+
+# Compiled python modules
+*.pyc
