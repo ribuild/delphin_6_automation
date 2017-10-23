@@ -25,3 +25,6 @@ def dp6_to_json():
 
 def do6_to_json():
     """Converts a delphin6 output to a json file"""
+
+def test()
+    return None
