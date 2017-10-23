@@ -1,5 +1,6 @@
 # db_admin passwords etc
 db_admin.py
+CONFIG.py
 
 # Compiled python modules
 *.pyc
