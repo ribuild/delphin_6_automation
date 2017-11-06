@@ -40,14 +40,14 @@ def user_loop():
             list_latest_added_simulations()
         elif choice == 'l':
             list_latest_added_simulations()
-        elif not ch or ch == 'x':
+        elif not choice or choice == 'x':
             print("see ya!")
             break
 
 
 def add_to_queue():
     country = str(input("country? >"))
-    start_year = int(input("year? >")) # int(input("what is something? (int)"))
+    start_year = int(input("year? >"))  # int(input("what is something? (int)"))
 
     sim = sim_db.Simulation()
     sim.country = country
