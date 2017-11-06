@@ -1,9 +1,15 @@
 import mongoengine
+import datetime
 
 class Simulation(mongoengine.Document):
-    country = mongoengine.StringField()
-    start_year = mongoengine.IntField()
-    end_year = mongoengine.IntField()
+    date_added = mongoengine.DateTimeField(default=datetime.datetime.now)
+    country = mongoengine.StringField(required=True)
+    start_year = mongoengine.IntField(required=True)
+    #something = mongoengine.FloatField(required=False)
+    #something = mongoengine.EmbeddedDocumentField(Engine, required=True)
+
+
+
 
     meta = {
         'db_alias': 'local',
