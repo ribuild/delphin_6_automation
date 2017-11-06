@@ -12,10 +12,28 @@
 	"buffers":
 	[
 		{
-			"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/db_interact.py",
+			"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/delphin_6_automation.py",
 			"settings":
 			{
-				"buffer_size": 532,
+				"buffer_size": 1121,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/queue_db.py",
+			"settings":
+			{
+				"buffer_size": 271,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/results_db.py",
+			"settings":
+			{
+				"buffer_size": 20,
 				"line_ending": "Windows"
 			}
 		},
@@ -23,24 +41,7 @@
 			"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/mongo_setup.py",
 			"settings":
 			{
-				"buffer_size": 118,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/delphin_6_automation.py",
-			"settings":
-			{
-				"buffer_size": 889,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/.gitignore",
-			"settings":
-			{
-				"buffer_size": 80,
+				"buffer_size": 419,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -116,6 +117,9 @@
 	],
 	"file_history":
 	[
+		"/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/results_db.py",
+		"/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/db_interact.py",
+		"/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/.gitignore",
 		"/C/Users/thper/AppData/Roaming/Sublime Text 3/Packages/User/sublime_ribuild_build_system.sublime-build",
 		"/C/Users/thper/AppData/Roaming/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings",
 		"/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/CONFIG.py",
@@ -174,28 +178,88 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/db_interact.py",
+					"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/delphin_6_automation.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 532,
+						"buffer_size": 1121,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								532,
-								532
+								667,
+								667
 							]
 						],
 						"settings":
 						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
+							"git_gutter_is_enabled": true,
+							"git_savvy.repo_path": "C:\\Users\\thper\\Google_Drive\\DTU\\delphin_automation\\delphin_6_automation",
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/queue_db.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 271,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								271,
+								271
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": ".",
+									"selector": "source.python - string - comment - constant.numeric"
+								},
+								{
+									"characters": ".",
+									"selector": "source.python - string - constant.numeric"
+								}
+							],
 							"git_gutter_is_enabled": true,
 							"git_savvy.repo_path": "C:\\Users\\thper\\Google_Drive\\DTU\\delphin_automation\\delphin_6_automation",
 							"syntax": "Packages/Python/Python.sublime-syntax"
@@ -208,12 +272,12 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/mongo_setup.py",
-					"semi_transient": false,
+					"buffer": 2,
+					"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/results_db.py",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 118,
+						"buffer_size": 20,
 						"regions":
 						{
 						},
@@ -233,69 +297,37 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/delphin_6_automation.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 889,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								889,
-								889
-							]
-						],
-						"settings":
-						{
-							"git_gutter_is_enabled": true,
-							"git_savvy.repo_path": "C:\\Users\\thper\\Google_Drive\\DTU\\delphin_automation\\delphin_6_automation",
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/.gitignore",
+					"file": "/C/Users/thper/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/mongo_setup.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 80,
+						"buffer_size": 419,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								46,
-								46
+								20,
+								20
 							]
 						],
 						"settings":
 						{
 							"git_gutter_is_enabled": true,
 							"git_savvy.repo_path": "C:\\Users\\thper\\Google_Drive\\DTU\\delphin_automation\\delphin_6_automation",
-							"syntax": "Packages/Theme - SoDaReloaded/settings/langs/Git.tmLanguage"
+							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -318,11 +350,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":
