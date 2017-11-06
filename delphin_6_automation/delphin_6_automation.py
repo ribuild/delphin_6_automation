@@ -12,9 +12,9 @@ def main():
 def print_header():
     print('---------------------------------------------------')
     print('|                                                  |')
-    print('|           RiBuild EU research project            |')
-    print('|           for hygrothermal simulations           |')
-    print('|              (WIP) Test environment              |')
+    print('|           RiBuild EU Research Project            |')
+    print('|           for Hygrothermal Simulations           |')
+    print('|              (WIP) Test Environment              |')
     print('|                                                  |')
     print('---------------------------------------------------')
 
