@@ -8,7 +8,6 @@ __version__ = "0.0.1"
 # Modules:
 from datetime import datetime
 import xml.etree.ElementTree as ET
-import xmltodict
 import os
 
 # RiBuild Modules:
@@ -20,23 +19,15 @@ import os
 class Delphin6File:
 
     def __init__(self):
-        self.xmlns_ns = None
-        self.xmlns_xsi = None
-        self.file_version = None
-        self.schema_location = None
-        self.project_info = None
-        self.directory_placeholders = None
-        self.init = None
-        self.materials = None
-        self.discretization = None
-        self.conditions = None
-        self.outputs = None
-        self.assignments = None
-        self.xml_tree = ET.ElementTree('DelphinProject')
+        self.xml_tree = ET.Element('DelphinProject')
         self.material_database = None
 
-    def create_attributes(self):
-        return None
+    def create_attributes(self, file_attributes):
+        self.xml_tree.set('xmlns', file_attributes['xmlns'])
+        self.xml_tree.set('xmlns:xsi', file_attributes['xmlns:xsi'])
+        self.xml_tree.set('xmlns:IBK', file_attributes['xmlns:IBK'])
+        self.xml_tree.set('xsi:schemaLocation', file_attributes['xsi:schemaLocation'])
+        self.xml_tree.set('fileVersion', file_attributes['file_version'])
 
     def create_project_info(self, comment, created=None):
         last_edited = datetime.strftime(datetime.now(), '%c')
@@ -227,7 +218,7 @@ class Delphin6File:
                 climate_param = ET.SubElement(climate_tree, 'IBK:Parameter')
                 climate_param.set('name', climate_dict['param']['name'])
                 climate_param.set('unit', climate_dict['param']['unit'])
-                climate_param.text = climate_dict['param']['value']
+                climate_param.text = str(climate_dict['param']['value'])
 
                 flag_param = ET.SubElement(climate_tree, 'IBK:Flag')
                 flag_param.set('name', climate_dict['flag']['name'])
@@ -237,7 +228,7 @@ class Delphin6File:
                 climate_param = ET.SubElement(climate_tree, 'IBK:Parameter')
                 climate_param.set('name', climate_dict['param']['name'])
                 climate_param.set('unit', climate_dict['param']['unit'])
-                climate_param.text = climate_dict['param']['value']
+                climate_param.text = str(climate_dict['param']['value'])
 
             else:
                 pass
@@ -254,44 +245,114 @@ class Delphin6File:
         # params has dict structure: {'name': string, 'unit': string, 'value': float or int}
         # cc_ref has dict structure: {'type': string, 'value': string}
 
-    def create_outputs(self):
-        return None
+        boundaries_tree = ET.SubElement(condition_tree, 'BoundaryConditions')
 
-    def create_assignments(self):
-        return None
+        for boundary_dict in boundary:
+            boundary_tree = ET.SubElement(boundaries_tree, 'BoundaryCondition')
+            boundary_tree.set('name', boundary_dict['name'])
+            boundary_tree.set('type', boundary_dict['type'])
+            boundary_tree.set('kind', boundary_dict['kind'])
 
-    def create_dicts(self):
-        self.create_project_info()
-        self.create_directory_placeholders()
-        self.create_init()
-        self.create_materials()
-        self.create_discretization()
-        self.create_conditions()
-        self.create_outputs()
-        self.create_assignments()
+            for boundary_parameter in boundary_dict['param']:
+                boundary_param = ET.SubElement(boundary_tree, 'IBK:Parameter')
+                boundary_param.set('name', boundary_parameter['name'])
+                boundary_param.set('unit', boundary_parameter['unit'])
+                boundary_param.text = str(boundary_parameter['value'])
+
+            for cc_parameter in boundary_dict['cc_ref']:
+                cc_param = ET.SubElement(boundary_tree, 'CCReference')
+                cc_param.set('type', cc_parameter['type'])
+                cc_param.text = cc_parameter['value']
+
+    def create_outputs(self, output_unit, output_grids, output_files):
+
+        outputs_tree = ET.SubElement(self.xml_tree, 'Outputs')
+
+        # Set general unit parameter
+        unit_tree = ET.SubElement(outputs_tree, 'IBK:Unit')
+        unit_tree.set('name', output_unit['name'])
+        unit_tree.text = output_unit['value']
+
+        # Set output grids
+        # output grids data structure: list with dicts.
+        # dicts has structure: {'name': 'string',
+        #                       'intervals': list of dicts
+        #                       }
+        #
+        # interval has structure: {'name': string, 'unit': string, 'value': float or int}
+
+        output_grids_tree = ET.SubElement(outputs_tree, 'OutputGrids')
+
+        for output_grid in output_grids:
+
+            output_grid_tree = ET.SubElement(output_grids_tree, 'OutputGrid')
+            output_grid_tree.set('name', output_grid['name'])
+
+            for interval in output_grid['intervals']:
+                interval_tree = ET.SubElement(output_grid_tree, 'Interval')
+                interval_tree.set('name', interval['name'])
+                interval_tree.set('unit', interval['unit'])
+                interval_tree.text = str(interval['value'])
+
+        # Set output files
+        # output files data structure: list with dicts.
+        # dicts has structure: {'name': 'string',
+        #                       'quantity': {'unit': string, 'value': string},
+        #                       'time_type': string,
+        #                       'space_type': string,
+        #                       'output_grid': string
+        #                       }
+
+        output_files_tree = ET.SubElement(outputs_tree, 'OutputFiles')
+
+        for output_file in output_files:
+            output_file_tree = ET.SubElement(output_files_tree, 'OutputFile')
+            output_file_tree.set('name', output_file['name'])
+
+            quantity_param = ET.SubElement(output_file_tree, 'Quantity')
+            quantity_param.set('unit', output_file['quantity']['unit'])
+            quantity_param.text = output_file['quantity']['value']
+
+    def create_assignments(self, assignment_list):
+
+        # Set assignments
+        # assignments data structure: list with dicts.
+        # dicts has structure: {'type': 'string',
+        #                       'location': string,
+        #                       'reference': string,
+        #                       'range': list of ints or None,
+        #                       'point': list of floats or None
+        #                       }
+
+        assignments_tree = ET.SubElement(self.xml_tree, 'Assignments')
+
+        for assignment in assignment_list:
+
+            assignment_tree = ET.SubElement(assignments_tree, 'Assignment')
+            assignment_tree.set('type', assignment['type'])
+            assignment_tree.set('location', assignment['location'])
+
+            reference_param = ET.SubElement(assignment_tree, 'Reference')
+            reference_param.text = assignment['reference']
+
+            if assignment['type'] == 'Material' or assignment['type'] == 'Interface':
+
+                range_param = ET.SubElement(assignment_tree, 'Range')
+                range_param.text = ' '.join(assignment['range'])
+
+            elif assignment['type'] == 'Output':
+                if assignment['location'] == 'Coordinate':
+                    point_param = ET.SubElement(assignment_tree, 'IBK:Point3D')
+                    point_param.text = ' '.join(assignment['point'])
+                else:
+                    pass
+
+            else:
+                pass
 
     def create_xml(self):
-        self.create_dicts()
 
-        delphin_root = ET.Element('ns0:DelphinProject')
-
-        info_subtree = ET.SubElement(delphin_root, 'ProjectInfo')
-
-        dir_place_subtree = ET.SubElement(delphin_root, 'DirectoryPlaceholders')
-
-        init_subtree = ET.SubElement(delphin_root, 'Init')
-
-        material_subtree = ET.SubElement(delphin_root, 'Materials')
-
-        discretization_subtree = ET.SubElement(delphin_root, 'Discretization')
-
-        conditions_subtree = ET.SubElement(delphin_root, 'Conditions')
-
-        outputs_subtree = ET.SubElement(delphin_root, 'Outputs')
-
-        assignments_subtree = ET.SubElement(delphin_root, 'Assignments')
-
-        delphin_tree = ET.ElementTree(delphin_root)
+        delphin_tree = ET.ElementTree(self.xml_tree)
 
         return delphin_tree
 
