@@ -1,7 +1,12 @@
+"""
+Backend user interface
+- Add new simulation(s)
+- Monitor the simulation process
+- Queue and watch finished simulations
+"""
+
 import nosql.mongo_setup as mongo_setup
-import nosql.simulation as sim_db
-
-
+from nosql.simulation import Simulation
 
 def main():
     print_header()
@@ -12,9 +17,9 @@ def main():
 def print_header():
     print('---------------------------------------------------')
     print('|                                                  |')
-    print('|           RiBuild EU Research Project            |')
-    print('|           for Hygrothermal Simulations           |')
-    print('|              (WIP) Test Environment              |')
+    print('|           RiBuild EU research project            |')
+    print('|           for hygrothermal simulations           |')
+    print('|              (WIP) Test environment              |')
     print('|                                                  |')
     print('---------------------------------------------------')
 
@@ -38,8 +43,6 @@ def user_loop():
             add_to_queue()
         elif choice == 'l':
             list_latest_added_simulations()
-        elif choice == 'l':
-            list_latest_added_simulations()
         elif not choice or choice == 'x':
             print("see ya!")
             break
@@ -47,27 +50,23 @@ def user_loop():
 
 def add_to_queue():
     country = str(input("country? >"))
-    start_year = int(input("year? >"))  # int(input("what is something? (int)"))
-
-    sim = sim_db.Simulation()
+    start_year = int(input("year? >")) # int(input("what is something? (int)"))
+    sim = Simulation()
     sim.country = country
     sim.start_year = start_year
     sim.save()
 
 
 def list_latest_added_simulations():
-    sim = sim_db.Simulation()
-    documents = sim_db.Simulation.objects.order_by(
-        "country",
-        "date_added",
-        "start_year"
-        )
+    #sim = Simulation()
+    #sim = Simulation.objects().order_by("-date_added")
+    documents = Simulation.objects.order_by("date_added")
 
-    for document in documents[:9]:
+    for document in documents:
         print("Added: {} - Simulation from {} starting {}".format(
-            sim.date_added.date(),
-            sim.country,
-            sim.start_year))
+            document.date_added,
+            document.country,
+            document.start_year))
 
 
 if __name__ == "__main__":
