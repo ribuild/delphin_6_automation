@@ -48,6 +48,8 @@ def do6_to_json():
     """Converts a delphin6 output to a json file"""
 
 
-def json_to_database(json, database):
-    """Uploads a json file to a database"""
+def upload_to_database(delphin_file, database):
+    """Uploads a Delphin file to a database"""
+
+    dp6_to_json(delphin_file)
 
