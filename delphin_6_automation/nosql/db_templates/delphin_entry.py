@@ -9,8 +9,9 @@ __version__ = "0.0.1"
 import mongoengine
 from datetime import datetime
 
-# RiBuild Modules:
 
+# RiBuild Modules:
+import delphin_6_automation.nosql.database_collections as collections
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN CLASS
@@ -31,6 +32,4 @@ class Delphin(mongoengine.Document):
     materials = mongoengine.DictField(required=True)
     weather = mongoengine.DictField(required=True)
 
-    meta = {'db_alias': 'core',
-            'collection': 'delphin'
-            }
+    meta = collections.delphin_db['db_alias']

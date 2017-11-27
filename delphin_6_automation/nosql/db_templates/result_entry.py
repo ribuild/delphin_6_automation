@@ -10,7 +10,7 @@ import mongoengine
 from datetime import datetime
 
 # RiBuild Modules:
-
+import delphin_6_automation.nosql.database_collections as collections
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RESULT CLASS
@@ -18,6 +18,4 @@ from datetime import datetime
 
 class Result(mongoengine.Document):
 
-    meta = {'db_alias': 'core',
-            'collection': 'results'
-            }
+    meta = collections.result_db

@@ -10,7 +10,7 @@ import mongoengine
 from datetime import datetime
 
 # RiBuild Modules:
-
+import delphin_6_automation.nosql.database_collections as collections
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL CLASS
@@ -18,6 +18,4 @@ from datetime import datetime
 
 class Material(mongoengine.Document):
 
-    meta = {'db_alias': 'core',
-            'collection': 'materials'
-            }
+    meta = collections.material_db

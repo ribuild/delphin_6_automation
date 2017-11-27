@@ -10,7 +10,7 @@ import mongoengine
 from datetime import datetime
 
 # RiBuild Modules:
-
+import delphin_6_automation.nosql.database_collections as collections
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # WEATHER CLASS
@@ -31,6 +31,4 @@ class Weather(mongoengine.Document):
     source = mongoengine.StringField(required=True)
     added_date = mongoengine.DateTimeField(default=datetime.now)
 
-    meta = {'db_alias': 'core',
-            'collection': 'weather'
-            }
+    meta = collections.weather_db
