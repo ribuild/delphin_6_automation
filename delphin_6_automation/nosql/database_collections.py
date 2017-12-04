@@ -20,8 +20,11 @@ material_db = {'db_alias': 'local',
 weather_db = {'db_alias': 'local',
               'collection': 'weather'}
 
-result_db = {'db_alias': 'local',
-             'collection': 'results'}
+raw_result_db = {'db_alias': 'local',
+                 'collection': 'raw_results'}
+
+processed_result_db = {'db_alias': 'local',
+                       'collection': 'processed_results'}
 
 delphin_db = {'db_alias': 'local',
               'collection': 'delphin'}
