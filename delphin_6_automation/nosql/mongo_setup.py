@@ -1,5 +1,5 @@
 from sshtunnel import SSHTunnelForwarder
-from nosql.auth import *
+from delphin_6_automation.nosql.auth import *
 
 import mongoengine
 
@@ -14,15 +14,13 @@ remote_bind_address = ('localhost', 27017)
 """
 
 
-
-
 def global_init():
     mongoengine.register_connection(
-    alias='local',
-    name=MONGO_DB,
-    host=HOST_IP,
-    port=HOST_PORT
-        )
+                                    alias='local',
+                                    name=MONGO_DB,
+                                    host=HOST_IP,
+                                    port=HOST_PORT
+                                        )
 
 
     """
