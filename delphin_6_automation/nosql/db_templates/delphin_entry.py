@@ -32,4 +32,4 @@ class Delphin(mongoengine.Document):
     materials = mongoengine.DictField(required=True)
     weather = mongoengine.DictField(required=True)
 
-    meta = collections.delphin_db['db_alias']
+    meta = collections.delphin_db
