@@ -14,14 +14,14 @@ __version__ = "0.0.1"
 # -------------------------------------------------------------------------------------------------------------------- #
 # DATABASE COLLECTIONS
 
-material_db = {'db_alias': 'core',
+material_db = {'db_alias': 'local',
                'collection': 'material'}
 
-weather_db = {'db_alias': 'core',
+weather_db = {'db_alias': 'local',
               'collection': 'weather'}
 
-result_db = {'db_alias': 'core',
+result_db = {'db_alias': 'local',
              'collection': 'results'}
 
-delphin_db = {'db_alias': 'core',
+delphin_db = {'db_alias': 'local',
               'collection': 'delphin'}
