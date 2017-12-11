@@ -13,10 +13,10 @@ import os
 import shutil
 
 # RiBuild Modules:
-import delphin_6_automation.nosql.db_templates.delphin_entry as de
-import delphin_6_automation.nosql.db_templates.result_entry as re
-import delphin_6_automation.nosql.database_collections as collections
-import delphin_6_automation.nosql.database_interactions as interactions
+import delphin_6_automation.simulation.nosql.db_templates.delphin_entry as delphin_db
+import delphin_6_automation.simulation.nosql.db_templates.result_entry as result_db
+import delphin_6_automation.simulation.nosql.database_collections as collections
+#import delphin_6_automation.simulation.database_interactions as interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES
@@ -149,15 +149,16 @@ def g6a_to_dict(path: str, filename: str)-> dict:
     geometry_name = filename[:-4]
     geometry_dict = {}
     geometry_dict['name'] = geometry_name
-    geometry_dict['D6OARLZ'] = lines[0].split(' ')[-1].strip()
+    geometry_dict['D6GARLZ'] = lines[0].split(' ')[-1].strip()
+    geometry_dict['materials'] = []
 
     # get materials
     for i in range(2, tables['grid']-1):
         number = int(lines[i][:3])
-        hash = int(lines[i][11:21])
+        hash_ = int(lines[i][11:21])
         name = lines[i][22:-1]
 
-        geometry_dict['materials'] = [number, hash, name]
+        geometry_dict['materials'].append([number, hash_, name])
 
     # get grid
     geometry_dict['grid'] = {}
@@ -336,3 +337,171 @@ def results_to_mongo_db(path_: str, delete_files=True):
 
     return True
 
+
+def dict_to_progress_file(file_dict, log_path):
+    file_obj = open(log_path + '/progress.txt', 'w')
+
+    spaces = 15
+    file_obj.write('   Simtime [s] \t   Realtime [s]\t Percentage [%]\n')
+
+    for line_index in range(0, len(file_dict['simulation_time'])):
+        sim_string = ' ' * (spaces - len(str(file_dict['simulation_time'][line_index]))) + \
+                     str(file_dict['simulation_time'][line_index])
+
+        real_string = ' ' * (spaces - len(str(file_dict['real_time'][line_index]))) + \
+                      str(file_dict['real_time'][line_index])
+
+        percentage_string = ' ' * (spaces - len(str(file_dict['percentage'][line_index]))) + \
+                            str(file_dict['percentage'][line_index])
+
+        file_obj.write(sim_string + '\t' + real_string + '\t' + percentage_string + '\n')
+
+    file_obj.close()
+
+
+def dict_to_cvode_stats_file(file_dict, log_path):
+    file_obj = open(log_path + '/integrator_cvode_stats.tsv', 'w')
+
+    file_obj.write('                 Time [s]\t     Steps\t  RhsEvals\t LinSetups\t  NIters\t NConvFails\t  NErrFails'
+                   '\t Order\t  StepSize [s]\n')
+
+    for line_index in range(0, len(file_dict['time'])):
+        time_string = ' ' * (25 - len(str(file_dict['time'][line_index]))) + \
+                      str(file_dict['time'][line_index])
+
+        steps_string = ' ' * (10 - len(str(file_dict['steps'][line_index]))) + \
+                       str(file_dict['steps'][line_index])
+
+        rhs_string = ' ' * (10 - len(str(file_dict['rhs_evaluations'][line_index]))) + \
+                     str(file_dict['rhs_evaluations'][line_index])
+
+        lin_string = ' ' * (10 - len(str(file_dict['lin_setup'][line_index]))) + \
+                     str(file_dict['lin_setup'][line_index])
+
+        iterations_string = ' ' * (8 - len(str(file_dict['number_iterations'][line_index]))) + \
+                            str(file_dict['number_iterations'][line_index])
+
+        conversion_fails_string = ' ' * (11 - len(str(file_dict['number_conversion_fails'][line_index]))) + \
+                                  str(file_dict['number_conversion_fails'][line_index])
+
+        error_fails_string = ' ' * (11 - len(str(file_dict['number_error_fails'][line_index]))) + \
+                             str(file_dict['number_error_fails'][line_index])
+
+        order_string = ' ' * (6 - len(str(file_dict['order'][line_index]))) + str(file_dict['order'][line_index])
+
+        step_size_string = ' ' * (14 - len(str(file_dict['step_size'][line_index]))) + \
+                           str(file_dict['step_size'][line_index])
+
+        file_obj.write(time_string + '\t' + steps_string + '\t' + rhs_string + '\t' + lin_string + '\t'
+                       + iterations_string + '\t' + conversion_fails_string + '\t' + error_fails_string + '\t'
+                       + order_string + '\t' + step_size_string + '\n')
+
+        file_obj.close()
+
+
+def dict_to_les_stats_file(file_dict, log_path):
+    file_obj = open(log_path + '/LES_direct_stats.tsv', 'w')
+
+    file_obj.write('                    Time\t   NJacEvals\t    NRhsEvals')
+
+    for line_index in range(0, len(file_dict['time'])):
+        time_string = ' ' * (25 - len(str(file_dict['time'][line_index]))) + \
+                      str(file_dict['time'][line_index])
+
+        jac_string = ' ' * (13 - len(str(file_dict['number_jac_evaluations'][line_index]))) + \
+                     str(file_dict['number_jac_evaluations'][line_index])
+
+        rhs_string = ' ' * (13 - len(str(file_dict['number_rhs_evaluations'][line_index]))) + \
+                     str(file_dict['number_rhs_evaluations'][line_index])
+
+        file_obj.write(time_string + '\t' + jac_string + rhs_string + '\n')
+
+    file_obj.close()
+
+
+def write_log_files(result_obj: result_db.Result, download_path: str):
+    log_dict = dict(result_obj.log)
+
+    log_path = download_path + '/log'
+    os.mkdir(log_path)
+
+    dict_to_progress_file(log_dict['progress'], log_path)
+    dict_to_cvode_stats_file(log_dict['integrator_cvode_stats'], log_path)
+    dict_to_les_stats_file(log_dict['les_direct_stats'], log_path)
+
+    return True
+
+
+def dict_to_g6a(geometry_dict, result_path):
+    file_obj = open(result_path + '/' + geometry_dict['name'] + '.g6a', 'w')
+
+    file_obj.write('D6GARLZ! ' + str(geometry_dict['D6GARLZ']) + '\n')
+
+    file_obj.write('TABLE  MATERIALS\n')
+    for material in geometry_dict['materials']:
+        file_obj.write(str(material[0]) + '        ' + str(material[1]) + ' ' + str(material[2] + '\n'))
+
+    file_obj.write('\nTABLE  GRID\n')
+    for dimension in geometry_dict['grid']:
+        file_obj.write(' '.join([str(element_)
+                                 for element_ in geometry_dict['grid'][dimension]]) + '\n')
+
+    file_obj.write('\nTABLE  ELEMENT_GEOMETRY\n')
+    for element in geometry_dict['element_geometry']:
+        space0 = ' ' * (9 - len(str(element[0])))
+        space1 = ' ' * max((10 - len(str(element[1]))), 1)
+        space2 = '       '
+        space3 = ' ' * (5 - len(str(element[3])))
+        space4 = ' ' * (5 - len(str(element[4])))
+
+        file_obj.write(str(element[0]) + space0 + str(element[1]) + space1 + str(element[2]) + space2 + '\t ' +
+                       str(element[3]) + space3 + str(element[4]) + space4 + str(element[4]) + '\n')
+
+    file_obj.write('TABLE  SIDES_GEOMETRY\n')
+    for side in geometry_dict['sides_geometry']:
+        "TO DO"
+        file_obj.write()
+
+    return True
+
+
+def dict_to_d6o(result_dict, result_name, result_path):
+    file_obj = open(result_path + '/' + result_name + '.d6o', 'w')
+
+    file_obj.write('D6OARLZ! ' + str(result_dict[result_name]['D6OARLZ']) + '\n')
+    file_obj.write('TYPE          = ' + str(result_dict[result_name]['type']) + '\n')
+    file_obj.write('PROJECT_FILE  = ' + str(result_dict[result_name]['project_file']) + '\n')
+    file_obj.write('CREATED       = ' + str(result_dict['simulation_started'].strftime('%a %b %d %H:%M:%S %Y')) + '\n')
+    file_obj.write('GEO_FILE      = ' + str(result_dict['geometry_file']['name']) + '\n')
+    file_obj.write('GEO_FILE_HASH = ' + str(result_dict['geometry_file_hash']) + '\n')
+    file_obj.write('QUANTITY      = ' + str(result_dict[result_name]['quantity']) + '\n')
+    file_obj.write('QUANTITY_KW   = ' + str(result_dict[result_name]['quantity_kw']) + '\n')
+    file_obj.write('SPACE_TYPE    = ' + str(result_dict[result_name]['space_type']) + '\n')
+    file_obj.write('TIME_TYPE     = ' + str(result_dict[result_name]['time_type']) + '\n')
+    file_obj.write('VALUE_UNIT    = ' + str(result_dict[result_name]['value_unit']) + '\n')
+    file_obj.write('TIME_UNIT     = ' + str(result_dict[result_name]['time_unit']) + '\n')
+    file_obj.write('START_YEAR    = ' + str(result_dict[result_name]['start_year']) + '\n')
+    file_obj.write('INDICES       = ' + str(result_dict[result_name]['indices']) + ' \n\n')
+
+    for count, value in enumerate(result_dict['result']):
+        space_count = ' ' * (13 - len(str(count)))
+        space_value = ' ' * (15 - len(str(value)))
+        file_obj.write(str(count) + space_count + '\t' + str(value) + space_value + '\t\n')
+
+    file_obj.close()
+
+    return True
+
+
+def write_result_files(result_obj, download_path):
+    result_dict = dict(result_obj.result)
+
+    result_path = download_path + '/results'
+    os.mkdir(result_path)
+
+    dict_to_g6a(dict(result_obj.geometry_file), result_path)
+
+    for result_name in result_dict.keys():
+        dict_to_d6o(result_dict, result_name, result_path)
+
+    return True
