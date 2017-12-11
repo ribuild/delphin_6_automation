@@ -20,7 +20,6 @@ def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSo
 
     verbosity = "verbosity-level=" + str(verbosity_level)
     command_string = '"' + str(delphin_exe) + '" --close-on-exit --' + verbosity + ' "' + file + '"'
-    #print(command_string)
     retcode = subprocess.run(command_string, shell=True)
 
     return retcode
