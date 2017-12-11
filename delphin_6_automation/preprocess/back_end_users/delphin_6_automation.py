@@ -5,8 +5,8 @@ Backend user interface
 - Queue and watch finished simulations
 """
 
-import delphin_6_automation.nosql.mongo_setup as mongo_setup
-import delphin_6_automation.nosql.simulation as simulation
+import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
+import delphin_6_automation.simulation.database_interactions as db_interact
 
 
 def main():
@@ -64,8 +64,8 @@ def show_commands(command):
 def add_to_queue():
     delphin_file = str(input("File path for the Delphin file >"))
     priority = str(input("Simulation Priority - high, medium or low >"))
-    sim_id = simulation.add_to_queue(delphin_file, priority)
-    simulation.start_simulation(sim_id)
+    sim_id = db_interact.general_interactions.add_to_queue(delphin_file, priority)
+    db_interact.general_interactions.start_simulation(sim_id)
     print('Simulation ID:', sim_id,
           '\n To retrieve the results of a simulation the simulation ID is needed.')
 
@@ -90,10 +90,10 @@ def list_latest_added_simulations():
 
 def download_simulation_result():
     sim_id = str(input('Simulation ID to retrieve? >'))
-    if simulation.is_simulation_finished(sim_id):
+    if db_interact.general_interactions.is_simulation_finished(sim_id):
         print('Simulation is ready to download.')
         download_path = str(input('Download Path? >'))
-        simulation.download_simulation_result(sim_id, download_path)
+        db_interact.general_interactions.download_raw_result(sim_id, download_path)
     else:
         print('Simulation is not done yet. Please return later')
         return
