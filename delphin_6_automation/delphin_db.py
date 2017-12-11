@@ -41,7 +41,6 @@ def upload_to_database(delphin_file,  queue_priority):
     entry.queue_priority = queue_priority
 
     delphin_dict = dp6_to_dict(delphin_file)
-    print(delphin_dict)
     entry.dp6_file = delphin_dict
 
     if len(delphin_dict['DelphinProject']['Discretization']) > 2:
@@ -52,6 +51,8 @@ def upload_to_database(delphin_file,  queue_priority):
         entry.dimensions = 1
 
     entry.save()
+
+    return entry.id
 
 
 def mongo_document_to_dp6(document_id, path):
