@@ -64,12 +64,19 @@ def upload_to_database(delphin_file: str,  queue_priority: int) -> delphin_db.De
     return entry.id
 
 
-def mongo_document_to_dp6(document_id, path):
-    """Converts a json file to Delphin 6 project file"""
+def mongo_document_to_dp6(document_id: str, path: str) -> bool:
+    """
+    Converts a database entry to Delphin 6 project file
+    :param document_id: Database entry id.
+    :param path: Path to where the files should be written.
+    :return: True
+    """
 
-    delphin_document = de.Delphin.objects(id=document_id).first()
+    delphin_document = delphin_db.Delphin.objects(id=document_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     xmltodict.unparse(delphin_dict, output=open(path + '/' + document_id + '.d6p', 'w'), pretty=True)
+
+    return True
 
 
 def download_from_database(document_id, path):
