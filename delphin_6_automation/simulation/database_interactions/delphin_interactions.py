@@ -35,8 +35,13 @@ def dp6_to_dict(path: str) -> dict:
     return dict(xml_dict)
 
 
-def upload_to_database(delphin_file,  queue_priority):
-    """Uploads a Delphin file to a database"""
+def upload_to_database(delphin_file: str,  queue_priority: int) -> delphin_db.Delphin.id:
+    """
+    Uploads a Delphin file to a database
+    :param delphin_file: Path to a Delphin 6 project file
+    :param queue_priority: Queue priority for the simulation
+    :return: Database entry id
+    """
 
     entry = delphin_db.Delphin()
     entry.materials = collections.material_db
@@ -87,7 +92,7 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
 
     # Helper functions
     def d6o_1d(d6o_lines):
-        result_dict_ = {}
+        result_dict_ = dict()
         result_dict_['D6OARLZ'] = lines[0].split(' ')[-1].strip()
 
         meta_dict_ = {}
