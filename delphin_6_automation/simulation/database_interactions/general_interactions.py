@@ -107,8 +107,24 @@ def is_simulation_finished(sim_id: str) -> bool:
         return False
 
 
-def gather_weather_list(document_id):
-    return None
+def gather_weather_list(delphin_id: str) -> list:
+    """
+    Gathers the weather files names of Delphin file in the database
+    :param delphin_id: database id
+    :return: list of weather file names
+    """
+
+    delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
+
+    weather_list = []
+    for weather_dict in delphin_document['dp6_file']['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']:
+
+        weather_list.append((weather_dict['@name'],
+                             weather_dict['@type'],
+                             weather_dict['@kind'])
+                            )
+
+    return weather_list
 
 
 def download_materials(material_list, path):
