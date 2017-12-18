@@ -1,5 +1,5 @@
 from sshtunnel import SSHTunnelForwarder
-from delphin_6_automation.nosql.auth import *
+from delphin_6_automation.simulation.nosql.auth import *
 
 import mongoengine
 

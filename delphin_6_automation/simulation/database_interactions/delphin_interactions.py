@@ -16,7 +16,7 @@ import shutil
 import delphin_6_automation.simulation.nosql.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.simulation.nosql.db_templates.result_entry as result_db
 import delphin_6_automation.simulation.nosql.database_collections as collections
-import delphin_6_automation.simulation.database_interactions.general_interactions as interactions
+from delphin_6_automation.simulation.database_interactions import general_interactions as interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES
@@ -416,8 +416,8 @@ def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
         rhs_string = ' ' * (10 - len(str(file_dict['rhs_evaluations'][line_index]))) + \
                      str(file_dict['rhs_evaluations'][line_index])
 
-        lin_string = ' ' * (10 - len(str(file_dict['lin_setup'][line_index]))) + \
-                     str(file_dict['lin_setup'][line_index])
+        lin_string = ' ' * (10 - len(str(file_dict['lin_setups'][line_index]))) + \
+                     str(file_dict['lin_setups'][line_index])
 
         iterations_string = ' ' * (8 - len(str(file_dict['number_iterations'][line_index]))) + \
                             str(file_dict['number_iterations'][line_index])
@@ -437,7 +437,7 @@ def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
                        + iterations_string + '\t' + conversion_fails_string + '\t' + error_fails_string + '\t'
                        + order_string + '\t' + step_size_string + '\n')
 
-        file_obj.close()
+    file_obj.close()
 
     return True
 
