@@ -105,3 +105,15 @@ def is_simulation_finished(sim_id: str) -> bool:
         return True
     else:
         return False
+
+
+def gather_weather_list(document_id):
+    return None
+
+
+def download_materials(material_list, path):
+    return None
+
+
+def download_weather(weather_list, path):
+    return None
