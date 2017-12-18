@@ -274,7 +274,7 @@ def les_stats_to_dict(path: str) -> dict:
     file_obj.close()
 
     les_dict = {'time': [],
-                'number_jac_evaluations': [],
+                'number_jacobian_evaluations': [],
                 'number_rhs_evaluations': []
                 }
 
