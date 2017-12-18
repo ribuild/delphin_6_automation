@@ -17,7 +17,7 @@ from delphin_6_automation.simulation.database_interactions import delphin_intera
 # DATABASE INTERACTIONS
 
 
-def gather_material_list(delphin_id: str)->list:
+def gather_material_list(delphin_id: str) -> list:
     """
     Gathers the material file names of Delphin file in the database
     :param delphin_id: database id
@@ -33,16 +33,29 @@ def gather_material_list(delphin_id: str)->list:
     return material_list
 
 
-def download_raw_result(result_id, download_path):
+def download_raw_result(result_id: str, download_path: str) -> bool:
+    """
+    Downloads a result entry from the database
+    :param result_id: Database entry id
+    :param download_path: Path where the result should be written
+    :return: True
+    """
+
     result_obj = result_db.Result.objects(id=result_id).first()
 
     delphin_interact.write_log_files(result_obj, download_path)
-    delphin_interact.write_result_files(result_obj, download_path)
+    delphin_interact.download_result_files(result_obj, download_path)
 
     return True
 
 
 def queue_priorities(priority: str)-> int:
+    """
+    Generate a queue priority number
+    :param priority: High, medium or low priority
+    :return: Priority number
+    """
+
     priority_list = [obj.queue_priority
                      for obj in delphin_db.Delphin.objects.order_by('queue_priority')]
 
@@ -65,15 +78,29 @@ def queue_priorities(priority: str)-> int:
     return priority_number
 
 
-def add_to_queue(delphin_file: str, priority: str)-> str:
+def add_to_simulation_queue(delphin_file: str, priority: str)-> str:
+    """
+    Uploads and adds a Delphin project file to the simulation queue.
+    :param delphin_file: Delphin 6 project file path
+    :param priority: High, medium or low priority
+    :return: Database entry id
+    """
+
     priority_number = queue_priorities(priority)
     simulation_id = delphin_interact.upload_to_database(delphin_file, priority_number)
 
     return simulation_id
 
 
-def is_simulation_finished(sim_id):
+def is_simulation_finished(sim_id: str) -> bool:
+    """
+    Checks if a Delphin project entry is simulated or not.
+    :param sim_id: Database entry to check
+    :return: True if it is simulated otherwise returns False.
+    """
+
     object_ = delphin_db.Delphin.objects(id=sim_id).first()
+
     if object_.simulated:
         return True
     else:
