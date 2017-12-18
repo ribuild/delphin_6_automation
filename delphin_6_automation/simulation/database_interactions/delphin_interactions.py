@@ -432,7 +432,14 @@ def write_log_files(result_obj: result_db.Result, download_path: str):
     return True
 
 
-def dict_to_g6a(geometry_dict, result_path):
+def dict_to_g6a(geometry_dict: dict, result_path: str):
+    """
+    Turns a dictionary into a delphin geometry file
+    :param geometry_dict: dictionary holding the information for the geometry file
+    :param result_path: path to were the geometry file should be written
+    :return:
+    """
+
     file_obj = open(result_path + '/' + geometry_dict['name'] + '.g6a', 'w')
 
     file_obj.write('D6GARLZ! ' + str(geometry_dict['D6GARLZ']) + '\n')
@@ -457,10 +464,17 @@ def dict_to_g6a(geometry_dict, result_path):
         file_obj.write(str(element[0]) + space0 + str(element[1]) + space1 + str(element[2]) + space2 + '\t ' +
                        str(element[3]) + space3 + str(element[4]) + space4 + str(element[4]) + '\n')
 
-    file_obj.write('TABLE  SIDES_GEOMETRY\n')
+    file_obj.write('\nTABLE  SIDES_GEOMETRY\n')
     for side in geometry_dict['sides_geometry']:
-        "TO DO"
-        file_obj.write()
+        space0 = ' ' * (9 - len(str(side[0])))
+        space1 = ' ' * max((10 - len(str(side[1]))), 1)
+        space2 = ' ' * (10 - len(str(side[2])))
+        space3 = ' ' * (7 - len(str(side[3])))
+        space4 = ' ' * (7 - len(str(side[4])))
+        space5 = ' ' * 4
+
+        file_obj.write(str(side[0]) + space0 + str(side[1]) + space1 + str(side[2]) + space2 + '\t ' + str(side[3]) +
+                       space3 + str(side[4]) + space4 + str(side[5]) + space5 + '\n')
 
     return True
 
