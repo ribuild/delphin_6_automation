@@ -22,8 +22,12 @@ import delphin_6_automation.simulation.nosql.database_collections as collections
 # DELPHIN FUNCTIONS AND CLASSES
 
 
-def dp6_to_dict(path):
-    """Converts a Delphin 6 project file to a python dict"""
+def dp6_to_dict(path: str) -> dict:
+    """
+    Converts a Delphin 6 project file to a python dict
+    :param path: Path to the Delphin project file
+    :return: Dictionary with the project file information
+    """
 
     xml_string = et.tostring(et.parse(path).getroot())
     xml_dict = xmltodict.parse(xml_string, encoding='UTF-8')
@@ -34,7 +38,7 @@ def dp6_to_dict(path):
 def upload_to_database(delphin_file,  queue_priority):
     """Uploads a Delphin file to a database"""
 
-    entry = de.Delphin()
+    entry = delphin_db.Delphin()
     entry.materials = collections.material_db
     entry.weather = collections.weather_db
     entry.result_db = collections.raw_result_db
@@ -75,10 +79,10 @@ def download_from_database(document_id, path):
 
 def d6o_to_dict(path: str, filename: str)-> tuple:
     """
-        Converts a Delphin results file into a dict
-        :param path: path to folder
-        :param filename: file name with extension
-        :return: converted result dict
+    Converts a Delphin results file into a dict
+    :param path: path to folder
+    :param filename: file name with extension
+    :return: converted result dict
     """
 
     # Helper functions
@@ -127,6 +131,7 @@ def g6a_to_dict(path: str, filename: str)-> dict:
     :param filename: file name with extension
     :return: converted geometry dict
     """
+
     file_obj = open(path + '/' + filename, 'r')
     lines = file_obj.readlines()
     file_obj.close()
@@ -200,7 +205,7 @@ def g6a_to_dict(path: str, filename: str)-> dict:
     return geometry_dict
 
 
-def cvode_stats_to_dict(path: str)-> dict:
+def cvode_stats_to_dict(path: str) -> dict:
     """
     Converts a Delphin integrator_cvode_stats file into a dict
     :param path: path to folder
@@ -237,7 +242,7 @@ def cvode_stats_to_dict(path: str)-> dict:
     return tsv_dict
 
 
-def les_stats_to_dict(path: str)-> dict:
+def les_stats_to_dict(path: str) -> dict:
     """
     Converts a Delphin LES_direct_stats file into a dict
     :param path: path to folder
@@ -271,7 +276,7 @@ def les_stats_to_dict(path: str)-> dict:
     return les_dict
 
 
-def progress_to_dict(path: str)-> dict:
+def progress_to_dict(path: str) -> dict:
     """
     Converts a Delphin progress file into a dict
     :param path: path to folder
@@ -297,7 +302,7 @@ def progress_to_dict(path: str)-> dict:
     return progress_dict
 
 
-def results_to_mongo_db(path_: str, delete_files=True):
+def results_to_mongo_db(path_: str, delete_files: bool =True) -> bool:
     """
     Uploads the results from a Delphin simulation
     :param path_: folder path containing the result files
@@ -320,7 +325,7 @@ def results_to_mongo_db(path_: str, delete_files=True):
         elif result_file.endswith('.g6a'):
             geometry_dict = g6a_to_dict(result_path, result_file)
 
-    entry = re.Result()
+    entry = result_db.Result()
     entry.delphin_db = collections.delphin_db
     entry.delphin_id = id_
     entry.log['integrator_cvode_stats'] = cvode_stats_to_dict(log_path)
@@ -338,7 +343,14 @@ def results_to_mongo_db(path_: str, delete_files=True):
     return True
 
 
-def dict_to_progress_file(file_dict, log_path):
+def dict_to_progress_file(file_dict: dict, log_path: str) -> bool:
+    """
+    Turns a dictionary into a delphin progress file
+    :param file_dict: Dictionary holding the information for the progress file
+    :param log_path: Path to were the progress file should be written
+    :return: True
+    """
+
     file_obj = open(log_path + '/progress.txt', 'w')
 
     spaces = 15
@@ -358,8 +370,17 @@ def dict_to_progress_file(file_dict, log_path):
 
     file_obj.close()
 
+    return True
 
-def dict_to_cvode_stats_file(file_dict, log_path):
+
+def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
+    """
+    Turns a dictionary into a delphin cvode stats file
+    :param file_dict: Dictionary holding the information for the cvode stats file
+    :param log_path: Path to were the cvode stats file should be written
+    :return: True
+    """
+
     file_obj = open(log_path + '/integrator_cvode_stats.tsv', 'w')
 
     file_obj.write('                 Time [s]\t     Steps\t  RhsEvals\t LinSetups\t  NIters\t NConvFails\t  NErrFails'
@@ -398,8 +419,17 @@ def dict_to_cvode_stats_file(file_dict, log_path):
 
         file_obj.close()
 
+    return True
 
-def dict_to_les_stats_file(file_dict, log_path):
+
+def dict_to_les_stats_file(file_dict: dict, log_path: str) -> bool:
+    """
+    Turns a dictionary into a delphin les stats file
+    :param file_dict: Dictionary holding the information for the les stats file
+    :param log_path: Path to were the les stats file should be written
+    :return: True
+    """
+
     file_obj = open(log_path + '/LES_direct_stats.tsv', 'w')
 
     file_obj.write('                    Time\t   NJacEvals\t    NRhsEvals')
@@ -418,8 +448,16 @@ def dict_to_les_stats_file(file_dict, log_path):
 
     file_obj.close()
 
+    return True
 
-def write_log_files(result_obj: result_db.Result, download_path: str):
+
+def write_log_files(result_obj: result_db.Result, download_path: str) -> bool:
+    """
+    Turns a result database entry into a delphin log file
+    :param result_obj: Database entry
+    :param download_path: Path to were the log file should be written
+    :return: True
+    """
     log_dict = dict(result_obj.log)
 
     log_path = download_path + '/log'
@@ -432,12 +470,12 @@ def write_log_files(result_obj: result_db.Result, download_path: str):
     return True
 
 
-def dict_to_g6a(geometry_dict: dict, result_path: str):
+def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
     """
     Turns a dictionary into a delphin geometry file
-    :param geometry_dict: dictionary holding the information for the geometry file
-    :param result_path: path to were the geometry file should be written
-    :return:
+    :param geometry_dict: Dictionary holding the information for the geometry file
+    :param result_path: Path to were the geometry file should be written
+    :return: True
     """
 
     file_obj = open(result_path + '/' + geometry_dict['name'] + '.g6a', 'w')
@@ -479,7 +517,15 @@ def dict_to_g6a(geometry_dict: dict, result_path: str):
     return True
 
 
-def dict_to_d6o(result_dict, result_name, result_path):
+def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
+    """
+    Turns a dictionary into a delphin result file
+    :param result_dict: Dictionary holding the information for the result file
+    :param result_name: Name of the result file
+    :param result_path: Path to were the result file should be written
+    :return: True
+    """
+
     file_obj = open(result_path + '/' + result_name + '.d6o', 'w')
 
     file_obj.write('D6OARLZ! ' + str(result_dict[result_name]['D6OARLZ']) + '\n')
@@ -507,8 +553,15 @@ def dict_to_d6o(result_dict, result_name, result_path):
     return True
 
 
-def write_result_files(result_obj, download_path):
-    result_dict = dict(result_obj.result)
+def write_result_files(result_obj: result_db.Result, download_path: str) -> bool:
+    """
+    Writes out all the result files from a result database entry
+    :param result_obj: Database entry
+    :param download_path: Where to write the files
+    :return: True
+    """
+
+    result_dict = dict(result_obj.results)
 
     result_path = download_path + '/results'
     os.mkdir(result_path)
