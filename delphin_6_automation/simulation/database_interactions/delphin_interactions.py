@@ -545,7 +545,7 @@ def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
 def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
     """
     Turns a dictionary into a delphin result file
-    :param result_dict: Dictionary holding the information for the result file
+    :param result_dict: Dictionary representation of the database entry
     :param result_name: Name of the result file
     :param result_path: Path to were the result file should be written
     :return: True
@@ -553,22 +553,22 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
 
     file_obj = open(result_path + '/' + result_name + '.d6o', 'w')
 
-    file_obj.write('D6OARLZ! ' + str(result_dict[result_name]['D6OARLZ']) + '\n')
-    file_obj.write('TYPE          = ' + str(result_dict[result_name]['type']) + '\n')
-    file_obj.write('PROJECT_FILE  = ' + str(result_dict[result_name]['project_file']) + '\n')
+    file_obj.write('D6OARLZ! ' + str(result_dict['results'][result_name]['D6OARLZ']) + '\n')
+    file_obj.write('TYPE          = ' + str(result_dict['results'][result_name]['type']) + '\n')
+    file_obj.write('PROJECT_FILE  = ' + str(result_dict['results'][result_name]['project_file']) + '\n')
     file_obj.write('CREATED       = ' + str(result_dict['simulation_started'].strftime('%a %b %d %H:%M:%S %Y')) + '\n')
     file_obj.write('GEO_FILE      = ' + str(result_dict['geometry_file']['name']) + '\n')
     file_obj.write('GEO_FILE_HASH = ' + str(result_dict['geometry_file_hash']) + '\n')
-    file_obj.write('QUANTITY      = ' + str(result_dict[result_name]['quantity']) + '\n')
-    file_obj.write('QUANTITY_KW   = ' + str(result_dict[result_name]['quantity_kw']) + '\n')
-    file_obj.write('SPACE_TYPE    = ' + str(result_dict[result_name]['space_type']) + '\n')
-    file_obj.write('TIME_TYPE     = ' + str(result_dict[result_name]['time_type']) + '\n')
-    file_obj.write('VALUE_UNIT    = ' + str(result_dict[result_name]['value_unit']) + '\n')
-    file_obj.write('TIME_UNIT     = ' + str(result_dict[result_name]['time_unit']) + '\n')
-    file_obj.write('START_YEAR    = ' + str(result_dict[result_name]['start_year']) + '\n')
-    file_obj.write('INDICES       = ' + str(result_dict[result_name]['indices']) + ' \n\n')
+    file_obj.write('QUANTITY      = ' + str(result_dict['results'][result_name]['quantity']) + '\n')
+    file_obj.write('QUANTITY_KW   = ' + str(result_dict['results'][result_name]['quantity_kw']) + '\n')
+    file_obj.write('SPACE_TYPE    = ' + str(result_dict['results'][result_name]['space_type']) + '\n')
+    file_obj.write('TIME_TYPE     = ' + str(result_dict['results'][result_name]['time_type']) + '\n')
+    file_obj.write('VALUE_UNIT    = ' + str(result_dict['results'][result_name]['value_unit']) + '\n')
+    file_obj.write('TIME_UNIT     = ' + str(result_dict['results'][result_name]['time_unit']) + '\n')
+    file_obj.write('START_YEAR    = ' + str(result_dict['results'][result_name]['start_year']) + '\n')
+    file_obj.write('INDICES       = ' + str(result_dict['results'][result_name]['indices']) + ' \n\n')
 
-    for count, value in enumerate(result_dict['result']):
+    for count, value in enumerate(result_dict['results'][result_name]['result']):
         space_count = ' ' * (13 - len(str(count)))
         space_value = ' ' * (15 - len(str(value)))
         file_obj.write(str(count) + space_count + '\t' + str(value) + space_value + '\t\n')
@@ -586,7 +586,7 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
     :return: True
     """
 
-    result_dict = dict(result_obj.results)
+    result_dict = result_obj.to_mongo()
 
     result_path = download_path + '/results'
 
@@ -598,7 +598,7 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
 
     dict_to_g6a(dict(result_obj.geometry_file), result_path)
 
-    for result_name in result_dict.keys():
+    for result_name in result_dict['results'].keys():
         dict_to_d6o(result_dict, result_name, result_path)
 
     return True
