@@ -172,7 +172,7 @@ def g6a_to_dict(path: str, filename: str)-> dict:
             tables['sides_geometry'] = index
 
     geometry_name = filename[:-4]
-    geometry_dict = {}
+    geometry_dict = dict()
     geometry_dict['name'] = geometry_name
     geometry_dict['D6GARLZ'] = lines[0].split(' ')[-1].strip()
     geometry_dict['materials'] = []
