@@ -589,7 +589,12 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
     result_dict = dict(result_obj.results)
 
     result_path = download_path + '/results'
-    os.mkdir(result_path)
+
+    if not os.path.exists(result_path):
+        os.mkdir(result_path)
+    else:
+        shutil.rmtree(result_path)
+        os.mkdir(result_path)
 
     dict_to_g6a(dict(result_obj.geometry_file), result_path)
 
