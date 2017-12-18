@@ -565,7 +565,7 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
     return True
 
 
-def write_result_files(result_obj: result_db.Result, download_path: str) -> bool:
+def download_result_files(result_obj: result_db.Result, download_path: str) -> bool:
     """
     Writes out all the result files from a result database entry
     :param result_obj: Database entry
