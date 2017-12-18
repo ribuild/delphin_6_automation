@@ -10,7 +10,7 @@ import mongoengine
 from datetime import datetime
 
 # RiBuild Modules:
-import delphin_6_automation.nosql.database_collections as collections
+import delphin_6_automation.simulation.nosql.database_collections as collections
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL CLASS
