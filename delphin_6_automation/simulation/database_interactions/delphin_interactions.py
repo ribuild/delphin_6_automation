@@ -481,7 +481,12 @@ def write_log_files(result_obj: result_db.Result, download_path: str) -> bool:
     log_dict = dict(result_obj.log)
 
     log_path = download_path + '/log'
-    os.mkdir(log_path)
+
+    if not os.path.exists(log_path):
+        os.mkdir(log_path)
+    else:
+        shutil.rmtree(log_path)
+        os.mkdir(log_path)
 
     dict_to_progress_file(log_dict['progress'], log_path)
     dict_to_cvode_stats_file(log_dict['integrator_cvode_stats'], log_path)
