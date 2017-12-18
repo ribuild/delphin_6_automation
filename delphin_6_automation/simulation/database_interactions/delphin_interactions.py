@@ -16,7 +16,7 @@ import shutil
 import delphin_6_automation.simulation.nosql.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.simulation.nosql.db_templates.result_entry as result_db
 import delphin_6_automation.simulation.nosql.database_collections as collections
-#import delphin_6_automation.simulation.database_interactions as interactions
+import delphin_6_automation.simulation.database_interactions.general_interactions as interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES
@@ -79,14 +79,22 @@ def mongo_document_to_dp6(document_id: str, path: str) -> bool:
     return True
 
 
-def download_from_database(document_id, path):
+def download_from_database(document_id: str, path: str) -> bool:
+    """
+    Downloads a Delphin project file from the database with all of its materials and weather.
+    :param document_id: Database entry id
+    :param path: Path where the files should be written.
+    :return: True
+    """
 
     mongo_document_to_dp6(document_id, path)
     material_list = interactions.gather_material_list(document_id)
-    #weather_list = interactions.gather_weather_list(document_id)
+    weather_list = interactions.gather_weather_list(document_id)
 
-    #download_materials(material_list, path)
-    #download_weather(weather_list, path)
+    interactions.download_materials(material_list, path)
+    interactions.download_weather(weather_list, path)
+
+    return True
 
 
 def d6o_to_dict(path: str, filename: str)-> tuple:
