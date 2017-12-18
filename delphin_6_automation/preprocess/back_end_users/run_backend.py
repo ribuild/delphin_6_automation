@@ -7,6 +7,8 @@ Backend user interface
 
 import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
 import delphin_6_automation.simulation.database_interactions as db_interact
+from delphin_6_automation.simulation.nosql.db_templates import delphin_entry as delphin_db
+import os
 
 
 def main():
@@ -64,22 +66,25 @@ def show_commands(command):
 def add_to_queue():
     delphin_file = str(input("File path for the Delphin file >"))
     priority = str(input("Simulation Priority - high, medium or low >"))
-    sim_id = db_interact.general_interactions.add_to_queue(delphin_file, priority)
-    db_interact.general_interactions.start_simulation(sim_id)
+    sim_id = db_interact.general_interactions.add_to_simulation_queue(delphin_file, priority)
     print('Simulation ID:', sim_id,
           '\n To retrieve the results of a simulation the simulation ID is needed.')
 
     save = str(input('Save Simulation ID to text file? (y/n)'))
     if save == 'y':
         print('Simulation will be saved on the Desktop as simulation_id.txt ')
-        # save txt file
+        user_desktop = os.path.join(os.environ["HOMEPATH"], "Desktop")
+        id_file = open(user_desktop + '/simulation_id.txt', 'w')
+        id_file.write(str(sim_id))
+        id_file.close()
+
     else:
         print('Simulation ID was not saved.')
         return
 
 
 def list_latest_added_simulations():
-    documents = simulation.simulation_db.objects.order_by("date_added")
+    documents = delphin_db.Delphin.objects.order_by("date_added")
 
     for document in documents:
         print("Added: {} - Simulation from {} starting {}".format(
