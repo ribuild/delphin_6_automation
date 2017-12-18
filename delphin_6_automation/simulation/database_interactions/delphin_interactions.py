@@ -458,8 +458,8 @@ def dict_to_les_stats_file(file_dict: dict, log_path: str) -> bool:
         time_string = ' ' * (25 - len(str(file_dict['time'][line_index]))) + \
                       str(file_dict['time'][line_index])
 
-        jac_string = ' ' * (13 - len(str(file_dict['number_jac_evaluations'][line_index]))) + \
-                     str(file_dict['number_jac_evaluations'][line_index])
+        jac_string = ' ' * (13 - len(str(file_dict['number_jacobian_evaluations'][line_index]))) + \
+                     str(file_dict['number_jacobian_evaluations'][line_index])
 
         rhs_string = ' ' * (13 - len(str(file_dict['number_rhs_evaluations'][line_index]))) + \
                      str(file_dict['number_rhs_evaluations'][line_index])
