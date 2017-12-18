@@ -10,7 +10,6 @@ import os
 
 # RiBuild Modules:
 import delphin_6_automation.simulation.nosql.db_templates.delphin_entry as delphin_db
-#from delphin_6_automation.simulation.database_interactions import delphin_interactions as delphin_interact
 from delphin_6_automation.simulation.database_interactions import general_interactions as general_interact
 
 # -------------------------------------------------------------------------------------------------------------------- #
