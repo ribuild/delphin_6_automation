@@ -84,13 +84,13 @@ def add_to_queue():
 
 
 def list_latest_added_simulations():
-    documents = delphin_db.Delphin.objects.order_by("date_added")
+    documents = delphin_db.Delphin.objects.order_by("added_date")
 
     for document in documents:
-        print("Added: {} - Simulation from {} starting {}".format(
-            document.date_added,
-            document.country,
-            document.start_year))
+        print("ID: {} - Added: {} - With priority: {}".format(
+            document.id,
+            document.added_date,
+            document.queue_priority))
 
 
 def download_simulation_result():
