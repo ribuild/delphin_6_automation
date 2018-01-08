@@ -116,20 +116,19 @@ def gather_weather_list(delphin_id: str) -> list:
 
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
 
-    weather_list = []
-    for weather_dict in delphin_document['dp6_file']['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']:
-        # TODO - Create genexpression instead
-        weather_list.append((weather_dict['@name'],
-                             weather_dict['@type'],
-                             weather_dict['@kind'])
-                            )
-
+    weather_list = [(weather_dict['@name'],
+                     weather_dict['@type'],
+                     weather_dict['@kind'])
+                    for weather_dict in delphin_document['dp6_file']['DelphinProject']['Conditions']
+                                                        ['ClimateConditions']['ClimateCondition']]
     return weather_list
 
 
 def download_materials(material_list, path):
+    # TODO
     return None
 
 
 def download_weather(weather_list, path):
+    # TODO
     return None
