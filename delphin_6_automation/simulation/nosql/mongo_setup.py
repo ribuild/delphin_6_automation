@@ -1,6 +1,4 @@
 from sshtunnel import SSHTunnelForwarder
-from delphin_6_automation.simulation.nosql.auth import *
-
 import mongoengine
 
 
@@ -14,13 +12,13 @@ remote_bind_address = ('localhost', 27017)
 """
 
 
-def global_init():
+def global_init(auth_dict):
     mongoengine.register_connection(
-                                    alias='local',
-                                    name=MONGO_DB,
-                                    host=HOST_IP,
-                                    port=HOST_PORT
-                                        )
+                                    alias=auth_dict['alias'],
+                                    name=auth_dict['name'],
+                                    host=auth_dict['ip'],
+                                    port=auth_dict['port']
+                                    )
 
     # TODO - Opsætning så man kan skifte mellem forskellige servere. F.eks. lokal, test og Deic.
 

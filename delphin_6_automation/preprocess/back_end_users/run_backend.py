@@ -8,6 +8,7 @@ Backend user interface
 import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
 import delphin_6_automation.simulation.database_interactions as db_interact
 from delphin_6_automation.simulation.nosql.db_templates import delphin_entry as delphin_db
+from delphin_6_automation.simulation.nosql.auth import dtu_byg
 import os
 
 
@@ -28,7 +29,7 @@ def print_header():
 
 
 def config_mongo():
-    mongo_setup.global_init()
+    mongo_setup.global_init(dtu_byg)
 
 
 def user_loop():
