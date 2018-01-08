@@ -107,6 +107,19 @@ def is_simulation_finished(sim_id: str) -> bool:
         return False
 
 
+def list_finished_simulations() -> list:
+    """
+    Returns a list with Delphin entry ID's for simulated entries.
+    :return: List
+    """
+
+    finished_list = [document.id
+                     for document in delphin_db.Delphin.objects()
+                     if document.simulated]
+
+    return finished_list
+
+
 def gather_weather_list(delphin_id: str) -> list:
     """
     Gathers the weather files names of Delphin file in the database
