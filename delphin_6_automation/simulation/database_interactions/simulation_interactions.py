@@ -27,8 +27,8 @@ def download_simulation_result(sim_id, download_path, raw_or_processed='raw'):
         general_interact.download_raw_result(result_id, download_extended_path)
 
     elif raw_or_processed == 'processed':
-        "TO DO"
-        "Download processed results from database"
+        pass
+        # TODO - Download processed results from database
 
     else:
         raise ValueError('raw_or_processed has to be raw or processed. Value given was: ' + str(raw_or_processed))

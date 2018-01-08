@@ -22,6 +22,7 @@ def global_init():
                                     port=HOST_PORT
                                         )
 
+    # TODO - Opsætning så man kan skifte mellem forskellige servere. F.eks. lokal, test og Deic.
 
     """
     server = SSHTunnelForwarder(

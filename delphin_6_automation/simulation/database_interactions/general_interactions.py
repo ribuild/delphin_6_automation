@@ -118,7 +118,7 @@ def gather_weather_list(delphin_id: str) -> list:
 
     weather_list = []
     for weather_dict in delphin_document['dp6_file']['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']:
-
+        # TODO - Create genexpression instead
         weather_list.append((weather_dict['@name'],
                              weather_dict['@type'],
                              weather_dict['@kind'])
