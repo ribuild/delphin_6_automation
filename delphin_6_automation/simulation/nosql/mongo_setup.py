@@ -1,4 +1,4 @@
-from sshtunnel import SSHTunnelForwarder
+# from sshtunnel import SSHTunnelForwarder
 import mongoengine
 
 
@@ -20,7 +20,7 @@ def global_init(auth_dict):
                                     port=auth_dict['port']
                                     )
 
-    # TODO - Opsætning så man kan skifte mellem forskellige servere. F.eks. lokal, test og Deic.
+    # TODO - Delete below if not needed.
 
     """
     server = SSHTunnelForwarder(
