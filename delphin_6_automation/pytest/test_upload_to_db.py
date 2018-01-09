@@ -5,14 +5,11 @@ __author__ = "Christian Kongsgaard"
 # IMPORTS
 
 # Modules:
-import filecmp
 import os
-import shutil
 
 # RiBuild Modules:
 import delphin_6_automation.simulation.database_interactions.delphin_interactions as delphin_interact
 import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
-import delphin_6_automation.pytest.pytest_helper_functions as helper
 from delphin_6_automation.simulation.nosql.auth import dtu_byg
 import delphin_6_automation.simulation.nosql.db_templates.delphin_entry as delphin_db
 
@@ -23,7 +20,6 @@ mongo_setup.global_init(dtu_byg)
 
 
 def test_upload_1():
-    # TODO - Upload, compare with origin (dict to dict), delete test entry
     delphin_file = os.path.dirname(os.path.realpath(__file__)) + '/test_files/5a5479095d9460327c6970f0.d6p'
     id_ = delphin_interact.upload_to_database(delphin_file, 10)
     test_doc = delphin_db.Delphin.objects(id=id_).first()

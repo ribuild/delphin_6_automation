@@ -361,7 +361,7 @@ def results_to_mongo_db(path_: str, delete_files: bool =True) -> bool:
     if delete_files:
         shutil.rmtree(path_)
 
-    return True
+    return entry.id
 
 
 def dict_to_progress_file(file_dict: dict, log_path: str) -> bool:
