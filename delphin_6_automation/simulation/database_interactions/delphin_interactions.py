@@ -91,8 +91,9 @@ def download_from_database(document_id: str, path: str) -> bool:
     material_list = interactions.gather_material_list(document_id)
     weather_list = interactions.gather_weather_list(document_id)
 
-    interactions.download_materials(material_list, path)
-    interactions.download_weather(weather_list, path)
+    # TODO - Update download weather & and materials
+    #interactions.download_materials(material_list, path)
+    #interactions.download_weather(weather_list, path)
 
     return True
 
