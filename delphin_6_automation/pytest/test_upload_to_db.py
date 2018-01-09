@@ -23,7 +23,6 @@ mongo_setup.global_init(dtu_byg)
 
 
 def test_upload_1():
-    # TODO - Upload, compare with origin (dict to dict), delete test entry
     delphin_file = os.path.dirname(os.path.realpath(__file__)) + '/test_files/5a5479095d9460327c6970f0.d6p'
     id_ = delphin_interact.upload_to_database(delphin_file, 10)
     test_doc = delphin_db.Delphin.objects(id=id_).first()
