@@ -11,7 +11,7 @@ import shutil
 # RiBuild Modules:
 import delphin_6_automation.simulation.database_interactions.delphin_interactions as delphin_interact
 import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
-from delphin_6_automation.simulation.nosql.auth import dtu_byg
+from delphin_6_automation.nosql.auth import dtu_byg
 import delphin_6_automation.simulation.nosql.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.simulation.nosql.db_templates.result_entry as result_db
 import delphin_6_automation.pytest.pytest_helper_functions as helper

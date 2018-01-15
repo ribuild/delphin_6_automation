@@ -14,8 +14,7 @@ import delphin_6_automation.simulation.database_interactions.delphin_interaction
 import delphin_6_automation.simulation.database_interactions.general_interactions as general_interact
 import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
 import delphin_6_automation.pytest.pytest_helper_functions as helper
-from delphin_6_automation.simulation.nosql.auth import dtu_byg
-import delphin_6_automation.simulation.nosql.db_templates.result_entry as result_db
+from delphin_6_automation.nosql.auth import dtu_byg
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
