@@ -5,9 +5,9 @@ Backend user interface
 - Queue and watch finished simulations
 """
 
-import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
-import delphin_6_automation.simulation.database_interactions as db_interact
-from delphin_6_automation.simulation.nosql.db_templates import delphin_entry as delphin_db
+import delphin_6_automation.nosql.mongo_setup as mongo_setup
+import delphin_6_automation.database_interactions as db_interact
+from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.nosql.auth import dtu_byg
 import os
 

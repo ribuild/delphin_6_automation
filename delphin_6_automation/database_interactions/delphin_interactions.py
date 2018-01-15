@@ -13,10 +13,10 @@ import os
 import shutil
 
 # RiBuild Modules:
-import delphin_6_automation.simulation.nosql.db_templates.delphin_entry as delphin_db
-import delphin_6_automation.simulation.nosql.db_templates.result_entry as result_db
-import delphin_6_automation.simulation.nosql.database_collections as collections
-from delphin_6_automation.simulation.database_interactions import general_interactions as interactions
+import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
+import delphin_6_automation.nosql.db_templates.result_entry as result_db
+import delphin_6_automation.nosql.database_collections as collections
+from delphin_6_automation.database_interactions import general_interactions as interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES

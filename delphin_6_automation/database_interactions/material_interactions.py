@@ -9,7 +9,7 @@ __version__ = "0.0.1"
 
 
 # RiBuild Modules:
-from delphin_6_automation.simulation.nosql.db_templates import delphin_entry as delphin_db
+from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DATABASE INTERACTIONS

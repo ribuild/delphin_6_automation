@@ -9,8 +9,8 @@ __version__ = "0.0.1"
 import os
 
 # RiBuild Modules:
-import delphin_6_automation.simulation.nosql.db_templates.delphin_entry as delphin_db
-from delphin_6_automation.simulation.database_interactions import general_interactions as general_interact
+import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
+from delphin_6_automation.database_interactions import general_interactions as general_interact
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION FUNCTIONS AND CLASSES
