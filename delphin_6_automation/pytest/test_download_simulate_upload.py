@@ -8,12 +8,12 @@ __author__ = "Christian Kongsgaard"
 
 
 # RiBuild Modules:
-import delphin_6_automation.simulation.database_interactions.delphin_interactions as delphin_interact
-import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
+import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
+import delphin_6_automation.nosql.mongo_setup as mongo_setup
 from delphin_6_automation.nosql.auth import dtu_byg
-import delphin_6_automation.simulation.nosql.db_templates.result_entry as result_db
+import delphin_6_automation.nosql.db_templates.result_entry as result_db
 import delphin_6_automation.pytest.pytest_helper_functions as helper
-import delphin_6_automation.simulation.simulation_package.delphin_solver as solver
+import delphin_6_automation.simulation_package.delphin_solver as solver
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST

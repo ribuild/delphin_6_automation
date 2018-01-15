@@ -10,9 +10,9 @@ import os
 import shutil
 
 # RiBuild Modules:
-import delphin_6_automation.simulation.database_interactions.delphin_interactions as delphin_interact
-import delphin_6_automation.simulation.database_interactions.general_interactions as general_interact
-import delphin_6_automation.simulation.nosql.mongo_setup as mongo_setup
+import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
+import delphin_6_automation.database_interactions.general_interactions as general_interact
+import delphin_6_automation.nosql.mongo_setup as mongo_setup
 import delphin_6_automation.pytest.pytest_helper_functions as helper
 from delphin_6_automation.nosql.auth import dtu_byg
 
