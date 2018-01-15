@@ -149,7 +149,7 @@ def download_materials(sim_id: str, path: str) -> bool:
 
 
 def download_weather(sim_id: str, path: str) -> bool:
-    # TODO
+    # TODO - Download weather
     weather_list = delphin_db.Delphin.objects(id=sim_id).first().weather
 
     return True
