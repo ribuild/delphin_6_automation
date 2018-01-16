@@ -1,0 +1,383 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>delphin_6_automation.database_interactions package &#8212; Delphin Automation 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="delphin-6-automation-database-interactions-package">
+<h1>delphin_6_automation.database_interactions package<a class="headerlink" href="#delphin-6-automation-database-interactions-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-delphin_6_automation.database_interactions.delphin_interactions">
+<span id="delphin-6-automation-database-interactions-delphin-interactions-module"></span><h2>delphin_6_automation.database_interactions.delphin_interactions module<a class="headerlink" href="#module-delphin_6_automation.database_interactions.delphin_interactions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.cvode_stats_to_dict">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">cvode_stats_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.cvode_stats_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin integrator_cvode_stats file into a dict
+:param path: path to folder
+:return: converted tsv dict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.d6o_to_dict">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">d6o_to_dict</code><span class="sig-paren">(</span><em>path: str</em>, <em>filename: str</em><span class="sig-paren">)</span> &#x2192; tuple<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.d6o_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin results file into a dict
+:param path: path to folder
+:param filename: file name with extension
+:return: converted result dict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_cvode_stats_file">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_cvode_stats_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_cvode_stats_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin cvode stats file
+:param file_dict: Dictionary holding the information for the cvode stats file
+:param log_path: Path to were the cvode stats file should be written
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_d6o">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_d6o</code><span class="sig-paren">(</span><em>result_dict: dict</em>, <em>result_name: str</em>, <em>result_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_d6o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin result file
+:param result_dict: Dictionary representation of the database entry
+:param result_name: Name of the result file
+:param result_path: Path to were the result file should be written
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_g6a">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_g6a</code><span class="sig-paren">(</span><em>geometry_dict: dict</em>, <em>result_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_g6a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin geometry file
+:param geometry_dict: Dictionary holding the information for the geometry file
+:param result_path: Path to were the geometry file should be written
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_les_stats_file">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_les_stats_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_les_stats_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin les stats file
+:param file_dict: Dictionary holding the information for the les stats file
+:param log_path: Path to were the les stats file should be written
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_progress_file">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_progress_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_progress_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin progress file
+:param file_dict: Dictionary holding the information for the progress file
+:param log_path: Path to were the progress file should be written
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.download_from_database">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">download_from_database</code><span class="sig-paren">(</span><em>document_id: str</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.download_from_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads a Delphin project file from the database with all of its materials and weather.
+:param document_id: Database entry id
+:param path: Path where the files should be written.
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.download_result_files">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">download_result_files</code><span class="sig-paren">(</span><em>result_obj: delphin_6_automation.nosql.db_templates.result_entry.Result</em>, <em>download_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.download_result_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes out all the result files from a result database entry
+:param result_obj: Database entry
+:param download_path: Where to write the files
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.dp6_to_dict">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dp6_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dp6_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin 6 project file to a python dict
+:param path: Path to the Delphin project file
+:return: Dictionary with the project file information</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.g6a_to_dict">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">g6a_to_dict</code><span class="sig-paren">(</span><em>path: str</em>, <em>filename: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.g6a_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin geometry file into a dict
+:param path: path to folder
+:param filename: file name with extension
+:return: converted geometry dict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.les_stats_to_dict">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">les_stats_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.les_stats_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin LES_direct_stats file into a dict
+:param path: path to folder
+:return: converted les stats dict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.mongo_document_to_dp6">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">mongo_document_to_dp6</code><span class="sig-paren">(</span><em>document_id: str</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.mongo_document_to_dp6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a database entry to Delphin 6 project file
+:param document_id: Database entry id.
+:param path: Path to where the files should be written.
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.progress_to_dict">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">progress_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.progress_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin progress file into a dict
+:param path: path to folder
+:return: converted progress dict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.results_to_mongo_db">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">results_to_mongo_db</code><span class="sig-paren">(</span><em>path_: str</em>, <em>delete_files: bool = True</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.results_to_mongo_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads the results from a Delphin simulation
+:param <a href="#id1"><span class="problematic" id="id2">path_</span></a>: folder path containing the result files
+:param delete_files: if True the result folder will be deleted. Default is True
+:return: True on success</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_to_database">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_to_database</code><span class="sig-paren">(</span><em>delphin_file: str</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x0000019C80958748&gt;<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_to_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads a Delphin file to a database
+:param delphin_file: Path to a Delphin 6 project file
+:param queue_priority: Queue priority for the simulation
+:return: Database entry id</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.write_log_files">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">write_log_files</code><span class="sig-paren">(</span><em>result_obj: delphin_6_automation.nosql.db_templates.result_entry.Result</em>, <em>download_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.write_log_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a result database entry into a delphin log file
+:param result_obj: Database entry
+:param download_path: Path to were the log file should be written
+:return: True</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-delphin_6_automation.database_interactions.general_interactions">
+<span id="delphin-6-automation-database-interactions-general-interactions-module"></span><h2>delphin_6_automation.database_interactions.general_interactions module<a class="headerlink" href="#module-delphin_6_automation.database_interactions.general_interactions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.add_to_simulation_queue">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">add_to_simulation_queue</code><span class="sig-paren">(</span><em>delphin_file: str</em>, <em>priority: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.add_to_simulation_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads and adds a Delphin project file to the simulation queue.
+:param delphin_file: Delphin 6 project file path
+:param priority: High, medium or low priority
+:return: Database entry id</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.download_materials">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">download_materials</code><span class="sig-paren">(</span><em>sim_id: str</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.download_materials" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.download_raw_result">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">download_raw_result</code><span class="sig-paren">(</span><em>result_id: str</em>, <em>download_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.download_raw_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads a result entry from the database
+:param result_id: Database entry id
+:param download_path: Path where the result should be written
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.download_weather">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">download_weather</code><span class="sig-paren">(</span><em>sim_id: str</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.download_weather" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.gather_material_list">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">gather_material_list</code><span class="sig-paren">(</span><em>delphin_id: str</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.gather_material_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gathers the material file names of Delphin file in the database
+:param delphin_id: database id
+:return: list of material file names</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.gather_weather_list">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">gather_weather_list</code><span class="sig-paren">(</span><em>delphin_id: str</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.gather_weather_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gathers the weather files names of Delphin file in the database
+:param delphin_id: database id
+:return: list of weather file names</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.is_simulation_finished">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">is_simulation_finished</code><span class="sig-paren">(</span><em>sim_id: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.is_simulation_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a Delphin project entry is simulated or not.
+:param sim_id: Database entry to check
+:return: True if it is simulated otherwise returns False.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.list_finished_simulations">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">list_finished_simulations</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.list_finished_simulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list with Delphin entry ID’s for simulated entries.
+:return: List</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.general_interactions.queue_priorities">
+<code class="descclassname">delphin_6_automation.database_interactions.general_interactions.</code><code class="descname">queue_priorities</code><span class="sig-paren">(</span><em>priority: str</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#delphin_6_automation.database_interactions.general_interactions.queue_priorities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a queue priority number
+:param priority: High, medium or low priority
+:return: Priority number</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-delphin_6_automation.database_interactions.material_interactions">
+<span id="delphin-6-automation-database-interactions-material-interactions-module"></span><h2>delphin_6_automation.database_interactions.material_interactions module<a class="headerlink" href="#module-delphin_6_automation.database_interactions.material_interactions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.material_interactions.assign_materials_to_project">
+<code class="descclassname">delphin_6_automation.database_interactions.material_interactions.</code><code class="descname">assign_materials_to_project</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#delphin_6_automation.database_interactions.material_interactions.assign_materials_to_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign materials to a Delphin entry
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.material_interactions.dict_to_m6">
+<code class="descclassname">delphin_6_automation.database_interactions.material_interactions.</code><code class="descname">dict_to_m6</code><span class="sig-paren">(</span><em>material: dict</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.material_interactions.dict_to_m6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an material dict and converts it into a .m6 file
+:param material: material dict
+:param path: Path to where .m6 should be placed.
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.material_interactions.list_project_materials">
+<code class="descclassname">delphin_6_automation.database_interactions.material_interactions.</code><code class="descname">list_project_materials</code><span class="sig-paren">(</span><em>sim_id: str</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#delphin_6_automation.database_interactions.material_interactions.list_project_materials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list with the materials in a project entry.
+:param sim_id: Delphin entry ID
+:return: List with material file names</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-delphin_6_automation.database_interactions.simulation_interactions">
+<span id="delphin-6-automation-database-interactions-simulation-interactions-module"></span><h2>delphin_6_automation.database_interactions.simulation_interactions module<a class="headerlink" href="#module-delphin_6_automation.database_interactions.simulation_interactions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.download_simulation_result">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">download_simulation_result</code><span class="sig-paren">(</span><em>sim_id</em>, <em>download_path</em>, <em>raw_or_processed='raw'</em><span class="sig-paren">)</span><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.download_simulation_result" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.start_simulation">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">start_simulation</code><span class="sig-paren">(</span><em>sim_id: str</em><span class="sig-paren">)</span><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.start_simulation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-delphin_6_automation.database_interactions.weather_interactions">
+<span id="delphin-6-automation-database-interactions-weather-interactions-module"></span><h2>delphin_6_automation.database_interactions.weather_interactions module<a class="headerlink" href="#module-delphin_6_automation.database_interactions.weather_interactions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.weather_interactions.assign_weather_to_project">
+<code class="descclassname">delphin_6_automation.database_interactions.weather_interactions.</code><code class="descname">assign_weather_to_project</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#delphin_6_automation.database_interactions.weather_interactions.assign_weather_to_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign weather to a Delphin entry
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.weather_interactions.dict_to_ccd">
+<code class="descclassname">delphin_6_automation.database_interactions.weather_interactions.</code><code class="descname">dict_to_ccd</code><span class="sig-paren">(</span><em>weather: dict</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.weather_interactions.dict_to_ccd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an weather dict and converts it into a .ccd file
+:param weather: material dict
+:param path: Path to where .ccd should be placed.
+:return: True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.weather_interactions.list_project_weather">
+<code class="descclassname">delphin_6_automation.database_interactions.weather_interactions.</code><code class="descname">list_project_weather</code><span class="sig-paren">(</span><em>sim_id: str</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#delphin_6_automation.database_interactions.weather_interactions.list_project_weather" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list with the weather in a project entry.
+:param sim_id: Delphin entry ID
+:return: List with material file names</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-delphin_6_automation.database_interactions">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-delphin_6_automation.database_interactions" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/delphin_6_automation.database_interactions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
