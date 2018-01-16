@@ -1,3 +1,5 @@
 mongoengine
 lxml
 xmltodict
+numpy
+scipy
