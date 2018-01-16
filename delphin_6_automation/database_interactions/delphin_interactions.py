@@ -24,7 +24,8 @@ from delphin_6_automation.database_interactions import general_interactions as i
 
 def dp6_to_dict(path: str) -> dict:
     """
-    Converts a Delphin 6 project file to a python dict
+    Converts a Delphin 6 project file to a python dict.
+
     :param path: Path to the Delphin project file
     :return: Dictionary with the project file information
     """
@@ -37,7 +38,8 @@ def dp6_to_dict(path: str) -> dict:
 
 def upload_to_database(delphin_file: str,  queue_priority: int) -> delphin_db.Delphin.id:
     """
-    Uploads a Delphin file to a database
+    Uploads a Delphin file to a database.
+
     :param delphin_file: Path to a Delphin 6 project file
     :param queue_priority: Queue priority for the simulation
     :return: Database entry id
@@ -66,7 +68,8 @@ def upload_to_database(delphin_file: str,  queue_priority: int) -> delphin_db.De
 
 def mongo_document_to_dp6(document_id: str, path: str) -> bool:
     """
-    Converts a database entry to Delphin 6 project file
+    Converts a database entry to Delphin 6 project file.
+
     :param document_id: Database entry id.
     :param path: Path to where the files should be written.
     :return: True
@@ -82,6 +85,7 @@ def mongo_document_to_dp6(document_id: str, path: str) -> bool:
 def download_from_database(document_id: str, path: str) -> bool:
     """
     Downloads a Delphin project file from the database with all of its materials and weather.
+
     :param document_id: Database entry id
     :param path: Path where the files should be written.
     :return: True
@@ -100,7 +104,8 @@ def download_from_database(document_id: str, path: str) -> bool:
 
 def d6o_to_dict(path: str, filename: str)-> tuple:
     """
-    Converts a Delphin results file into a dict
+    Converts a Delphin results file into a dict.
+
     :param path: path to folder
     :param filename: file name with extension
     :return: converted result dict
@@ -147,7 +152,8 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
 
 def g6a_to_dict(path: str, filename: str)-> dict:
     """
-    Converts a Delphin geometry file into a dict
+    Converts a Delphin geometry file into a dict.
+
     :param path: path to folder
     :param filename: file name with extension
     :return: converted geometry dict
@@ -228,7 +234,8 @@ def g6a_to_dict(path: str, filename: str)-> dict:
 
 def cvode_stats_to_dict(path: str) -> dict:
     """
-    Converts a Delphin integrator_cvode_stats file into a dict
+    Converts a Delphin integrator_cvode_stats file into a dict.
+
     :param path: path to folder
     :return: converted tsv dict
     """
@@ -265,7 +272,8 @@ def cvode_stats_to_dict(path: str) -> dict:
 
 def les_stats_to_dict(path: str) -> dict:
     """
-    Converts a Delphin LES_direct_stats file into a dict
+    Converts a Delphin LES_direct_stats file into a dict.
+
     :param path: path to folder
     :return: converted les stats dict
     """
@@ -299,7 +307,8 @@ def les_stats_to_dict(path: str) -> dict:
 
 def progress_to_dict(path: str) -> dict:
     """
-    Converts a Delphin progress file into a dict
+    Converts a Delphin progress file into a dict.
+
     :param path: path to folder
     :return: converted progress dict
     """
@@ -325,7 +334,8 @@ def progress_to_dict(path: str) -> dict:
 
 def results_to_mongo_db(path_: str, delete_files: bool =True) -> bool:
     """
-    Uploads the results from a Delphin simulation
+    Uploads the results from a Delphin simulation.
+
     :param path_: folder path containing the result files
     :param delete_files: if True the result folder will be deleted. Default is True
     :return: True on success
@@ -366,7 +376,8 @@ def results_to_mongo_db(path_: str, delete_files: bool =True) -> bool:
 
 def dict_to_progress_file(file_dict: dict, log_path: str) -> bool:
     """
-    Turns a dictionary into a delphin progress file
+    Turns a dictionary into a delphin progress file.
+
     :param file_dict: Dictionary holding the information for the progress file
     :param log_path: Path to were the progress file should be written
     :return: True
@@ -396,7 +407,8 @@ def dict_to_progress_file(file_dict: dict, log_path: str) -> bool:
 
 def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
     """
-    Turns a dictionary into a delphin cvode stats file
+    Turns a dictionary into a delphin cvode stats file.
+
     :param file_dict: Dictionary holding the information for the cvode stats file
     :param log_path: Path to were the cvode stats file should be written
     :return: True
@@ -445,7 +457,8 @@ def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
 
 def dict_to_les_stats_file(file_dict: dict, log_path: str) -> bool:
     """
-    Turns a dictionary into a delphin les stats file
+    Turns a dictionary into a delphin les stats file.
+
     :param file_dict: Dictionary holding the information for the les stats file
     :param log_path: Path to were the les stats file should be written
     :return: True
@@ -474,7 +487,8 @@ def dict_to_les_stats_file(file_dict: dict, log_path: str) -> bool:
 
 def write_log_files(result_obj: result_db.Result, download_path: str) -> bool:
     """
-    Turns a result database entry into a delphin log file
+    Turns a result database entry into a delphin log file.
+
     :param result_obj: Database entry
     :param download_path: Path to were the log file should be written
     :return: True
@@ -498,7 +512,8 @@ def write_log_files(result_obj: result_db.Result, download_path: str) -> bool:
 
 def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
     """
-    Turns a dictionary into a delphin geometry file
+    Turns a dictionary into a delphin geometry file.
+
     :param geometry_dict: Dictionary holding the information for the geometry file
     :param result_path: Path to were the geometry file should be written
     :return: True
@@ -545,7 +560,8 @@ def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
 
 def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
     """
-    Turns a dictionary into a delphin result file
+    Turns a dictionary into a delphin result file.
+
     :param result_dict: Dictionary representation of the database entry
     :param result_name: Name of the result file
     :param result_path: Path to were the result file should be written
@@ -581,7 +597,8 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
 
 def download_result_files(result_obj: result_db.Result, download_path: str) -> bool:
     """
-    Writes out all the result files from a result database entry
+    Writes out all the result files from a result database entry.
+
     :param result_obj: Database entry
     :param download_path: Where to write the files
     :return: True

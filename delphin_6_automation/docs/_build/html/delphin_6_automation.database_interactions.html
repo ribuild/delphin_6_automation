@@ -48,138 +48,302 @@
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.cvode_stats_to_dict">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">cvode_stats_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.cvode_stats_to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a Delphin integrator_cvode_stats file into a dict
-:param path: path to folder
-:return: converted tsv dict</p>
+<dd><p>Converts a Delphin integrator_cvode_stats file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to folder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">converted tsv dict</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.d6o_to_dict">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">d6o_to_dict</code><span class="sig-paren">(</span><em>path: str</em>, <em>filename: str</em><span class="sig-paren">)</span> &#x2192; tuple<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.d6o_to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a Delphin results file into a dict
-:param path: path to folder
-:param filename: file name with extension
-:return: converted result dict</p>
+<dd><p>Converts a Delphin results file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – path to folder</li>
+<li><strong>filename</strong> – file name with extension</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">converted result dict</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_cvode_stats_file">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_cvode_stats_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_cvode_stats_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turns a dictionary into a delphin cvode stats file
-:param file_dict: Dictionary holding the information for the cvode stats file
-:param log_path: Path to were the cvode stats file should be written
-:return: True</p>
+<dd><p>Turns a dictionary into a delphin cvode stats file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_dict</strong> – Dictionary holding the information for the cvode stats file</li>
+<li><strong>log_path</strong> – Path to were the cvode stats file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_d6o">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_d6o</code><span class="sig-paren">(</span><em>result_dict: dict</em>, <em>result_name: str</em>, <em>result_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_d6o" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turns a dictionary into a delphin result file
-:param result_dict: Dictionary representation of the database entry
-:param result_name: Name of the result file
-:param result_path: Path to were the result file should be written
-:return: True</p>
+<dd><p>Turns a dictionary into a delphin result file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>result_dict</strong> – Dictionary representation of the database entry</li>
+<li><strong>result_name</strong> – Name of the result file</li>
+<li><strong>result_path</strong> – Path to were the result file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_g6a">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_g6a</code><span class="sig-paren">(</span><em>geometry_dict: dict</em>, <em>result_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_g6a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turns a dictionary into a delphin geometry file
-:param geometry_dict: Dictionary holding the information for the geometry file
-:param result_path: Path to were the geometry file should be written
-:return: True</p>
+<dd><p>Turns a dictionary into a delphin geometry file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geometry_dict</strong> – Dictionary holding the information for the geometry file</li>
+<li><strong>result_path</strong> – Path to were the geometry file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_les_stats_file">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_les_stats_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_les_stats_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turns a dictionary into a delphin les stats file
-:param file_dict: Dictionary holding the information for the les stats file
-:param log_path: Path to were the les stats file should be written
-:return: True</p>
+<dd><p>Turns a dictionary into a delphin les stats file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_dict</strong> – Dictionary holding the information for the les stats file</li>
+<li><strong>log_path</strong> – Path to were the les stats file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.dict_to_progress_file">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dict_to_progress_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dict_to_progress_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turns a dictionary into a delphin progress file
-:param file_dict: Dictionary holding the information for the progress file
-:param log_path: Path to were the progress file should be written
-:return: True</p>
+<dd><p>Turns a dictionary into a delphin progress file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_dict</strong> – Dictionary holding the information for the progress file</li>
+<li><strong>log_path</strong> – Path to were the progress file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.download_from_database">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">download_from_database</code><span class="sig-paren">(</span><em>document_id: str</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.download_from_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads a Delphin project file from the database with all of its materials and weather.
-:param document_id: Database entry id
-:param path: Path where the files should be written.
-:return: True</p>
+<dd><p>Downloads a Delphin project file from the database with all of its materials and weather.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>document_id</strong> – Database entry id</li>
+<li><strong>path</strong> – Path where the files should be written.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.download_result_files">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">download_result_files</code><span class="sig-paren">(</span><em>result_obj: delphin_6_automation.nosql.db_templates.result_entry.Result</em>, <em>download_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.download_result_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes out all the result files from a result database entry
-:param result_obj: Database entry
-:param download_path: Where to write the files
-:return: True</p>
+<dd><p>Writes out all the result files from a result database entry.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>result_obj</strong> – Database entry</li>
+<li><strong>download_path</strong> – Where to write the files</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.dp6_to_dict">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">dp6_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.dp6_to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a Delphin 6 project file to a python dict
-:param path: Path to the Delphin project file
-:return: Dictionary with the project file information</p>
+<dd><p>Converts a Delphin 6 project file to a python dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – Path to the Delphin project file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dictionary with the project file information</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.g6a_to_dict">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">g6a_to_dict</code><span class="sig-paren">(</span><em>path: str</em>, <em>filename: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.g6a_to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a Delphin geometry file into a dict
-:param path: path to folder
-:param filename: file name with extension
-:return: converted geometry dict</p>
+<dd><p>Converts a Delphin geometry file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – path to folder</li>
+<li><strong>filename</strong> – file name with extension</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">converted geometry dict</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.les_stats_to_dict">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">les_stats_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.les_stats_to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a Delphin LES_direct_stats file into a dict
-:param path: path to folder
-:return: converted les stats dict</p>
+<dd><p>Converts a Delphin LES_direct_stats file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to folder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">converted les stats dict</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.mongo_document_to_dp6">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">mongo_document_to_dp6</code><span class="sig-paren">(</span><em>document_id: str</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.mongo_document_to_dp6" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a database entry to Delphin 6 project file
-:param document_id: Database entry id.
-:param path: Path to where the files should be written.
-:return: True</p>
+<dd><p>Converts a database entry to Delphin 6 project file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>document_id</strong> – Database entry id.</li>
+<li><strong>path</strong> – Path to where the files should be written.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.progress_to_dict">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">progress_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.progress_to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a Delphin progress file into a dict
-:param path: path to folder
-:return: converted progress dict</p>
+<dd><p>Converts a Delphin progress file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to folder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">converted progress dict</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.results_to_mongo_db">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">results_to_mongo_db</code><span class="sig-paren">(</span><em>path_: str</em>, <em>delete_files: bool = True</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.results_to_mongo_db" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uploads the results from a Delphin simulation
-:param <a href="#id1"><span class="problematic" id="id2">path_</span></a>: folder path containing the result files
-:param delete_files: if True the result folder will be deleted. Default is True
-:return: True on success</p>
+<dd><p>Uploads the results from a Delphin simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – folder path containing the result files</li>
+<li><strong>delete_files</strong> – if True the result folder will be deleted. Default is True</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True on success</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_to_database">
-<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_to_database</code><span class="sig-paren">(</span><em>delphin_file: str</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x0000019C80958748&gt;<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_to_database" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_to_database</code><span class="sig-paren">(</span><em>delphin_file: str</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x000001C662B53400&gt;<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_to_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uploads a Delphin file to a database
 :param delphin_file: Path to a Delphin 6 project file
 :param queue_priority: Queue priority for the simulation
@@ -189,10 +353,22 @@
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.write_log_files">
 <code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">write_log_files</code><span class="sig-paren">(</span><em>result_obj: delphin_6_automation.nosql.db_templates.result_entry.Result</em>, <em>download_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.write_log_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turns a result database entry into a delphin log file
-:param result_obj: Database entry
-:param download_path: Path to were the log file should be written
-:return: True</p>
+<dd><p>Turns a result database entry into a delphin log file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>result_obj</strong> – Database entry</li>
+<li><strong>download_path</strong> – Path to were the log file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
