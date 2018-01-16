@@ -106,6 +106,177 @@
 
 </dd></dl>
 
+<span class="target" id="module-delphin_6_automation.delphin_setup.delphin_permutations"></span><dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.add_layers">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">add_layers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.add_layers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.change_layer_material">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">change_layer_material</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>original_material: str</em>, <em>new_material: dict</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.change_layer_material" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the material of a layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to change.</li>
+<li><strong>original_material</strong> (<em>str</em>) – Name of material that should be changed.</li>
+<li><strong>new_material</strong> (<em>dict</em>) – New material given as a dict. Dict should have the following keys: &#64;name, &#64;color, &#64;hatchCode and #test.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Modified Delphin dict</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.change_layer_width">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">change_layer_width</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>original_material: str</em>, <em>new_width: float</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.change_layer_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the width of a single layer, while keeping number of elements in the project.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to change.</li>
+<li><strong>original_material</strong> (<em>str</em>) – Name of material to change the width of.</li>
+<li><strong>new_width</strong> (<em>float</em>) – New width in m</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Modified Delphin dict</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.change_weather">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">change_weather</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>original_weather: str</em>, <em>new_weather: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.change_weather" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the weather file of a weather instance. Can therefore only be used on climate conditions that is loaded
+from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to change.</li>
+<li><strong>original_weather</strong> (<em>str</em>) – Name of the original weather</li>
+<li><strong>new_weather</strong> (<em>str</em>) – New weather file path</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Modified Delphin dict</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.convert_discretization_to_list">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">convert_discretization_to_list</code><span class="sig-paren">(</span><em>delphin_dict: dict</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.convert_discretization_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the discretized elements of a project.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to look in.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list with the discretizated values.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.discrete_layer">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">discrete_layer</code><span class="sig-paren">(</span><em>width: float</em>, <em>steps: int</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.discrete_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discretization of width in a given number of steps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>width</strong> (<em>float</em>) – Width in m</li>
+<li><strong>steps</strong> (<em>int</em>) – Number of steps or discretizations to make.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list with the discretizated values.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.get_layers">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">get_layers</code><span class="sig-paren">(</span><em>delphin_dict: dict</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.get_layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the layers of a Delphin dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to get layers from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dict of dicts. Each nested dict has the keys: material, x_width, x_index</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.remove_layers">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">remove_layers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.remove_layers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.delphin_permutations.sub_division">
+<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">sub_division</code><span class="sig-paren">(</span><em>width: float</em>, <em>minimum_division: float</em>, <em>stretch_factor: float</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.sub_division" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a subdivision of the material to be used for the discretization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>width</strong> (<em>float</em>) – Width of the material to be subdivided</li>
+<li><strong>minimum_division</strong> (<em>float</em>) – Width of the smallest division</li>
+<li><strong>stretch_factor</strong> (<em>float</em>) – Increase in subdivisions</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List containing width of subdivisions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-delphin_6_automation.delphin_setup">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-delphin_6_automation.delphin_setup" title="Permalink to this headline">¶</a></h2>

@@ -17,10 +17,15 @@ from scipy.optimize import fsolve
 def change_layer_width(delphin_dict: dict, original_material: str, new_width: float) -> dict:
     """
     Changes the width of a single layer, while keeping number of elements in the project.
+
     :param delphin_dict: Delphin dict to change.
+    :type delphin_dict: dict
     :param original_material: Name of material to change the width of.
+    :type original_material: str
     :param new_width: New width in m
+    :type new_width: float
     :return: Modified Delphin dict
+    :rtype: dict
     """
 
     layers = get_layers(delphin_dict)
@@ -47,11 +52,15 @@ def change_layer_width(delphin_dict: dict, original_material: str, new_width: fl
 def change_layer_material(delphin_dict: dict, original_material: str, new_material: dict) -> dict:
     """
     Changes the material of a layer.
+
     :param delphin_dict: Delphin dict to change.
+    :type delphin_dict: dict
     :param original_material: Name of material that should be changed.
-    :param new_material: New material given as a dict. Dict should have the following keys: @name, @color, @hatchCode
-    and #test.
+    :type original_material: str
+    :param new_material: New material given as a dict. Dict should have the following keys: @name, @color, @hatchCode and #test.
+    :type new_material: dict
     :return: Modified Delphin dict
+    :rtype: dict
     """
 
     # Find original material
@@ -74,10 +83,15 @@ def change_weather(delphin_dict: dict, original_weather: str, new_weather: str) 
     """
     Changes the weather file of a weather instance. Can therefore only be used on climate conditions that is loaded
     from a file.
+
     :param delphin_dict: Delphin dict to change.
+    :type delphin_dict: dict
     :param original_weather: Name of the original weather
+    :type original_weather: str
     :param new_weather: New weather file path
+    :type new_weather: str
     :return: Modified Delphin dict
+    :rtype: dict
     """
 
     # Find original weather
@@ -100,8 +114,11 @@ def remove_layers():
 def get_layers(delphin_dict: dict) -> dict:
     """
     Get the layers of a Delphin dict.
+
     :param delphin_dict: Delphin dict to get layers from.
+    :type delphin_dict: dict
     :return: Dict of dicts. Each nested dict has the keys: material, x_width, x_index
+    :rtype: dict
     """
 
     x_list = convert_discretization_to_list(delphin_dict)
@@ -125,9 +142,13 @@ def get_layers(delphin_dict: dict) -> dict:
 def discrete_layer(width: float, steps: int) -> list:
     """
     Discretization of width in a given number of steps.
+
     :param width: Width in m
+    :type width: float
     :param steps: Number of steps or discretizations to make.
+    :type steps: int
     :return: A list with the discretizated values.
+    :rtype: list
     """
 
     min_x = 0.001
@@ -144,8 +165,11 @@ def discrete_layer(width: float, steps: int) -> list:
 def convert_discretization_to_list(delphin_dict: dict) -> list:
     """
     Get the discretized elements of a project.
+
     :param delphin_dict: Delphin dict to look in.
+    :type delphin_dict: dict
     :return: A list with the discretizated values.
+    :rtype: list
     """
 
     x_list = [float(x)
@@ -157,10 +181,15 @@ def convert_discretization_to_list(delphin_dict: dict) -> list:
 def sub_division(width: float, minimum_division: float, stretch_factor: float) -> list:
     """
     Creates a subdivision of the material to be used for the discretization.
+
     :param width: Width of the material to be subdivided
+    :type width: float
     :param minimum_division: Width of the smallest division
+    :type minimum_division: float
     :param stretch_factor: Increase in subdivisions
+    :type stretch_factor: float
     :return: List containing width of subdivisions
+    :rtype: list
     """
 
     sum_x = 0

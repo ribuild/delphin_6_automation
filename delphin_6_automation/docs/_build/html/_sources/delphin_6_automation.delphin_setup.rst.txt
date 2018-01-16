@@ -12,6 +12,11 @@ delphin\_6\_automation\.delphin\_setup\.create\_delphin\_file module
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: delphin_6_automation.delphin_setup.delphin_permutations
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
