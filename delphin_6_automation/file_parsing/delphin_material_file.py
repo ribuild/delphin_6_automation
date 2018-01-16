@@ -22,7 +22,7 @@ def num(s):
         return float(s)
 
 
-def material_file_to_dict(file_path)
+def material_file_to_dict(file_path):
 
     material_dict = {}
     data = codecs.open(file_path, "r", "utf-8")
