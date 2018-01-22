@@ -37,7 +37,7 @@ def wac_to_dict(file_path: str) -> dict:
                     'horizontal_global_solar_radiation': [],
                     'diffuse_horizontal_solar_radiation': [],
                     'air_pressure': [],
-                    'rain_intensity': [],
+                    'vertical_rain': [],
                     'wind_direction': [],
                     'wind_speed': [],
                     'cloud_index': [],
@@ -63,7 +63,7 @@ def wac_to_dict(file_path: str) -> dict:
         weather_dict['horizontal_global_solar_radiation'].append(float(splitted_line[3].strip()))
         weather_dict['diffuse_horizontal_solar_radiation'].append(float(splitted_line[4].strip()))
         weather_dict['air_pressure'].append(float(splitted_line[5].strip()))
-        weather_dict['rain_intensity'].append(float(splitted_line[6].strip()))
+        weather_dict['vertical_rain'].append(float(splitted_line[6].strip()))
         weather_dict['wind_direction'].append(float(splitted_line[7].strip()))
         weather_dict['wind_speed'].append(float(splitted_line[8].strip()))
         weather_dict['cloud_index'].append(float(splitted_line[9].strip()))
@@ -78,39 +78,113 @@ def wac_to_dict(file_path: str) -> dict:
 def wac_to_db(file_path: str) -> str:
 
     weather_dict = wac_to_dict(file_path)
-    entry = weather_db.Weather()
+    weather_entry = weather_db.Weather()
 
-    entry.temperature = weather_dict['temperature']
-    entry.relative_humidity = weather_dict['relative_humidity']
-    entry.vertical_rain = weather_dict['rain_intensity']
-    entry.wind_direction = weather_dict['wind_direction']
-    entry.wind_speed = weather_dict['wind_speed']
-    entry.long_wave_radiation = weather_dict['atmospheric_horizontal_long_wave_radiation']
-    entry.diffuse_radiation = weather_dict['diffuse_horizontal_solar_radiation']
-    entry.direct_radiation = weather_dict['horizontal_global_solar_radiation']
-    entry.dates = weather_dict['time']
+    # Temperature
+    temperature_entry = weather_db.Temperature()
+    temperature_entry.temperature = weather_dict['temperature']
+    temperature_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    temperature_entry.altitude = weather_dict['altitude']
+    temperature_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    temperature_entry.dates = weather_dict['time']
+    temperature_entry.unit = 'C'
+    temperature_entry.save()
+    weather_entry.temperature = temperature_entry
 
-    entry.location = [weather_dict['longitude'],
-                      weather_dict['latitude'],
-                      ]
-    entry.altitude = weather_dict['altitude']
+    # Relative Humidity
+    relative_humidity_entry = weather_db.RelativeHumidity()
+    relative_humidity_entry.relative_humidity = weather_dict['relative_humidity']
+    relative_humidity_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    relative_humidity_entry.altitude = weather_dict['altitude']
+    relative_humidity_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    relative_humidity_entry.dates = weather_dict['time']
+    relative_humidity_entry.unit = '-'
+    relative_humidity_entry.save()
+    weather_entry.relative_humidity = relative_humidity_entry
 
-    entry.source = {'comment': 'Culture for Climate',
-                    'file': file_path}
+    # Vertical Rain
+    vertical_rain_entry = weather_db.VerticalRain()
+    vertical_rain_entry.vertical_rain = weather_dict['vertical_rain']
+    vertical_rain_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    vertical_rain_entry.altitude = weather_dict['altitude']
+    vertical_rain_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    vertical_rain_entry.dates = weather_dict['time']
+    vertical_rain_entry.unit = 'mm/h'
+    vertical_rain_entry.save()
+    weather_entry.vertical_rain = vertical_rain_entry
 
-    entry.units = {'temperature': 'C',
-                   'relative_humidity': '-',
-                   'rain_intensity': 'mm/h',
-                   'wind_direction': 'degrees',
-                   'wind_speed': 'm/s',
-                   'atmospheric_horizontal_long_wave_radiation': 'W/m2',
-                   'diffuse_horizontal_solar_radiation': 'W/m2',
-                   'horizontal_global_solar_radiation': 'W/m2'
-                   }
+    # Wind Direction
+    wind_direction_entry = weather_db.WindDirection()
+    wind_direction_entry.wind_direction = weather_dict['wind_direction']
+    wind_direction_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    wind_direction_entry.altitude = weather_dict['altitude']
+    wind_direction_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    wind_direction_entry.dates = weather_dict['time']
+    wind_direction_entry.unit = 'degrees'
+    wind_direction_entry.save()
+    weather_entry.wind_direction = wind_direction_entry
 
-    entry.save()
+    # Wind Speed
+    wind_speed_entry = weather_db.WindSpeed()
+    wind_speed_entry.wind_speed = weather_dict['wind_speed']
+    wind_speed_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    wind_speed_entry.altitude = weather_dict['altitude']
+    wind_speed_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    wind_speed_entry.dates = weather_dict['time']
+    wind_speed_entry.unit = 'm/s'
+    wind_speed_entry.save()
+    weather_entry.wind_speed = wind_speed_entry
 
-    return entry.id
+    # Long Wave
+    long_wave_radiation_entry = weather_db.LongWaveRadiation()
+    long_wave_radiation_entry.long_wave_radiation = weather_dict['atmospheric_horizontal_long_wave_radiation']
+    long_wave_radiation_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    long_wave_radiation_entry.altitude = weather_dict['altitude']
+    long_wave_radiation_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    long_wave_radiation_entry.dates = weather_dict['time']
+    long_wave_radiation_entry.unit = 'W/m2'
+    long_wave_radiation_entry.save()
+    weather_entry.long_wave_radiation = long_wave_radiation_entry
+
+    # Diffuse Radiation
+    diffuse_radiation_entry = weather_db.DiffuseRadiation()
+    diffuse_radiation_entry.diffuse_radiation = weather_dict['diffuse_horizontal_solar_radiation']
+    diffuse_radiation_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    diffuse_radiation_entry.altitude = weather_dict['altitude']
+    diffuse_radiation_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    diffuse_radiation_entry.dates = weather_dict['time']
+    diffuse_radiation_entry.unit = 'W/m2'
+    diffuse_radiation_entry.save()
+    weather_entry.diffuse_radiation = diffuse_radiation_entry
+
+    # Direct Radiation
+    direct_radiation_entry = weather_db.DirectRadiation()
+    direct_radiation_entry.direct_radiation = weather_dict['horizontal_global_solar_radiation']
+    direct_radiation_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    direct_radiation_entry.altitude = weather_dict['altitude']
+    direct_radiation_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    direct_radiation_entry.dates = weather_dict['time']
+    direct_radiation_entry.unit = 'W/m2'
+    direct_radiation_entry.save()
+    weather_entry.direct_radiation = direct_radiation_entry
+
+    # Weather
+    weather_entry.dates = weather_dict['time']
+    weather_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+    weather_entry.altitude = weather_dict['altitude']
+    weather_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
+    weather_entry.units = {'temperature': 'C',
+                           'relative_humidity': '-',
+                           'rain_intensity': 'mm/h',
+                           'wind_direction': 'degrees',
+                           'wind_speed': 'm/s',
+                           'atmospheric_horizontal_long_wave_radiation': 'W/m2',
+                           'diffuse_horizontal_solar_radiation': 'W/m2',
+                           'horizontal_global_solar_radiation': 'W/m2'
+                           }
+    weather_entry.save()
+
+    return weather_entry.id
 
 
 def convert_weather_to_indoor_climate(temperature: list, indoor_class) -> tuple:
@@ -134,7 +208,7 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class) -> tuple:
         if indoor_class_.lower() == 'a':
             delta_rh = 0
         elif indoor_class_.lower() == 'b':
-            delta_rh = 5
+            delta_rh = 0.05
         else:
             raise ValueError(f"Wrong indoor class. It has to be either a or b. Value given was: {indoor_class}")
 
@@ -153,11 +227,11 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class) -> tuple:
         # Create indoor relative humidity
         for rh in daily_temperature_average_:
             if rh <= -10:
-                indoor_relative_humidity_.append([35 + delta_rh, ] * 24)
+                indoor_relative_humidity_.append([0.35 + delta_rh, ] * 24)
             elif rh >= 20:
-                indoor_relative_humidity_.append([65 + delta_rh, ] * 24)
+                indoor_relative_humidity_.append([0.65 + delta_rh, ] * 24)
             else:
-                indoor_relative_humidity_.append([rh + 45 + delta_rh, ] * 24)
+                indoor_relative_humidity_.append([rh + 0.45 + delta_rh, ] * 24)
 
         return list(np.ravel(indoor_temperature_)), list(np.ravel(indoor_relative_humidity_))
 

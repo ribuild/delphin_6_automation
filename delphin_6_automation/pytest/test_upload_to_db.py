@@ -73,4 +73,8 @@ def test_upload_weather_1():
     weather_parser.wac_to_db(folder + '/' + weather_file)
 
 
-test_upload_weather_1()
+def test_upload_indoor_climate_1():
+    weather_id = '5a65ec9b5d946021a84937df'
+    weather_parser.add_indoor_climate_to_weather_db(weather_id)
+
+test_upload_indoor_climate_1()
