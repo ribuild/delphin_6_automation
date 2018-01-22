@@ -26,9 +26,12 @@ class Weather(mongoengine.Document):
     long_wave_radiation = mongoengine.ListField(required=True)
     diffuse_radiation = mongoengine.ListField(required=True)
     direct_radiation = mongoengine.ListField(required=True)
+    indoor_tempearture = mongoengine.ListField()
+    indoor_relative_humidity = mongoengine.ListField()
 
     location = mongoengine.GeoPointField(required=True)
     source = mongoengine.StringField(required=True)
     added_date = mongoengine.DateTimeField(default=datetime.now)
+    dates = mongoengine.ListField(required=True)
 
     meta = collections.weather_db

@@ -15,18 +15,6 @@ from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 # WEATHER INTERACTIONS
 
 
-def dict_to_ccd(weather: dict, path: str) -> bool:
-    """
-    Takes an weather dict and converts it into a .ccd file
-    :param weather: material dict
-    :param path: Path to where .ccd should be placed.
-    :return: True
-    """
-
-    # TODO - Create function
-    return True
-
-
 def list_project_weather(sim_id: str) -> list:
     """
     Returns a list with the weather in a project entry.
