@@ -15,6 +15,7 @@ from delphin_6_automation.nosql.auth import dtu_byg
 import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.nosql.db_templates.result_entry as result_db
 import delphin_6_automation.pytest.pytest_helper_functions as helper
+import delphin_6_automation.file_parsing.delphin_weather_file as weather_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
@@ -66,5 +67,10 @@ def test_upload_materials_1():
 
 
 def test_upload_weather_1():
-    # TODO
-    pass
+    folder = r'D:\Weatherdata\RAW\Climate for Culture\CTL_2021_2050'
+    weather_file = 'Aberdeen_-2.083_57.167_2020_2050_A1B.WAC'
+
+    weather_parser.wac_to_db(folder + '/' + weather_file)
+
+
+test_upload_weather_1()

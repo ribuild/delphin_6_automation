@@ -18,6 +18,7 @@ from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 def list_project_weather(sim_id: str) -> list:
     """
     Returns a list with the weather in a project entry.
+
     :param sim_id: Delphin entry ID
     :return: List with material file names
     """
@@ -33,6 +34,7 @@ def list_project_weather(sim_id: str) -> list:
 def assign_weather_to_project():
     """
     Assign weather to a Delphin entry
+
     :return:
     """
 

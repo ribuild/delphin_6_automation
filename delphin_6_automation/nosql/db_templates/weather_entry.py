@@ -18,6 +18,7 @@ import delphin_6_automation.nosql.database_collections as collections
 
 class Weather(mongoengine.Document):
 
+    # Weather Data
     temperature = mongoengine.ListField(required=True)
     relative_humidity = mongoengine.ListField(required=True)
     vertical_rain = mongoengine.ListField(required=True)
@@ -26,12 +27,19 @@ class Weather(mongoengine.Document):
     long_wave_radiation = mongoengine.ListField(required=True)
     diffuse_radiation = mongoengine.ListField(required=True)
     direct_radiation = mongoengine.ListField(required=True)
-    indoor_tempearture = mongoengine.ListField()
-    indoor_relative_humidity = mongoengine.ListField()
-
-    location = mongoengine.GeoPointField(required=True)
-    source = mongoengine.StringField(required=True)
-    added_date = mongoengine.DateTimeField(default=datetime.now)
     dates = mongoengine.ListField(required=True)
+
+    # Indoor Data
+    indoor_temperature_a = mongoengine.ListField()
+    indoor_relative_humidity_a = mongoengine.ListField()
+    indoor_temperature_b = mongoengine.ListField()
+    indoor_relative_humidity_b = mongoengine.ListField()
+
+    # Meta Data
+    location = mongoengine.GeoPointField(required=True)
+    altitude = mongoengine.FloatField(required=True)
+    source = mongoengine.DictField(required=True)
+    added_date = mongoengine.DateTimeField(default=datetime.now)
+    units = mongoengine.DictField(required=True)
 
     meta = collections.weather_db
