@@ -6,7 +6,7 @@ delphin_6_automation
 
    delphin_6_automation
    delphin_6_automation.back_end_users
-   delphin_6_automation.datebase_interactions
+   delphin_6_automation.database_interactions
    delphin_6_automation.delphin_setup
    delphin_6_automation.nosql.db_templates
    delphin_6_automation.nosql

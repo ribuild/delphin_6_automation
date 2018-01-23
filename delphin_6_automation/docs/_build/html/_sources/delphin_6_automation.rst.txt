@@ -6,5 +6,4 @@ Module contents
 
 .. automodule:: delphin_6_automation
     :members:
-    :undoc-members:
     :show-inheritance:
