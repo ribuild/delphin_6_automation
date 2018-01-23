@@ -17,7 +17,8 @@ from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 
 def dict_to_m6(material: dict, path: str) -> bool:
     """
-    Takes an material dict and converts it into a .m6 file
+    Takes an material dict and converts it into a .m6 file.
+
     :param material: material dict
     :param path: Path to where .m6 should be placed.
     :return: True
@@ -30,6 +31,7 @@ def dict_to_m6(material: dict, path: str) -> bool:
 def list_project_materials(sim_id: str) -> list:
     """
     Returns a list with the materials in a project entry.
+
     :param sim_id: Delphin entry ID
     :return: List with material file names
     """
@@ -44,7 +46,8 @@ def list_project_materials(sim_id: str) -> list:
 
 def assign_materials_to_project():
     """
-    Assign materials to a Delphin entry
+    Assign materials to a Delphin entry.
+
     :return:
     """
 

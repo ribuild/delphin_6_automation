@@ -20,7 +20,8 @@ from delphin_6_automation.database_interactions import material_interactions as 
 
 def gather_material_list(delphin_id: str) -> list:
     """
-    Gathers the material file names of Delphin file in the database
+    Gathers the material file names of Delphin file in the database.
+
     :param delphin_id: database id
     :return: list of material file names
     """
@@ -36,7 +37,8 @@ def gather_material_list(delphin_id: str) -> list:
 
 def download_raw_result(result_id: str, download_path: str) -> bool:
     """
-    Downloads a result entry from the database
+    Downloads a result entry from the database.
+
     :param result_id: Database entry id
     :param download_path: Path where the result should be written
     :return: True
@@ -52,7 +54,8 @@ def download_raw_result(result_id: str, download_path: str) -> bool:
 
 def queue_priorities(priority: str)-> int:
     """
-    Generate a queue priority number
+    Generate a queue priority number.
+
     :param priority: High, medium or low priority
     :return: Priority number
     """
@@ -82,6 +85,7 @@ def queue_priorities(priority: str)-> int:
 def add_to_simulation_queue(delphin_file: str, priority: str)-> str:
     """
     Uploads and adds a Delphin project file to the simulation queue.
+
     :param delphin_file: Delphin 6 project file path
     :param priority: High, medium or low priority
     :return: Database entry id
@@ -96,6 +100,7 @@ def add_to_simulation_queue(delphin_file: str, priority: str)-> str:
 def is_simulation_finished(sim_id: str) -> bool:
     """
     Checks if a Delphin project entry is simulated or not.
+
     :param sim_id: Database entry to check
     :return: True if it is simulated otherwise returns False.
     """
@@ -111,6 +116,7 @@ def is_simulation_finished(sim_id: str) -> bool:
 def list_finished_simulations() -> list:
     """
     Returns a list with Delphin entry ID's for simulated entries.
+
     :return: List
     """
 
