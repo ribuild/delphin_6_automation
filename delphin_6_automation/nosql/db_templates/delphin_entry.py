@@ -11,10 +11,18 @@ from datetime import datetime
 
 # RiBuild Modules:
 import delphin_6_automation.nosql.database_collections as collections
-import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
+import delphin_6_automation.nosql.db_templates.result_raw_entry as raw_db
+import delphin_6_automation.nosql.db_templates.result_processed_entry as processed_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN CLASS
+
+
+class WeatherPlaceholder(mongoengine.EmbeddedDocument):
+
+    weather_reference = mongoengine.GenericReferenceField(required=True)
+    start_date = mongoengine.DateTimeField()
+    end_date = mongoengine.DateTimeField()
 
 
 class Delphin(mongoengine.Document):
@@ -26,10 +34,10 @@ class Delphin(mongoengine.Document):
     dimensions = mongoengine.IntField(required=True)
 
     # References
-    results_raw = mongoengine.ReferenceField(document_type=result_db.Result)
-    result_processed = mongoengine.ReferenceField(document_type=result_db.ProcessedResult)
+    results_raw = mongoengine.ReferenceField(document_type=raw_db.Result)
+    result_processed = mongoengine.ReferenceField(document_type=processed_db.ProcessedResult)
     dp6_file = mongoengine.DictField(required=True)
     materials = mongoengine.DictField(required=True)
-    weather = mongoengine.DictField(required=True)
+    weather = mongoengine.EmbeddedDocumentListField(document_type=WeatherPlaceholder)
 
     meta = collections.delphin_db
