@@ -13,7 +13,7 @@ import delphin_6_automation.database_interactions.delphin_interactions as delphi
 import delphin_6_automation.nosql.mongo_setup as mongo_setup
 from delphin_6_automation.nosql.auth import dtu_byg
 import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
-import delphin_6_automation.nosql.db_templates.result_entry as result_db
+import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
 import delphin_6_automation.pytest.pytest_helper_functions as helper
 import delphin_6_automation.file_parsing.delphin_weather_file as weather_parser
 

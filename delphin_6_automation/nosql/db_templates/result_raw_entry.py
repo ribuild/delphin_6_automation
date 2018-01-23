@@ -11,6 +11,8 @@ from datetime import datetime
 
 # RiBuild Modules:
 import delphin_6_automation.nosql.database_collections as collections
+import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
+import delphin_6_automation.nosql.db_templates.result_processed_entry as processed_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RESULT CLASS
@@ -19,10 +21,8 @@ import delphin_6_automation.nosql.database_collections as collections
 class Result(mongoengine.Document):
 
     added_date = mongoengine.DateTimeField(default=datetime.now)
-    delphin_id = mongoengine.ObjectIdField(required=True)
-    delphin_db = mongoengine.DictField(required=True)
-    process_db = mongoengine.DictField()
-    process_id = mongoengine.ObjectIdField()
+    delphin = mongoengine.ReferenceField(document_type=delphin_db.Delphin)
+    results_processed = mongoengine.ReferenceField(document_type=processed_db.ProcessedResult, required=True)
 
     log = mongoengine.DictField(required=True)
     results = mongoengine.DictField(required=True)
@@ -31,14 +31,3 @@ class Result(mongoengine.Document):
     simulation_started = mongoengine.DateTimeField(required=True)
 
     meta = collections.raw_result_db
-
-
-class ProcessedResult(mongoengine.Document):
-
-    added_date = mongoengine.DateTimeField(default=datetime.now)
-    delphin_id = mongoengine.ObjectIdField(required=True)
-    delphin_db = mongoengine.DictField(required=True)
-    raw_db = mongoengine.DictField(required=True)
-    raw_id = mongoengine.ObjectIdField(required=True)
-
-    meta = collections.processed_result_db

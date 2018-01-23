@@ -14,7 +14,7 @@ import shutil
 
 # RiBuild Modules:
 import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
-import delphin_6_automation.nosql.db_templates.result_entry as result_db
+import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
 import delphin_6_automation.nosql.database_collections as collections
 from delphin_6_automation.database_interactions import general_interactions as interactions
 
@@ -48,7 +48,6 @@ def upload_to_database(delphin_file: str,  queue_priority: int) -> delphin_db.De
     entry = delphin_db.Delphin()
     entry.materials = collections.material_db
     entry.weather = collections.weather_db
-    entry.result_db = collections.raw_result_db
     entry.queue_priority = queue_priority
 
     delphin_dict = dp6_to_dict(delphin_file)
@@ -357,8 +356,13 @@ def results_to_mongo_db(path_: str, delete_files: bool =True) -> bool:
             geometry_dict = g6a_to_dict(result_path, result_file)
 
     entry = result_db.Result()
-    entry.delphin_db = collections.delphin_db
-    entry.delphin_id = id_
+
+    # Add results reference to Delphin entry
+    delphin_entry = delphin_db.Delphin.objects(id=id_).first()
+    delphin_entry.results_raw = entry
+    delphin_entry.save()
+
+    entry.delphin_id = delphin_entry
     entry.log['integrator_cvode_stats'] = cvode_stats_to_dict(log_path)
     entry.log['les_direct_stats'] = les_stats_to_dict(log_path)
     entry.log['progress'] = progress_to_dict(log_path)

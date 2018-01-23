@@ -1,6 +1,5 @@
 __author__ = "Christian Kongsgaard"
 __license__ = "MIT"
-__version__ = "0.0.1"
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -12,6 +11,7 @@ from datetime import datetime
 
 # RiBuild Modules:
 import delphin_6_automation.nosql.database_collections as collections
+import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN CLASS
@@ -26,8 +26,8 @@ class Delphin(mongoengine.Document):
     dimensions = mongoengine.IntField(required=True)
 
     # References
-    result_db = mongoengine.DictField()
-    result_id = mongoengine.ObjectIdField()
+    results_raw = mongoengine.ReferenceField(document_type=result_db.Result)
+    result_processed = mongoengine.ReferenceField(document_type=result_db.ProcessedResult)
     dp6_file = mongoengine.DictField(required=True)
     materials = mongoengine.DictField(required=True)
     weather = mongoengine.DictField(required=True)
