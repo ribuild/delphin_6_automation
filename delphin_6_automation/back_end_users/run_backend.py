@@ -9,14 +9,14 @@ import delphin_6_automation.nosql.mongo_setup as mongo_setup
 import delphin_6_automation.database_interactions as db_interact
 from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.nosql.auth import dtu_byg
+from delphin_6_automation.database_interactions.material_interactions import upload_material_file
 import os
 
 
 def main():
     print_header()
     config_mongo()
-    user_loop()
-
+    main_menu()
 
 def print_header():
     print('---------------------------------------------------')
@@ -32,36 +32,42 @@ def config_mongo():
     mongo_setup.global_init(dtu_byg)
 
 
-def user_loop():
+def main_menu():
     while True:
         print()
         print("Available actions:")
-        print("* [a]dd new simulation to queue")
-        print("* [l]ist simulations")
-        #print("* [f]ind simulation")
-        #print("* [f]ind results")
-        print("* e[x]it")
+        print("[a] Add new simulation to queue")
+        print("[l] List simulations")
+        print("[m] Add Delphin material to the database")
+        print("[g] Add Ribuild Geometry file to database")
+        print("[f] Find simulation")
+        print("[w] Queue and view weather data")
+        print("[x] Exit")
         print()
+
         choice = input("> ").strip().lower()
+
         if choice == 'a':
             add_to_queue()
+
         elif choice == 'l':
             list_latest_added_simulations()
+
+        elif choice == 'm':
+            add_delphin_material_to_db()
+
+        elif choice == 'g':
+            add_geometry_file_to_db()
+
+        elif choice == 'f':
+            pass
+
+        elif choice == 'w':
+            pass
+
         elif not choice or choice == 'x':
             print("see ya!")
             break
-
-
-def show_commands(command):
-    if command == 'start_up':
-        print()
-        print("Available actions:")
-        print("* [a]dd new simulation to queue")
-        print("* [l]ist simulations")
-        # print("* [f]ind simulation")
-        # print("* [f]ind results")
-        print("* e[x]it")
-        print()
 
 
 def add_to_queue():
@@ -94,6 +100,12 @@ def list_latest_added_simulations():
             document.queue_priority))
 
 
+def add_delphin_material_to_db():
+    user_input = input("Please type the path a .m6 file or a folder with multiple files: ")
+    upload_material_file(user_input)
+
+
+
 def download_simulation_result():
     sim_id = str(input('Simulation ID to retrieve? >'))
     if db_interact.general_interactions.is_simulation_finished(sim_id):
@@ -105,12 +117,7 @@ def download_simulation_result():
         return
 
 
-def exit_app():
-    print()
-    print('Bye')
-    raise KeyboardInterrupt()
-
-
 #if __name__ == "__main__":
 #    main()
-print(42)
+config_mongo()
+upload_material_file("/users/thomasperkov/desktop/materialer/Brick_686.m6")
