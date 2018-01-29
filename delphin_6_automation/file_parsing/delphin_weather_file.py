@@ -6,7 +6,6 @@ __author__ = "Christian Kongsgaard"
 # Modules:
 import numpy as np
 import datetime
-import calendar
 import os
 
 # RiBuild Modules:
@@ -114,7 +113,7 @@ def wac_to_db(file_path: str) -> list:
 
         yearly_weather_entry.year = year_dates[0].year
 
-        yearly_weather_entry.location = [weather_dict['longitude'], weather_dict['latitude'],]
+        yearly_weather_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
         yearly_weather_entry.altitude = weather_dict['altitude']
 
         yearly_weather_entry.source = {'comment': 'Climate for Culture',
