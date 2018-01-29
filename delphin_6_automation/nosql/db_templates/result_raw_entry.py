@@ -11,8 +11,8 @@ from datetime import datetime
 
 # RiBuild Modules:
 import delphin_6_automation.nosql.database_collections as collections
-from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
-import delphin_6_automation.nosql.db_templates.result_processed_entry as processed_db
+#from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
+from delphin_6_automation.nosql.db_templates import result_processed_entry as processed_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RESULT CLASS
@@ -21,7 +21,7 @@ import delphin_6_automation.nosql.db_templates.result_processed_entry as process
 class Result(mongoengine.Document):
 
     added_date = mongoengine.DateTimeField(default=datetime.now)
-    delphin = mongoengine.ReferenceField(document_type=delphin_db.Delphin)
+    #delphin = mongoengine.ReferenceField(document_type=delphin_db.Delphin)
     results_processed = mongoengine.ReferenceField(document_type=processed_db.ProcessedResult, required=True)
 
     log = mongoengine.DictField(required=True)
