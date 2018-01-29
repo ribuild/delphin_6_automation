@@ -18,4 +18,9 @@ import delphin_6_automation.nosql.database_collections as collections
 
 class Material(mongoengine.Document):
 
+
+
+    added_date = mongoengine.DateTimeField(default=datetime.now)
+    material_data = mongoengine.DictField(required=True)
+
     meta = collections.material_db
