@@ -6,6 +6,8 @@ __author__ = "Christian Kongsgaard"
 # Modules:
 import numpy as np
 import datetime
+import calendar
+import os
 
 # RiBuild Modules:
 from delphin_6_automation.nosql.db_templates import weather_entry as weather_db
@@ -75,116 +77,96 @@ def wac_to_dict(file_path: str) -> dict:
     return weather_dict
 
 
-def wac_to_db(file_path: str) -> str:
+def wac_to_db(file_path: str) -> list:
 
     weather_dict = wac_to_dict(file_path)
-    weather_entry = weather_db.Weather()
 
-    # Temperature
-    temperature_entry = weather_db.Temperature()
-    temperature_entry.temperature = weather_dict['temperature']
-    temperature_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    temperature_entry.altitude = weather_dict['altitude']
-    temperature_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    temperature_entry.dates = weather_dict['time']
-    temperature_entry.unit = 'C'
-    temperature_entry.save()
-    weather_entry.temperature = temperature_entry
+    # Split years
+    def hours_per_year(start, stop):
+        while start < stop:
+            yield 8760
+            start += 1
 
-    # Relative Humidity
-    relative_humidity_entry = weather_db.RelativeHumidity()
-    relative_humidity_entry.relative_humidity = weather_dict['relative_humidity']
-    relative_humidity_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    relative_humidity_entry.altitude = weather_dict['altitude']
-    relative_humidity_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    relative_humidity_entry.dates = weather_dict['time']
-    relative_humidity_entry.unit = '-'
-    relative_humidity_entry.save()
-    weather_entry.relative_humidity = relative_humidity_entry
+    def accumulate_hours(hour_list):
+        accumulated_list = [0, ]
 
-    # Vertical Rain
-    vertical_rain_entry = weather_db.VerticalRain()
-    vertical_rain_entry.vertical_rain = weather_dict['vertical_rain']
-    vertical_rain_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    vertical_rain_entry.altitude = weather_dict['altitude']
-    vertical_rain_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    vertical_rain_entry.dates = weather_dict['time']
-    vertical_rain_entry.unit = 'mm/h'
-    vertical_rain_entry.save()
-    weather_entry.vertical_rain = vertical_rain_entry
+        for i in range(0, len(hour_list)):
+            accumulated_list.append(accumulated_list[i] + hour_list[i])
 
-    # Wind Direction
-    wind_direction_entry = weather_db.WindDirection()
-    wind_direction_entry.wind_direction = weather_dict['wind_direction']
-    wind_direction_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    wind_direction_entry.altitude = weather_dict['altitude']
-    wind_direction_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    wind_direction_entry.dates = weather_dict['time']
-    wind_direction_entry.unit = 'degrees'
-    wind_direction_entry.save()
-    weather_entry.wind_direction = wind_direction_entry
+        return accumulated_list
 
-    # Wind Speed
-    wind_speed_entry = weather_db.WindSpeed()
-    wind_speed_entry.wind_speed = weather_dict['wind_speed']
-    wind_speed_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    wind_speed_entry.altitude = weather_dict['altitude']
-    wind_speed_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    wind_speed_entry.dates = weather_dict['time']
-    wind_speed_entry.unit = 'm/s'
-    wind_speed_entry.save()
-    weather_entry.wind_speed = wind_speed_entry
+    hours = [hour
+             for hour in hours_per_year(weather_dict['time'][0].year,
+                                        weather_dict['time'][-1].year)]
 
-    # Long Wave
-    long_wave_radiation_entry = weather_db.LongWaveRadiation()
-    long_wave_radiation_entry.long_wave_radiation = weather_dict['atmospheric_horizontal_long_wave_radiation']
-    long_wave_radiation_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    long_wave_radiation_entry.altitude = weather_dict['altitude']
-    long_wave_radiation_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    long_wave_radiation_entry.dates = weather_dict['time']
-    long_wave_radiation_entry.unit = 'W/m2'
-    long_wave_radiation_entry.save()
-    weather_entry.long_wave_radiation = long_wave_radiation_entry
+    accumulated_hours = accumulate_hours(hours)
 
-    # Diffuse Radiation
-    diffuse_radiation_entry = weather_db.DiffuseRadiation()
-    diffuse_radiation_entry.diffuse_radiation = weather_dict['diffuse_horizontal_solar_radiation']
-    diffuse_radiation_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    diffuse_radiation_entry.altitude = weather_dict['altitude']
-    diffuse_radiation_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    diffuse_radiation_entry.dates = weather_dict['time']
-    diffuse_radiation_entry.unit = 'W/m2'
-    diffuse_radiation_entry.save()
-    weather_entry.diffuse_radiation = diffuse_radiation_entry
+    # Add yearly weather entries
+    entry_ids = []
+    for year_index in range(1, len(accumulated_hours)):
+        yearly_weather_entry = weather_db.Weather()
 
-    # Direct Radiation
-    direct_radiation_entry = weather_db.DirectRadiation()
-    direct_radiation_entry.direct_radiation = weather_dict['horizontal_global_solar_radiation']
-    direct_radiation_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    direct_radiation_entry.altitude = weather_dict['altitude']
-    direct_radiation_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    direct_radiation_entry.dates = weather_dict['time']
-    direct_radiation_entry.unit = 'W/m2'
-    direct_radiation_entry.save()
-    weather_entry.direct_radiation = direct_radiation_entry
+        # Meta Data
+        yearly_weather_entry.location_name = os.path.split(file_path)[-1].split('_')[0]
+        year_dates = weather_dict['time'][accumulated_hours[year_index - 1]: accumulated_hours[year_index]]
+        yearly_weather_entry.dates = {'start': year_dates[0],
+                                      'stop': year_dates[-1]}
 
-    # Weather
-    weather_entry.dates = weather_dict['time']
-    weather_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-    weather_entry.altitude = weather_dict['altitude']
-    weather_entry.source = {'comment': 'Climate for Culture', 'file': file_path}
-    weather_entry.units = {'temperature': 'C',
-                           'relative_humidity': '-',
-                           'rain_intensity': 'mm/h',
-                           'wind_direction': 'degrees',
-                           'wind_speed': 'm/s',
-                           'atmospheric_horizontal_long_wave_radiation': 'W/m2',
-                           'diffuse_horizontal_solar_radiation': 'W/m2',
-                           'horizontal_global_solar_radiation': 'W/m2'
-                           }
-    weather_entry.save()
+        yearly_weather_entry.year = year_dates[0].year
 
-    return weather_entry.id
+        yearly_weather_entry.location = [weather_dict['longitude'], weather_dict['latitude'],]
+        yearly_weather_entry.altitude = weather_dict['altitude']
+
+        yearly_weather_entry.source = {'comment': 'Climate for Culture',
+                                       'url': 'https://www.climateforculture.eu/',
+                                       'file': os.path.split(file_path)[-1]}
+
+        yearly_weather_entry.units = {'temperature': 'C',
+                                      'relative_humidity': '-',
+                                      'vertical_rain': 'mm/h',
+                                      'wind_direction': 'degrees',
+                                      'wind_speed': 'm/s',
+                                      'long_wave_radiation': 'W/m2',
+                                      'diffuse_radiation': 'W/m2',
+                                      'direct_radiation': 'W/m2'
+                                      }
+
+        # Climate Data
+        yearly_weather_entry.temperature = weather_dict['temperature'][
+                                           accumulated_hours[year_index - 1]:
+                                           accumulated_hours[year_index]]
+
+        yearly_weather_entry.relative_humidity = weather_dict['relative_humidity'][
+                                                 accumulated_hours[year_index - 1]:
+                                                 accumulated_hours[year_index]]
+
+        yearly_weather_entry.vertical_rain = weather_dict['vertical_rain'][
+                                             accumulated_hours[year_index - 1]:
+                                             accumulated_hours[year_index]]
+
+        yearly_weather_entry.wind_direction = weather_dict['wind_direction'][
+                                              accumulated_hours[year_index - 1]:
+                                              accumulated_hours[year_index]]
+
+        yearly_weather_entry.wind_speed = weather_dict['wind_speed'][
+                                          accumulated_hours[year_index - 1]:
+                                          accumulated_hours[year_index]]
+
+        yearly_weather_entry.long_wave_radiation = weather_dict['atmospheric_counter_horizontal_long_wave_radiation'][
+                                                   accumulated_hours[year_index - 1]:
+                                                   accumulated_hours[year_index]]
+
+        yearly_weather_entry.diffuse_radiation = weather_dict['diffuse_horizontal_solar_radiation'][
+                                                 accumulated_hours[year_index - 1]:
+                                                 accumulated_hours[year_index]]
+
+        yearly_weather_entry.direct_radiation = weather_dict['horizontal_global_solar_radiation'][
+                                                accumulated_hours[year_index - 1]:
+                                                accumulated_hours[year_index]]
+        yearly_weather_entry.save()
+        entry_ids.append(yearly_weather_entry.id)
+
+    return entry_ids
 
 
 def convert_weather_to_indoor_climate(temperature: list, indoor_class) -> tuple:

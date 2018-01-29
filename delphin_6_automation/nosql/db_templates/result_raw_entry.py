@@ -11,7 +11,7 @@ from datetime import datetime
 
 # RiBuild Modules:
 import delphin_6_automation.nosql.database_collections as collections
-import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
+from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 import delphin_6_automation.nosql.db_templates.result_processed_entry as processed_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
