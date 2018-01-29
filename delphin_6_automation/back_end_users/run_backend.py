@@ -1,5 +1,5 @@
 """
-Backend user interface
+Backend user interface:
 - Add new simulation(s)
 - Monitor the simulation process
 - Queue and watch finished simulations
@@ -111,5 +111,6 @@ def exit_app():
     raise KeyboardInterrupt()
 
 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+#    main()
+print(42)

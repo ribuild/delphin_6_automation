@@ -1,11 +1,11 @@
-# Imports
+# Imports:
 import os
 import codecs
 import re
 import datetime
 
 
-# Functions
+# Functions:
 def isfloat(num):
     try:
         float(num)
@@ -97,26 +97,21 @@ def material_file_to_dict(file_path):
 
     return material_dict
 
-#for root, dirs, files in os.walk(directory):
-#    for file in files:
-#        if file.endswith('.txt'):
 
-
+# Code:
 file_path = user_input
+material_dict_lst = []
 
-
-if file_path.endswith(".mat6") # TODO - check .mat6 file
+if file_path.endswith(".mat6"): # TODO - check .mat6 file
     material_dict = material_file_to_dict(file_path)
+    material_dict_lst.append(material_dict)
     # TO DO send to mongoDB
 
 else:
     for root, dirs, files in os.walk(file_path):
         for file, root in zip(files, root):
             fullpath = os.path.join(root, file)
-    material_dict = material_file_to_dict(file_path)
-        material_dict = material_file_to_dict(file_path)
-    # TO DO send to mongoDB
-
-
+            material_dict = material_file_to_dict(fullpath)
+            material_dict_lst.append(material_dict)
 
 
