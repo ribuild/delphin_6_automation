@@ -13,16 +13,11 @@ from datetime import datetime
 import delphin_6_automation.nosql.database_collections as collections
 import delphin_6_automation.nosql.db_templates.result_raw_entry as raw_db
 import delphin_6_automation.nosql.db_templates.result_processed_entry as processed_db
+import delphin_6_automation.nosql.db_templates.weather_entry as weather_db
+import delphin_6_automation.nosql.db_templates.material_entry as material_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN CLASS
-
-
-class WeatherPlaceholder(mongoengine.EmbeddedDocument):
-
-    weather_reference = mongoengine.GenericReferenceField(required=True)
-    start_date = mongoengine.DateTimeField()
-    end_date = mongoengine.DateTimeField()
 
 
 class Delphin(mongoengine.Document):
@@ -37,7 +32,8 @@ class Delphin(mongoengine.Document):
     results_raw = mongoengine.ReferenceField(document_type=raw_db.Result)
     result_processed = mongoengine.ReferenceField(document_type=processed_db.ProcessedResult)
     dp6_file = mongoengine.DictField(required=True)
-    materials = mongoengine.DictField(required=True)
-    weather = mongoengine.EmbeddedDocumentListField(document_type=WeatherPlaceholder)
+    materials = mongoengine.ListField(mongoengine.ReferenceField(material_db.Material))
+    weather = mongoengine.ListField(mongoengine.ReferenceField(weather_db.Weather))
+    indoor_climate = mongoengine.StringField()
 
     meta = collections.delphin_db

@@ -1,6 +1,4 @@
 __author__ = "Christian Kongsgaard"
-__license__ = "MIT"
-__version__ = "0.0.1"
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -18,8 +16,8 @@ import delphin_6_automation.nosql.database_collections as collections
 
 class Material(mongoengine.Document):
 
-
-
+    material_name = mongoengine.StringField(required=True)
+    material_id = mongoengine.IntField(required=True)
     added_date = mongoengine.DateTimeField(default=datetime.now)
     material_data = mongoengine.DictField(required=True)
 
