@@ -53,8 +53,10 @@ def test_download_materials_1():
 
 
 def test_download_weather_1():
-    # TODO
+    test_path, source_path = helper.setup_test_folders()
+    id_ = '5a702a315d946001cc908295'
+
     pass
 
 
-test_download_results_1()
+test_download_weather_1()

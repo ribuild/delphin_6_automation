@@ -10,7 +10,8 @@ import os
 import shutil
 
 # RiBuild Modules:
-
+import delphin_6_automation.database_interactions.material_interactions as material_interact
+from delphin_6_automation.file_parsing import weather_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST HELPER FUNCTIONS
@@ -45,3 +46,36 @@ def unzip_with_test_folder_setup(zip_file):
 def clean_up_test_folders():
     test_dir = os.path.dirname(os.path.realpath(__file__)) + '/test_dir'
     shutil.rmtree(test_dir)
+
+
+def upload_needed_materials(test_case: str) -> list:
+    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files/helper_files'
+
+    if test_case in ['upload_project_1', 'upload_project_2']:
+        # Needed files
+        material_files = ['WietersdorfPeggauerMineralischeKalkzementLeichtputz_630.m6', 'BrickWienerberger_512.m6',
+                          'RemmersiQTherm_438.m6', 'RemmersiQFix_437.m6', 'IQTop_726.m6', 'RestorationRender_210.m6']
+
+    else:
+        material_files = []
+
+    # Upload
+    material_ids = []
+    for material_file in material_files:
+        material_ids.append(material_interact.upload_material_file(folder + '/' + material_file))
+
+    return material_ids
+
+
+def upload_needed_weather(test_case: str):
+    # Local Files
+    folder = os.path.dirname(os.path.abspath(__file__)) + '/test_files/helper_files'
+
+    if test_case == 'upload_project_2':
+        weather_file = 'Aberdeen_3_years.WAC'
+
+    else:
+        return None
+
+    # Upload
+    return weather_parser.wac_to_db(folder + '/' + weather_file)
