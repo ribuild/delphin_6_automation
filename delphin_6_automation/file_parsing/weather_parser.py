@@ -15,16 +15,152 @@ from delphin_6_automation.nosql.db_templates import weather_entry as weather_db
 # WEATHER PARSING
 
 
-def dict_to_ccd(weather: dict, path: str) -> bool:
+def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
     """
     Takes an weather dict and converts it into a .ccd file
 
-    :param weather: material dict
-    :param path: Path to where .ccd should be placed.
+    :param weather_dict: weather dict from mongo_db
+    :param folder: Folder to where .ccd's should be placed.
     :return: True
     """
 
-    # TODO - Create function
+    if not os.path.isdir(folder):
+        os.mkdir(folder)
+
+    parameter_dict = {
+        "temperature": {"description": "Air temperature [°C] (TA)",
+                        "intro": "TEMPER   C",
+                        "factor": 1,
+                        "abr": "TA"},
+
+        "relative_humidity": {"description": "Relative Humidity [%] (HREL)",
+                             "intro": "RELHUM   %",
+                             "factor": 1,
+                             "abr": "HREL"},
+
+        "diffuse_radiation": {"description": "Diffuse Horizontal Solar Radiation [W/m²] (ISD)",
+                             "intro": "DIFRAD   W/m2",
+                             "factor": 1,
+                             "abr": "ISD"},
+
+        "wind_direction": {"description": "Wind Direction [°] (WD)",
+                          "intro": "WINDDIR   Deg",
+                          "factor": 1,
+                          "abr": "WD"},
+
+        "wind_speed": {"description": "Wind Velocity [m/s] (WS)",
+                         "intro": "WINDVEL   m/s",
+                         "factor": 1,
+                         "abr": "WS"},
+
+        "CloudCover": {"description": "Cloud Cover [-] (CI)",
+                       "intro": "CLOUDCOV   ---",
+                       "factor": 1,
+                       "abr": "CI"},
+
+        "direct_radiation": {"description": "Direct Horizontal Solar Radiation [W/m²] (ISvar) [ISGH - ISD]",
+                            "intro": "DIRRAD  W/m2",
+                            "factor": 1,
+                            "abr": "ISVAR"},
+
+        "vertical_rain": {"description": "Rain intensity[mm/h] (RN)",
+                         "intro": "HORRAIN   l/m2h",
+                         "factor": 1,
+                         "abr": "RN"},
+
+        "TotalPressure": {"description": "Air pressure [hPa] (PSTA)",
+                          "intro": "GASPRESS   hPa",
+                          "factor": 1,
+                          "abr": "PSTA"},
+
+        "long_wave_radiation": {"description": "Atmospheric Horizontal Long wave Radiation [W/m²] (ILTH)",
+                         "intro": "SKYEMISS  W/m2",
+                         "factor": 1,
+                         "abr": "ILTH"},
+
+        "TerrainCounterRadiation": {"description": "Terrain counter radiation [W/m²](ILAH)",
+                                    "intro": "GRINDEMISS  W/m2",
+                                    "factor": 1,
+                                    "abr": "ILAH"},
+
+        "GlobalRadiation": {"description": "Horizontal Global Solar Radiation [W/m²] (ISGH)",
+                            "intro": "SKYEMISS  W/m2",
+                            "factor": 1,
+                            "abr": "ISGH"},
+
+        "indoor_relative_humidity_a": {"description": "Indoor Relative Humidity after EN13788 category A [%] (HREL)",
+                                       "intro": "RELHUM   %",
+                                       "factor": 1},
+
+        "indoor_relative_humidity_b": {"description": "Indoor Relative Humidity after EN13788 category B (HREL)",
+                                       "intro": "RELHUM   %",
+                                       "factor": 1},
+
+        "indoor_temperature_a": {"description": "Indoor Air temperature after EN13788 category A [°C] (TA)",
+                                 "intro": "TEMPER   C",
+                                 "factor": 1},
+
+        "indoor_temperature_b": {"description": "Indoor Air temperature after EN13788 category B [°C] (TA)",
+                                 "intro": "TEMPER   C",
+                                 "factor": 1},
+    }
+
+    for weather_key in weather_dict.keys():
+        if weather_key in ['temperature', 'relative_humidity',
+                           'vertical_rain', 'wind_direction',
+                           'wind_speed', 'long_wave_radiation',
+                           'diffuse_radiation', 'direct_radiation',
+                           'indoor_temperature_a', 'indoor_temperature_b',
+                           'indoor_relative_humidity_a',
+                           'indoor_relative_humidity_b']:
+
+            info_dict = parameter_dict[weather_key] + weather_dict['year'] + weather_dict['location_name']
+            list_to_ccd(weather_dict[weather_key], info_dict, folder + '/' + weather_key + '.ccd')
+
+    return True
+
+
+def list_to_ccd(weather_list: list, parameter_info: dict, file_path: str) -> bool:
+    """
+    Converts a weather list into a Delphin weather file (.ccd)
+
+    :param weather_list: List with hourly weather values
+    :type weather_list: list
+    :param parameter_info: Dict with meta data for the weather file.
+    Should contain the following keys: location_name, year, description and intro.
+    :type parameter_info: dict
+    :param file_path: Full file path for where the .ccd file should be saved.
+    :type file_path: str
+    :return: True
+    :rtype: bool
+    """
+
+    # Write meta data
+    file_obj = open(file_path, 'w')
+    file_obj.write(f"# {parameter_info['location_name']}\n")
+    file_obj.write(f"# Year {parameter_info['year']}\n")
+    file_obj.write(f"# RIBuild - Hourly values, {parameter_info['description']} \n\n")
+    file_obj.write(parameter_info["intro"] + "\n\n")
+
+    # Write data
+    day = 0
+    hour = 0
+    for i in range(len(weather_list)):
+
+        # leap year 29th febuary removal
+
+        if i % 24 == 0 and i != 0:
+            hour = 0
+            day += 1
+
+        hour_str = str(hour) + ":00:00"
+        data = weather_list[i]
+        file_obj.write(f'{day:>{6}}{hour_str:>{9}}  {data}\n')
+
+        hour += 1
+
+    file_obj.close()
+
     return True
 
 
