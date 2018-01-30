@@ -36,8 +36,8 @@ def material_file_to_dict(file_path):
         if line.split(" ")[0] == "D6MARLZ!":
             material_dict["INFO-MAGIC_HEADER"] = line.strip("\n")
             material_dict["INFO-LAST_MODIFIED"] = datetime.datetime.now()
-            material_dict["INFO-MATERIAL_NAME"] = file_path.split("_")[0]
-            material_dict["INFO-UNIQUE_ID"] = int(file_path.split("_")[1].split(".")[0])
+            material_dict["INFO-MATERIAL_NAME"] = os.path.split(file_path)[-1].split("_")[0]
+            material_dict["INFO-UNIQUE_ID"] = int(os.path.split(file_path)[-1].split("_")[1].split(".")[0])
             material_dict["INFO-FILE"] = file_path
 
         elif line[0] == "[":
@@ -86,7 +86,7 @@ def material_file_to_dict(file_path):
             elif line[2] == " " and sub_key_func == "MODEL":
                 key = main_key + sub_key_func + line.split("=")[0].strip()
                 data  = line.split("=")[1].strip()
-                print(data)
+                #print(data)
 
                 if isfloat(data):
                     data = data.split(" ")
@@ -99,4 +99,14 @@ def material_file_to_dict(file_path):
     return material_dict
 
 
+def dict_to_m6(material: dict, path: str) -> bool:
+    """
+    Takes an material dict and converts it into a .m6 file.
 
+    :param material: material dict
+    :param path: Path to where .m6 should be placed.
+    :return: True
+    """
+
+    # TODO - Create function
+    return True
