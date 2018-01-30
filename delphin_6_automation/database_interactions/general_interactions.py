@@ -159,3 +159,23 @@ def download_weather(sim_id: str, path: str) -> bool:
     weather_list = delphin_db.Delphin.objects(id=sim_id).first().weather
 
     return True
+
+
+def download_full_project_from_database(document_id: str, path: str) -> bool:
+    """
+    Downloads a Delphin project file from the database with all of its materials and weather.
+
+    :param document_id: Database entry id
+    :param path: Path where the files should be written.
+    :return: True
+    """
+
+    mongo_document_to_dp6(document_id, path)
+    material_list = interactions.gather_material_list(document_id)
+    weather_list = interactions.gather_weather_list(document_id)
+
+    # TODO - Update download weather & and materials
+    #interactions.download_materials(material_list, path)
+    #interactions.download_weather(weather_list, path)
+
+    return True
