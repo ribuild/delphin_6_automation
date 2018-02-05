@@ -1,4 +1,3 @@
-bson
 mongoengine
 lxml
 xmltodict
