@@ -88,19 +88,11 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                             "factor": 1,
                             "abr": "ISGH"},
 
-        "indoor_relative_humidity_a": {"description": "Indoor Relative Humidity after EN13788 category A [%] (HREL)",
+        "indoor_relative_humidity": {"description": "Indoor Relative Humidity after EN13788 [%] (HREL)",
                                        "intro": "RELHUM   %",
                                        "factor": 1},
 
-        "indoor_relative_humidity_b": {"description": "Indoor Relative Humidity after EN13788 category B (HREL)",
-                                       "intro": "RELHUM   %",
-                                       "factor": 1},
-
-        "indoor_temperature_a": {"description": "Indoor Air temperature after EN13788 category A [°C] (TA)",
-                                 "intro": "TEMPER   C",
-                                 "factor": 1},
-
-        "indoor_temperature_b": {"description": "Indoor Air temperature after EN13788 category B [°C] (TA)",
+        "indoor_temperature": {"description": "Indoor Air temperature after EN13788 [°C] (TA)",
                                  "intro": "TEMPER   C",
                                  "factor": 1},
     }
@@ -110,11 +102,11 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                            'vertical_rain', 'wind_direction',
                            'wind_speed', 'long_wave_radiation',
                            'diffuse_radiation', 'direct_radiation',
-                           'indoor_temperature_a', 'indoor_temperature_b',
-                           'indoor_relative_humidity_a',
-                           'indoor_relative_humidity_b']:
+                           'indoor_temperature',
+                           'indoor_relative_humidity']:
 
-            info_dict = parameter_dict[weather_key] + weather_dict['year'] + weather_dict['location_name']
+            info_dict = dict(parameter_dict[weather_key], **{'year': weather_dict['year']})
+            info_dict.update({'location_name': weather_dict['location_name']})
             list_to_ccd(weather_dict[weather_key], info_dict, folder + '/' + weather_key + '.ccd')
 
     return True
@@ -155,7 +147,7 @@ def list_to_ccd(weather_list: list, parameter_info: dict, file_path: str) -> boo
 
         hour_str = str(hour) + ":00:00"
         data = weather_list[i]
-        file_obj.write(f'{day:>{6}}{hour_str:>{9}}  {data}\n')
+        file_obj.write(f'{day:>{6}}{hour_str:>{9}}  {data:.2f}\n')
 
         hour += 1
 
@@ -306,10 +298,6 @@ def wac_to_db(file_path: str) -> list:
 
 def convert_weather_to_indoor_climate(temperature: list, indoor_class) -> tuple:
 
-    # Create daily temperature average
-    temperature_matrix = np.reshape(temperature, (365, 24))
-    daily_temperature_average = np.sum(temperature_matrix, 1) / 24
-
     def en13788(indoor_class_: str, daily_temperature_average_: np.array) -> tuple:
         """
         Only the continental class is implemented.
@@ -322,7 +310,10 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class) -> tuple:
         :rtype: tuple
         """
 
-        if indoor_class_.lower() == 'a':
+        if not isinstance(indoor_class, str):
+            raise TypeError(f"Wrong indoor class. Type has to be a string. "
+                            f"Value given was: >{indoor_class}< with type: {type(indoor_class)}")
+        elif indoor_class_.lower() == 'a':
             delta_rh = 0
         elif indoor_class_.lower() == 'b':
             delta_rh = 0.05
@@ -344,12 +335,18 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class) -> tuple:
         # Create indoor relative humidity
         for rh in daily_temperature_average_:
             if rh <= -10:
-                indoor_relative_humidity_.append([0.35 + delta_rh, ] * 24)
+                indoor_relative_humidity_.append([35 + delta_rh, ] * 24)
             elif rh >= 20:
-                indoor_relative_humidity_.append([0.65 + delta_rh, ] * 24)
+                indoor_relative_humidity_.append([65 + delta_rh, ] * 24)
             else:
-                indoor_relative_humidity_.append([rh + 0.45 + delta_rh, ] * 24)
+                indoor_relative_humidity_.append([rh + 45 + delta_rh, ] * 24)
 
         return list(np.ravel(indoor_temperature_)), list(np.ravel(indoor_relative_humidity_))
+
+    # Create daily temperature average
+    temperature = np.array(temperature).flatten()
+    total_days = int(len(temperature)/24)
+    temperature_matrix = np.reshape(temperature, (total_days, 24))
+    daily_temperature_average = np.sum(temperature_matrix, 1) / 24
 
     return en13788(indoor_class, daily_temperature_average)

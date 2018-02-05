@@ -20,6 +20,9 @@ import delphin_6_automation.simulation_package.delphin_solver as solver
 
 mongo_setup.global_init(dtu_byg)
 
+# TODO - update simulate tests
+# TODO - mock class for delphin
+
 
 def download():
     id_ = "5a5479095d9460327c6970f0"

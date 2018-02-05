@@ -9,7 +9,7 @@ import os
 # RiBuild Modules:
 from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.nosql.db_templates import material_entry as material_db
-from delphin_6_automation.file_parsing.material_parser import material_file_to_dict
+from delphin_6_automation.file_parsing import material_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DATABASE INTERACTIONS
@@ -85,9 +85,19 @@ def upload_material_file(material_path: str) -> delphin_db.Delphin.id:
     """
 
     entry = material_db.Material()
-    entry.material_data = material_file_to_dict(material_path)
+    entry.material_data = material_parser.material_file_to_dict(material_path)
     entry.material_name = os.path.split(material_path)[-1].split('_')[0]
     entry.material_id = int(os.path.split(material_path)[-1].split('_')[1][:-3])
     entry.save()
 
     return entry.id
+
+
+def download_materials(sim_id: str, path: str) -> bool:
+
+    materials_list = delphin_db.Delphin.objects(id=sim_id).first().materials
+
+    for material in materials_list:
+        material_parser.dict_to_m6(material, path)
+
+    return True

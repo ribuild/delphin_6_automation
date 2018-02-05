@@ -20,6 +20,7 @@ import delphin_6_automation.delphin_setup.delphin_permutations as delphin_permu
 
 mongo_setup.global_init(dtu_byg)
 
+# TODO - Update test permetuations
 
 def test_get_layers_1():
     id_ = "5a5479095d9460327c6970f0"

@@ -9,7 +9,7 @@ __author__ = "Christian Kongsgaard"
 # RiBuild Modules:
 from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.nosql.db_templates import weather_entry as weather_db
-import delphin_6_automation.file_parsing.weather_parser as parse_weather
+from delphin_6_automation.file_parsing import weather_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # WEATHER INTERACTIONS
@@ -72,25 +72,36 @@ def assign_indoor_climate_to_project(delphin_id: str, climate_class: str) -> str
 
     # Save climate class to delphin document
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
-    delphin_document.indoor_climate = climate_class.lower()
-    delphin_document.save()
+    delphin_document.update(set__indoor_climate=climate_class.lower())
 
     return delphin_document.id
 
 
 def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
 
-    weather_dict = dict()
+    weather_dict = {'temperature': [], 'relative_humidity': [],
+                    'vertical_rain': [], 'wind_direction': [],
+                    'wind_speed': [], 'long_wave_radiation': [],
+                    'diffuse_radiation': [], 'direct_radiation': [],
+                    'year': [], 'location_name': [], 'altitude': []}
+
     for weather_document in delphin_document.weather:
 
-        weather_document_as_dict = dict(weather_document)
+        weather_document_as_dict = weather_document.to_mongo()
         for weather_key in weather_document_as_dict:
-            if weather_key in ['temperature', 'relative_humidity',
-                               'vertical_rain', 'wind_direction',
-                               'wind_speed', 'long_wave_radiation',
-                               'diffuse_radiation', 'direct_radiation',
-                               'year', 'location_name']:
+            if weather_key in ['temperature', 'vertical_rain',
+                               'wind_direction', 'wind_speed',
+                               'long_wave_radiation', 'diffuse_radiation',
+                               'direct_radiation']:
 
+                weather_dict[weather_key].extend(weather_document_as_dict[weather_key])
+
+            elif weather_key == 'relative_humidity':
+                relhum = [rh * 100
+                          for rh in weather_document_as_dict[weather_key]]
+                weather_dict[weather_key].extend(relhum)
+
+            elif weather_key in ['year', 'location_name', 'altitude']:
                 weather_dict[weather_key].append(weather_document_as_dict[weather_key])
 
     return weather_dict
@@ -102,8 +113,8 @@ def download_weather(delphin_id: str, folder: str) -> bool:
 
     weather = concatenate_weather(delphin_document)
     weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
-        parse_weather.convert_weather_to_indoor_climate(weather['temperature'],
-                                                        delphin_document.indoor_climate)
-    parse_weather.dict_to_ccd(weather, folder)
+        weather_parser.convert_weather_to_indoor_climate(weather['temperature'],
+                                                         delphin_document.indoor_climate)
+    weather_parser.dict_to_ccd(weather, folder)
 
     return True

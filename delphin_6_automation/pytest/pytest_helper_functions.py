@@ -10,11 +10,15 @@ import os
 import shutil
 
 # RiBuild Modules:
-import delphin_6_automation.database_interactions.material_interactions as material_interact
+from delphin_6_automation.database_interactions import material_interactions
+from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.file_parsing import weather_parser
+import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST HELPER FUNCTIONS
+
 
 def setup_test_folders():
     default_path = os.path.dirname(os.path.realpath(__file__))
@@ -62,7 +66,7 @@ def upload_needed_materials(test_case: str) -> list:
     # Upload
     material_ids = []
     for material_file in material_files:
-        material_ids.append(material_interact.upload_material_file(folder + '/' + material_file))
+        material_ids.append(material_interactions.upload_material_file(folder + '/' + material_file))
 
     return material_ids
 
@@ -79,3 +83,19 @@ def upload_needed_weather(test_case: str):
 
     # Upload
     return weather_parser.wac_to_db(folder + '/' + weather_file)
+
+
+def upload_needed_project(test_case: str) -> tuple:
+
+    if test_case == 'download_project_1':
+        folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+        delphin_file = folder + '/delphin_project.d6p'
+
+        delphin_id = delphin_interactions.upload_delphin_to_database(delphin_file, 10)
+        material_ids = upload_needed_materials('upload_project_2')
+        weather_ids = upload_needed_weather('upload_project_2')
+
+        weather_interactions.assign_weather_to_project(delphin_id, weather_ids)
+        weather_interactions.assign_indoor_climate_to_project(delphin_id, 'a')
+
+        return delphin_id, weather_ids, material_ids
