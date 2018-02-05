@@ -21,8 +21,8 @@ from delphin_6_automation.nosql.db_templates import result_processed_entry as pr
 class Result(mongoengine.Document):
 
     added_date = mongoengine.DateTimeField(default=datetime.now)
-    #delphin = mongoengine.ReferenceField(document_type=delphin_db.Delphin)
-    results_processed = mongoengine.ReferenceField(document_type=processed_db.ProcessedResult, required=True)
+    delphin = mongoengine.GenericReferenceField(required=True)
+    results_processed = mongoengine.GenericReferenceField()
 
     log = mongoengine.DictField(required=True)
     results = mongoengine.DictField(required=True)
@@ -31,3 +31,5 @@ class Result(mongoengine.Document):
     simulation_started = mongoengine.DateTimeField(required=True)
 
     meta = collections.raw_result_db
+
+

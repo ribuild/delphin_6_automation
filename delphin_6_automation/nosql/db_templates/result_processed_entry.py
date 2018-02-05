@@ -20,7 +20,7 @@ from delphin_6_automation.nosql.db_templates import result_raw_entry as raw_db
 class ProcessedResult(mongoengine.Document):
 
     added_date = mongoengine.DateTimeField(default=datetime.now)
-    #delphin = mongoengine.ReferenceField(document_type=Delphin, required=True)
-    #results_raw = mongoengine.ReferenceField(document_type=raw_db.Result, required=True)
+    delphin = mongoengine.GenericReferenceField(required=True)
+    results_raw = mongoengine.GenericReferenceField(required=True)
 
     meta = collections.processed_result_db
