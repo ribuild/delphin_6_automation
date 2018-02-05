@@ -155,27 +155,45 @@ def test_upload_project_2():
 
     assert (test_dict, materials, weather) == (source_entry, material_ids, weather_ids)
 
-"""
-def test_upload_results_1():
-    test_path, source_path = helper.setup_test_folders()
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    result_zip = folder + '/delphin_results.zip'
-    result_folder = test_path
-    shutil.unpack_archive(result_zip, result_folder)
-    id_ = delphin_interact.upload_results_to_database(result_folder + '/delphin_results')
 
-    test_doc = result_db.Result.objects(id=id_).first()
+def test_upload_results_1():
+    # Create test folders
+    result_folder, source_path = helper.setup_test_folders()
+
+    # Upload Delphin Project, so it can be linked to
+    material_ids = helper.upload_needed_materials('upload_project_1')
+    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+    delphin_file = folder + '/delphin_project.d6p'
+    delphin_id = delphin_interact.upload_delphin_to_database(delphin_file, 10)
+
+    # Upload results
+    result_zip = folder + '/delphin_results.zip'
+    shutil.unpack_archive(result_zip, result_folder)
+    os.rename(result_folder + '/delphin_results', result_folder + '/' + str(delphin_id))
+    result_id = delphin_interact.upload_results_to_database(result_folder + '/' + str(delphin_id))
+
+    # Prepare test
+    test_doc = result_db.Result.objects(id=result_id).first()
     test_dict = test_doc.to_mongo()
     test_dict.pop('_id')
     test_dict.pop('added_date')
+    test_dict.pop('delphin')
+    test_dict.pop('simulation_started')
 
-    with open(folder + '/delphin_project_with_weather_entry.txt') as outfile:
+    with open(folder + '/delphin_result_entry.txt') as outfile:
         source_entry = bson.json_util.loads(json.load(outfile))
 
     source_entry.pop('_id')
     source_entry.pop('added_date')
+    source_entry.pop('delphin')
+    source_entry.pop('simulation_started')
 
+    # Clean up
     test_doc.delete()
+    delphin_db.Delphin.objects(id=delphin_id).first().delete()
+    for material_id in material_ids:
+        material_db.Material.objects(id=material_id).first().delete()
     helper.clean_up_test_folders()
+
+    # Assert
     assert test_dict == source_entry
-"""
