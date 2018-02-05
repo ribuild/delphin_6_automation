@@ -74,6 +74,7 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> bool:
     """
 
     id_ = os.path.split(path_)[1]
+    delphin_entry = delphin_db.Delphin.objects(id=id_).first()
     result_dict = {}
     result_path = path_ + '/results'
     log_path = path_ + '/log'
@@ -82,7 +83,6 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> bool:
 
     for result_file in os.listdir(result_path):
         if result_file.endswith('.d6o'):
-            print(result_file)
             result_dict[result_file.split('.')[0]], meta_dict = delphin_parser.d6o_to_dict(result_path, result_file)
 
         elif result_file.endswith('.g6a'):
@@ -90,12 +90,7 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> bool:
 
     entry = result_db.Result()
 
-    # Add results reference to Delphin entry
-    delphin_entry = delphin_db.Delphin.objects(id=id_).first()
-    delphin_entry.results_raw = entry
-    delphin_entry.save()
-
-    entry.delphin_id = delphin_entry
+    entry.delphin = delphin_entry
     entry.log['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
     entry.log['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
     entry.log['progress'] = delphin_parser.progress_to_dict(log_path)
@@ -104,6 +99,9 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> bool:
     entry.simulation_started = meta_dict['created']
     entry.geometry_file_hash = meta_dict['geo_file_hash']
     entry.save()
+
+    # Add results reference to Delphin entry
+    delphin_entry.update(push__results_raw=entry)
 
     if delete_files:
         shutil.rmtree(path_)
