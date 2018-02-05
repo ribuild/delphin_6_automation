@@ -12,27 +12,12 @@ __version__ = "0.0.1"
 from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.nosql.db_templates import result_raw_entry as result_db
 from delphin_6_automation.database_interactions import delphin_interactions as delphin_interact
-from delphin_6_automation.database_interactions import material_interactions as mat_interact
+from delphin_6_automation.database_interactions import weather_interactions
+from delphin_6_automation.file_parsing import material_parser
+from delphin_6_automation.file_parsing import delphin_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL INTERACTIONS
-
-
-def gather_material_list(delphin_id: str) -> list:
-    """
-    Gathers the material file names of Delphin file in the database.
-
-    :param delphin_id: database id
-    :return: list of material file names
-    """
-
-    delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
-
-    material_list = []
-    for material_dict in delphin_document['dp6_file']['DelphinProject']['Materials']['MaterialReference']:
-        material_list.append(material_dict['#text'].split('/')[-1])
-
-    return material_list
 
 
 def download_raw_result(result_id: str, download_path: str) -> bool:
@@ -46,7 +31,7 @@ def download_raw_result(result_id: str, download_path: str) -> bool:
 
     result_obj = result_db.Result.objects(id=result_id).first()
 
-    delphin_interact.write_log_files(result_obj, download_path)
+    delphin_parser.write_log_files(result_obj, download_path)
     delphin_interact.download_result_files(result_obj, download_path)
 
     return True
@@ -92,7 +77,7 @@ def add_to_simulation_queue(delphin_file: str, priority: str)-> str:
     """
 
     priority_number = queue_priorities(priority)
-    simulation_id = delphin_interact.upload_to_database(delphin_file, priority_number)
+    simulation_id = delphin_interact.upload_delphin_to_database(delphin_file, priority_number)
 
     return simulation_id
 
@@ -127,55 +112,27 @@ def list_finished_simulations() -> list:
     return finished_list
 
 
-def gather_weather_list(delphin_id: str) -> list:
-    """
-    Gathers the weather files names of Delphin file in the database
-    :param delphin_id: database id
-    :return: list of weather file names
-    """
-
-    delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
-
-    weather_list = [(weather_dict['@name'],
-                     weather_dict['@type'],
-                     weather_dict['@kind'])
-                    for weather_dict in delphin_document['dp6_file']['DelphinProject']['Conditions']
-                                                        ['ClimateConditions']['ClimateCondition']]
-    return weather_list
-
-
 def download_materials(sim_id: str, path: str) -> bool:
 
     materials_list = delphin_db.Delphin.objects(id=sim_id).first().materials
 
     for material in materials_list:
-        mat_interact.dict_to_m6(material, path)
+        material_parser.dict_to_m6(material, path)
 
     return True
 
 
-def download_weather(sim_id: str, path: str) -> bool:
-    # TODO - Download weather
-    weather_list = delphin_db.Delphin.objects(id=sim_id).first().weather
-
-    return True
-
-
-def download_full_project_from_database(document_id: str, path: str) -> bool:
+def download_full_project_from_database(document_id: str, folder: str) -> bool:
     """
     Downloads a Delphin project file from the database with all of its materials and weather.
 
     :param document_id: Database entry id
-    :param path: Path where the files should be written.
+    :param folder: Path where the files should be written.
     :return: True
     """
 
-    mongo_document_to_dp6(document_id, path)
-    material_list = interactions.gather_material_list(document_id)
-    weather_list = interactions.gather_weather_list(document_id)
-
-    # TODO - Update download weather & and materials
-    #interactions.download_materials(material_list, path)
-    #interactions.download_weather(weather_list, path)
+    delphin_interact.download_delphin_entry(document_id, folder)
+    download_materials(document_id, folder)
+    weather_interactions.download_weather(document_id, folder)
 
     return True
