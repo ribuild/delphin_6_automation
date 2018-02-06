@@ -72,11 +72,11 @@ def material_file_to_dict(file_path):
 
                 key = main_key + "-FUNCTION-" + sub_key_func
 
-                if n  % 2 != 0: #ulige linjer (1)
+                if n % 2 != 0:  # ulige linjer (1)
                     key = key + "-X"
                     material_dict[key] = data
 
-                else: #lige linjer (2)
+                else:  # lige linjer (2)
                     key = key + "-Y"
                     material_dict[key] = data
 
@@ -108,5 +108,74 @@ def dict_to_m6(material: dict, path: str) -> bool:
     :return: True
     """
 
-    # TODO - Create function
+    # TODO - Fix Function. Does not produce the same output as input
+
+    def write_material_content(group, material_dict, model=False):
+        unit_dict = {"RHO": "kg/m3", "CE": "J/kgK", "THETA_POR": "m3/m3",
+                     "THETA_EFF": "m3/m3", "THETA_CAP": "m3/m3",
+                     "THETA_80": "m3/m3", "LAMBDA": "W/mK",
+                     "AW": "kg/m2s05", "MEW": "-",
+                     "KLEFF": "s", "DLEFF": "m2/s", "KG": "s"}
+
+        if model:
+            model_exist = False
+            for key, value in material_dict.items():
+                try:
+                    if key[3] == "[":
+                        file.write("\n  " + "[MODEL]")
+                except IndexError:
+                    pass
+        elif group == 'IDENTIFICATION':
+            file.write("\n\n" + "[" + group + "]")
+        else:
+            file.write("\n\n\n" + "[" + group + "]")
+
+        for key, value in material_dict.items():
+            if key.split("-")[0] == group:
+                name = key.split("-")[1]
+
+                if name == "FUNCTION" and key.split("-")[
+                    -1] == "X" and model is not True:  # Parameters under "FUNCTION"
+
+                    function_value_x = "      "
+                    for v in value:
+                        function_value_x += str(v).ljust(17)
+
+                    value = material_dict[key.strip("-X") + "-Y"]
+                    function_value_y = "      "
+                    for v in value:
+                        function_value_y += str(v).ljust(17)
+                    value = key.split("-")[2] + "\n" + function_value_x + "\n" + function_value_y
+
+                    file.write("\n" + "  " + name + " = ".ljust(25) + str(value))
+
+                elif name == "MODEL" and model:  # parameters under "MODEL"
+                    name = key.split("-")[-1]
+                    file.write("\n" + "    " + name.ljust(25) + "= " + str(value))
+
+                elif name in unit_dict:  # parameters with units
+                    value = str(value) + " " + unit_dict[name]
+                    file.write("\n" + "  " + name.ljust(25) + "= " + str(value))
+
+                elif len(key.split("-")) <= 2:
+                    file.write("\n" + "  " + name.ljust(25) + "= " + str(value))
+
+    # Create file
+    material_data = material['material_data']
+    file_name = os.path.split(material_data['INFO-FILE'])[1]
+    file = codecs.open(path + '/' + file_name, "w", "utf-8")
+
+    # Write lines
+    file.write(material_data["INFO-MAGIC_HEADER"])
+    write_material_content("IDENTIFICATION", material_data)
+    write_material_content("STORAGE_BASE_PARAMETERS", material_data)
+    write_material_content("TRANSPORT_BASE_PARAMETERS", material_data)
+    write_material_content("MOISTURE_STORAGE", material_data)
+    write_material_content("MOISTURE_STORAGE", material_data, True)
+    write_material_content("MOISTURE_TRANSPORT", material_data)
+    write_material_content("MOISTURE_TRANSPORT", material_data, True)
+    file.write("\n")
+
+    file.close()
+
     return True

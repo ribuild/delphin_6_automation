@@ -91,11 +91,20 @@ def upload_needed_project(test_case: str) -> tuple:
         folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
         delphin_file = folder + '/delphin_project.d6p'
 
-        delphin_id = delphin_interactions.upload_delphin_to_database(delphin_file, 10)
         material_ids = upload_needed_materials('upload_project_2')
         weather_ids = upload_needed_weather('upload_project_2')
+        delphin_id = delphin_interactions.upload_delphin_to_database(delphin_file, 10)
 
         weather_interactions.assign_weather_to_project(delphin_id, weather_ids)
         weather_interactions.assign_indoor_climate_to_project(delphin_id, 'a')
 
         return delphin_id, weather_ids, material_ids
+
+    elif test_case == 'download_material_project_1':
+        folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+        delphin_file = folder + '/delphin_project.d6p'
+
+        material_ids = upload_needed_materials('upload_project_2')
+        delphin_id = delphin_interactions.upload_delphin_to_database(delphin_file, 10)
+
+        return delphin_id, material_ids

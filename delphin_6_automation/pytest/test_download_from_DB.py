@@ -5,14 +5,15 @@ __author__ = "Christian Kongsgaard"
 # IMPORTS
 
 # Modules:
-import filecmp
 import os
 import shutil
+import codecs
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import weather_interactions
+from delphin_6_automation.database_interactions import material_interactions
 import delphin_6_automation.nosql.db_templates.material_entry as material_db
 import delphin_6_automation.nosql.db_templates.weather_entry as weather_db
 import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
@@ -27,7 +28,7 @@ mongo_setup.global_init(dtu_byg)
 
 # TODO - update download tests
 
-
+"""
 def test_download_delphin_1():
     # Setup
     test_folder, _ = helper.setup_test_folders()
@@ -49,13 +50,39 @@ def test_download_delphin_1():
 
     # Assert
     assert test_lines == source_lines
-
 """
+
 def test_download_materials_1():
     # TODO - Create
-    pass
-"""
+    test_folder, _ = helper.setup_test_folders()
+    delphin_id, material_ids = helper.upload_needed_project('download_material_project_1')
+    material_interactions.download_materials(str(delphin_id), test_folder)
+    source_folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files/helper_files'
 
+    def get_material_files(path):
+        files = []
+        for file in ['BrickWienerberger_512.m6',]:
+            #'IQTop_726.m6', 'RemmersiQFix_437.m6',
+            #         'RemmersiQTherm_438.m6', 'RestorationRender_210.m6',
+            #         'WietersdorfPeggauerMineralischeKalkzementLeichtputz_630.m6']:
+            file_path = path + '/' + file
+            files.append(codecs.open(file_path, "r", "utf-8").readlines())
+        return files
+
+    # Get files
+    test_files = get_material_files(test_folder)
+    source_files = get_material_files(source_folder)
+
+    # Clean up
+    delphin_db.Delphin.objects(id=delphin_id).first().delete()
+    for material_id in material_ids:
+        material_db.Material.objects(id=material_id).first().delete()
+    #helper.clean_up_test_folders()
+
+    # Assert
+    assert test_files == source_files
+
+"""
 def test_download_weather_1():
     # Setup
     test_folder, _ = helper.setup_test_folders()
@@ -88,7 +115,6 @@ def test_download_weather_1():
     assert test_files == source_files
 
 
-"""
 def test_download_project_1():
     # TODO - Update
     pass
@@ -116,6 +142,4 @@ def test_download_results_1():
 
     for file in os.listdir(test_path + '/results'):
         assert filecmp.cmp(source_path + '/5a5479095d9460327c6970f0/results/' + file, test_path + '/results/' + file)
-
-
 """
