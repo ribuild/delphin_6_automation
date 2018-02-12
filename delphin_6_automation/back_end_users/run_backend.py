@@ -6,7 +6,7 @@ Backend user interface:
 """
 
 import delphin_6_automation.nosql.mongo_setup as mongo_setup
-import delphin_6_automation.database_interactions as db_interact
+from  delphin_6_automation import database_interactions
 from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.nosql.auth import dtu_byg
 from delphin_6_automation.database_interactions.material_interactions import upload_material_file
@@ -73,7 +73,7 @@ def main_menu():
 def add_to_queue():
     delphin_file = str(input("File path for the Delphin file >"))
     priority = str(input("Simulation Priority - high, medium or low >"))
-    sim_id = db_interact.general_interactions.add_to_simulation_queue(delphin_file, priority)
+    sim_id = database_interactions.general_interactions.add_to_simulation_queue(delphin_file, priority)
     print('Simulation ID:', sim_id,
           '\n To retrieve the results of a simulation the simulation ID is needed.')
 

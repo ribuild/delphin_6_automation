@@ -1,6 +1,10 @@
-__author__ = "Christian Kongsgaard"
+__author__ = ""
 __license__ = "MIT"
 __version__ = "0.0.1"
+
+# delphin_6_automation simulation.simulation_process
+# Folder intended for everything related to the simulation itself on the computer pools.
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS

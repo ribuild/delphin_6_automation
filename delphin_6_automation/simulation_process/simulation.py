@@ -16,6 +16,7 @@ import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION WORKER, DELPHIN SOLVER,
 
+
 def worker(id_, database):
     """
     Simulation worker. Supposed to be used with main simulation loop.
@@ -43,9 +44,9 @@ def worker(id_, database):
         os.mkdir(delphin_path)
 
     # Download, solve, upload
-    delphin_interact.download_from_database(id_, delphin_path)
+    delphin_interact.download_delphin_entry(id_, delphin_path)
     solve_delphin(delphin_path + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
-    id_result = delphin_interact.results_to_mongo_db(delphin_path + '/' + id_)
+    id_result = delphin_interact.upload_results_to_database(delphin_path + '/' + id_)
 
     # Check if uploaded:
     test_doc = result_db.Result.objects(id=id_result).first()
@@ -56,7 +57,7 @@ def worker(id_, database):
         raise FileNotFoundError('Could not find result entry')
 
 
-def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1):
+def solve_delphin(file, delphin_exe = r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1):
     """Solves a delphin file"""
 
     verbosity = "verbosity-level=" + str(verbosity_level)
@@ -65,5 +66,12 @@ def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSo
     return subprocess.run(command_string, shell=True)
 
 
-if __name__ == '__main__':
-    main()
+def start_simulations():
+    try:
+    while True:
+        do_something()
+
+    except KeyboardInterrupt:
+        pass
+
+
