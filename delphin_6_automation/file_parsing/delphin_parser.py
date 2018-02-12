@@ -11,7 +11,7 @@ import os
 import shutil
 
 # RiBuild Modules:
-import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
+import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES
@@ -282,8 +282,16 @@ def dict_to_progress_file(file_dict: dict, log_path: str) -> bool:
         real_string = ' ' * (spaces - len(str(file_dict['real_time'][line_index]))) + \
                       str(file_dict['real_time'][line_index])
 
-        percentage_string = ' ' * (spaces - len(str(file_dict['percentage'][line_index]))) + \
-                            str(file_dict['percentage'][line_index])
+        if int(file_dict['percentage'][line_index]) == 100:
+            percentage_string = ' ' * (spaces - len('1e+02')) + '1e+02'
+
+        elif file_dict['percentage'][line_index] == int(file_dict['percentage'][line_index]):
+            percentage_string = ' ' * (spaces - len(str(int(file_dict['percentage'][line_index])))) + \
+                                str(int(file_dict['percentage'][line_index]))
+
+        else:
+            percentage_string = ' ' * (spaces - len(str(file_dict['percentage'][line_index]))) + \
+                                str(file_dict['percentage'][line_index])
 
         file_obj.write(sim_string + '\t' + real_string + '\t' + percentage_string + '\n')
 
@@ -307,8 +315,8 @@ def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
                    '\t Order\t  StepSize [s]\n')
 
     for line_index in range(0, len(file_dict['time'])):
-        time_string = ' ' * (25 - len(str(file_dict['time'][line_index]))) + \
-                      str(file_dict['time'][line_index])
+        time_string = ' ' * (25 - len(str("{:.10f}".format(file_dict['time'][line_index])))) + \
+                      str("{:.10f}".format(file_dict['time'][line_index]))
 
         steps_string = ' ' * (10 - len(str(file_dict['steps'][line_index]))) + \
                        str(file_dict['steps'][line_index])
@@ -330,8 +338,8 @@ def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
 
         order_string = ' ' * (6 - len(str(file_dict['order'][line_index]))) + str(file_dict['order'][line_index])
 
-        step_size_string = ' ' * (14 - len(str(file_dict['step_size'][line_index]))) + \
-                           str(file_dict['step_size'][line_index])
+        step_size_string = ' ' * (14 - len(str("{:.6f}".format(file_dict['step_size'][line_index])))) + \
+                           str("{:.6f}".format(file_dict['step_size'][line_index]))
 
         file_obj.write(time_string + '\t' + steps_string + '\t' + rhs_string + '\t' + lin_string + '\t'
                        + iterations_string + '\t' + conversion_fails_string + '\t' + error_fails_string + '\t'
@@ -353,11 +361,11 @@ def dict_to_les_stats_file(file_dict: dict, log_path: str) -> bool:
 
     file_obj = open(log_path + '/LES_direct_stats.tsv', 'w')
 
-    file_obj.write('                    Time\t   NJacEvals\t    NRhsEvals')
+    file_obj.write('                    Time\t   NJacEvals\t    NRhsEvals\n')
 
     for line_index in range(0, len(file_dict['time'])):
-        time_string = ' ' * (25 - len(str(file_dict['time'][line_index]))) + \
-                      str(file_dict['time'][line_index])
+        time_string = ' ' * (25 - len(str("{:.10f}".format(file_dict['time'][line_index])))) + \
+                      str("{:.10f}".format(file_dict['time'][line_index]))
 
         jac_string = ' ' * (13 - len(str(file_dict['number_jacobian_evaluations'][line_index]))) + \
                      str(file_dict['number_jacobian_evaluations'][line_index])
@@ -416,31 +424,36 @@ def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
 
     file_obj.write('\nTABLE  GRID\n')
     for dimension in geometry_dict['grid']:
-        file_obj.write(' '.join([str(element_)
-                                 for element_ in geometry_dict['grid'][dimension]]) + '\n')
+        if not dimension == 'z':
+            file_obj.write(' '.join([str(int(element_)) if element_ == int(element_) else str(element_)
+                                     for element_ in geometry_dict['grid'][dimension]]) + ' \n')
+
+        else:
+            file_obj.write(' '.join([str(int(element_)) if element_ == int(element_) else str(element_)
+                                     for element_ in geometry_dict['grid'][dimension]]) + '\n')
 
     file_obj.write('\nTABLE  ELEMENT_GEOMETRY\n')
     for element in geometry_dict['element_geometry']:
-        space0 = ' ' * (9 - len(str(element[0])))
+        space0 = ' ' * (9 - len(str(int(element[0]))))
         space1 = ' ' * max((10 - len(str(element[1]))), 1)
         space2 = '       '
-        space3 = ' ' * (5 - len(str(element[3])))
-        space4 = ' ' * (5 - len(str(element[4])))
+        space3 = ' ' * (6 - len(str(int(element[3]))))
+        space4 = ' ' * (6 - len(str(int(element[4]))))
 
-        file_obj.write(str(element[0]) + space0 + str(element[1]) + space1 + str(element[2]) + space2 + '\t ' +
-                       str(element[3]) + space3 + str(element[4]) + space4 + str(element[4]) + '\n')
+        file_obj.write(str(int(element[0])) + space0 + str(element[1]) + space1 + str(element[2]) + space2 + '\t ' +
+                       str(int(element[3])) + space3 + str(int(element[4])) + space4 + str(int(element[4])) + '\n')
 
     file_obj.write('\nTABLE  SIDES_GEOMETRY\n')
     for side in geometry_dict['sides_geometry']:
-        space0 = ' ' * (9 - len(str(side[0])))
+        space0 = ' ' * (9 - len(str(int(side[0]))))
         space1 = ' ' * max((10 - len(str(side[1]))), 1)
         space2 = ' ' * (10 - len(str(side[2])))
-        space3 = ' ' * (7 - len(str(side[3])))
-        space4 = ' ' * (7 - len(str(side[4])))
+        space3 = ' ' * (7 - len(str(int(side[3]))))
+        space4 = ' ' * (7 - len(str(int(side[4]))))
         space5 = ' ' * 4
 
-        file_obj.write(str(side[0]) + space0 + str(side[1]) + space1 + str(side[2]) + space2 + '\t ' + str(side[3]) +
-                       space3 + str(side[4]) + space4 + str(side[5]) + space5 + '\n')
+        file_obj.write(str(int(side[0])) + space0 + str(side[1]) + space1 + str(side[2]) + space2 + '\t ' +
+                       str(int(side[3])) + space3 + str(int(side[4])) + space4 + str(int(side[5])) + space5 + '\n')
 
     return True
 

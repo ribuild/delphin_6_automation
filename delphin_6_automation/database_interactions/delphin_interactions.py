@@ -12,7 +12,7 @@ __version__ = "0.0.1"
 import os
 import shutil
 
-import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
+import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 # Modules:
 import xmltodict
 
@@ -70,13 +70,13 @@ def download_delphin_entry(document_id: str, path: str) -> bool:
     return True
 
 
-def upload_results_to_database(path_: str, delete_files: bool =True) -> bool:
+def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
     """
     Uploads the results from a Delphin simulation.
 
     :param path_: folder path containing the result files
     :param delete_files: if True the result folder will be deleted. Default is True
-    :return: True on success
+    :return: Result entry id
     """
 
     id_ = os.path.split(path_)[1]

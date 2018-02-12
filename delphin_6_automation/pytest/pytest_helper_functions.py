@@ -14,7 +14,7 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.file_parsing import weather_parser
-import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
+import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST HELPER FUNCTIONS
@@ -108,3 +108,24 @@ def upload_needed_project(test_case: str) -> tuple:
         delphin_id = delphin_interactions.upload_delphin_to_database(delphin_file, 10)
 
         return delphin_id, material_ids
+
+
+def upload_needed_results(test_case: str) -> tuple:
+
+    if test_case == 'download_results_1':
+        # Create test folders
+        result_folder, source_path = setup_test_folders()
+
+        # Upload Delphin Project, so it can be linked to
+        material_ids = upload_needed_materials('upload_project_1')
+        folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+        delphin_file = folder + '/delphin_project.d6p'
+        delphin_id = delphin_interactions.upload_delphin_to_database(delphin_file, 10)
+
+        # Upload results
+        result_zip = folder + '/delphin_results.zip'
+        shutil.unpack_archive(result_zip, result_folder)
+        os.rename(result_folder + '/delphin_results', result_folder + '/' + str(delphin_id))
+        result_id = delphin_interactions.upload_results_to_database(result_folder + '/' + str(delphin_id))
+
+        return result_id, delphin_id, material_ids

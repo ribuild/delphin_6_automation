@@ -9,7 +9,7 @@ import datetime
 import os
 
 # RiBuild Modules:
-from delphin_6_automation.nosql.db_templates import weather_entry as weather_db
+import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # WEATHER PARSING

@@ -11,7 +11,7 @@ import os.path
 import shutil
 
 import bson.json_util
-from delphin_6_automation.nosql.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import dtu_byg
 
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db

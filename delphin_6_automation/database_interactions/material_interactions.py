@@ -7,9 +7,8 @@ __author__ = "Christian Kongsgaard"
 import os
 
 # RiBuild Modules:
-from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
-
-from delphin_6_automation.database_interactions.db_templates import material_entry as material_db
+import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
+import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 from delphin_6_automation.file_parsing import material_parser
 
 

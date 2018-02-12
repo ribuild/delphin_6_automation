@@ -8,7 +8,7 @@ __author__ = "Christian Kongsgaard"
 
 
 import delphin_6_automation.simulation_process.simulation as solver
-from delphin_6_automation.nosql.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import dtu_byg
 
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 # RiBuild Modules:

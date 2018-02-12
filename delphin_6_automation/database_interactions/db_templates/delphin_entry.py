@@ -6,9 +6,9 @@ __license__ = "MIT"
 
 from datetime import datetime
 
-import delphin_6_automation.nosql.db_templates.material_entry as material_db
-import delphin_6_automation.nosql.db_templates.result_raw_entry as raw_db
-import delphin_6_automation.nosql.db_templates.weather_entry as weather_db
+import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
+import delphin_6_automation.database_interactions.db_templates.result_raw_entry as raw_db
+import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
 # Modules:
 import mongoengine
 

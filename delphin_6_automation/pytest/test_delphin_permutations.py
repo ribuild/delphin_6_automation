@@ -8,7 +8,7 @@ __author__ = "Christian Kongsgaard"
 from collections import OrderedDict
 
 import xmltodict
-from delphin_6_automation.nosql.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import dtu_byg
 
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 import delphin_6_automation.pytest.pytest_helper_functions as helper

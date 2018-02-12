@@ -7,7 +7,7 @@ Backend user interface:
 
 import os
 
-from delphin_6_automation.nosql.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import dtu_byg
 
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 from  delphin_6_automation import database_interactions
