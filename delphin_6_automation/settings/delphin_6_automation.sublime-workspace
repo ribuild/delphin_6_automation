@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"delphin_",
+				"delphin_6_automation\tmodule"
+			],
+			[
+				"delphin",
+				"delphin_6_automation"
+			],
+			[
 				"h",
 				"href\tAttr"
 			],
@@ -60,12 +68,48 @@
 	"command_palette":
 	{
 		"height": 313.0,
-		"last_filter": "branch",
+		"last_filter": "",
 		"selected_items":
 		[
 			[
+				"git add ",
+				"git: add (edit)"
+			],
+			[
+				"git add",
+				"git: add (edit)"
+			],
+			[
+				"push",
+				"git: push"
+			],
+			[
+				"add",
+				"git: add (edit)"
+			],
+			[
+				"pull",
+				"git: pull"
+			],
+			[
 				"branch",
 				"git: branch"
+			],
+			[
+				"git push",
+				"git: push"
+			],
+			[
+				"git pull",
+				"git: pull"
+			],
+			[
+				"bra",
+				"git: branch"
+			],
+			[
+				"git status",
+				"git: status"
 			],
 			[
 				"install",
@@ -116,7 +160,7 @@
 				"Indent XML"
 			]
 		],
-		"width": 432.0
+		"width": 570.0
 	},
 	"console":
 	{
@@ -140,19 +184,22 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation",
-		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation",
-		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/venv",
-		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/venv/Lib",
-		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/venv/Lib/tcl8.6",
-		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/venv/Scripts"
-	],
 	"file_history":
 	[
+		"/Users/thomasperkov/Desktop/urls.py",
+		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/back_end_users/run_backend.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/__init__.py",
+		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/setup.py",
+		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/__init__.py",
+		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/test.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/file_parsing/delphin_material_file.py",
+		"/Users/thomasperkov/Library/Application Support/Sublime Text 3/Packages/User/python3.sublime-build",
+		"/Users/thomasperkov/Library/Application Support/Sublime Text 3/Packages/User/py3.sublime-build",
+		"/Users/thomasperkov/Library/Application Support/Sublime Text 3/Packages/User/python3_jan18.sublime-build",
+		"/Users/thomasperkov/Library/Application Support/Sublime Text 3/Packages/User/RiBuild_jan18.sublime-build",
+		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/database_interactions/__init__.py",
+		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/back_end_users/__init__.py",
+		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/sublime/sublime_ribuild_build_windows.sublime-build",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/database_interactions/delphin_interactions.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/delphin_setup/create_delphin_file.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/file_parsing/delphin_weather_file.py",
@@ -161,7 +208,6 @@
 		"/Users/thomasperkov/Google_Drive/Python/code_challenges/test.py",
 		"/Users/thomasperkov/Google_Drive/Python/code_challenges/names.py",
 		"/Users/thomasperkov/Library/Application Support/Sublime Text 3/Packages/User/python",
-		"/Users/thomasperkov/Library/Application Support/Sublime Text 3/Packages/User/python3.sublime-build",
 		"/Users/thomasperkov/Library/Application Support/Sublime Text 3/Packages/User/python3_buiod",
 		"/Users/thomasperkov/Google_Drive/Python/test.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/nosql/mongo_setup.py",
@@ -170,7 +216,6 @@
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/database_interactions/simulation_interactions.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/database_interactions/weather_interactions.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/database_interactions/general_interactions.py",
-		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/back_end_users/run_backend.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/file_parsing/delphin_material_file",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/simulation_package/delphin_solver.py",
 		"/Users/thomasperkov/Google_Drive/DTU/delphin_automation/delphin_6_automation/delphin_6_automation/simulation_package/simulation_worker.py",
@@ -268,17 +313,7 @@
 		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/Icon\r",
 		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/nulpunkt/static/js/master.js",
 		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/nulpunkt/static/css",
-		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/nulpunkt/templates/Icon\r",
-		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/polls/urls.py",
-		"/Users/thomasperkov/Google_Drive/Python/Django/social_site/social/templates/base.html",
-		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/polls/polls.urls",
-		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/info/models.py",
-		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/venv/terminal.glue",
-		"/Users/thomasperkov/Google_Drive/Python/Python tricks - Dan Bader/terminal.glue",
-		"/Users/thomasperkov/schedule/setup.py",
-		"/Users/thomasperkov/schedule/schedule/__init__.py",
-		"/Users/thomasperkov/schedule/HISTORY.rst",
-		"/Users/thomasperkov/Desktop/untitled.py"
+		"/Users/thomasperkov/Google_Drive/Python/nulpunkt/nulpunkt/templates/Icon\r"
 	],
 	"find":
 	{
@@ -371,11 +406,19 @@
 		]
 	},
 	"menu_visible": true,
+	"output.GitSavvy":
+	{
+		"height": 114.0
+	},
 	"output.exec":
 	{
-		"height": 243.0
+		"height": 357.0
 	},
 	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.mdpopups":
 	{
 		"height": 0.0
 	},
