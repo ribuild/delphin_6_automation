@@ -6,15 +6,16 @@ __author__ = "Christian Kongsgaard"
 
 # Modules:
 from collections import OrderedDict
-import xmltodict
 
+import xmltodict
+from delphin_6_automation.nosql.auth import dtu_byg
+
+import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
+import delphin_6_automation.pytest.pytest_helper_functions as helper
 # RiBuild Modules:
 from delphin_6_automation.database_interactions import delphin_interactions
-from delphin_6_automation.file_parsing import delphin_parser
-import delphin_6_automation.nosql.mongo_setup as mongo_setup
-import delphin_6_automation.pytest.pytest_helper_functions as helper
-from delphin_6_automation.nosql.auth import dtu_byg
 from delphin_6_automation.delphin_setup import delphin_permutations
+from delphin_6_automation.file_parsing import delphin_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST

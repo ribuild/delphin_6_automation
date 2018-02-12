@@ -6,10 +6,12 @@ __author__ = "Christian Kongsgaard"
 # Modules:
 
 
-# RiBuild Modules:
-from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.nosql.db_templates import weather_entry as weather_db
+
+# RiBuild Modules:
+from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.file_parsing import weather_parser
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # WEATHER INTERACTIONS

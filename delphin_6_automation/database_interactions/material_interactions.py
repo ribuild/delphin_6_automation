@@ -8,8 +8,10 @@ import os
 
 # RiBuild Modules:
 from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
-from delphin_6_automation.nosql.db_templates import material_entry as material_db
+
+from delphin_6_automation.database_interactions.db_templates import material_entry as material_db
 from delphin_6_automation.file_parsing import material_parser
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DATABASE INTERACTIONS

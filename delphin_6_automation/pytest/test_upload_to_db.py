@@ -4,25 +4,26 @@ __author__ = "Christian Kongsgaard"
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
+import json
 # Modules:
 import os
 import os.path
 import shutil
-import json
-import bson.json_util
 
+import bson.json_util
+from delphin_6_automation.nosql.auth import dtu_byg
+
+import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
+import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
+import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
+import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
-import delphin_6_automation.nosql.mongo_setup as mongo_setup
-from delphin_6_automation.nosql.auth import dtu_byg
-import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
-import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
-import delphin_6_automation.nosql.db_templates.weather_entry as weather_db
-import delphin_6_automation.nosql.db_templates.material_entry as material_db
-import delphin_6_automation.pytest.pytest_helper_functions as helper
-import delphin_6_automation.file_parsing.weather_parser as weather_parser
 import delphin_6_automation.database_interactions.material_interactions as material_interact
+import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 import delphin_6_automation.database_interactions.weather_interactions as weather_interact
+import delphin_6_automation.file_parsing.weather_parser as weather_parser
+import delphin_6_automation.pytest.pytest_helper_functions as helper
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST

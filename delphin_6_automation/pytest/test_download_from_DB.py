@@ -4,22 +4,18 @@ __author__ = "Christian Kongsgaard"
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
+import codecs
 # Modules:
 import os
-import shutil
-import codecs
 
-# RiBuild Modules:
-from delphin_6_automation.database_interactions import delphin_interactions
-from delphin_6_automation.database_interactions import general_interactions
-from delphin_6_automation.database_interactions import weather_interactions
-from delphin_6_automation.database_interactions import material_interactions
-import delphin_6_automation.nosql.db_templates.material_entry as material_db
-import delphin_6_automation.nosql.db_templates.weather_entry as weather_db
 import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
-import delphin_6_automation.nosql.mongo_setup as mongo_setup
-import delphin_6_automation.pytest.pytest_helper_functions as helper
+import delphin_6_automation.nosql.db_templates.material_entry as material_db
 from delphin_6_automation.nosql.auth import dtu_byg
+
+import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
+import delphin_6_automation.pytest.pytest_helper_functions as helper
+# RiBuild Modules:
+from delphin_6_automation.database_interactions import material_interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST

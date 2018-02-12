@@ -9,16 +9,18 @@ __version__ = "0.0.1"
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
-# Modules:
-import xmltodict
 import os
 import shutil
 
-# RiBuild Modules:
-import delphin_6_automation.nosql.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
-from delphin_6_automation.file_parsing import delphin_parser
+# Modules:
+import xmltodict
+
+# RiBuild Modules:
+import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.database_interactions.material_interactions as material_interact
+from delphin_6_automation.file_parsing import delphin_parser
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES
