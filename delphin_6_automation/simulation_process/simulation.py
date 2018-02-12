@@ -1,4 +1,4 @@
-__author__ = "Christian Kongsgaard"
+__author__ = ''
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -10,15 +10,11 @@ from pathlib import Path
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
-import delphin_6_automation.simulation_package.delphin_solver as solver
 import delphin_6_automation.nosql.mongo_setup as mongo_setup
 import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
-# RIBUILD SIMULATION WORKER
-
-# TODO - Test worker.
-
+# RIBUILD SIMULATION WORKER, DELPHIN SOLVER,
 
 def worker(id_, database):
     """
@@ -48,7 +44,7 @@ def worker(id_, database):
 
     # Download, solve, upload
     delphin_interact.download_from_database(id_, delphin_path)
-    solver.solve_delphin(delphin_path + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
+    solve_delphin(delphin_path + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
     id_result = delphin_interact.results_to_mongo_db(delphin_path + '/' + id_)
 
     # Check if uploaded:
@@ -60,5 +56,14 @@ def worker(id_, database):
         raise FileNotFoundError('Could not find result entry')
 
 
+def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1):
+    """Solves a delphin file"""
+
+    verbosity = "verbosity-level=" + str(verbosity_level)
+    command_string = '"' + str(delphin_exe) + '" --close-on-exit --' + verbosity + ' "' + file + '"'
+
+    return subprocess.run(command_string, shell=True)
 
 
+if __name__ == '__main__':
+    main()
