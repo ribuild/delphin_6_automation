@@ -51,6 +51,8 @@ def worker(id_, database):
     # Check if uploaded:
     test_doc = result_db.Result.objects(id=id_result).first()
 
+    # TODO - Flag for simulation ended
+
     if test_doc:
         return True
     else:
@@ -73,5 +75,17 @@ def start_simulations():
 
     except KeyboardInterrupt:
         pass
+
+
+def find_next_in_queue():
+    # Find next simulation
+    # Flag for simulation started
+    # return id to worker
+    pass
+
+
+def github_updates():
+    # Check for github update to code
+    pass
 
 
