@@ -68,15 +68,6 @@ def solve_delphin(file, delphin_exe = r'C:/Program Files/IBK/Delphin 6.0/Delphin
     return subprocess.run(command_string, shell=True)
 
 
-def start_simulations():
-    try:
-    while True:
-        do_something()
-
-    except KeyboardInterrupt:
-        pass
-
-
 def find_next_in_queue():
     # Find next simulation
     # Flag for simulation started
@@ -89,3 +80,14 @@ def github_updates():
     pass
 
 
+def simulation_worker():
+    try:
+    while True:
+        id = find_next_in_queue()
+        worker(id, database=ribuild)
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == "__main__":
+    simulation_worker()
