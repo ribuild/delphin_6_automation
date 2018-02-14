@@ -24,8 +24,8 @@ mongo_setup.global_init(dtu_byg)
 
 
 def test_get_layers_1():
-    test_path = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\delphin_6_automation\pytest\test_files'
-    delphin_dict = delphin_parser.dp6_to_dict(test_path + '/delphin_project.d6p')
+    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
     delphin_layers = delphin_permutations.get_layers(delphin_dict)
 
     correct_layer_dict = {0: {'material': 'Lime Cement Plaster light [630]',
@@ -51,7 +51,7 @@ def test_get_layers_1():
 
 
 def test_change_material_1():
-    source_path = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\delphin_6_automation\pytest\test_files'
+    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
     test_path, _ = helper.setup_test_folders()
     delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
     new_material = OrderedDict((('@name', 'Aerated Concrete [6]'),
@@ -66,7 +66,7 @@ def test_change_material_1():
 
 
 def test_change_layer_width():
-    source_path = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\delphin_6_automation\pytest\test_files'
+    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
     test_path, _ = helper.setup_test_folders()
     delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
     old_width = sum(delphin_permutations.convert_discretization_to_list(delphin_dict))
@@ -79,7 +79,7 @@ def test_change_layer_width():
 
 
 def test_change_weather():
-    source_path = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\delphin_6_automation\pytest\test_files'
+    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
     test_path, _ = helper.setup_test_folders()
     delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
     weather_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files/temperature.ccd'
