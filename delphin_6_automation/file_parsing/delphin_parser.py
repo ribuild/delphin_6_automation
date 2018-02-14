@@ -436,18 +436,21 @@ def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
     for element in geometry_dict['element_geometry']:
         space0 = ' ' * (9 - len(str(int(element[0]))))
         space1 = ' ' * max((10 - len(str(element[1]))), 1)
-        space2 = '       '
+        space2 = ' ' * (29 - len(str(int(element[0])) + space0 + str(element[1]) + space1 + str(element[2])))
         space3 = ' ' * (6 - len(str(int(element[3]))))
         space4 = ' ' * (6 - len(str(int(element[4]))))
 
         file_obj.write(str(int(element[0])) + space0 + str(element[1]) + space1 + str(element[2]) + space2 + '\t ' +
-                       str(int(element[3])) + space3 + str(int(element[4])) + space4 + str(int(element[4])) + '\n')
+                       str(int(element[3])) + space3 + str(int(element[4])) + space4 + str(int(element[5])) + '\n')
 
     file_obj.write('\nTABLE  SIDES_GEOMETRY\n')
     for side in geometry_dict['sides_geometry']:
+        if side[1] == int(side[1]):
+            side[1] = int(side[1])
+
         space0 = ' ' * (9 - len(str(int(side[0]))))
         space1 = ' ' * max((10 - len(str(side[1]))), 1)
-        space2 = ' ' * (10 - len(str(side[2])))
+        space2 = ' ' * (29 - len(str(int(side[0])) + space0 + str(side[1]) + space1 + str(side[2])))
         space3 = ' ' * (7 - len(str(int(side[3]))))
         space4 = ' ' * (7 - len(str(int(side[4]))))
         space5 = ' ' * 4
@@ -455,6 +458,8 @@ def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
         file_obj.write(str(int(side[0])) + space0 + str(side[1]) + space1 + str(side[2]) + space2 + '\t ' +
                        str(int(side[3])) + space3 + str(int(side[4])) + space4 + str(int(side[5])) + space5 + '\n')
 
+    file_obj.write('\n')
+    file_obj.close()
     return True
 
 
@@ -474,7 +479,7 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
     file_obj.write('TYPE          = ' + str(result_dict['results'][result_name]['type']) + '\n')
     file_obj.write('PROJECT_FILE  = ' + str(result_dict['results'][result_name]['project_file']) + '\n')
     file_obj.write('CREATED       = ' + str(result_dict['simulation_started'].strftime('%a %b %d %H:%M:%S %Y')) + '\n')
-    file_obj.write('GEO_FILE      = ' + str(result_dict['geometry_file']['name']) + '\n')
+    file_obj.write('GEO_FILE      = ' + str(result_dict['geometry_file']['name']) + '.g6a' + '\n')
     file_obj.write('GEO_FILE_HASH = ' + str(result_dict['geometry_file_hash']) + '\n')
     file_obj.write('QUANTITY      = ' + str(result_dict['results'][result_name]['quantity']) + '\n')
     file_obj.write('QUANTITY_KW   = ' + str(result_dict['results'][result_name]['quantity_kw']) + '\n')
@@ -487,6 +492,9 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
 
     for count, value in enumerate(result_dict['results'][result_name]['result']):
         space_count = ' ' * (13 - len(str(count)))
+
+        if value == int(value):
+            value = int(value)
         space_value = ' ' * (15 - len(str(value)))
         file_obj.write(str(count) + space_count + '\t' + str(value) + space_value + '\t\n')
 
