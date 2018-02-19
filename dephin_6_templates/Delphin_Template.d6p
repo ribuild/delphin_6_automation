@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<DelphinProject xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de DelphinProject.xsd" fileVersion="6.4">
+	<ProjectInfo created="Mon Aug 14 11:49:57 2017" lastEdited="ma feb 19 11:21:56 2018">
+		<Comment>&#x0A;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RiBuild Template&lt;/p&gt;</Comment>
+	</ProjectInfo>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--DirectoryPlaceholders section defines strings to be substituted with directories-->
+	<DirectoryPlaceholders>
+		<Placeholder name="Climate Database">C:/Program Files/IBK/Delphin 6.0/resources/DB_climate</Placeholder>
+		<Placeholder name="Material Database">C:/Program Files/IBK/Delphin 6.0/resources/DB_materials</Placeholder>
+	</DirectoryPlaceholders>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Model data, solver settings, general parameters-->
+	<Init>
+		<SimulationParameter>
+			<BalanceEquationModule>BEHeatMoisture</BalanceEquationModule>
+			<Interval>
+				<IBK:Parameter name="Duration" unit="a">2</IBK:Parameter>
+			</Interval>
+			<ClimateDataFilePath>${Climate Database}/TRY_2010/01_Bremerhaven.c6b</ClimateDataFilePath>
+			<IBK:Parameter name="Longitude" unit="Deg">51.3</IBK:Parameter>
+			<IBK:Parameter name="Latitude" unit="Deg">13.4</IBK:Parameter>
+			<IBK:Parameter name="Albedo" unit="---">0.15</IBK:Parameter>
+		</SimulationParameter>
+	</Init>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--List of all materials used in this construction-->
+	<Materials>
+		<MaterialReference name="Lime Cement Plaster light [630]" color="#ffffaaff" hatchCode="13">${Material Database}/WietersdorfPeggauerMineralischeKalkzementLeichtputz_630.m6</MaterialReference>
+		<MaterialReference name="Normal Brick [512]" color="#ffaa5500" hatchCode="13">${Material Database}/BrickWienerberger_512.m6</MaterialReference>
+		<MaterialReference name="iQ-Therm [438]" color="#ffffff7f" hatchCode="13">${Material Database}/RemmersiQTherm_438.m6</MaterialReference>
+		<MaterialReference name="iQ-Fix [437]" color="#ffff557f" hatchCode="13">${Material Database}/RemmersiQFix_437.m6</MaterialReference>
+		<MaterialReference name="iQ-Top [726]" color="#ffaa00ff" hatchCode="6">${Material Database}/IQTop_726.m6</MaterialReference>
+		<MaterialReference name="Restoration Render [210]" color="#ff00aaff" hatchCode="13">${Material Database}/RestorationRender_210.m6</MaterialReference>
+	</Materials>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Discretization data (grid and sketches)-->
+	<Discretization>
+		<XSteps unit="m">0.01 0.35 0.0077 0.0023 0.002 0.003 0.08 0.01 </XSteps>
+	</Discretization>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Conditions data, specifies how construction interacts with environment-->
+	<Conditions>
+
+		<Interfaces>
+			<Interface name="Indoor surface" type="Detailed">
+				<IBK:Parameter name="Orientation" unit="Deg">270</IBK:Parameter>
+				<BCReference>Indoor surface:IndoorHeatConduction</BCReference>
+				<BCReference>Indoor surface:IndoorVaporDiffusion</BCReference>
+			</Interface>
+			<Interface name="Outdoor surface" type="Detailed">
+				<BCReference>Outdoor surface:OutdoorHeatConduction</BCReference>
+				<BCReference>Outdoor surface:OutdoorVaporDiffusion</BCReference>
+				<BCReference>Outdoor surface:OutdoorShortWaveRadiation</BCReference>
+				<BCReference>Outdoor surface:OutdoorLongWaveRadiation</BCReference>
+				<BCReference>Outdoor surface:OutdoorWindDrivenRain</BCReference>
+			</Interface>
+		</Interfaces>
+
+		<ClimateConditions>
+
+			<ClimateCondition name="Temperature_Indoor" type="Temperature" kind="Constant">
+				<IBK:Parameter name="ConstantValue" unit="C">20</IBK:Parameter>
+			</ClimateCondition>
+
+			<ClimateCondition name="Relative_Humidity_Indoor" type="RelativeHumidity" kind="Constant">
+				<IBK:Parameter name="ConstantValue" unit="%">60</IBK:Parameter>
+			</ClimateCondition>
+
+			<ClimateCondition name="Temperature" type="Temperature" kind="TabulatedData">
+				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/Temperature.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Relative_Humidity" type="RelativeHumidity" kind="TabulatedData">
+				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/RelativeHumidity.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Diffuse_Radiation" type="SWRadiationDiffuse" kind="TabulatedData">
+				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/DiffuseRadiation.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Direct_Radiation" type="SWRadiationDirect" kind="TabulatedData">
+				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/DirectRadiation.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Rain" type="RainFluxHorizontal" kind="TabulatedData">
+				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/VerticalRain.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="l/m2s">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Wind_Direction" type="WindDirection" kind="TabulatedData">
+				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/WindDirection.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="Deg">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Wind_Velocity" type="WindVelocity" kind="TabulatedData">
+				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/WindVelocity.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="m/s">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Long_Wave_Emission" type="LWRadiationBalance" kind="TabulatedData">
+				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/LongWaveEmission.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+			</ClimateCondition>
+		</ClimateConditions>
+
+		<BoundaryConditions>
+
+			<BoundaryCondition name="Indoor heat conduction" type="HeatConduction" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">8</IBK:Parameter>
+				<CCReference type="Temperature">Temperature_Indoor</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="INdoor vapour diffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">3e-08</IBK:Parameter>
+				<IBK:Parameter name="SDValue" unit="m">0</IBK:Parameter>
+				<CCReference type="Temperature">Temperature_Indoor</CCReference>
+				<CCReference type="RelativeHumidity">Relative_Humidity_Indoor</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outdoor heat conduction" type="HeatConduction" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">25</IBK:Parameter>
+				<CCReference type="Temperature">Temperature</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outdoor vapour diffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">2e-07</IBK:Parameter>
+				<IBK:Parameter name="SDValue" unit="m">0</IBK:Parameter>
+				<CCReference type="Temperature">Temperature</CCReference>
+				<CCReference type="RelativeHumidity">Relative_Humidity</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="WDR" type="WindDrivenRain" kind="StandardRainModel">
+				<IBK:Parameter name="ExposureCoefficient" unit="-">0.7</IBK:Parameter>
+				<IBK:Parameter name="MinRainTemperature" unit="C">-2</IBK:Parameter>
+				<CCReference type="Temperature">Temperature</CCReference>
+				<CCReference type="RainFluxHorizontal">Rain</CCReference>
+				<CCReference type="WindDirection">Wind_Direction</CCReference>
+				<CCReference type="WindVelocity">Wind_Velocity</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Short wave radiation" type="ShortWaveRadiation" kind="StandardRadiationModel">
+				<IBK:Parameter name="SurfaceAbsorptionCoefficient" unit="-">0.4</IBK:Parameter>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Indoor surface:IndoorHeatConduction" type="HeatConduction" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">8</IBK:Parameter>
+				<CCReference type="Temperature">20 C</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Indoor surface:IndoorVaporDiffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">5e-06</IBK:Parameter>
+				<CCReference type="Temperature">20 C</CCReference>
+				<CCReference type="RelativeHumidity">50 %</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outdoor surface:OutdoorHeatConduction" type="HeatConduction" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">25</IBK:Parameter>
+				<CCReference type="Temperature">[current location]::Temperature</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outdoor surface:OutdoorVaporDiffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">1.6e-06</IBK:Parameter>
+				<CCReference type="Temperature">[current location]::Temperature</CCReference>
+				<CCReference type="RelativeHumidity">[current location]::RelativeHumidity</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outdoor surface:OutdoorShortWaveRadiation" type="ShortWaveRadiation" kind="StandardRadiationModel">
+				<IBK:Parameter name="SurfaceAbsorptionCoefficient" unit="-">0.7</IBK:Parameter>
+				<CCReference type="SWRadiationDirect">[current location]::SWRadiationDirect</CCReference>
+				<CCReference type="SWRadiationDiffuse">[current location]::SWRadiationDiffuse</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outdoor surface:OutdoorLongWaveRadiation" type="LongWaveRadiation" kind="LongWaveBalance">
+				<IBK:Parameter name="SurfaceEmissionCoefficient" unit="-">0.9</IBK:Parameter>
+				<CCReference type="LWRadiationSkyEmission">[current location]::LWRadiationSkyEmission</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outdoor surface:OutdoorWindDrivenRain" type="WindDrivenRain" kind="StandardRainModel">
+				<IBK:Parameter name="ExposureCoefficient" unit="-">0.7</IBK:Parameter>
+				<CCReference type="Temperature">[current location]::Temperature</CCReference>
+				<CCReference type="RelativeHumidity">[current location]::RelativeHumidity</CCReference>
+				<CCReference type="RainFluxHorizontal">[current location]::RainFluxHorizontal</CCReference>
+				<CCReference type="WindDirection">[current location]::WindDirection</CCReference>
+				<CCReference type="WindVelocity">[current location]::WindVelocity</CCReference>
+			</BoundaryCondition>
+		</BoundaryConditions>
+	</Conditions>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Contains definitions of output files and schedules for outputs.-->
+	<Outputs>
+		<!--General parameters-->
+		<IBK:Unit name="TimeUnit">h</IBK:Unit>
+		<!--List of all Output schedules-->
+		<OutputGrids>
+			<OutputGrid name="Fields and Profiles">
+				<Interval>
+					<IBK:Parameter name="Duration" unit="a">0</IBK:Parameter>
+					<IBK:Parameter name="StepSize" unit="d">1.5</IBK:Parameter>
+				</Interval>
+			</OutputGrid>
+			<OutputGrid name="Scalars">
+				<Interval>
+					<IBK:Parameter name="Duration" unit="a">0</IBK:Parameter>
+					<IBK:Parameter name="StepSize" unit="h">1</IBK:Parameter>
+				</Interval>
+			</OutputGrid>
+		</OutputGrids>
+		<!--List of all Output files-->
+		<OutputFiles>
+			<OutputFile name="Surface temperature - left side, outdoor">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Single</SpaceType>
+				<OutputGrid>Scalars</OutputGrid>
+			</OutputFile>
+			<OutputFile name="Surface temperature - right side, indoor">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Single</SpaceType>
+				<OutputGrid>Scalars</OutputGrid>
+			</OutputFile>
+			<OutputFile name="Surface relative humidity - left side, outdoor">
+				<Quantity unit="%">RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Single</SpaceType>
+				<OutputGrid>Scalars</OutputGrid>
+			</OutputFile>
+			<OutputFile name="Surface relative humidity - right side, indoor">
+				<Quantity unit="%">RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Single</SpaceType>
+				<OutputGrid>Scalars</OutputGrid>
+			</OutputFile>
+			<OutputFile name="Temp P1">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Single</SpaceType>
+				<OutputGrid>Scalars</OutputGrid>
+			</OutputFile>
+			<OutputFile name="Temp P2">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Scalars</OutputGrid>
+			</OutputFile>
+		</OutputFiles>
+	</Outputs>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--List of all assignments of materials and conditions-->
+	<Assignments>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Lime Cement Plaster light [630]</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Normal Brick [512]</Reference>
+			<Range>1 0 1 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>iQ-Fix [437]</Reference>
+			<Range>4 0 5 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>iQ-Therm [438]</Reference>
+			<Range>6 0 6 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>iQ-Top [726]</Reference>
+			<Range>7 0 7 0</Range>
+		</Assignment>
+
+		<Assignment type="Interface" location="Left">
+			<Reference>Outdoor surface</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+
+		<Assignment type="Interface" location="Right">
+			<Reference>Indoor surface</Reference>
+			<Range>7 0 7 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Coordinate">
+			<Reference>Surface temperature - left side, outdoor</Reference>
+			<IBK:Point3D>0.00077 0.5 0.5</IBK:Point3D>
+		</Assignment>
+
+		<Assignment type="Output" location="Coordinate">
+			<Reference>Surface temperature - right side, indoor</Reference>
+			<IBK:Point3D>0.46423 0.5 0.5</IBK:Point3D>
+		</Assignment>
+
+		<Assignment type="Output" location="Coordinate">
+			<Reference>Surface relative humidity - left side, outdoor</Reference>
+			<IBK:Point3D>0.00077 0.5 0.5</IBK:Point3D>
+		</Assignment>
+
+		<Assignment type="Output" location="Coordinate">
+			<Reference>Surface relative humidity - right side, indoor</Reference>
+			<IBK:Point3D>0.46423 0.5 0.5</IBK:Point3D>
+		</Assignment>
+
+		<Assignment type="Output" location="Coordinate">
+			<Reference>Temp P1</Reference>
+			<IBK:Point3D>0.05 0.5 0</IBK:Point3D>
+		</Assignment>
+
+		<Assignment type="Output" location="Element">
+			<Reference>Temp P2</Reference>
+			<Range>3 0 4 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Restoration Render [210]</Reference>
+			<Range>2 0 3 0</Range>
+		</Assignment>
+	</Assignments>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+</DelphinProject>

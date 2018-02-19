@@ -4,20 +4,19 @@ __author__ = "Christian Kongsgaard"
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
-import json
 # Modules:
+import json
 import os
 import os.path
 import shutil
-
 import bson.json_util
-from delphin_6_automation.database_interactions.auth import dtu_byg
 
+# RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
-# RiBuild Modules:
+from delphin_6_automation.database_interactions.auth import dtu_byg
 import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
 import delphin_6_automation.database_interactions.material_interactions as material_interact
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup

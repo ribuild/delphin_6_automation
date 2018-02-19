@@ -1,9 +1,9 @@
-WUFI®_WAC_02
+WUFI_WAC_02
 10	Line Offset to 'Number of Data Columns'
 Aberdeen
 All times are GMT, regardless of the real time zone of the location.
--2.083	Longitude [°]; East is positive
-57.167	Latitude [°]; North is positive
+-2.083	Longitude [degrees]; East is positive
+57.167	Latitude [degrees]; North is positive
 16.626	HeightAMSL [m]
 0	Time Zone [h from UTC]; East is positive
 1	Time Step [h]
