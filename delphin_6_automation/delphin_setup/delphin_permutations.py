@@ -103,12 +103,60 @@ def change_weather(delphin_dict: dict, original_weather: str, new_weather: str) 
     return delphin_dict
 
 
-def add_layers():
-    pass
+def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
+    """
+    Changes the orientation of the Delphin project.
+
+    :param delphin_dict: Delphin dict to change.
+    :type delphin_dict: dict
+    :param new_orientation: New orientation. Value between 0 and 360
+    :type new_orientation: int
+    :return: Modified Delphin dict
+    :rtype: dict
+    """
+
+    # Find current orientation
+    interfaces = delphin_dict['DelphinProject']['Conditions']['Interfaces']['Interface']
+
+    for index in range(len(interfaces)):
+        try:
+            #print(interfaces[index]['IBK:Parameter']['@name'])
+            interfaces[index]['IBK:Parameter']['#text'] = str(new_orientation)
+        except KeyError:
+            pass
+
+    return delphin_dict
 
 
-def remove_layers():
-    pass
+def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coefficient: str, new_value: float) -> dict:
+    """
+    Changes a boundary coefficient of a boundary condition instance.
+
+    :param delphin_dict: Delphin dict to change.
+    :type delphin_dict: dict
+    :param boundary_condition: Name of the boundary condition
+    :type boundary_condition: str
+    :param coefficient: Name of the coefficient to change
+    :type coefficient: str
+    :param new_value: New value of the coefficient
+    :type new_value: float
+    :return: Modified Delphin dict
+    :rtype: dict
+    """
+
+    boundary_conditions = delphin_dict['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition']
+
+    for index in range(len(boundary_conditions)):
+        if boundary_conditions[index]['@name'] == boundary_condition:
+            if isinstance(boundary_conditions[index]['IBK:Parameter'], list):
+                for sub_index in range(len(boundary_conditions[index]['IBK:Parameter'])):
+                    if boundary_conditions[index]['IBK:Parameter'][sub_index]['@name'] == coefficient:
+                        boundary_conditions[index]['IBK:Parameter'][sub_index]['#text'] = str(new_value)
+            else:
+                if boundary_conditions[index]['IBK:Parameter']['@name'] == coefficient:
+                    boundary_conditions[index]['IBK:Parameter']['#text'] = str(new_value)
+
+    return delphin_dict
 
 
 def get_layers(delphin_dict: dict) -> dict:
