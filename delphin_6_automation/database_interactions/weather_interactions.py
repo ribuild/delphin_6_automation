@@ -9,6 +9,7 @@ __author__ = "Christian Kongsgaard"
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.file_parsing import weather_parser
+from delphin_6_automation.delphin_setup import weather_modeling
 import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -113,8 +114,8 @@ def download_weather(delphin_id: str, folder: str) -> bool:
 
     weather = concatenate_weather(delphin_document)
     weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
-        weather_parser.convert_weather_to_indoor_climate(weather['temperature'],
-                                                         delphin_document.indoor_climate)
+        weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
+                                                           delphin_document.indoor_climate)
     weather_parser.dict_to_ccd(weather, folder)
 
     return True

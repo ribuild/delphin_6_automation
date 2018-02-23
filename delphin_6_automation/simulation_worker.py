@@ -10,8 +10,8 @@ from pathlib import Path
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
-import delphin_6_automation.nosql.mongo_setup as mongo_setup
-import delphin_6_automation.nosql.db_templates.result_raw_entry as result_db
+import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
+import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION WORKER, DELPHIN SOLVER,
@@ -82,9 +82,9 @@ def github_updates():
 
 def simulation_worker():
     try:
-    while True:
-        id = find_next_in_queue()
-        worker(id, database=ribuild)
+        while True:
+            id = find_next_in_queue()
+            worker(id, database=ribuild)
     except KeyboardInterrupt:
         pass
 
