@@ -15,6 +15,7 @@ from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import dtu_byg
+from delphin_6_automation.database_interactions import delphin_interactions
 
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
@@ -130,15 +131,23 @@ def test_download_materials_1():
     # Assert
     assert test_files == source_files
 
-"""
+
 def test_download_project_1():
-    # TODO - Update
-    pass
-    id_ = "5a5479095d9460327c6970f0"
-    test_path, source_path = helper.setup_test_folders()
-    test_file_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    delphin_interact.download_from_database(id_, test_path)
-    shutil.copy(test_file_path + '/' + id_ + '.d6p', source_path + '/' + id_ + '.d6p')
-    assert filecmp.cmp(source_path + '/' + str(id_) + '.d6p', test_path + '/' + str(id_) + '.d6p')
+
+    test_folder, _ = helper.setup_test_folders()
+    source_folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+    delphin_id, weather_ids, material_ids = helper.upload_needed_project('download_project_1')
+    delphin_interactions.download_delphin_entry(str(delphin_id), test_folder)
+
+    test_lines = open(test_folder + '/' + str(delphin_id) + '.d6p', 'r').readlines()
+    source_lines = open(source_folder + '/delphin_project.d6p', 'r').readlines()
+
+    # Clean up
+    delphin_db.Delphin.objects(id=delphin_id).first().delete()
+    for material_id in material_ids:
+        material_db.Material.objects(id=material_id).first().delete()
+    for weather_id in weather_ids:
+        weather_db.Weather.objects(id=weather_id).first().delete()
     helper.clean_up_test_folders()
-"""
+
+    assert test_lines == source_lines
