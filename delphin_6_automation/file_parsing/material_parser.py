@@ -81,9 +81,9 @@ def material_file_to_dict(file_path):
                     material_dict[key] = data
 
             elif line[2] == "[":
-                sub_key_func = "MODEL"
+                sub_key_func = "-MODEL-"
 
-            elif line[2] == " " and sub_key_func == "MODEL":
+            elif line[2] == " " and sub_key_func == "-MODEL-":
                 key = main_key + sub_key_func + line.split("=")[0].strip()
                 data  = line.split("=")[1].strip()
                 #print(data)
@@ -119,38 +119,53 @@ def dict_to_m6(material: dict, path: str) -> bool:
 
         if model:
             model_exist = False
+            file.write("\n\n  " + "[MODEL]")
             for key, value in material_dict.items():
                 try:
                     if key[3] == "[":
                         file.write("\n  " + "[MODEL]")
                 except IndexError:
                     pass
-        elif group == 'IDENTIFICATION':
-            file.write("\n\n" + "[" + group + "]")
+
+        #elif group == 'IDENTIFICATION':
+        #    file.write("\n\n" + "[" + group + "]")
         else:
-            file.write("\n\n\n" + "[" + group + "]")
+            file.write("\n\n" + "[" + group + "]")
 
         for key, value in material_dict.items():
             if key.split("-")[0] == group:
                 name = key.split("-")[1]
 
-                if name == "FUNCTION" and key.split("-")[
-                    -1] == "X" and model is not True:  # Parameters under "FUNCTION"
+                # Parameters under "FUNCTION"
+                if name == "FUNCTION" and key.split("-")[-1] == "X" and model is not True:
 
                     function_value_x = "      "
                     for v in value:
-                        function_value_x += str(v).ljust(17)
+                        if len(str(v)) >= 17:
+                            function_value_x += str(v) + '  '
+                        else:
+                            function_value_x += str(v).ljust(17)
+                            if not function_value_x.endswith('  '):
+                                function_value_x += ' '
 
                     value = material_dict[key.strip("-X") + "-Y"]
                     function_value_y = "      "
                     for v in value:
-                        function_value_y += str(v).ljust(17)
+                        if len(str(v)) >= 17:
+                            function_value_y += str(v) + '  '
+                        else:
+                            function_value_y += str(v).ljust(17)
+                            if not function_value_y.endswith('  '):
+                                function_value_y += ' '
+
                     value = key.split("-")[2] + "\n" + function_value_x + "\n" + function_value_y
 
-                    file.write("\n" + "  " + name + " = ".ljust(25) + str(value))
+                    file.write("\n" + "  " + name + " = ".ljust(16) + str(value))
 
                 elif name == "MODEL" and model:  # parameters under "MODEL"
                     name = key.split("-")[-1]
+                    if not isinstance(value, str):
+                        value = "".join([str(element) for element in value])
                     file.write("\n" + "    " + name.ljust(25) + "= " + str(value))
 
                 elif name in unit_dict:  # parameters with units
@@ -158,7 +173,12 @@ def dict_to_m6(material: dict, path: str) -> bool:
                     file.write("\n" + "  " + name.ljust(25) + "= " + str(value))
 
                 elif len(key.split("-")) <= 2:
+                    if value == 'AIR_TIGHT':
+                        value += ' '
                     file.write("\n" + "  " + name.ljust(25) + "= " + str(value))
+
+        if group.endswith('PARAMETERS') or group.endswith('IDENTIFICATION'):
+            file.write("\n")
 
     # Create file
     material_data = material['material_data']

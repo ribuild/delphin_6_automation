@@ -13,13 +13,14 @@ import shutil
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
+from delphin_6_automation.database_interactions import mongo_setup
+from delphin_6_automation.database_interactions.auth import dtu_byg
+
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
-import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 import delphin_6_automation.pytest.pytest_helper_functions as helper
-from delphin_6_automation.database_interactions.auth import dtu_byg
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
@@ -101,7 +102,6 @@ def test_download_weather_1():
     assert test_files == source_files
 
 
-"""
 def test_download_materials_1():
     # TODO - Create
     test_folder, _ = helper.setup_test_folders()
@@ -132,7 +132,7 @@ def test_download_materials_1():
     # Assert
     assert test_files == source_files
 
-
+"""
 def test_download_project_1():
     # TODO - Update
     pass
