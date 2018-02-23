@@ -4,7 +4,6 @@ __author__ = "Christian Kongsgaard"
 # IMPORTS
 
 # Modules:
-import numpy as np
 import datetime
 import os
 
