@@ -7,11 +7,10 @@ __author__ = "Christian Kongsgaard"
 # Modules:
 
 
-import delphin_6_automation.simulation_process.simulation as solver
-from delphin_6_automation.database_interactions.auth import dtu_byg
-
-import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 # RiBuild Modules:
+import delphin_6_automation.simulation_worker
+from delphin_6_automation.database_interactions.auth import dtu_byg
+import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 import delphin_6_automation.pytest.pytest_helper_functions as helper
@@ -24,7 +23,7 @@ mongo_setup.global_init(dtu_byg)
 # TODO - update simulate tests
 # TODO - mock class for delphin
 
-
+"""
 def download():
     id_ = "5a5479095d9460327c6970f0"
     test_path, source_path = helper.setup_test_folders()
@@ -55,3 +54,4 @@ def test_download_simulate_upload():
     simulate(test_file)
     test_doc = upload(test_folder)
     clean_up(test_doc)
+"""

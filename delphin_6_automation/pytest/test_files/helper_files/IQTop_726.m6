@@ -56,7 +56,7 @@ D6MARLZ! 006.001
   [MODEL]
     TYPE                     = SERIAL_PARALLEL
     SP_KScale                = 0.08
-    SP_Kl                    = 2e-14
+    SP_Kl                    = 2e-014
     SP_SP                    = 1.6
     SP_ThetaLAdditional      = 0.02
     SP_UNSAT                 = 0

@@ -1,15 +1,36 @@
-# Imports:
+__author__ = "Thomas Perkov"
+
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# IMPORTS
+
+# Modules:
 import os
 import codecs
 import re
 import datetime
 
+# RiBuild Modules:
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# MATERIAL PARSER
 
 
-# Functions:
-def isfloat(num):
+class MyNumber:
+    def __init__(self, val):
+        self.val = val
+
+    def __format__(self, format_spec):
+        ss = ('{0:'+format_spec+'}').format(self.val)
+        if 'e' in ss:
+            mantissa, exp = ss.split('e')
+            return mantissa + 'e' + exp[0] + '0' + exp[1:]
+        return ss
+
+
+def isfloat(number):
     try:
-        float(num)
+        float(number)
     except ValueError:
         return False
     else:
@@ -113,19 +134,29 @@ def dict_to_m6(material: dict, path: str) -> bool:
     def write_material_content(group, material_dict, model=False):
         unit_dict = {"RHO": "kg/m3", "CE": "J/kgK", "THETA_POR": "m3/m3",
                      "THETA_EFF": "m3/m3", "THETA_CAP": "m3/m3",
-                     "THETA_80": "m3/m3", "LAMBDA": "W/mK",
+                     "THETA_80": "m3/m3", "LAMBDA": "W/mK", "LAMBDA_DESIGN": "W/mK",
                      "AW": "kg/m2s05", "MEW": "-",
                      "KLEFF": "s", "DLEFF": "m2/s", "KG": "s"}
 
         if model:
             model_exist = False
-            file.write("\n\n  " + "[MODEL]")
+
             for key, value in material_dict.items():
+                if key.split("-")[0] == group:
+                    name = key.split("-")[1]
+
+                    if name == 'MODEL':
+                        file.write("\n\n  " + "[MODEL]")
+                        model_exist = True
+                        break
                 try:
                     if key[3] == "[":
                         file.write("\n  " + "[MODEL]")
                 except IndexError:
                     pass
+
+            if not model_exist:
+                file.write('\n')
 
         #elif group == 'IDENTIFICATION':
         #    file.write("\n\n" + "[" + group + "]")
@@ -162,10 +193,14 @@ def dict_to_m6(material: dict, path: str) -> bool:
 
                     file.write("\n" + "  " + name + " = ".ljust(16) + str(value))
 
-                elif name == "MODEL" and model:  # parameters under "MODEL"
+                # Parameters under "MODEL"
+                elif name == "MODEL" and model:
                     name = key.split("-")[-1]
                     if not isinstance(value, str):
-                        value = "".join([str(element) for element in value])
+                        if 'e' in str(value[0]):
+                            value = '{:.0e}'.format(MyNumber(value[0]))
+                        else:
+                            value = "".join([str(element) for element in value])
                     file.write("\n" + "    " + name.ljust(25) + "= " + str(value))
 
                 elif name in unit_dict:  # parameters with units

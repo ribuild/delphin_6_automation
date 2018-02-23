@@ -116,7 +116,8 @@ def test_upload_project_1():
     for id_ in material_ids:
         material_db.Material.objects(id=id_).first().delete()
 
-    assert (test_dict, materials) == (source_entry, material_ids)
+    assert test_dict == source_entry
+    assert materials == material_ids
 
 
 def test_upload_project_2():
@@ -153,7 +154,9 @@ def test_upload_project_2():
     for weather_id in weather_ids:
         weather_db.Weather.objects(id=weather_id).first().delete()
 
-    assert (test_dict, materials, weather) == (source_entry, material_ids, weather_ids)
+    assert test_dict == source_entry
+    assert materials == material_ids
+    assert weather == weather_ids
 
 
 def test_upload_results_1():

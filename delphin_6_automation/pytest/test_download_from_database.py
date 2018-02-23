@@ -103,7 +103,6 @@ def test_download_weather_1():
 
 
 def test_download_materials_1():
-    # TODO - Create
     test_folder, _ = helper.setup_test_folders()
     delphin_id, material_ids = helper.upload_needed_project('download_material_project_1')
     material_interactions.download_materials(str(delphin_id), test_folder)
@@ -111,10 +110,9 @@ def test_download_materials_1():
 
     def get_material_files(path):
         files = []
-        for file in ['BrickWienerberger_512.m6',]:
-            #'IQTop_726.m6', 'RemmersiQFix_437.m6',
-            #         'RemmersiQTherm_438.m6', 'RestorationRender_210.m6',
-            #         'WietersdorfPeggauerMineralischeKalkzementLeichtputz_630.m6']:
+        for file in ['BrickWienerberger_512.m6', 'IQTop_726.m6', 'RemmersiQFix_437.m6',
+                     'RemmersiQTherm_438.m6', 'RestorationRender_210.m6',
+                     'WietersdorfPeggauerMineralischeKalkzementLeichtputz_630.m6']:
             file_path = path + '/' + file
             files.append(codecs.open(file_path, "r", "utf-8").readlines())
         return files
@@ -124,10 +122,10 @@ def test_download_materials_1():
     source_files = get_material_files(source_folder)
 
     # Clean up
-    #delphin_db.Delphin.objects(id=delphin_id).first().delete()
-    #for material_id in material_ids:
-    #    material_db.Material.objects(id=material_id).first().delete()
-    #helper.clean_up_test_folders()
+    delphin_db.Delphin.objects(id=delphin_id).first().delete()
+    for material_id in material_ids:
+        material_db.Material.objects(id=material_id).first().delete()
+    helper.clean_up_test_folders()
 
     # Assert
     assert test_files == source_files
