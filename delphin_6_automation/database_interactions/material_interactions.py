@@ -68,7 +68,7 @@ def convert_and_upload_file(user_path_input):
 
 def upload_material_file(material_path: str) -> delphin_db.Delphin.id:
     """
-    Uploads a Delphin file to a database.
+    Uploads a Delphin file to a database.rst.
 
     :param material_path: Path to a Delphin 6 material project file
     :return: Database entry id

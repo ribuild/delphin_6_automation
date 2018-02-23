@@ -23,7 +23,7 @@ from delphin_6_automation.database_interactions import weather_interactions
 
 def download_raw_result(result_id: str, download_path: str) -> bool:
     """
-    Downloads a result entry from the database.
+    Downloads a result entry from the database.rst.
 
     :param result_id: Database entry id
     :param download_path: Path where the result should be written
@@ -115,7 +115,7 @@ def list_finished_simulations() -> list:
 
 def download_full_project_from_database(document_id: str, folder: str) -> bool:
     """
-    Downloads a Delphin project file from the database with all of its materials and weather.
+    Downloads a Delphin project file from the database.rst with all of its materials and weather.
 
     :param document_id: Database entry id
     :param folder: Path where the files should be written.

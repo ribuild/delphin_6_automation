@@ -117,8 +117,7 @@ def list_to_ccd(weather_list: list, parameter_info: dict, file_path: str) -> boo
 
     :param weather_list: List with hourly weather values
     :type weather_list: list
-    :param parameter_info: Dict with meta data for the weather file.
-    Should contain the following keys: location_name, year, description and intro.
+    :param parameter_info: Dict with meta data for the weather file. Should contain the following keys: location_name, year, description and intro.
     :type parameter_info: dict
     :param file_path: Full file path for where the .ccd file should be saved.
     :type file_path: str

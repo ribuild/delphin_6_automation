@@ -1,0 +1,365 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>delphin_6_automation.delphin_setup.delphin_permutations &#8212; RiBuild - Delphin Automation .1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for delphin_6_automation.delphin_setup.delphin_permutations</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christian Kongsgaard&quot;</span>
+
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># IMPORTS</span>
+
+<span class="c1"># Modules:</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">fsolve</span>
+
+<span class="c1"># RiBuild Modules:</span>
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># DELPHIN PERMUTATION FUNCTIONS</span>
+
+
+<div class="viewcode-block" id="change_layer_width"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.change_layer_width">[docs]</a><span class="k">def</span> <span class="nf">change_layer_width</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">original_material</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Changes the width of a single layer, while keeping number of elements in the project.</span>
+
+<span class="sd">    :param delphin_dict: Delphin dict to change.</span>
+<span class="sd">    :type delphin_dict: dict</span>
+<span class="sd">    :param original_material: Name of material to change the width of.</span>
+<span class="sd">    :type original_material: str</span>
+<span class="sd">    :param new_width: New width in m</span>
+<span class="sd">    :type new_width: float</span>
+<span class="sd">    :return: Modified Delphin dict</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">layers</span> <span class="o">=</span> <span class="n">get_layers</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">)</span>
+    <span class="n">x_list</span> <span class="o">=</span> <span class="n">convert_discretization_to_list</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">)</span>
+    <span class="n">new_x_list</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">][</span><span class="s1">&#39;material&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">original_material</span><span class="p">:</span>
+            <span class="n">range_</span> <span class="o">=</span> <span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">][</span><span class="s1">&#39;x_index&#39;</span><span class="p">]</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="n">range_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">range_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">new_discretization</span> <span class="o">=</span> <span class="n">discrete_layer</span><span class="p">(</span><span class="n">new_width</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+            <span class="n">new_x_list</span> <span class="o">=</span> <span class="n">x_list</span><span class="p">[:</span><span class="n">range_</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">new_discretization</span> <span class="o">+</span> <span class="n">x_list</span><span class="p">[</span><span class="n">range_</span><span class="p">[</span><span class="mi">1</span><span class="p">]:]</span>
+
+    <span class="k">if</span> <span class="n">new_x_list</span><span class="p">:</span>
+        <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Discretization&#39;</span><span class="p">][</span><span class="s1">&#39;XSteps&#39;</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">value_</span><span class="p">)</span>
+                                                                                        <span class="k">for</span> <span class="n">value_</span> <span class="ow">in</span> <span class="n">new_x_list</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Could not find original_material in DelphinProject. original_material given was: &#39;</span>
+                       <span class="n">f</span><span class="s1">&#39;</span><span class="si">{original_material}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">delphin_dict</span></div>
+
+
+<div class="viewcode-block" id="change_layer_material"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.change_layer_material">[docs]</a><span class="k">def</span> <span class="nf">change_layer_material</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">original_material</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_material</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Changes the material of a layer.</span>
+
+<span class="sd">    :param delphin_dict: Delphin dict to change.</span>
+<span class="sd">    :type delphin_dict: dict</span>
+<span class="sd">    :param original_material: Name of material that should be changed.</span>
+<span class="sd">    :type original_material: str</span>
+<span class="sd">    :param new_material: New material given as a dict. Dict should have the following keys: @name, @color, @hatchCode and #test.</span>
+<span class="sd">    :type new_material: dict</span>
+<span class="sd">    :return: Modified Delphin dict</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find original material</span>
+    <span class="k">for</span> <span class="n">mat_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Materials&#39;</span><span class="p">][</span><span class="s1">&#39;MaterialReference&#39;</span><span class="p">])):</span>
+        <span class="k">if</span> <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Materials&#39;</span><span class="p">][</span><span class="s1">&#39;MaterialReference&#39;</span><span class="p">][</span><span class="n">mat_index</span><span class="p">][</span><span class="s1">&#39;@name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">original_material</span><span class="p">:</span>
+            <span class="c1"># Replace with new material</span>
+            <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Materials&#39;</span><span class="p">][</span><span class="s1">&#39;MaterialReference&#39;</span><span class="p">][</span><span class="n">mat_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_material</span>
+
+    <span class="c1"># Find original material assignment</span>
+    <span class="k">for</span> <span class="n">assign_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Assignments&#39;</span><span class="p">][</span><span class="s1">&#39;Assignment&#39;</span><span class="p">])):</span>
+        <span class="k">if</span> <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Assignments&#39;</span><span class="p">][</span><span class="s1">&#39;Assignment&#39;</span><span class="p">][</span><span class="n">assign_index</span><span class="p">][</span><span class="s1">&#39;Reference&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">original_material</span><span class="p">:</span>
+            <span class="c1"># Replace with new material</span>
+            <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Assignments&#39;</span><span class="p">][</span><span class="s1">&#39;Assignment&#39;</span><span class="p">][</span><span class="n">assign_index</span><span class="p">][</span><span class="s1">&#39;Reference&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">new_material</span><span class="p">[</span><span class="s1">&#39;@name&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">delphin_dict</span></div>
+
+
+<div class="viewcode-block" id="change_weather"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.change_weather">[docs]</a><span class="k">def</span> <span class="nf">change_weather</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">original_weather</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_weather</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Changes the weather file of a weather instance. Can therefore only be used on climate conditions that is loaded</span>
+<span class="sd">    from a file.</span>
+
+<span class="sd">    :param delphin_dict: Delphin dict to change.</span>
+<span class="sd">    :type delphin_dict: dict</span>
+<span class="sd">    :param original_weather: Name of the original weather</span>
+<span class="sd">    :type original_weather: str</span>
+<span class="sd">    :param new_weather: New weather file path</span>
+<span class="sd">    :type new_weather: str</span>
+<span class="sd">    :return: Modified Delphin dict</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find original weather</span>
+    <span class="n">climate_conditions</span> <span class="o">=</span> <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Conditions&#39;</span><span class="p">][</span><span class="s1">&#39;ClimateConditions&#39;</span><span class="p">][</span><span class="s1">&#39;ClimateCondition&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">weather_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">climate_conditions</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">climate_conditions</span><span class="p">[</span><span class="n">weather_index</span><span class="p">][</span><span class="s1">&#39;@name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">original_weather</span><span class="p">:</span>
+            <span class="n">climate_conditions</span><span class="p">[</span><span class="n">weather_index</span><span class="p">][</span><span class="s1">&#39;Filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weather</span>
+
+    <span class="k">return</span> <span class="n">delphin_dict</span></div>
+
+
+<div class="viewcode-block" id="change_orientation"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.change_orientation">[docs]</a><span class="k">def</span> <span class="nf">change_orientation</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">new_orientation</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Changes the orientation of the Delphin project.</span>
+
+<span class="sd">    :param delphin_dict: Delphin dict to change.</span>
+<span class="sd">    :type delphin_dict: dict</span>
+<span class="sd">    :param new_orientation: New orientation. Value between 0 and 360</span>
+<span class="sd">    :type new_orientation: int</span>
+<span class="sd">    :return: Modified Delphin dict</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find current orientation</span>
+    <span class="n">interfaces</span> <span class="o">=</span> <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Conditions&#39;</span><span class="p">][</span><span class="s1">&#39;Interfaces&#39;</span><span class="p">][</span><span class="s1">&#39;Interface&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">interfaces</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1">#print(interfaces[index][&#39;IBK:Parameter&#39;][&#39;@name&#39;])</span>
+            <span class="n">interfaces</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;IBK:Parameter&#39;</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_orientation</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">delphin_dict</span></div>
+
+
+<div class="viewcode-block" id="change_boundary_coefficient"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.change_boundary_coefficient">[docs]</a><span class="k">def</span> <span class="nf">change_boundary_coefficient</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">coefficient</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Changes a boundary coefficient of a boundary condition instance.</span>
+
+<span class="sd">    :param delphin_dict: Delphin dict to change.</span>
+<span class="sd">    :type delphin_dict: dict</span>
+<span class="sd">    :param boundary_condition: Name of the boundary condition</span>
+<span class="sd">    :type boundary_condition: str</span>
+<span class="sd">    :param coefficient: Name of the coefficient to change</span>
+<span class="sd">    :type coefficient: str</span>
+<span class="sd">    :param new_value: New value of the coefficient</span>
+<span class="sd">    :type new_value: float</span>
+<span class="sd">    :return: Modified Delphin dict</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">boundary_conditions</span> <span class="o">=</span> <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Conditions&#39;</span><span class="p">][</span><span class="s1">&#39;BoundaryConditions&#39;</span><span class="p">][</span><span class="s1">&#39;BoundaryCondition&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">boundary_conditions</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">boundary_conditions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;@name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">boundary_condition</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary_conditions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;IBK:Parameter&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">sub_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">boundary_conditions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;IBK:Parameter&#39;</span><span class="p">])):</span>
+                    <span class="k">if</span> <span class="n">boundary_conditions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;IBK:Parameter&#39;</span><span class="p">][</span><span class="n">sub_index</span><span class="p">][</span><span class="s1">&#39;@name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">coefficient</span><span class="p">:</span>
+                        <span class="n">boundary_conditions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;IBK:Parameter&#39;</span><span class="p">][</span><span class="n">sub_index</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">boundary_conditions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;IBK:Parameter&#39;</span><span class="p">][</span><span class="s1">&#39;@name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">coefficient</span><span class="p">:</span>
+                    <span class="n">boundary_conditions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;IBK:Parameter&#39;</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">delphin_dict</span></div>
+
+
+<div class="viewcode-block" id="get_layers"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.get_layers">[docs]</a><span class="k">def</span> <span class="nf">get_layers</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the layers of a Delphin dict.</span>
+
+<span class="sd">    :param delphin_dict: Delphin dict to get layers from.</span>
+<span class="sd">    :type delphin_dict: dict</span>
+<span class="sd">    :return: Dict of dicts. Each nested dict has the keys: material, x_width, x_index</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x_list</span> <span class="o">=</span> <span class="n">convert_discretization_to_list</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">)</span>
+
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">layers_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Assignments&#39;</span><span class="p">][</span><span class="s1">&#39;Assignment&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">assignment</span><span class="p">[</span><span class="s1">&#39;@type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Material&#39;</span><span class="p">:</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s1">&#39;material&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="s1">&#39;Reference&#39;</span><span class="p">]</span>
+            <span class="n">range_</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">assignment</span><span class="p">[</span><span class="s1">&#39;Range&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)]</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s1">&#39;x_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x_list</span><span class="p">[</span><span class="n">range_</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">range_</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">layer</span><span class="p">[</span><span class="s1">&#39;x_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">range_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">range_</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">layers_dict</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">layers_dict</span></div>
+
+
+<div class="viewcode-block" id="discrete_layer"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.discrete_layer">[docs]</a><span class="k">def</span> <span class="nf">discrete_layer</span><span class="p">(</span><span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Discretization of width in a given number of steps.</span>
+
+<span class="sd">    :param width: Width in m</span>
+<span class="sd">    :type width: float</span>
+<span class="sd">    :param steps: Number of steps or discretizations to make.</span>
+<span class="sd">    :type steps: int</span>
+<span class="sd">    :return: A list with the discretizated values.</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">min_x</span> <span class="o">=</span> <span class="mf">0.001</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="n">steps</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">sum_function</span><span class="p">(</span><span class="n">stretch_factor</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">width</span> <span class="o">-</span> <span class="n">min_x</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">stretch_factor</span><span class="o">**</span><span class="n">steps</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">stretch_factor</span><span class="p">))</span>
+
+    <span class="n">stretch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsolve</span><span class="p">(</span><span class="n">sum_function</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">sub_division</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">min_x</span><span class="p">,</span> <span class="n">stretch</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_discretization_to_list"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.convert_discretization_to_list">[docs]</a><span class="k">def</span> <span class="nf">convert_discretization_to_list</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the discretized elements of a project.</span>
+
+<span class="sd">    :param delphin_dict: Delphin dict to look in.</span>
+<span class="sd">    :type delphin_dict: dict</span>
+<span class="sd">    :return: A list with the discretizated values.</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+              <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Discretization&#39;</span><span class="p">][</span><span class="s1">&#39;XSteps&#39;</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">x_list</span></div>
+
+
+<div class="viewcode-block" id="sub_division"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.delphin_permutations.sub_division">[docs]</a><span class="k">def</span> <span class="nf">sub_division</span><span class="p">(</span><span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">minimum_division</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">stretch_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a subdivision of the material to be used for the discretization.</span>
+
+<span class="sd">    :param width: Width of the material to be subdivided</span>
+<span class="sd">    :type width: float</span>
+<span class="sd">    :param minimum_division: Width of the smallest division</span>
+<span class="sd">    :type minimum_division: float</span>
+<span class="sd">    :param stretch_factor: Increase in subdivisions</span>
+<span class="sd">    :type stretch_factor: float</span>
+<span class="sd">    :return: List containing width of subdivisions</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sum_x</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">next_</span> <span class="o">=</span> <span class="n">minimum_division</span>
+    <span class="n">new_grid</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">max_dx</span> <span class="o">=</span> <span class="mi">20</span><span class="o">/</span><span class="mi">100</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">width</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="k">while</span> <span class="n">sum_x</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">:</span>
+        <span class="n">remaining</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">sum_x</span>
+
+        <span class="k">if</span> <span class="n">next_</span> <span class="o">&gt;</span> <span class="n">max_dx</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">remaining</span><span class="o">/</span><span class="n">max_dx</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remaining</span><span class="p">)</span>
+
+            <span class="n">next_</span> <span class="o">=</span> <span class="n">remaining</span><span class="o">/</span><span class="n">n</span>
+
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)):</span>
+                <span class="n">new_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_</span><span class="p">)</span>
+                <span class="n">sum_x</span> <span class="o">+=</span> <span class="n">next_</span>
+
+            <span class="n">remaining</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">sum_x</span>
+
+        <span class="k">if</span> <span class="n">next_</span> <span class="o">&lt;</span> <span class="n">remaining</span><span class="p">:</span>
+            <span class="n">new_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_</span><span class="p">)</span>
+            <span class="n">sum_x</span> <span class="o">+=</span> <span class="n">next_</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">remaining</span> <span class="o">+=</span> <span class="n">new_grid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">new_grid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">remaining</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">new_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remaining</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">sum_x</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="n">next_</span> <span class="o">=</span> <span class="n">next_</span> <span class="o">*</span> <span class="n">stretch_factor</span>
+
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">new_grid</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">new_grid</span><span class="o">+</span><span class="n">x1</span>
+
+    <span class="k">return</span> <span class="n">x2</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

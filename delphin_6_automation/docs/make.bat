@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=DelphinAutomation
+set SPHINXPROJ=RiBuild-DelphinAutomation
 
 if "%1" == "" goto help
 

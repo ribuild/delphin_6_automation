@@ -28,8 +28,6 @@ import delphin_6_automation.pytest.pytest_helper_functions as helper
 
 mongo_setup.global_init(dtu_byg)
 
-# TODO - update download tests
-
 
 def test_download_results_1():
 

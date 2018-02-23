@@ -29,7 +29,7 @@ def download_simulation_result(sim_id, download_path, raw_or_processed='raw'):
 
     elif raw_or_processed == 'processed':
         pass
-        # TODO - Download processed results from database
+        # TODO - Download processed results from database.rst
 
     else:
         raise ValueError('raw_or_processed has to be raw or processed. Value given was: ' + str(raw_or_processed))

@@ -28,7 +28,7 @@ from delphin_6_automation.file_parsing import delphin_parser
 
 def upload_delphin_to_database(delphin_file: str,  queue_priority: int) -> delphin_db.Delphin.id:
     """
-    Uploads a Delphin file to a database.
+    Uploads a Delphin file to a database.rst.
 
     :param delphin_file: Path to a Delphin 6 project file
     :param queue_priority: Queue priority for the simulation
@@ -56,7 +56,7 @@ def upload_delphin_to_database(delphin_file: str,  queue_priority: int) -> delph
 
 def download_delphin_entry(document_id: str, path: str) -> bool:
     """
-    Converts a database entry to Delphin 6 project file.
+    Converts a database.rst entry to Delphin 6 project file.
 
     :param document_id: Database entry id.
     :param path: Path to where the files should be written.
@@ -117,7 +117,7 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
 
 def download_result_files(result_obj: result_db.Result, download_path: str) -> bool:
     """
-    Writes out all the result files from a result database entry.
+    Writes out all the result files from a result database.rst entry.
 
     :param result_obj: Database entry
     :param download_path: Where to write the files

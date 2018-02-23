@@ -36,7 +36,7 @@ def assign_weather_to_project(delphin_id: str, weather_ids: list) -> str:
     """
     Assign weather to a Delphin entry
 
-    :param delphin_id: Delphin document database ID
+    :param delphin_id: Delphin document database.rst ID
     :type delphin_id: str
     :param weather_ids: List with weather entry IDs
     :type weather_ids: list

@@ -1,0 +1,188 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>delphin_6_automation.database_interactions.material_interactions &#8212; RiBuild - Delphin Automation .1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for delphin_6_automation.database_interactions.material_interactions</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christian Kongsgaard&quot;</span>
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># IMPORTS</span>
+
+<span class="c1"># Modules:</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># RiBuild Modules:</span>
+<span class="kn">import</span> <span class="nn">delphin_6_automation.database_interactions.db_templates.delphin_entry</span> <span class="k">as</span> <span class="nn">delphin_db</span>
+<span class="kn">import</span> <span class="nn">delphin_6_automation.database_interactions.db_templates.material_entry</span> <span class="k">as</span> <span class="nn">material_db</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.file_parsing</span> <span class="k">import</span> <span class="n">material_parser</span>
+
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># DATABASE INTERACTIONS</span>
+
+
+<div class="viewcode-block" id="find_material_ids"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.material_interactions.find_material_ids">[docs]</a><span class="k">def</span> <span class="nf">find_material_ids</span><span class="p">(</span><span class="n">project_materials</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find ids of given material entries based on material name and material unique id.</span>
+
+<span class="sd">    :param project_materials: List tuples with material file names and unique material ids</span>
+<span class="sd">    :type project_materials: list</span>
+<span class="sd">    :return: list with material entries</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">material_entries</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">material_pair</span> <span class="ow">in</span> <span class="n">project_materials</span><span class="p">:</span>
+        <span class="n">material_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">material_db</span><span class="o">.</span><span class="n">Material</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">material_name</span><span class="o">=</span><span class="n">material_pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                             <span class="n">material_id</span><span class="o">=</span><span class="n">material_pair</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">first</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">material_entries</span></div>
+
+
+<div class="viewcode-block" id="list_project_materials"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.material_interactions.list_project_materials">[docs]</a><span class="k">def</span> <span class="nf">list_project_materials</span><span class="p">(</span><span class="n">delphin_document</span><span class="p">:</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list with the materials in a project entry.</span>
+
+<span class="sd">    :param delphin_document: Delphin entry</span>
+<span class="sd">    :return: List tuples with material file names and unique material ids</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">materials</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Materials&#39;</span><span class="p">][</span><span class="s1">&#39;MaterialReference&#39;</span><span class="p">]</span>
+
+    <span class="n">material_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">material</span><span class="p">[</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                      <span class="nb">int</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">3</span><span class="p">]))</span>
+                     <span class="k">for</span> <span class="n">material</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">material_list</span></div>
+
+
+<div class="viewcode-block" id="convert_and_upload_file"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.material_interactions.convert_and_upload_file">[docs]</a><span class="k">def</span> <span class="nf">convert_and_upload_file</span><span class="p">(</span><span class="n">user_path_input</span><span class="p">):</span>
+
+    <span class="n">material_dict_lst</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">user_path_input</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.m6&quot;</span><span class="p">):</span>
+        <span class="n">upload_material_file</span><span class="p">(</span><span class="n">user_path_input</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">user_path_input</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">file</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.m6&quot;</span><span class="p">):</span>
+                    <span class="n">upload_material_file</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">material_dict_lst</span></div>
+
+
+<div class="viewcode-block" id="upload_material_file"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.material_interactions.upload_material_file">[docs]</a><span class="k">def</span> <span class="nf">upload_material_file</span><span class="p">(</span><span class="n">material_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uploads a Delphin file to a database.rst.</span>
+
+<span class="sd">    :param material_path: Path to a Delphin 6 material project file</span>
+<span class="sd">    :return: Database entry id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">material_db</span><span class="o">.</span><span class="n">Material</span><span class="p">()</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">material_data</span> <span class="o">=</span> <span class="n">material_parser</span><span class="o">.</span><span class="n">material_file_to_dict</span><span class="p">(</span><span class="n">material_path</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">material_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">material_path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">material_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">material_path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">id</span></div>
+
+
+<div class="viewcode-block" id="download_materials"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.material_interactions.download_materials">[docs]</a><span class="k">def</span> <span class="nf">download_materials</span><span class="p">(</span><span class="n">delphin_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads the materials of a Delphin Project</span>
+
+<span class="sd">    :param delphin_id: Delphin entry ID</span>
+<span class="sd">    :type delphin_id: str</span>
+<span class="sd">    :param path: Path to save to</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :return: True</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">materials_list</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">delphin_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">materials</span>
+
+    <span class="k">for</span> <span class="n">material</span> <span class="ow">in</span> <span class="n">materials_list</span><span class="p">:</span>
+        <span class="n">material_parser</span><span class="o">.</span><span class="n">dict_to_m6</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

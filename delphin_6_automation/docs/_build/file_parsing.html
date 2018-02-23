@@ -1,0 +1,431 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>RiBuild File Parsing &#8212; RiBuild - Delphin Automation .1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="RiBuild Delphin Setup" href="delphin_setup.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ribuild-file-parsing">
+<h1>RiBuild File Parsing<a class="headerlink" href="#ribuild-file-parsing" title="Permalink to this headline">¶</a></h1>
+<p>This modules handles all the file parsing</p>
+<div class="section" id="module-delphin_6_automation.file_parsing.delphin_parser">
+<span id="delphin-parser"></span><h2>Delphin Parser<a class="headerlink" href="#module-delphin_6_automation.file_parsing.delphin_parser" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.cvode_stats_to_dict">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">cvode_stats_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#cvode_stats_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.cvode_stats_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin integrator_cvode_stats file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to folder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">converted tsv dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.d6o_to_dict">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">d6o_to_dict</code><span class="sig-paren">(</span><em>path: str</em>, <em>filename: str</em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#d6o_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.d6o_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin results file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – path to folder</li>
+<li><strong>filename</strong> – file name with extension</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">converted result dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.dict_to_cvode_stats_file">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">dict_to_cvode_stats_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#dict_to_cvode_stats_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.dict_to_cvode_stats_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin cvode stats file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_dict</strong> – Dictionary holding the information for the cvode stats file</li>
+<li><strong>log_path</strong> – Path to were the cvode stats file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.dict_to_d6o">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">dict_to_d6o</code><span class="sig-paren">(</span><em>result_dict: dict</em>, <em>result_name: str</em>, <em>result_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#dict_to_d6o"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.dict_to_d6o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin result file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>result_dict</strong> – Dictionary representation of the database entry</li>
+<li><strong>result_name</strong> – Name of the result file</li>
+<li><strong>result_path</strong> – Path to were the result file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.dict_to_g6a">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">dict_to_g6a</code><span class="sig-paren">(</span><em>geometry_dict: dict</em>, <em>result_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#dict_to_g6a"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.dict_to_g6a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin geometry file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geometry_dict</strong> – Dictionary holding the information for the geometry file</li>
+<li><strong>result_path</strong> – Path to were the geometry file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.dict_to_les_stats_file">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">dict_to_les_stats_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#dict_to_les_stats_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.dict_to_les_stats_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin les stats file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_dict</strong> – Dictionary holding the information for the les stats file</li>
+<li><strong>log_path</strong> – Path to were the les stats file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.dict_to_progress_file">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">dict_to_progress_file</code><span class="sig-paren">(</span><em>file_dict: dict</em>, <em>log_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#dict_to_progress_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.dict_to_progress_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a dictionary into a delphin progress file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_dict</strong> – Dictionary holding the information for the progress file</li>
+<li><strong>log_path</strong> – Path to were the progress file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.dp6_to_dict">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">dp6_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#dp6_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.dp6_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin 6 project file to a python dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – Path to the Delphin project file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dictionary with the project file information</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.g6a_to_dict">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">g6a_to_dict</code><span class="sig-paren">(</span><em>path: str</em>, <em>filename: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#g6a_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.g6a_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin geometry file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – path to folder</li>
+<li><strong>filename</strong> – file name with extension</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">converted geometry dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.les_stats_to_dict">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">les_stats_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#les_stats_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.les_stats_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin LES_direct_stats file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to folder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">converted les stats dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.progress_to_dict">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">progress_to_dict</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#progress_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.progress_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a Delphin progress file into a dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to folder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">converted progress dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.delphin_parser.write_log_files">
+<code class="descclassname">delphin_6_automation.file_parsing.delphin_parser.</code><code class="descname">write_log_files</code><span class="sig-paren">(</span><em>result_obj: delphin_6_automation.database_interactions.db_templates.result_raw_entry.Result</em>, <em>download_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/delphin_parser.html#write_log_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.delphin_parser.write_log_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a result database entry into a delphin log file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>result_obj</strong> – Database entry</li>
+<li><strong>download_path</strong> – Path to were the log file should be written</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-delphin_6_automation.file_parsing.material_parser">
+<span id="material-parser"></span><h2>Material Parser<a class="headerlink" href="#module-delphin_6_automation.file_parsing.material_parser" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="delphin_6_automation.file_parsing.material_parser.MyNumber">
+<em class="property">class </em><code class="descclassname">delphin_6_automation.file_parsing.material_parser.</code><code class="descname">MyNumber</code><span class="sig-paren">(</span><em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/file_parsing/material_parser.html#MyNumber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.material_parser.MyNumber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.material_parser.dict_to_m6">
+<code class="descclassname">delphin_6_automation.file_parsing.material_parser.</code><code class="descname">dict_to_m6</code><span class="sig-paren">(</span><em>material: dict</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/material_parser.html#dict_to_m6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.material_parser.dict_to_m6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an material dict and converts it into a .m6 file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>material</strong> – material dict</li>
+<li><strong>path</strong> – Path to where .m6 should be placed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.material_parser.isfloat">
+<code class="descclassname">delphin_6_automation.file_parsing.material_parser.</code><code class="descname">isfloat</code><span class="sig-paren">(</span><em>number</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/file_parsing/material_parser.html#isfloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.material_parser.isfloat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.material_parser.material_file_to_dict">
+<code class="descclassname">delphin_6_automation.file_parsing.material_parser.</code><code class="descname">material_file_to_dict</code><span class="sig-paren">(</span><em>file_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/file_parsing/material_parser.html#material_file_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.material_parser.material_file_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.material_parser.num">
+<code class="descclassname">delphin_6_automation.file_parsing.material_parser.</code><code class="descname">num</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/file_parsing/material_parser.html#num"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.material_parser.num" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-delphin_6_automation.file_parsing.weather_parser">
+<span id="weather-parser"></span><h2>Weather Parser<a class="headerlink" href="#module-delphin_6_automation.file_parsing.weather_parser" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.weather_parser.dict_to_ccd">
+<code class="descclassname">delphin_6_automation.file_parsing.weather_parser.</code><code class="descname">dict_to_ccd</code><span class="sig-paren">(</span><em>weather_dict: dict</em>, <em>folder: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/weather_parser.html#dict_to_ccd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.weather_parser.dict_to_ccd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an weather dict and converts it into a .ccd file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>weather_dict</strong> – weather dict from mongo_db</li>
+<li><strong>folder</strong> – Folder to where .ccd’s should be placed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.weather_parser.list_to_ccd">
+<code class="descclassname">delphin_6_automation.file_parsing.weather_parser.</code><code class="descname">list_to_ccd</code><span class="sig-paren">(</span><em>weather_list: list</em>, <em>parameter_info: dict</em>, <em>file_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/weather_parser.html#list_to_ccd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.weather_parser.list_to_ccd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a weather list into a Delphin weather file (.ccd)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>weather_list</strong> (<em>list</em>) – List with hourly weather values</li>
+<li><strong>parameter_info</strong> (<em>dict</em>) – Dict with meta data for the weather file. Should contain the following keys: location_name, year, description and intro.</li>
+<li><strong>file_path</strong> (<em>str</em>) – Full file path for where the .ccd file should be saved.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.weather_parser.wac_to_db">
+<code class="descclassname">delphin_6_automation.file_parsing.weather_parser.</code><code class="descname">wac_to_db</code><span class="sig-paren">(</span><em>file_path: str</em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/weather_parser.html#wac_to_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.weather_parser.wac_to_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.file_parsing.weather_parser.wac_to_dict">
+<code class="descclassname">delphin_6_automation.file_parsing.weather_parser.</code><code class="descname">wac_to_dict</code><span class="sig-paren">(</span><em>file_path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/file_parsing/weather_parser.html#wac_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.file_parsing.weather_parser.wac_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="delphin_setup.html" title="previous chapter">RiBuild Delphin Setup</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/file_parsing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
