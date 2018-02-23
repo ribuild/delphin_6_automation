@@ -7,7 +7,7 @@ __author__ = "Christian Kongsgaard"
 # Modules:
 
 # RiBuild Modules:
-import delphin_6_automation.nosql.mongo_setup as mongo_setup
+import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 from delphin_6_automation.database_interactions.auth import dtu_byg
 
 # -------------------------------------------------------------------------------------------------------------------- #
