@@ -50,17 +50,6 @@ def list_project_materials(delphin_document: delphin_db.Delphin) -> list:
     return material_list
 
 
-def assign_materials_to_project():
-    """
-    Assign materials to a Delphin entry.
-
-    :return:
-    """
-
-    # TODO - Create function
-    return None
-
-
 def convert_and_upload_file(user_path_input):
 
     material_dict_lst = []
@@ -70,7 +59,7 @@ def convert_and_upload_file(user_path_input):
 
     else:
         for root, dirs, files in os.walk(user_path_input):
-            for file, root in zip(files, root):
+            for file, _ in zip(files, root):
                 if file.endswith(".m6"):
                     upload_material_file(file)
 
@@ -94,9 +83,19 @@ def upload_material_file(material_path: str) -> delphin_db.Delphin.id:
     return entry.id
 
 
-def download_materials(sim_id: str, path: str) -> bool:
+def download_materials(delphin_id: str, path: str) -> bool:
+    """
+    Downloads the materials of a Delphin Project
 
-    materials_list = delphin_db.Delphin.objects(id=sim_id).first().materials
+    :param delphin_id: Delphin entry ID
+    :type delphin_id: str
+    :param path: Path to save to
+    :type path: str
+    :return: True
+    :rtype: bool
+    """
+
+    materials_list = delphin_db.Delphin.objects(id=delphin_id).first().materials
 
     for material in materials_list:
         material_parser.dict_to_m6(material, path)
