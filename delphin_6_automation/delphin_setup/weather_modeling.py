@@ -127,7 +127,6 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
                          f'Method given was: {calculation_method}')
 
 
-
 def driving_rain(vertical_rain, wind_direction, wind_speed, location, orientation, inclination=90,):
 
     # Load catch ratio and catch ratio parameters
