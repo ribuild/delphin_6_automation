@@ -129,8 +129,6 @@ def dict_to_m6(material: dict, path: str) -> bool:
     :return: True
     """
 
-    # TODO - Fix Function. Does not produce the same output as input
-
     def write_material_content(group, material_dict, model=False):
         unit_dict = {"RHO": "kg/m3", "CE": "J/kgK", "THETA_POR": "m3/m3",
                      "THETA_EFF": "m3/m3", "THETA_CAP": "m3/m3",
