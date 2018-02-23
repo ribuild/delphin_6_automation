@@ -86,8 +86,9 @@ def test_upload_materials_1():
     material_dict['material_data'].pop('INFO-FILE')
 
     # Assert
-    material_doc.delete()
-    assert material_dict == source_entry
+    #material_doc.delete()
+    for key in material_dict.keys():
+        assert material_dict[key] == source_entry[key]
 
 
 def test_upload_project_1():

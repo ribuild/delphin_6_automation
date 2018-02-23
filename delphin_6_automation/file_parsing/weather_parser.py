@@ -87,11 +87,11 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                             "factor": 1,
                             "abr": "ISGH"},
 
-        "indoor_relative_humidity": {"description": "Indoor Relative Humidity after EN13788 [%] (HREL)",
+        "indoor_relative_humidity": {"description": "Indoor Relative Humidity after EN15026 [%] (HREL)",
                                        "intro": "RELHUM   %",
                                        "factor": 1},
 
-        "indoor_temperature": {"description": "Indoor Air temperature after EN13788 [°C] (TA)",
+        "indoor_temperature": {"description": "Indoor Air temperature after EN15026 [°C] (TA)",
                                  "intro": "TEMPER   C",
                                  "factor": 1},
     }

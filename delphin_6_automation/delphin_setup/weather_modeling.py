@@ -77,7 +77,7 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
             raise TypeError(f"Wrong indoor class. Type has to be a string. "
                             f"Value given was: < {indoor_class} > with type: {type(indoor_class)}")
         elif indoor_class_.lower() == 'a':
-            humidity_load = {'a':30,
+            humidity_load = {'a': 30,
                              'b': 60,
                              'c': 40}
         elif indoor_class_.lower() == 'b':
@@ -93,20 +93,20 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
         # Indoor temperature
         for i in range(len(daily_temperature_average_)):
             if daily_temperature_average_[i] < 10:
-                indoor_temperature_.append(20)
+                indoor_temperature_.append([20, ] * 24)
             elif daily_temperature_average_[i] > 20:
-                indoor_temperature_.append(25)
+                indoor_temperature_.append([25, ] * 24)
             else:
-                indoor_temperature_.append(0.5 * daily_temperature_average_[i] + 15)
+                indoor_temperature_.append([0.5 * daily_temperature_average_[i] + 15] * 24)
 
         # Indoor relative humidity
         for i in range(len(daily_temperature_average_)):
             if daily_temperature_average_[i] < -10:
-                indoor_relative_humidity_.append(humidity_load['a'])
+                indoor_relative_humidity_.append([humidity_load['a'], ] * 24)
             elif daily_temperature_average_[i] > 20:
-                indoor_relative_humidity_.append(humidity_load['b'])
+                indoor_relative_humidity_.append([humidity_load['b'], ] * 24)
             else:
-                indoor_relative_humidity_.append(daily_temperature_average_[i] + humidity_load['c'])
+                indoor_relative_humidity_.append([daily_temperature_average_[i] + humidity_load['c'], ] * 24)
 
         return list(np.ravel(indoor_temperature_)), list(np.ravel(indoor_relative_humidity_))
 
