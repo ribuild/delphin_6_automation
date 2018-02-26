@@ -57,7 +57,7 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                        "factor": 1,
                        "abr": "CI"},
 
-        "direct_radiation": {"description": "Direct Horizontal Solar Radiation [W/m²] (ISvar) [ISGH - ISD]",
+        "direct_radiation": {"description": "Direct Horizontal Solar Radiation [W/m2] (ISvar) [ISGH - ISD]",
                             "intro": "DIRRAD  W/m2",
                             "factor": 1,
                             "abr": "ISVAR"},
