@@ -90,9 +90,9 @@ def material_file_to_dict(file_path):
             if line[5] == " ":
                 n += 1
 
-                data = line.split(" ")
+                data = line.strip().split(" ")
                 data = [x for x in data if x]
-                data.remove("\n")
+                #data.remove('\n')
                 data = [num(i) for i in data]
 
                 key = main_key + "-FUNCTION-" + sub_key_func

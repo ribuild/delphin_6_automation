@@ -13,12 +13,13 @@ import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 from  delphin_6_automation import database_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.database_interactions.material_interactions import upload_material_file
-
+from delphin_6_automation.simulation_worker import simulation_worker
 
 def main():
     print_header()
     config_mongo()
     main_menu()
+
 
 def print_header():
     print('---------------------------------------------------')
@@ -44,6 +45,7 @@ def main_menu():
         print("[g] Add Ribuild Geometry file to database")
         print("[f] Find simulation")
         print("[w] Queue and view weather data")
+        print("[s] Start simulation worker")
         print("[x] Exit")
         print()
 
@@ -66,6 +68,9 @@ def main_menu():
 
         elif choice == 'w':
             pass
+
+        elif choice == 's':
+            start_simulation()
 
         elif not choice or choice == 'x':
             print("see ya!")
@@ -119,7 +124,20 @@ def download_simulation_result():
         return
 
 
-#if __name__ == "__main__":
-#    main()
-config_mongo()
-upload_material_file("/users/thomasperkov/desktop/materialer/Brick_686.m6")
+def start_simulation():
+    answer = input("Have you read and followed the the PDF guideline for installing and setups? (y/n): ")
+    if answer == "y":
+        simulation_worker()
+    else:
+        print("Please start by reading and following the PDF guidelines!")
+        return
+
+
+if __name__ == "__main__":
+   # main()
+   config_mongo()
+   start_simulation()
+
+
+#config_mongo()
+#upload_material_file("/users/thomasperkov/desktop/materialer/Brick_686.m6")

@@ -128,3 +128,5 @@ def upload_needed_results(test_case: str) -> tuple:
         result_id = delphin_interactions.upload_results_to_database(result_folder + '/' + str(delphin_id))
 
         return result_id, delphin_id, material_ids
+
+

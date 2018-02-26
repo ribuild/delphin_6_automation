@@ -140,3 +140,18 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
         delphin_parser.dict_to_d6o(result_dict, result_name, result_path)
 
     return True
+
+def find_next_sim_in_queue():
+    # TODO - simulation queue
+
+    id = delphin_db.Delphin.objects(simulating=False).order_by('-queue_priority').first().id
+    set_simulation(str(id))
+    return str(id)
+
+
+def set_simulation(id):
+    # TODO - if fail then fix!
+    simulation = delphin_db.Delphin.objects(id=id).first()
+    simulation.update(set__simulating=True)
+
+    return simulation.id
