@@ -16,10 +16,11 @@ import delphin_6_automation.database_interactions.db_templates.delphin_entry as 
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
+
 try:
     from delphin_6_automation.database_interactions.auth import dtu_byg as authorisation
 except ModuleNotFoundError:
-    import delphin_6_automation.database_interactions.auth_travis as authorisation
+    from delphin_6_automation.database_interactions.auth_travis import test_db as authorisation
 
 import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
 import delphin_6_automation.database_interactions.material_interactions as material_interact

@@ -19,7 +19,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 try:
     from delphin_6_automation.database_interactions.auth import dtu_byg as authorisation
 except ModuleNotFoundError:
-    import delphin_6_automation.database_interactions.auth_travis as authorisation
+    from delphin_6_automation.database_interactions.auth_travis import test_db as authorisation
 
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
