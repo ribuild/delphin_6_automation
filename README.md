@@ -15,6 +15,6 @@ Thank you for contributing!
 
 Visit our documentation [here](https://ribuild.github.io/delphin_6_automation)
 
-[License (MIT)](.github/LICENSE.md)
+[License (MIT)](LICENSE.md)
 
 [Code of Conduct](.github/CODE_OF_CONDUCT.md)
