@@ -27,7 +27,7 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
         os.mkdir(folder)
 
     parameter_dict = {
-        "temperature": {"description": "Air temperature [°C] (TA)",
+        "temperature": {"description": "Air temperature [C] (TA)",
                         "intro": "TEMPER   C",
                         "factor": 1,
                         "abr": "TA"},
@@ -37,7 +37,7 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                              "factor": 1,
                              "abr": "HREL"},
 
-        "diffuse_radiation": {"description": "Diffuse Horizontal Solar Radiation [W/m²] (ISD)",
+        "diffuse_radiation": {"description": "Diffuse Horizontal Solar Radiation [W/m2] (ISD)",
                              "intro": "DIFRAD   W/m2",
                              "factor": 1,
                              "abr": "ISD"},
@@ -72,12 +72,12 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                           "factor": 1,
                           "abr": "PSTA"},
 
-        "long_wave_radiation": {"description": "Atmospheric Horizontal Long wave Radiation [W/m²] (ILTH)",
+        "long_wave_radiation": {"description": "Atmospheric Horizontal Long wave Radiation [W/m2] (ILTH)",
                          "intro": "SKYEMISS  W/m2",
                          "factor": 1,
                          "abr": "ILTH"},
 
-        "TerrainCounterRadiation": {"description": "Terrain counter radiation [W/m²](ILAH)",
+        "TerrainCounterRadiation": {"description": "Terrain counter radiation [W/m2](ILAH)",
                                     "intro": "GRINDEMISS  W/m2",
                                     "factor": 1,
                                     "abr": "ILAH"},
@@ -91,7 +91,7 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                                        "intro": "RELHUM   %",
                                        "factor": 1},
 
-        "indoor_temperature": {"description": "Indoor Air temperature after EN15026 [°C] (TA)",
+        "indoor_temperature": {"description": "Indoor Air temperature after EN15026 [C] (TA)",
                                  "intro": "TEMPER   C",
                                  "factor": 1},
     }
