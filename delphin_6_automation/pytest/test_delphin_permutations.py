@@ -10,16 +10,12 @@ import os
 import xmltodict
 
 # RiBuild Modules:
-from delphin_6_automation.database_interactions.auth import dtu_byg
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
-from delphin_6_automation.database_interactions import mongo_setup
 import delphin_6_automation.pytest.pytest_helper_functions as helper
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
-
-mongo_setup.global_init(dtu_byg)
 
 
 def test_get_layers_1():

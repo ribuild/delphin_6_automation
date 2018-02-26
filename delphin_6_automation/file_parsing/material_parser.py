@@ -17,6 +17,10 @@ import datetime
 
 
 class MyNumber:
+    """
+    Makes it possible to have 3 digits after the e of a scientific notation.
+    """
+
     def __init__(self, val):
         self.val = val
 

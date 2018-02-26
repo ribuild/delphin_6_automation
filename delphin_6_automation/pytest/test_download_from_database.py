@@ -14,8 +14,12 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import dtu_byg
 from delphin_6_automation.database_interactions import delphin_interactions
+
+try:
+    from delphin_6_automation.database_interactions.auth import dtu_byg as authorisation
+except ModuleNotFoundError:
+    import delphin_6_automation.database_interactions.auth_travis as authorisation
 
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
@@ -26,7 +30,7 @@ import delphin_6_automation.pytest.pytest_helper_functions as helper
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
 
-mongo_setup.global_init(dtu_byg)
+mongo_setup.global_init(authorisation)
 
 
 def test_download_results_1():

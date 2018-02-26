@@ -16,7 +16,11 @@ import delphin_6_automation.database_interactions.db_templates.delphin_entry as 
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
-from delphin_6_automation.database_interactions.auth import dtu_byg
+try:
+    from delphin_6_automation.database_interactions.auth import dtu_byg as authorisation
+except ModuleNotFoundError:
+    import delphin_6_automation.database_interactions.auth_travis as authorisation
+
 import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
 import delphin_6_automation.database_interactions.material_interactions as material_interact
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
@@ -27,7 +31,7 @@ import delphin_6_automation.pytest.pytest_helper_functions as helper
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
 
-mongo_setup.global_init(dtu_byg)
+mongo_setup.global_init(authorisation)
 
 
 def test_upload_weather_1():
