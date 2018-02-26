@@ -2,9 +2,9 @@
 - Submit an issue describing your proposed change.
 - We will respond to your issue as quickly as possible.
 - Fork delphin_6_automation, develop and test your code changes.
-- Ensure that your code adheres to the existing style. A style guide can be found below.
-- Ensure that your code has an appropriate set of tests which all pass.
-- Submit a pull request! 
+- Ensure that your code adheres to the existing style. Our style guide can be found below.
+- Ensure that your code has an appropriate set of tests, which all pass.
+- Submit your pull request! 
 
 ## Style Guide
 
@@ -21,6 +21,6 @@ Please refer to your initial issue in the comments of the pull request.
 
 ## Tests
 
-We run our tests with PyTest and we would prefer if you do so for the pull requests.
+We run our tests with [PyTest](https://docs.pytest.org/en/latest/) and we would prefer if you do so for the pull requests.
 
-All pull requests are checked with Travis CI it make sure new functionality does not break old. 
+All pull requests are checked with [Travis CI](https://travis-ci.org/) it make sure new functionality does not break old. 
