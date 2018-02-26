@@ -1,9 +1,11 @@
-# delphin_6_automation
-Automation script for the hygrothermal simulation program Delphin 6 made under the EU research project, RIBuild.
+[![Build Status](https://travis-ci.org/ribuild/delphin_6_automation.svg?branch=master)](https://travis-ci.org/ribuild/delphin_6_automation)
 
+# Delphin 6 Automation
+Automation script for the hygrothermal simulation program Delphin 6 made under the EU research project: [RIBuild](http://ribuild.eu/).
+
+Visit our documentation [here](https://ribuild.github.io/delphin_6_automation)
 
 ## License
-
 
 Copyright 2018 Thomas Perkov & Christian Kongsgaard Nielsen
 
