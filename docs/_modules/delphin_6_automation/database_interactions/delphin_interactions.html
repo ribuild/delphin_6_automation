@@ -1,0 +1,226 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>delphin_6_automation.database_interactions.delphin_interactions &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for delphin_6_automation.database_interactions.delphin_interactions</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
+
+<span class="c1"># delphin_6_automation simulation.simulation_process</span>
+<span class="c1"># Folder intended for everything related to the simulation itself on the computer pools.</span>
+
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># IMPORTS</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="kn">import</span> <span class="nn">delphin_6_automation.database_interactions.db_templates.result_raw_entry</span> <span class="k">as</span> <span class="nn">result_db</span>
+<span class="c1"># Modules:</span>
+<span class="kn">import</span> <span class="nn">xmltodict</span>
+
+<span class="c1"># RiBuild Modules:</span>
+<span class="kn">import</span> <span class="nn">delphin_6_automation.database_interactions.db_templates.delphin_entry</span> <span class="k">as</span> <span class="nn">delphin_db</span>
+<span class="kn">import</span> <span class="nn">delphin_6_automation.database_interactions.material_interactions</span> <span class="k">as</span> <span class="nn">material_interact</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.file_parsing</span> <span class="k">import</span> <span class="n">delphin_parser</span>
+
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># DELPHIN FUNCTIONS AND CLASSES</span>
+
+
+<div class="viewcode-block" id="upload_delphin_to_database"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_to_database">[docs]</a><span class="k">def</span> <span class="nf">upload_delphin_to_database</span><span class="p">(</span><span class="n">delphin_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>  <span class="n">queue_priority</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uploads a Delphin file to a database.rst.</span>
+
+<span class="sd">    :param delphin_file: Path to a Delphin 6 project file</span>
+<span class="sd">    :param queue_priority: Queue priority for the simulation</span>
+<span class="sd">    :return: Database entry id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="p">()</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">queue_priority</span> <span class="o">=</span> <span class="n">queue_priority</span>
+
+    <span class="n">delphin_dict</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">dp6_to_dict</span><span class="p">(</span><span class="n">delphin_file</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">dp6_file</span> <span class="o">=</span> <span class="n">delphin_dict</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">materials</span> <span class="o">=</span> <span class="n">material_interact</span><span class="o">.</span><span class="n">find_material_ids</span><span class="p">(</span><span class="n">material_interact</span><span class="o">.</span><span class="n">list_project_materials</span><span class="p">(</span><span class="n">entry</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Discretization&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Discretization&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">entry</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">id</span></div>
+
+
+<div class="viewcode-block" id="download_delphin_entry"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.delphin_interactions.download_delphin_entry">[docs]</a><span class="k">def</span> <span class="nf">download_delphin_entry</span><span class="p">(</span><span class="n">document_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a database.rst entry to Delphin 6 project file.</span>
+
+<span class="sd">    :param document_id: Database entry id.</span>
+<span class="sd">    :param path: Path to where the files should be written.</span>
+<span class="sd">    :return: True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">document_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
+    <span class="n">xmltodict</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">document_id</span> <span class="o">+</span> <span class="s1">&#39;.d6p&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">pretty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="upload_results_to_database"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.delphin_interactions.upload_results_to_database">[docs]</a><span class="k">def</span> <span class="nf">upload_results_to_database</span><span class="p">(</span><span class="n">path_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delete_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uploads the results from a Delphin simulation.</span>
+
+<span class="sd">    :param path_: folder path containing the result files</span>
+<span class="sd">    :param delete_files: if True the result folder will be deleted. Default is True</span>
+<span class="sd">    :return: Result entry id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">id_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path_</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">delphin_entry</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result_path</span> <span class="o">=</span> <span class="n">path_</span> <span class="o">+</span> <span class="s1">&#39;/results&#39;</span>
+    <span class="n">log_path</span> <span class="o">=</span> <span class="n">path_</span> <span class="o">+</span> <span class="s1">&#39;/log&#39;</span>
+    <span class="n">geometry_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">meta_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">result_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">result_path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">result_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.d6o&#39;</span><span class="p">):</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="n">result_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">meta_dict</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">result_path</span><span class="p">,</span> <span class="n">result_file</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">result_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.g6a&#39;</span><span class="p">):</span>
+            <span class="n">geometry_dict</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">g6a_to_dict</span><span class="p">(</span><span class="n">result_path</span><span class="p">,</span> <span class="n">result_file</span><span class="p">)</span>
+
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">result_db</span><span class="o">.</span><span class="n">Result</span><span class="p">()</span>
+
+    <span class="n">entry</span><span class="o">.</span><span class="n">delphin</span> <span class="o">=</span> <span class="n">delphin_entry</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">log</span><span class="p">[</span><span class="s1">&#39;integrator_cvode_stats&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">cvode_stats_to_dict</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">log</span><span class="p">[</span><span class="s1">&#39;les_direct_stats&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">les_stats_to_dict</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">log</span><span class="p">[</span><span class="s1">&#39;progress&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">progress_to_dict</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">geometry_file</span> <span class="o">=</span> <span class="n">geometry_dict</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">result_dict</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">simulation_started</span> <span class="o">=</span> <span class="n">meta_dict</span><span class="p">[</span><span class="s1">&#39;created&#39;</span><span class="p">]</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">geometry_file_hash</span> <span class="o">=</span> <span class="n">meta_dict</span><span class="p">[</span><span class="s1">&#39;geo_file_hash&#39;</span><span class="p">]</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="c1"># Add results reference to Delphin entry</span>
+    <span class="n">delphin_entry</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">push__results_raw</span><span class="o">=</span><span class="n">entry</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">delete_files</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">path_</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">id</span></div>
+
+
+<div class="viewcode-block" id="download_result_files"><a class="viewcode-back" href="../../../database.html#delphin_6_automation.database_interactions.delphin_interactions.download_result_files">[docs]</a><span class="k">def</span> <span class="nf">download_result_files</span><span class="p">(</span><span class="n">result_obj</span><span class="p">:</span> <span class="n">result_db</span><span class="o">.</span><span class="n">Result</span><span class="p">,</span> <span class="n">download_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes out all the result files from a result database.rst entry.</span>
+
+<span class="sd">    :param result_obj: Database entry</span>
+<span class="sd">    :param download_path: Where to write the files</span>
+<span class="sd">    :return: True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">result_dict</span> <span class="o">=</span> <span class="n">result_obj</span><span class="o">.</span><span class="n">to_mongo</span><span class="p">()</span>
+
+    <span class="n">result_path</span> <span class="o">=</span> <span class="n">download_path</span> <span class="o">+</span> <span class="s1">&#39;/results&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">result_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">result_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">result_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">result_path</span><span class="p">)</span>
+
+    <span class="n">delphin_parser</span><span class="o">.</span><span class="n">dict_to_g6a</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">result_obj</span><span class="o">.</span><span class="n">geometry_file</span><span class="p">),</span> <span class="n">result_path</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">result_name</span> <span class="ow">in</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">delphin_parser</span><span class="o">.</span><span class="n">dict_to_d6o</span><span class="p">(</span><span class="n">result_dict</span><span class="p">,</span> <span class="n">result_name</span><span class="p">,</span> <span class="n">result_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

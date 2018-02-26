@@ -1,0 +1,337 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>delphin_6_automation.delphin_setup.weather_modeling &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for delphin_6_automation.delphin_setup.weather_modeling</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christian Kongsgaard&quot;</span>
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># IMPORTS</span>
+
+<span class="c1"># Modules:</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># RiBuild Modules:</span>
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># WEATHER MODELS</span>
+
+
+<div class="viewcode-block" id="convert_weather_to_indoor_climate"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.weather_modeling.convert_weather_to_indoor_climate">[docs]</a><span class="k">def</span> <span class="nf">convert_weather_to_indoor_climate</span><span class="p">(</span><span class="n">temperature</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">indoor_class</span><span class="p">,</span> <span class="n">calculation_method</span><span class="o">=</span><span class="s1">&#39;en15026&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">en13788</span><span class="p">(</span><span class="n">indoor_class_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">daily_temperature_average_</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Only the continental class is implemented.</span>
+
+<span class="sd">        :param indoor_class_: Either a or b</span>
+<span class="sd">        :type indoor_class_: str</span>
+<span class="sd">        :param daily_temperature_average_: daily average of air temperature</span>
+<span class="sd">        :type daily_temperature_average_: numpy array</span>
+<span class="sd">        :return: Indoor temperature and relative humidity</span>
+<span class="sd">        :rtype: tuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indoor_class</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Wrong indoor class. Type has to be a string. &quot;</span>
+                            <span class="n">f</span><span class="s2">&quot;Value given was: &gt;</span><span class="si">{indoor_class}</span><span class="s2">&lt; with type: {type(indoor_class)}&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">indoor_class_</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span>
+            <span class="n">delta_rh</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">indoor_class_</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>
+            <span class="n">delta_rh</span> <span class="o">=</span> <span class="mf">0.05</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Wrong indoor class. It has to be either a or b. Value given was: </span><span class="si">{indoor_class}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">indoor_temperature_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">indoor_relative_humidity_</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Create indoor temperature</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">daily_temperature_average_</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="n">indoor_temperature_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">:</span>
+                <span class="n">indoor_temperature_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">25</span><span class="p">,</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">indoor_temperature_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">15</span><span class="p">,</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+
+        <span class="c1"># Create indoor relative humidity</span>
+        <span class="k">for</span> <span class="n">rh</span> <span class="ow">in</span> <span class="n">daily_temperature_average_</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rh</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mi">10</span><span class="p">:</span>
+                <span class="n">indoor_relative_humidity_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">35</span> <span class="o">+</span> <span class="n">delta_rh</span><span class="p">,</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">rh</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">:</span>
+                <span class="n">indoor_relative_humidity_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">65</span> <span class="o">+</span> <span class="n">delta_rh</span><span class="p">,</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">indoor_relative_humidity_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">rh</span> <span class="o">+</span> <span class="mi">45</span> <span class="o">+</span> <span class="n">delta_rh</span><span class="p">,</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">indoor_temperature_</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">indoor_relative_humidity_</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">en15026</span><span class="p">(</span><span class="n">indoor_class_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">daily_temperature_average_</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Only the continental class is implemented.</span>
+
+<span class="sd">        :param indoor_class_: Either a or b</span>
+<span class="sd">        :type indoor_class_: str</span>
+<span class="sd">        :param daily_temperature_average_: daily average of air temperature</span>
+<span class="sd">        :type daily_temperature_average_: numpy array</span>
+<span class="sd">        :return: Indoor temperature and relative humidity</span>
+<span class="sd">        :rtype: tuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indoor_class</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Wrong indoor class. Type has to be a string. &quot;</span>
+                            <span class="n">f</span><span class="s2">&quot;Value given was: &lt; </span><span class="si">{indoor_class}</span><span class="s2"> &gt; with type: {type(indoor_class)}&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">indoor_class_</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span>
+            <span class="n">humidity_load</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+                             <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+                             <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">indoor_class_</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>
+            <span class="n">humidity_load</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                             <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+                             <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Wrong indoor class. It has to be either a or b. Value given was: </span><span class="si">{indoor_class}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">indoor_temperature_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">indoor_relative_humidity_</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Indoor temperature</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">daily_temperature_average_</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">daily_temperature_average_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="n">indoor_temperature_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">daily_temperature_average_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                <span class="n">indoor_temperature_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">25</span><span class="p">,</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">indoor_temperature_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">daily_temperature_average_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">15</span><span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+
+        <span class="c1"># Indoor relative humidity</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">daily_temperature_average_</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">daily_temperature_average_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">10</span><span class="p">:</span>
+                <span class="n">indoor_relative_humidity_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">humidity_load</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">],</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">daily_temperature_average_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                <span class="n">indoor_relative_humidity_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">humidity_load</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">],</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">indoor_relative_humidity_</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">daily_temperature_average_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">humidity_load</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">],</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">indoor_temperature_</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">indoor_relative_humidity_</span><span class="p">))</span>
+
+    <span class="c1"># Create daily temperature average</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">total_days</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span><span class="o">/</span><span class="mi">24</span><span class="p">)</span>
+    <span class="n">temperature_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="p">(</span><span class="n">total_days</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+    <span class="n">daily_temperature_average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">temperature_matrix</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">24</span>
+
+    <span class="k">if</span> <span class="n">calculation_method</span> <span class="o">==</span> <span class="s1">&#39;en15026&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">en15026</span><span class="p">(</span><span class="n">indoor_class</span><span class="p">,</span> <span class="n">daily_temperature_average</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">calculation_method</span> <span class="o">==</span> <span class="s1">&#39;en13788&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">en13788</span><span class="p">(</span><span class="n">indoor_class</span><span class="p">,</span> <span class="n">daily_temperature_average</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;The chosen calculation method is not recognized. Only en13788 or en15026 is allowed. &#39;</span>
+                         <span class="n">f</span><span class="s1">&#39;Method given was: </span><span class="si">{calculation_method}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="driving_rain"><a class="viewcode-back" href="../../../delphin_setup.html#delphin_6_automation.delphin_setup.weather_modeling.driving_rain">[docs]</a><span class="k">def</span> <span class="nf">driving_rain</span><span class="p">(</span><span class="n">vertical_rain</span><span class="p">,</span> <span class="n">wind_direction</span><span class="p">,</span> <span class="n">wind_speed</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">inclination</span><span class="o">=</span><span class="mi">90</span><span class="p">,):</span>
+
+    <span class="c1"># Load catch ratio and catch ratio parameters</span>
+    <span class="n">catch_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;catch_ratio.npy&#39;</span><span class="p">))</span>
+    <span class="n">catch_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">9.25</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mf">9.75</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+                        <span class="s1">&#39;horizontal rain intensity&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span>
+                                                      <span class="mf">12.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">],</span>
+                        <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+                        <span class="s1">&#39;wind speed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}</span>
+
+    <span class="c1"># Convert deg to rad</span>
+    <span class="n">orientation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">orientation</span><span class="p">)</span>
+    <span class="n">inclination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">inclination</span><span class="p">)</span>
+    <span class="n">wind_direction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">wind_direction</span><span class="p">])</span>
+
+    <span class="c1"># Calculate rain load on facade, for each time step</span>
+    <span class="n">horizontal_rain</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">wind_driven_rain</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">time_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vertical_rain</span><span class="p">)):</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">def calcRainLoad(path_climate, ori, number, loc=[5, 5], path_save=None):</span>
+<span class="sd">    # If the inclination of the wall is not specified, set default incination 90 deg</span>
+<span class="sd">    if not isinstance(ori, list):</span>
+<span class="sd">        ori = [ori]</span>
+<span class="sd">        ori.append(90)</span>
+
+<span class="sd">    # Load catch ratio and catch ratio parameters</span>
+<span class="sd">    catch_ratio = np.load(os.path.join(os.path.dirname(__file__), &#39;data&#39;, &#39;catch_ratio.npy&#39;))</span>
+<span class="sd">    catch_param = {&#39;height&#39;: [0.0, 5.0, 8.0, 8.5, 9.0, 9.25, 9.5, 9.75, 10.0],</span>
+<span class="sd">                   &#39;horizontal rain intensity&#39;: [0.0, 0.1, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0, 15.0,</span>
+<span class="sd">                                                 20.0, 25.0, 30.0],</span>
+<span class="sd">                   &#39;width&#39;: [0.0, 2.5, 5.0, 7.5, 10.0],</span>
+<span class="sd">                   &#39;wind speed&#39;: [0, 1, 2, 3, 4, 5, 6, 8, 10]}</span>
+
+<span class="sd">    # Calculate rain load on facade, for each time step</span>
+<span class="sd">    rain = list()</span>
+<span class="sd">    rain_v = list()</span>
+
+<span class="sd">    for t in range(len(rain_h)):</span>
+<span class="sd">        # Wind speed at facade</span>
+<span class="sd">        Vloc = windvel[t] * m.cos(winddir[t] - ori[1])</span>
+<span class="sd">        # Check if wind driven rain falls on facade</span>
+<span class="sd">        if rain_h[t] * Vloc &gt; 0:</span>
+<span class="sd">            </span>
+<span class="sd">            # STEP 1: interpolation based on vertical and horizontal location</span>
+<span class="sd">            # 1.1a Interpolation boundary for vertical location</span>
+<span class="sd">            k = len(catch_param[&#39;height&#39;]) - 2</span>
+<span class="sd">            for knm in range(len(catch_param[&#39;height&#39;]) - 1):</span>
+<span class="sd">                if loc[0] &gt;= catch_param[&#39;height&#39;][knm] and loc[0] &lt; catch_param[&#39;height&#39;][knm + 1]:</span>
+<span class="sd">                    k = knm</span>
+<span class="sd">                    break</span>
+<span class="sd">            </span>
+<span class="sd">            # 1.1b Interpolation boundary for horizontal location</span>
+<span class="sd">            l = len(catch_param[&#39;width&#39;]) - 2</span>
+<span class="sd">            for lnm in range(len(catch_param[&#39;width&#39;]) - 1):</span>
+<span class="sd">                if loc[1] &gt;= catch_param[&#39;width&#39;][lnm] and loc[1] &lt; catch_param[&#39;width&#39;][lnm + 1]:</span>
+<span class="sd">                    l = lnm</span>
+<span class="sd">                    break</span>
+<span class="sd">            </span>
+<span class="sd">            # 1.2 Interpolating horizontal and vertical location</span>
+<span class="sd">            # interpolating horizontal location for vertical location 1</span>
+<span class="sd">            x = loc[1]</span>
+<span class="sd">            x1, x2 = catch_param[&#39;width&#39;][l], catch_param[&#39;width&#39;][l + 1]</span>
+<span class="sd">            y1, y2 = catch_ratio[:, :, k, l], catch_ratio[:, :, k, l + 1]</span>
+<span class="sd">            catc5 = y1 + (y2 - y1) * ((x - x1) / (x2 - x1))</span>
+<span class="sd">            </span>
+<span class="sd">            # interpolating horizontal location for vertical location 2</span>
+<span class="sd">            y1, y2 = catch_ratio[:, :, k + 1, l], catch_ratio[:, :, k + 1, l + 1]</span>
+<span class="sd">            catc6 = y1 + (y2 - y1) * ((x - x1) / (x2 - x1))</span>
+<span class="sd">            </span>
+<span class="sd">            # interpolating vertical location for interpolated horizontal location</span>
+<span class="sd">            x = loc[0]</span>
+<span class="sd">            x1, x2 = catch_param[&#39;height&#39;][k], catch_param[&#39;height&#39;][k + 1]</span>
+<span class="sd">            catc = catc5 + (catc6 - catc5) * ((x - x1) / (x2 - x1))</span>
+
+<span class="sd">            # STEP 2: interpolation based on wind speed and rain intensity</span>
+<span class="sd">            # 2.1a Interpolation boundary for wind speed</span>
+<span class="sd">            i = catc.shape[0] - 2</span>
+<span class="sd">            for inm in range(catc.shape[0] - 1):</span>
+<span class="sd">                if Vloc &gt;= catch_param[&#39;wind speed&#39;][inm] and Vloc &lt; catch_param[&#39;wind speed&#39;][inm + 1]:</span>
+<span class="sd">                    i = inm</span>
+<span class="sd">                    break</span>
+<span class="sd">            </span>
+<span class="sd">            # 2.1a Interpolation boundary for rain intensity</span>
+<span class="sd">            j = catc.shape[1] - 2</span>
+<span class="sd">            for jnm in range(catc.shape[1] - 1):</span>
+<span class="sd">                if rain_h[t] &gt;= catch_param[&#39;horizontal rain intensity&#39;][jnm] and rain_h[t] &lt; \</span>
+<span class="sd">                        catch_param[&#39;horizontal rain intensity&#39;][jnm + 1]:</span>
+<span class="sd">                    j = jnm</span>
+<span class="sd">                    break</span>
+<span class="sd">            </span>
+<span class="sd">            # 2.2 Interpolation wind speed and rain intensity</span>
+<span class="sd">            # interpolating rain intensity for wind speed 1</span>
+<span class="sd">            x = rain_h[t]</span>
+<span class="sd">            x1, x2 = catch_param[&#39;horizontal rain intensity&#39;][j], catch_param[&#39;horizontal rain intensity&#39;][j + 1]</span>
+<span class="sd">            y1, y2 = catc[i, j], catc[i, j + 1]</span>
+<span class="sd">            cat5 = y1 + (y2 - y1) * ((x - x1) / (x2 - x1))</span>
+<span class="sd">            </span>
+<span class="sd">            # interpolating rain intensity for wind speed 2</span>
+<span class="sd">            y1, y2 = catc[i + 1, j], catc[i + 1, j + 1]</span>
+<span class="sd">            cat6 = y1 + (y2 - y1) * ((x - x1) / (x2 - x1))</span>
+<span class="sd">            </span>
+<span class="sd">            # interpolation wind speed for interpolated rain intensity</span>
+<span class="sd">            x = Vloc</span>
+<span class="sd">            x1, x2 = catch_param[&#39;wind speed&#39;][i], catch_param[&#39;wind speed&#39;][i + 1]</span>
+<span class="sd">            cat = (cat5 + (cat6 - cat5) * (x - x1) / (x2 - x1))</span>
+
+<span class="sd">            # STEP 3: Calculate wind driven rain</span>
+<span class="sd">            rain_v.append(rain_h[t] * cat)</span>
+
+<span class="sd">        # No wind driven rain on facade</span>
+<span class="sd">        else:</span>
+<span class="sd">            rain_v.append(0)</span>
+
+<span class="sd">        # Calculate total rain load (horizontal + wind driven) on facade</span>
+<span class="sd">        rain.append(round(rain_h[t] * m.cos(ori[1]) + rain_v[t] * m.sin(ori[1]), 8))</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
