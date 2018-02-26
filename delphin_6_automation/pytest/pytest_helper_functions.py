@@ -1,6 +1,5 @@
 __author__ = "Christian Kongsgaard"
 __license__ = "MIT"
-__version__ = "0.0.1"
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -14,7 +13,7 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.file_parsing import weather_parser
-import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST HELPER FUNCTIONS
