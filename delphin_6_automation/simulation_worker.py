@@ -7,6 +7,7 @@ __author__ = ''
 import os
 import platform
 from pathlib import Path
+import subprocess
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
@@ -59,7 +60,7 @@ def worker(id_, database):
         raise FileNotFoundError('Could not find result entry')
 
 
-def solve_delphin(file, delphin_exe = r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1):
+def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1):
     """Solves a delphin file"""
 
     verbosity = "verbosity-level=" + str(verbosity_level)
