@@ -1,6 +1,6 @@
 # ['Aberdeen', 'Aberdeen', 'Aberdeen']
 # Year [2020, 2021, 2022]
-# RIBuild - Hourly values, Wind Direction [°] (WD) 
+# RIBuild - Hourly values, Wind Direction [degrees] (WD) 
 
 WINDDIR   Deg
 

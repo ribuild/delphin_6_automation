@@ -1,6 +1,6 @@
 # ['Aberdeen', 'Aberdeen', 'Aberdeen']
 # Year [2020, 2021, 2022]
-# RIBuild - Hourly values, Indoor Air temperature after EN15026 [°C] (TA) 
+# RIBuild - Hourly values, Indoor Air temperature after EN15026 [C] (TA) 
 
 TEMPER   C
 

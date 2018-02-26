@@ -42,7 +42,7 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                              "factor": 1,
                              "abr": "ISD"},
 
-        "wind_direction": {"description": "Wind Direction [°] (WD)",
+        "wind_direction": {"description": "Wind Direction [degrees] (WD)",
                           "intro": "WINDDIR   Deg",
                           "factor": 1,
                           "abr": "WD"},
@@ -82,7 +82,7 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                                     "factor": 1,
                                     "abr": "ILAH"},
 
-        "GlobalRadiation": {"description": "Horizontal Global Solar Radiation [W/m²] (ISGH)",
+        "GlobalRadiation": {"description": "Horizontal Global Solar Radiation [W/m2] (ISGH)",
                             "intro": "SKYEMISS  W/m2",
                             "factor": 1,
                             "abr": "ISGH"},
