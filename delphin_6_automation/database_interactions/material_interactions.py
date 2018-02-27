@@ -30,7 +30,11 @@ def find_material_ids(project_materials: list) -> list:
     for material_pair in project_materials:
         material_entries.append(material_db.Material.objects(material_name=material_pair[0],
                                                              material_id=material_pair[1]).first())
-    return material_entries
+    if material_entries:
+        return material_entries
+    else:
+        raise FileNotFoundError('Materials does not exist in database. '
+                                'Please upload material files before uploading Delphin Projects')
 
 
 def list_project_materials(delphin_document: delphin_db.Delphin) -> list:
