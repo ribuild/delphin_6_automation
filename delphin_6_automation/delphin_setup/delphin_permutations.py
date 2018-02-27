@@ -9,12 +9,13 @@ import numpy as np
 from scipy.optimize import fsolve
 
 # RiBuild Modules:
+from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN PERMUTATION FUNCTIONS
 
 
-def change_layer_width(delphin_dict: dict, original_material: str, new_width: float) -> dict:
+def change_layer_width(delphin_dict, original_material: str, new_width: float) -> dict:
     """
     Changes the width of a single layer, while keeping number of elements in the project.
 
@@ -47,6 +48,28 @@ def change_layer_width(delphin_dict: dict, original_material: str, new_width: fl
                        f'{original_material}')
 
     return delphin_dict
+
+
+def change_layer_widths(delphin_dict: dict, layer_material: str, widths: list) -> list:
+    """
+    Creates a new Delphin dict with the width of each value in widths.
+
+    :param delphin_dict: Delphin dict to change.
+    :type delphin_dict: dict
+    :param layer_material: Name of material to change the width of.
+    :type layer_material: str
+    :param widths: New widths in m
+    :type widths: list
+    :return: List with modified Delphin dicts
+    :rtype: list
+    """
+
+    permutated_dicts = []
+
+    for width in widths:
+        permutated_dicts.append(change_layer_width(delphin_dict, layer_material, width))
+
+    return permutated_dicts
 
 
 def change_layer_material(delphin_dict: dict, original_material: str, new_material: dict) -> dict:

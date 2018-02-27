@@ -1,3 +1,26 @@
+__author__ = "Christian Kongsgaard"
+
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# IMPORTS
+
+# Modules:
+import os
+
+# RiBuild Modules:
+import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
+import delphin_6_automation.delphin_setup.delphin_permutations as permutations
+
+from delphin_6_automation.database_interactions.auth import dtu_byg
+from delphin_6_automation.database_interactions import general_interactions
+from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
+from delphin_6_automation.database_interactions.material_interactions import upload_material_file
+from delphin_6_automation.simulation_worker import simulation_worker
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# DELPHIN PERMUTATION FUNCTIONS
+
 """
 Backend user interface:
 - Add new simulation(s)
@@ -5,15 +28,6 @@ Backend user interface:
 - Queue and watch finished simulations
 """
 
-import os
-
-from delphin_6_automation.database_interactions.auth import dtu_byg
-
-import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
-from delphin_6_automation.database_interactions import general_interactions
-from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
-from delphin_6_automation.database_interactions.material_interactions import upload_material_file
-from delphin_6_automation.simulation_worker import simulation_worker
 
 def main():
     print_header()
@@ -40,6 +54,7 @@ def main_menu():
         print()
         print("Available actions:")
         print("[a] Add new simulation to queue")
+        print("[b] Add new simulation with permutation to queue")
         print("[l] List simulations")
         print("[m] Add Delphin material to the database")
         print("[g] Add Ribuild Geometry file to database")
@@ -52,7 +67,12 @@ def main_menu():
         choice = input("> ").strip().lower()
 
         if choice == 'a':
-            add_to_queue()
+            sim_id, _ = add_to_queue()
+            save_ids(sim_id)
+
+        elif choice == 'b':
+            id_list = add_permutations_to_queue()
+            save_ids(id_list)
 
         elif choice == 'l':
             list_latest_added_simulations()
@@ -84,12 +104,35 @@ def add_to_queue():
     print('Simulation ID:', sim_id,
           '\n To retrieve the results of a simulation the simulation ID is needed.')
 
+    return sim_id, general_interactions.queue_priorities(priority)
+
+
+def add_permutations_to_queue():
+    print('First upload the original file. Afterwards permutations can be chosen.')
+
+    id_list = []
+    original_id, priority = add_to_queue()
+    id_list.append(original_id)
+    id_list.append(list_permutation_options(original_id, priority))
+
+    return id_list
+
+
+def save_ids(simulation_id):
+
     save = str(input('Save Simulation ID to text file? (y/n)'))
     if save == 'y':
         print('Simulation will be saved on the Desktop as simulation_id.txt ')
         user_desktop = os.path.join(os.environ["HOMEPATH"], "Desktop")
         id_file = open(user_desktop + '/simulation_id.txt', 'w')
-        id_file.write(str(sim_id))
+
+        if not isinstance(simulation_id, list):
+            id_file.write(str(simulation_id))
+
+        else:
+            for id_ in simulation_id:
+                id_file.write(str(id_) + '\n')
+
         id_file.close()
 
     else:
@@ -97,14 +140,56 @@ def add_to_queue():
         return
 
 
+def list_permutation_options(original_id, priority):
+    print()
+    print("Available actions:")
+    print("[a] Change layer width")
+    print("[b] Change layer material")
+    print("[c] Change weather")
+    print("[d] Change wall orientation")
+    print("[e] Change boundary coefficient")
+    print("[x] Exit")
+    print()
+
+    choice = input("> ").strip().lower()
+
+    if choice == 'a':
+        ids = layer_width_permutation(original_id, priority)
+
+    elif choice == 'b':
+        ids = layer_material_permutation()
+
+    else:
+        ids = ''
+
+    return ids
+
+
+def layer_width_permutation(simulation_id, priority):
+
+    print('')
+    print("The layer will be identified by the name of the material in the layer.")
+
+    layer_material = input("What is the name of the material? >")
+    widths = input("Input wished layer widths in meter.\n"
+                   "If more than 1 width is wished, then the values have to be separated with a comma. >")
+    widths = [float(width.strip())
+              for width in widths.split(',')]
+
+    print('')
+    print(f'Following values given: {widths}')
+    print('')
+
+    ids = delphin_interactions.change_entry_layer_width(simulation_id, layer_material, widths, priority)
+
+    return ids
+
+
 def list_latest_added_simulations():
     documents = delphin_db.Delphin.objects.order_by("added_date")
 
     for document in documents:
-        print("ID: {} - Added: {} - With priority: {}".format(
-            document.id,
-            document.added_date,
-            document.queue_priority))
+        print(f"ID: {document.id} - Added: {document.added_date} - With priority: {document.queue_priority}")
 
 
 def add_delphin_material_to_db():
@@ -133,7 +218,5 @@ def start_simulation():
 
 
 if __name__ == "__main__":
-
-   config_mongo()
    main()
    #start_simulation()

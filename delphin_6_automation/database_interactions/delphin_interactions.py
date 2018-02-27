@@ -1,24 +1,20 @@
 __author__ = ""
 __license__ = "MIT"
-__version__ = "0.0.1"
-
-# delphin_6_automation simulation.simulation_process
-# Folder intended for everything related to the simulation itself on the computer pools.
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
+# Modules:
 import os
 import shutil
-
-import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
-# Modules:
 import xmltodict
 
 # RiBuild Modules:
+import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.database_interactions.material_interactions as material_interact
+import delphin_6_automation.delphin_setup.delphin_permutations as permutations
 from delphin_6_automation.file_parsing import delphin_parser
 
 
@@ -35,10 +31,23 @@ def upload_delphin_to_database(delphin_file: str,  queue_priority: int) -> delph
     :return: Database entry id
     """
 
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file)
+    entry_id = upload_delphin_dict_to_database(delphin_dict, queue_priority)
+
+    return entry_id
+
+
+def upload_delphin_dict_to_database(delphin_dict: dict,  queue_priority: int) -> delphin_db.Delphin.id:
+    """
+    Uploads a Delphin file to a database.rst.
+
+    :param delphin_dict: Dict with a Delphin 6 project
+    :param queue_priority: Queue priority for the simulation
+    :return: Database entry id
+    """
+
     entry = delphin_db.Delphin()
     entry.queue_priority = queue_priority
-
-    delphin_dict = delphin_parser.dp6_to_dict(delphin_file)
     entry.dp6_file = delphin_dict
     entry.materials = material_interact.find_material_ids(material_interact.list_project_materials(entry))
 
@@ -140,3 +149,16 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
         delphin_parser.dict_to_d6o(result_dict, result_name, result_path)
 
     return True
+
+
+def change_entry_layer_width(original_id, layer_material, widths, queue_priority):
+
+    delphin_document = delphin_db.Delphin.objects(id=original_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    modified_ids = []
+
+    for width in widths:
+        modified_dict = permutations.change_layer_width(delphin_dict, layer_material, width)
+        modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
+
+    return modified_ids
