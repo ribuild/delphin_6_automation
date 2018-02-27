@@ -49,23 +49,27 @@ def queue_priorities(priority: str)-> int:
     priority_list = [obj.queue_priority
                      for obj in delphin_db.Delphin.objects.order_by('queue_priority')]
 
-    min_priority = min(priority_list)
-    max_priority = max(priority_list)
-    span = max_priority - min_priority
-
-    if priority == 'high':
-        priority_number = int(max_priority)
-
-    elif priority == 'medium':
-        priority_number = int(span * 0.5 + min_priority)
-
-    elif priority == 'low':
-        priority_number = int(span * 0.25 + min_priority)
+    if not priority_list:
+        return 1
 
     else:
-        raise ValueError('priority has to be: high, medium or low. Value given was: ' + str(priority))
+        min_priority = min(priority_list)
+        max_priority = max(priority_list)
+        span = max_priority - min_priority
 
-    return priority_number
+        if priority == 'high':
+            priority_number = int(max_priority)
+
+        elif priority == 'medium':
+            priority_number = int(span * 0.5 + min_priority)
+
+        elif priority == 'low':
+            priority_number = int(span * 0.25 + min_priority)
+
+        else:
+            raise ValueError('priority has to be: high, medium or low. Value given was: ' + str(priority))
+
+        return priority_number
 
 
 def add_to_simulation_queue(delphin_file: str, priority: str)-> str:

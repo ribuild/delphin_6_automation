@@ -10,7 +10,7 @@ import os
 from delphin_6_automation.database_interactions.auth import dtu_byg
 
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
-from  delphin_6_automation import database_interactions
+from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.database_interactions.material_interactions import upload_material_file
 from delphin_6_automation.simulation_worker import simulation_worker
@@ -80,7 +80,7 @@ def main_menu():
 def add_to_queue():
     delphin_file = str(input("File path for the Delphin file >"))
     priority = str(input("Simulation Priority - high, medium or low >"))
-    sim_id = database_interactions.general_interactions.add_to_simulation_queue(delphin_file, priority)
+    sim_id = general_interactions.add_to_simulation_queue(delphin_file, priority)
     print('Simulation ID:', sim_id,
           '\n To retrieve the results of a simulation the simulation ID is needed.')
 
@@ -112,13 +112,12 @@ def add_delphin_material_to_db():
     upload_material_file(user_input)
 
 
-
 def download_simulation_result():
     sim_id = str(input('Simulation ID to retrieve? >'))
-    if db_interact.general_interactions.is_simulation_finished(sim_id):
+    if general_interactions.is_simulation_finished(sim_id):
         print('Simulation is ready to download.')
         download_path = str(input('Download Path? >'))
-        db_interact.general_interactions.download_raw_result(sim_id, download_path)
+        general_interactions.download_raw_result(sim_id, download_path)
     else:
         print('Simulation is not done yet. Please return later')
         return
@@ -134,10 +133,7 @@ def start_simulation():
 
 
 if __name__ == "__main__":
-   # main()
+
    config_mongo()
-   start_simulation()
-
-
-#config_mongo()
-#upload_material_file("/users/thomasperkov/desktop/materialer/Brick_686.m6")
+   main()
+   #start_simulation()

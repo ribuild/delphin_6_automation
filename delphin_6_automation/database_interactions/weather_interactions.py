@@ -108,7 +108,7 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
     return weather_dict
 
 
-def change_weather_location(delphin_id: str, weather: dict, folder: str):
+def change_weather_location(delphin_id: str, folder: str):
 
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
@@ -159,6 +159,6 @@ def download_weather(delphin_id: str, folder: str) -> bool:
         weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
                                                            delphin_document.indoor_climate)
     weather_parser.dict_to_ccd(weather, folder)
-    change_weather_location(delphin_id, weather, folder)
+    change_weather_location(delphin_id, folder)
 
     return True
