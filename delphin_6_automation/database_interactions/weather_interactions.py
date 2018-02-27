@@ -32,6 +32,17 @@ def list_project_weather(sim_id: str) -> list:
     return weather_list
 
 
+def assign_weather_by_name_and_years(delphin_id: str, weather_station_name: str, years: list) -> str:
+
+    weather_ids = []
+    for year in years:
+        weather_ids.append(weather_db.Weather.objects(location_name=weather_station_name, year=year).first().id)
+
+    delphin_id = assign_weather_to_project(delphin_id, weather_ids)
+
+    return delphin_id
+
+
 def assign_weather_to_project(delphin_id: str, weather_ids: list) -> str:
     """
     Assign weather to a Delphin entry
@@ -108,7 +119,7 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
     return weather_dict
 
 
-def change_weather_location(delphin_id: str, folder: str):
+def change_weather_file_location(delphin_id: str, folder: str):
 
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
@@ -159,6 +170,6 @@ def download_weather(delphin_id: str, folder: str) -> bool:
         weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
                                                            delphin_document.indoor_climate)
     weather_parser.dict_to_ccd(weather, folder)
-    change_weather_location(delphin_id, folder)
+    change_weather_file_location(delphin_id, folder)
 
     return True

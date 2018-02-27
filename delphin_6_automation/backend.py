@@ -9,11 +9,11 @@ import os
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
-import delphin_6_automation.delphin_setup.delphin_permutations as permutations
 
 from delphin_6_automation.database_interactions.auth import dtu_byg
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.database_interactions.material_interactions import upload_material_file
 from delphin_6_automation.simulation_worker import simulation_worker
@@ -67,7 +67,7 @@ def main_menu():
         choice = input("> ").strip().lower()
 
         if choice == 'a':
-            sim_id, _ = add_to_queue()
+            [sim_id, *_] = add_to_queue()
             save_ids(sim_id)
 
         elif choice == 'b':
@@ -101,19 +101,28 @@ def add_to_queue():
     delphin_file = str(input("File path for the Delphin file >"))
     priority = str(input("Simulation Priority - high, medium or low >"))
     sim_id = general_interactions.add_to_simulation_queue(delphin_file, priority)
+    climate_class = str(input('What climate class should be assigned? A or B can be chosen. >'))
+    weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
+    location_name, years = add_weather(sim_id)
     print('Simulation ID:', sim_id,
           '\n To retrieve the results of a simulation the simulation ID is needed.')
 
-    return sim_id, general_interactions.queue_priorities(priority)
+    return sim_id, general_interactions.queue_priorities(priority), location_name, years, climate_class
 
 
 def add_permutations_to_queue():
     print('First upload the original file. Afterwards permutations can be chosen.')
 
     id_list = []
-    original_id, priority = add_to_queue()
+    original_id, priority, location_name, years, climate_class = add_to_queue()
     id_list.append(original_id)
-    id_list.append(list_permutation_options(original_id, priority))
+    modified_ids = list_permutation_options(original_id, priority)
+
+    for id_ in modified_ids:
+        weather_interactions.assign_weather_by_name_and_years(id_, location_name, years)
+        weather_interactions.assign_indoor_climate_to_project(id_, climate_class)
+
+    id_list.extend(modified_ids)
 
     return id_list
 
@@ -138,6 +147,18 @@ def save_ids(simulation_id):
     else:
         print('Simulation ID was not saved.')
         return
+
+
+def add_weather(simulation_id):
+
+    location_name = str(input("What weather station should be used? >"))
+    years = input("Which years should be used?.\n"
+                  "If more than 1 year is wished, then the values have to be separated with a comma. >")
+    years = [int(year.strip())
+             for year in years.split(',')]
+    weather_interactions.assign_weather_by_name_and_years(simulation_id, location_name, years)
+
+    return location_name, years
 
 
 def list_permutation_options(original_id, priority):

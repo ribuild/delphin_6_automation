@@ -159,7 +159,7 @@ def change_entry_layer_width(original_id, layer_material, widths, queue_priority
 
     for width in widths:
         modified_dict = permutations.change_layer_width(delphin_dict, layer_material, width)
-        modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
+        modified_ids.append(str(upload_delphin_dict_to_database(modified_dict, queue_priority)))
 
     return modified_ids
 
@@ -172,6 +172,6 @@ def change_entry_layer_material(original_id, original_material, new_materials, q
 
     for material in new_materials:
         modified_dict = permutations.change_layer_material(delphin_dict, original_material, material)
-        modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
+        modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority).id)
 
     return modified_ids
