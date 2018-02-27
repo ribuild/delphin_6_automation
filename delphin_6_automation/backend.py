@@ -98,12 +98,15 @@ def main_menu():
 
 
 def add_to_queue():
+
     delphin_file = str(input("File path for the Delphin file >"))
     priority = str(input("Simulation Priority - high, medium or low >"))
-    sim_id = general_interactions.add_to_simulation_queue(delphin_file, priority)
     climate_class = str(input('What climate class should be assigned? A or B can be chosen. >'))
+
+    sim_id = general_interactions.add_to_simulation_queue(delphin_file, priority)
     weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
     location_name, years = add_weather(sim_id)
+
     print('Simulation ID:', sim_id,
           '\n To retrieve the results of a simulation the simulation ID is needed.')
 
