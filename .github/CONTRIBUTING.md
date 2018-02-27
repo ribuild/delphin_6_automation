@@ -1,4 +1,5 @@
 ## Contributing
+
 - Submit an issue describing your proposed change.
 - We will respond to your issue as quickly as possible.
 - Fork delphin_6_automation, develop and test your code changes.

@@ -3,3 +3,4 @@ lxml
 xmltodict
 numpy
 scipy
+pytest
