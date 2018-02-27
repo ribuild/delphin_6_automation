@@ -236,8 +236,3 @@ def start_simulation():
     else:
         print("Please start by reading and following the PDF guidelines!")
         return
-
-
-if __name__ == "__main__":
-   main()
-   #start_simulation()
