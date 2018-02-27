@@ -162,3 +162,16 @@ def change_entry_layer_width(original_id, layer_material, widths, queue_priority
         modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
 
     return modified_ids
+
+
+def change_entry_layer_material(original_id, original_material, new_materials, queue_priority):
+
+    delphin_document = delphin_db.Delphin.objects(id=original_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    modified_ids = []
+
+    for material in new_materials:
+        modified_dict = permutations.change_layer_material(delphin_dict, original_material, material)
+        modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
+
+    return modified_ids

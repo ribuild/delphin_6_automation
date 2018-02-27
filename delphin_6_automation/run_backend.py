@@ -141,6 +141,7 @@ def save_ids(simulation_id):
 
 
 def list_permutation_options(original_id, priority):
+
     print()
     print("Available actions:")
     print("[a] Change layer width")
@@ -157,7 +158,7 @@ def list_permutation_options(original_id, priority):
         ids = layer_width_permutation(original_id, priority)
 
     elif choice == 'b':
-        ids = layer_material_permutation()
+        ids = layer_material_permutation(original_id, priority)
 
     else:
         ids = ''
@@ -181,6 +182,26 @@ def layer_width_permutation(simulation_id, priority):
     print('')
 
     ids = delphin_interactions.change_entry_layer_width(simulation_id, layer_material, widths, priority)
+
+    return ids
+
+
+def layer_material_permutation(original_id, priority):
+
+    print('')
+    print("The layer will be identified by the name of the material in the layer.")
+
+    layer_material = input("What is the name of the material? >")
+    material_list = input("Input wished layer materials.\n"
+                          "If more than 1 width is wished, then the values have to be separated with a comma. >")
+    material_list = [material.strip()
+                     for material in material_list.split(',')]
+
+    print('')
+    print(f'Following values given: {material_list}')
+    print('')
+
+    ids = delphin_interactions.change_entry_layer_material(original_id, layer_material, material_list, priority)
 
     return ids
 
