@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DelphinProject xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de DelphinProject.xsd" fileVersion="6.4">
-	<ProjectInfo created="Mon Aug 14 11:49:57 2017" lastEdited="Mon Aug 14 14:16:10 2017">
+	<ProjectInfo created="Mon Aug 14 11:49:57 2017" lastEdited="ti feb 27 10:41:54 2018">
 		<Comment>&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;RiBuild Template&lt;/p&gt;</Comment>
 	</ProjectInfo>
 	<DirectoryPlaceholders>
@@ -46,11 +46,15 @@
 			</Interface>
 		</Interfaces>
 		<ClimateConditions>
-			<ClimateCondition name="Temp indoor" type="Temperature" kind="Constant">
-				<IBK:Parameter name="ConstantValue" unit="C">20</IBK:Parameter>
+			<ClimateCondition name="Temp indoor" type="Temperature" kind="TabulatedData">
+				<Filename>C:/Users/ocni/PycharmProjects/delphin_6_automation/delphin_6_automation/pytest/test_files/indoor_temperature.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
 			</ClimateCondition>
-			<ClimateCondition name="RH indoor" type="RelativeHumidity" kind="Constant">
-				<IBK:Parameter name="ConstantValue" unit="%">60</IBK:Parameter>
+			<ClimateCondition name="RH indoor" type="RelativeHumidity" kind="TabulatedData">
+				<Filename>C:/Users/ocni/PycharmProjects/delphin_6_automation/delphin_6_automation/pytest/test_files/climate/indoor_relative_humidity.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
 			</ClimateCondition>
 			<ClimateCondition name="Temp Out" type="Temperature" kind="TabulatedData">
 				<Filename>C:/Program Files (x86)/IBK/Delphin 5.9/DB_climate_data/Germany/Bremerhaven/Temperature.ccd</Filename>

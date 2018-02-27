@@ -122,8 +122,8 @@ def download_full_project_from_database(document_id: str, folder: str) -> bool:
     :return: True
     """
 
+    material_interactions.download_materials(document_id, folder + '/materials')
+    weather_interactions.download_weather(document_id, folder + '/weather')
     delphin_interact.download_delphin_entry(document_id, folder)
-    material_interactions.download_materials(document_id, folder)
-    weather_interactions.download_weather(document_id, folder)
 
     return True

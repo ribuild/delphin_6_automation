@@ -83,6 +83,26 @@ def upload_material_file(material_path: str) -> delphin_db.Delphin.id:
     return entry.id
 
 
+def change_material_location(delphin_id: str, path: str) -> str:
+    """
+    Changes the location of the material database location for the Delphin Project file.
+
+    :param delphin_id: ID of entry
+    :type delphin_id: str
+    :param path: Path to change it to
+    :type path: str
+    :return: ID of entry
+    :rtype: str
+    """
+
+    delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    delphin_dict['DelphinProject']['DirectoryPlaceholders']['Placeholder'][1]['#text'] = path
+    delphin_document.update(set__dp6_file=delphin_dict)
+
+    return delphin_document.id
+
+
 def download_materials(delphin_id: str, path: str) -> bool:
     """
     Downloads the materials of a Delphin Project
@@ -96,6 +116,10 @@ def download_materials(delphin_id: str, path: str) -> bool:
     """
 
     materials_list = delphin_db.Delphin.objects(id=delphin_id).first().materials
+    change_material_location(delphin_id, path)
+
+    if not os.path.isdir(path):
+        os.mkdir(path)
 
     for material in materials_list:
         material_parser.dict_to_m6(material, path)

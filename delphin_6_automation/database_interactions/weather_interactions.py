@@ -108,6 +108,48 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
     return weather_dict
 
 
+def change_weather_location(delphin_id: str, weather: dict, folder: str):
+
+    delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    climate_conditions = delphin_dict['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']
+
+    for index in range(0, len(climate_conditions)):
+            if climate_conditions[index]['@type'] == 'Temperature':
+                if 'indoor' in climate_conditions[index]['@name']:
+                    climate_conditions[index]['Filename'] = folder + '/indoor_temperature.ccd'
+                else:
+                    climate_conditions[index]['Filename'] = folder + '/temperature.ccd'
+
+            elif climate_conditions[index]['@type'] == 'RelativeHumidity':
+                if 'indoor' in climate_conditions[index]['@name']:
+                    climate_conditions[index]['Filename'] = folder + '/indoor_relative_humidity.ccd'
+                else:
+                    climate_conditions[index]['Filename'] = folder + '/relative_humidity.ccd'
+
+            elif climate_conditions[index]['@type'] == 'SWRadiationDiffuse':
+                climate_conditions[index]['Filename'] = folder + '/diffuse_radiation.ccd'
+
+            elif climate_conditions[index]['@type'] == 'SWRadiationDirect':
+                climate_conditions[index]['Filename'] = folder + '/direct_radiation.ccd'
+
+            elif climate_conditions[index]['@type'] == 'RainFluxHorizontal':
+                climate_conditions[index]['Filename'] = folder + '/vertical_rain.ccd'
+
+            elif climate_conditions[index]['@type'] == 'WindDirection':
+                climate_conditions[index]['Filename'] = folder + '/wind_direction.ccd'
+
+            elif climate_conditions[index]['@type'] == 'WindVelocity':
+                climate_conditions[index]['Filename'] = folder + '/wind_speed.ccd'
+
+            elif climate_conditions[index]['@type'] == 'LWRadiationBalance':
+                climate_conditions[index]['Filename'] = folder + '/long_wave_radiation.ccd'
+
+    delphin_document.update(set__dp6_file=delphin_dict)
+
+    return delphin_document.id
+
+
 def download_weather(delphin_id: str, folder: str) -> bool:
 
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
@@ -117,5 +159,6 @@ def download_weather(delphin_id: str, folder: str) -> bool:
         weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
                                                            delphin_document.indoor_climate)
     weather_parser.dict_to_ccd(weather, folder)
+    change_weather_location(delphin_id, weather, folder)
 
     return True
