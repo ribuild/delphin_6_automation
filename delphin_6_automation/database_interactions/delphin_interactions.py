@@ -13,7 +13,8 @@ import xmltodict
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
-import delphin_6_automation.database_interactions.material_interactions as material_interact
+from delphin_6_automation.database_interactions import material_interactions
+from delphin_6_automation.database_interactions import weather_interactions
 import delphin_6_automation.delphin_setup.delphin_permutations as permutations
 from delphin_6_automation.file_parsing import delphin_parser
 
@@ -37,7 +38,7 @@ def upload_delphin_to_database(delphin_file: str,  queue_priority: int) -> delph
     return entry_id
 
 
-def upload_delphin_dict_to_database(delphin_dict: dict,  queue_priority: int) -> delphin_db.Delphin.id:
+def upload_delphin_dict_to_database(delphin_dict: dict, queue_priority: int) -> delphin_db.Delphin.id:
     """
     Uploads a Delphin file to a database.rst.
 
@@ -49,7 +50,7 @@ def upload_delphin_dict_to_database(delphin_dict: dict,  queue_priority: int) ->
     entry = delphin_db.Delphin()
     entry.queue_priority = queue_priority
     entry.dp6_file = delphin_dict
-    entry.materials = material_interact.find_material_ids(material_interact.list_project_materials(entry))
+    entry.materials = material_interactions.find_material_ids(material_interactions.list_project_materials(entry))
 
     if len(delphin_dict['DelphinProject']['Discretization']) > 2:
         entry.dimensions = 3
@@ -186,5 +187,23 @@ def change_entry_orientation(original_id, orientation_list, queue_priority):
     for orientation in orientation_list:
         modified_dict = permutations.change_orientation(delphin_dict, orientation)
         modified_ids.append(str(upload_delphin_dict_to_database(modified_dict, queue_priority)))
+
+    return modified_ids
+
+
+def change_entry_weather(original_id, weather_stations, queue_priority):
+    delphin_document = delphin_db.Delphin.objects(id=original_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    modified_ids = []
+
+    for station in weather_stations['stations']:
+        print(station)
+        print(weather_stations['years'])
+        for index in range(len(weather_stations['years'])):
+            print(weather_stations['years'][index])
+            modified_id = str(upload_delphin_dict_to_database(delphin_dict, queue_priority))
+            weather_interactions.assign_weather_by_name_and_years(
+                modified_id, station, weather_stations['years'][index])
+            modified_ids.append(modified_id)
 
     return modified_ids

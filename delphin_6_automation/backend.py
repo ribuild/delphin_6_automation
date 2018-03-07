@@ -15,7 +15,7 @@ from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
-from delphin_6_automation.database_interactions.material_interactions import upload_material_file
+from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.simulation_worker import simulation_worker
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -123,8 +123,6 @@ def get_simulation_status(id_):
         if download == 'y':
             print(f'Simulation result will be saved on the Desktop as in the folder: {id_}')
             user_desktop = os.path.join(os.environ["HOMEPATH"], "Desktop")
-
-            print(type(delphin_document.results_raw))
             general_interactions.download_raw_result(delphin_document.results_raw.id, user_desktop + f'/{id_}')
 
 
@@ -208,11 +206,12 @@ def add_permutations_to_queue():
     id_list = []
     original_id, priority, location_name, years, climate_class = add_to_queue()
     id_list.append(original_id)
-    modified_ids = list_permutation_options(original_id, priority)
+    modified_ids, choice = list_permutation_options(original_id, priority)
 
-    for id_ in modified_ids:
-        weather_interactions.assign_weather_by_name_and_years(id_, location_name, years)
-        weather_interactions.assign_indoor_climate_to_project(id_, climate_class)
+    if choice != 'c':
+        for id_ in modified_ids:
+            weather_interactions.assign_weather_by_name_and_years(id_, location_name, years)
+            weather_interactions.assign_indoor_climate_to_project(id_, climate_class)
 
     id_list.extend(modified_ids)
 
@@ -285,7 +284,7 @@ def list_permutation_options(original_id, priority):
     else:
         ids = ''
 
-    return ids
+    return ids, choice
 
 
 def layer_width_permutation(simulation_id, priority):
@@ -329,9 +328,31 @@ def layer_material_permutation(original_id, priority):
 
 
 def weather_permutation(original_id, priority):
-    # TODO - weather_permutation
-    print('Not implemented')
-    return
+    print('')
+
+    weather_stations = {'years': [], 'stations': []}
+
+    stations = input("Input wished weather stations.\n"
+                     "If more than 1 weather station with the same years is wished, "
+                     "then the weather station have to be separated with a comma. >")
+
+    for station in stations.split(','):
+        weather_stations['stations'].append(station.strip())
+
+    year_list = input(f"Input wished years for the following weather stations: {stations}.\n"
+                  f"If more than 1 year is wished, then the years have to be separated with a comma. >")
+
+    year_list = [[int(year.strip())
+                  for year in years.strip().split(' ')]
+                 for years in year_list.split(',')]
+
+    weather_stations['years'] = year_list
+
+    print('')
+    print(f'Following values given: {weather_stations}')
+    print('')
+
+    return delphin_interactions.change_entry_weather(original_id, weather_stations, priority)
 
 
 def wall_permutation(original_id, priority):
@@ -365,8 +386,10 @@ def list_latest_added_simulations():
 
 
 def add_delphin_material_to_db():
+
     user_input = input("Please type the path a .m6 file or a folder with multiple files: ")
-    upload_material_file(user_input)
+    id_ = material_interactions.upload_material_file(user_input)
+    print(f'\nMaterial was upload with ID: {id_}')
 
 
 def download_delphin_material():

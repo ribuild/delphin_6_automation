@@ -34,23 +34,24 @@ def list_project_weather(sim_id: str) -> list:
 
 def assign_weather_by_name_and_years(delphin_id: str, weather_station_name: str, years: list) -> str:
 
-    weather_ids = []
+    weather_documents = []
     for year in years:
-        weather_ids.append(weather_db.Weather.objects(location_name=weather_station_name, year=year).first().id)
+        weather_documents.append(weather_db.Weather.objects(location_name=weather_station_name, year=year).first())
 
-    delphin_id = assign_weather_to_project(delphin_id, weather_ids)
+    print([w.id for w in weather_documents])
+    delphin_id = assign_weather_to_project(delphin_id, weather_documents)
 
     return delphin_id
 
 
-def assign_weather_to_project(delphin_id: str, weather_ids: list) -> str:
+def assign_weather_to_project(delphin_id: str, weather_documents: list) -> str:
     """
     Assign weather to a Delphin entry
 
     :param delphin_id: Delphin document database.rst ID
     :type delphin_id: str
-    :param weather_ids: List with weather entry IDs
-    :type weather_ids: list
+    :param weather_documents: List with weather entries
+    :type weather_documents: list
     :return: Database ID
     :rtype: str
     """
@@ -58,9 +59,10 @@ def assign_weather_to_project(delphin_id: str, weather_ids: list) -> str:
     # Save climate class to delphin document
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
 
-    for id_ in weather_ids:
-        weather_document = weather_db.Weather.objects(id=id_).first()
-        delphin_document.update(push__weather=weather_document)
+    if delphin_document.weather:
+        delphin_document.update(pull_all__weather=delphin_document.weather)
+
+    delphin_document.update(push_all__weather=weather_documents)
 
     return delphin_document.id
 
