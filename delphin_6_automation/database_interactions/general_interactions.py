@@ -12,6 +12,7 @@ __version__ = "0.0.1"
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry as result_db
 from delphin_6_automation.database_interactions.db_templates import weather_entry as weather_db
+from delphin_6_automation.database_interactions.db_templates import material_entry as material_db
 from delphin_6_automation.file_parsing import delphin_parser
 
 from delphin_6_automation.database_interactions import delphin_interactions as delphin_interact
@@ -157,3 +158,22 @@ def print_weather_stations_dict(weather_station_dict):
               f'{len(weather_station_dict[key]["years"])} years.\n'
               f'\t The years are: {weather_station_dict[key]["years"]}')
 
+
+def list_materials():
+    materials = dict()
+
+    for document in material_db.Material.objects():
+        materials[str(document.material_name)] = dict()
+        materials[str(document.material_name)]['material_id'] = document.material_id
+        materials[str(document.material_name)]['database_id'] = document.id
+
+    return materials
+
+
+def print_material_dict(materials):
+
+    for key in materials.keys():
+        print(f'Material:\n'
+              f'\tName: {key}\n'
+              f'\tDelphin Material ID: {materials[key]["material_id"]}\n'
+              f'\tDatabase ID: {materials[key]["database_id"]}\n')

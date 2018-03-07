@@ -55,7 +55,8 @@ def main_menu():
         print("Available actions:")
         print("[a] Add new simulation to queue")
         print("[b] Add new simulation with permutation to queue")
-        print("[l] List simulations")
+        print("[c] List simulations")
+        print("[d] List materials")
         print("[m] Add Delphin material to the database")
         print("[g] Add Ribuild Geometry file to database")
         print("[f] Find simulation")
@@ -74,8 +75,11 @@ def main_menu():
             id_list = add_permutations_to_queue()
             save_ids(id_list)
 
-        elif choice == 'l':
+        elif choice == 'c':
             list_latest_added_simulations()
+
+        elif choice == 'd':
+            view_material_data()
 
         elif choice == 'm':
             add_delphin_material_to_db()
@@ -95,6 +99,33 @@ def main_menu():
         elif not choice or choice == 'x':
             print("see ya!")
             break
+
+
+def view_material_data():
+
+    while True:
+        print('')
+        print("[l] List materials")
+        print("[m] Add Delphin material to the database")
+        print("[d] Download material")
+        print("[x] Return to main menu")
+        print('')
+
+        choice = input("> ").strip().lower()
+
+        if choice == 'l':
+            print('The RIBuild Database currently contains the following materials:\n')
+            materials = general_interactions.list_materials()
+            general_interactions.print_material_dict(materials)
+
+        elif choice == 'm':
+            add_delphin_material_to_db()
+
+        elif choice == 'd':
+            download_delphin_material()
+
+        elif choice == 'x':
+            return None
 
 
 def view_weather_data():
@@ -259,6 +290,12 @@ def list_latest_added_simulations():
 def add_delphin_material_to_db():
     user_input = input("Please type the path a .m6 file or a folder with multiple files: ")
     upload_material_file(user_input)
+
+
+def download_delphin_material():
+    # TODO - download_delphin_material
+    print('Not implemented')
+    return
 
 
 def download_simulation_result():
