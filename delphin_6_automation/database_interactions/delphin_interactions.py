@@ -173,16 +173,33 @@ def change_entry_layer_material(original_id, original_material, new_materials, q
     delphin_dict = dict(delphin_document.dp6_file)
     modified_ids = []
 
-    for material_name in new_materials:
-        material = material_db.Material.objects(material_name=material_name).first()
+    for new_material in new_materials:
 
-        material_dict = OrderedDict((('@name', f'{material_name} [{material.material_id}]'),
-                                     ('@color', str(material.material_data['IDENTIFICATION-COLOUR'])),
-                                     ('@hatchCode', str(material.material_data['IDENTIFICATION-HATCHING'])),
-                                     ('#text', '${Material Database}/' +
-                                      str(material.material_data['INFO-FILE'].split('/')[-1]))))
-        modified_dict = permutations.change_layer_material(delphin_dict, original_material, material_dict)
-        modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
+        if isinstance(new_material, str):
+            material = material_db.Material.objects(material_name=new_material).first()
+
+            material_dict = OrderedDict((('@name', f'{material.material_name} [{material.material_id}]'),
+                                         ('@color', str(material.material_data['IDENTIFICATION-COLOUR'])),
+                                         ('@hatchCode', str(material.material_data['IDENTIFICATION-HATCHING'])),
+                                         ('#text', '${Material Database}/' +
+                                          str(material.material_data['INFO-FILE'].split('/')[-1]))
+                                         )
+                                        )
+            modified_dict = permutations.change_layer_material(delphin_dict, original_material, material_dict)
+            modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
+
+        elif isinstance(new_material, int):
+            material = material_db.Material.objects(material_id=new_material).first()
+
+            material_dict = OrderedDict((('@name', f'{material.material_name} [{material.material_id}]'),
+                                         ('@color', str(material.material_data['IDENTIFICATION-COLOUR'])),
+                                         ('@hatchCode', str(material.material_data['IDENTIFICATION-HATCHING'])),
+                                         ('#text', '${Material Database}/' +
+                                          str(material.material_data['INFO-FILE'].split('/')[-1]))
+                                         )
+                                        )
+            modified_dict = permutations.change_layer_material(delphin_dict, original_material, material_dict)
+            modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
 
     return modified_ids
 

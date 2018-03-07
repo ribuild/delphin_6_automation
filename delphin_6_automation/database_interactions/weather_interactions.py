@@ -38,7 +38,6 @@ def assign_weather_by_name_and_years(delphin_id: str, weather_station_name: str,
     for year in years:
         weather_documents.append(weather_db.Weather.objects(location_name=weather_station_name, year=year).first())
 
-    print([w.id for w in weather_documents])
     delphin_id = assign_weather_to_project(delphin_id, weather_documents)
 
     return delphin_id

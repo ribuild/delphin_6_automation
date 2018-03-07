@@ -315,14 +315,20 @@ def layer_material_permutation(original_id, priority):
     layer_material = input("What is the name of the material? >")
     material_list = input("Input wished layer materials.\n"
                           "If more than 1 material is wished, then the values have to be separated with a comma. >")
-    material_list = [material.strip()
-                     for material in material_list.split(',')]
+    materials = []
+    for material in material_list.split(','):
+        try:
+            materials.append(int(material.strip()))
+            print('Material ID was given')
+        except ValueError:
+            materials.append(material.strip())
+            print('Matierial Name was given')
 
     print('')
-    print(f'Following values given: {material_list}')
+    print(f'Following values given: {materials}')
     print('')
 
-    ids = delphin_interactions.change_entry_layer_material(original_id, layer_material, material_list, priority)
+    ids = delphin_interactions.change_entry_layer_material(original_id, layer_material, materials, priority)
 
     return ids
 

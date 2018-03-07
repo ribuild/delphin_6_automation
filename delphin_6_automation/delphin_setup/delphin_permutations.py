@@ -5,7 +5,7 @@ __author__ = "Christian Kongsgaard"
 # IMPORTS
 
 # Modules:
-import numpy as np
+import copy
 from scipy.optimize import fsolve
 
 # RiBuild Modules:
@@ -86,20 +86,22 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
     :rtype: dict
     """
 
+    new_delphin_dict = copy.deepcopy(delphin_dict)
+
     # Find original material
     for mat_index in range(0, len(delphin_dict['DelphinProject']['Materials']['MaterialReference'])):
         if delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index]['@name'] == original_material:
             # Replace with new material
-            delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index] = new_material
+            new_delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index] = new_material
 
     # Find original material assignment
     for assign_index in range(0, len(delphin_dict['DelphinProject']['Assignments']['Assignment'])):
         if delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] == original_material:
             # Replace with new material
-            delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] = \
+            new_delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] = \
                 new_material['@name']
 
-    return delphin_dict
+    return new_delphin_dict
 
 
 def change_weather(delphin_dict: dict, original_weather: str, new_weather: str) -> dict:
