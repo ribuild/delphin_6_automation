@@ -80,7 +80,7 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
     :type delphin_dict: dict
     :param original_material: Name of material that should be changed.
     :type original_material: str
-    :param new_material: New material given as a dict. Dict should have the following keys: @name, @color, @hatchCode and #test.
+    :param new_material: New material given as a dict. Dict should have the following keys: @name, @color, @hatchCode and #text.
     :type new_material: dict
     :return: Modified Delphin dict
     :rtype: dict

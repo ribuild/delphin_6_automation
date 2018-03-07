@@ -9,10 +9,12 @@ __license__ = "MIT"
 import os
 import shutil
 import xmltodict
+from collections import OrderedDict
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
+import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 import delphin_6_automation.delphin_setup.delphin_permutations as permutations
@@ -171,9 +173,16 @@ def change_entry_layer_material(original_id, original_material, new_materials, q
     delphin_dict = dict(delphin_document.dp6_file)
     modified_ids = []
 
-    for material in new_materials:
-        modified_dict = permutations.change_layer_material(delphin_dict, original_material, material)
-        modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority).id)
+    for material_name in new_materials:
+        material = material_db.Material.objects(material_name=material_name).first()
+
+        material_dict = OrderedDict((('@name', f'{material_name} [{material.material_id}]'),
+                                     ('@color', str(material.material_data['IDENTIFICATION-COLOUR'])),
+                                     ('@hatchCode', str(material.material_data['IDENTIFICATION-HATCHING'])),
+                                     ('#text', '${Material Database}/' +
+                                      str(material.material_data['INFO-FILE'].split('/')[-1]))))
+        modified_dict = permutations.change_layer_material(delphin_dict, original_material, material_dict)
+        modified_ids.append(upload_delphin_dict_to_database(modified_dict, queue_priority))
 
     return modified_ids
 
