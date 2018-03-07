@@ -249,7 +249,7 @@ def convert_discretization_to_list(delphin_dict: dict) -> list:
     return x_list
 
 
-def sub_division(width: float, minimum_division: float, stretch_factor: float) -> list:
+def sub_division(width: float, stretch_factor: float,  minimum_division=0.001, maximum_division=0.2) -> list:
     """
     Creates a subdivision of the material to be used for the discretization.
 
@@ -263,41 +263,29 @@ def sub_division(width: float, minimum_division: float, stretch_factor: float) -
     :rtype: list
     """
 
-    sum_x = 0
+    processed_width = 0
     next_ = minimum_division
-    new_grid = []
-    max_dx = 20/100
-    x = width/2
+    left_side = []
+    right_side = []
 
-    while sum_x < x:
-        remaining = x - sum_x
+    while processed_width < width:
+        remaining = width - processed_width
 
-        if next_ > max_dx:
-            n = np.ceil(remaining/max_dx)
+        if next_*2 <= remaining:
+            left_side.append(next_)
+            right_side.append(next_)
+            processed_width += next_*2
 
-            if n == 0:
-                new_grid.append(remaining)
-
-            next_ = remaining/n
-
-            for _ in range(0, int(n)):
-                new_grid.append(next_)
-                sum_x += next_
-
-            remaining = x - sum_x
-
-        if next_ < remaining:
-            new_grid.append(next_)
-            sum_x += next_
         else:
-            remaining += new_grid[-1]
-            new_grid[-1] = remaining/2
-            new_grid.append(remaining/2)
-            sum_x = x
+            if remaining <= maximum_division:
+                left_side.append(remaining)
+                processed_width += remaining
+            else:
+                left_side.append(remaining/2)
+                right_side.append(remaining/2)
+                processed_width += remaining
 
-        next_ = next_ * stretch_factor
+        next_ = min(next_ * stretch_factor, maximum_division)
 
-    x1 = new_grid[::-1]
-    x2 = new_grid+x1
-
-    return x2
+    new_grid = left_side + right_side[::-1]
+    return new_grid

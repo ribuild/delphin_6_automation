@@ -217,7 +217,7 @@ def layer_material_permutation(original_id, priority):
 
     layer_material = input("What is the name of the material? >")
     material_list = input("Input wished layer materials.\n"
-                          "If more than 1 width is wished, then the values have to be separated with a comma. >")
+                          "If more than 1 material is wished, then the values have to be separated with a comma. >")
     material_list = [material.strip()
                      for material in material_list.split(',')]
 

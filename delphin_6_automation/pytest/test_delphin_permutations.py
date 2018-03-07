@@ -68,7 +68,7 @@ def test_change_layer_width():
 
     new_delphin = delphin_permutations.change_layer_width(delphin_dict, 'Normal Brick [512]', 1.0)
     xmltodict.unparse(new_delphin, output=open(test_path + '/modified_delphin_project.d6p', 'w'), pretty=True)
-    helper.clean_up_test_folders()
+    #helper.clean_up_test_folders()
 
     assert sum(delphin_permutations.convert_discretization_to_list(new_delphin)) - old_width - 0.65 <= 0.002
 
