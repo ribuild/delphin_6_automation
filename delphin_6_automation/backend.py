@@ -54,7 +54,7 @@ def main_menu():
         print()
         print("Available actions:")
         print("[a] Add new simulation to queue")
-        print("[b] Add new simulation with permutation to queue")
+        print("[b] Add new simulation with permutations to queue")
         print("[c] List simulations")
         print("[d] List materials")
         print("[m] Add Delphin material to the database")
@@ -234,6 +234,15 @@ def list_permutation_options(original_id, priority):
     elif choice == 'b':
         ids = layer_material_permutation(original_id, priority)
 
+    elif choice == 'c':
+        ids = weather_permutation(original_id, priority)
+
+    elif choice == 'd':
+        ids = wall_permutation(original_id, priority)
+
+    elif choice == 'e':
+        ids = boundary_permutation(original_id, priority)
+
     else:
         ids = ''
 
@@ -278,6 +287,35 @@ def layer_material_permutation(original_id, priority):
     ids = delphin_interactions.change_entry_layer_material(original_id, layer_material, material_list, priority)
 
     return ids
+
+
+def weather_permutation(original_id, priority):
+    # TODO - weather_permutation
+    print('Not implemented')
+    return
+
+
+def wall_permutation(original_id, priority):
+
+    print('')
+
+    orientation_list = input("Input wished orientations.\n"
+                             "If more than 1 orientation is wished, "
+                             "then the values have to be separated with a comma. >")
+    orientation_list = [int(orientation.strip())
+                        for orientation in orientation_list.split(',')]
+
+    print('')
+    print(f'Following values given: {orientation_list}')
+    print('')
+
+    return delphin_interactions.change_entry_orientation(original_id, orientation_list, priority)
+
+
+def boundary_permutation(original_id, priority):
+    # TODO - boundary_permutation
+    print('Not implemented')
+    return
 
 
 def list_latest_added_simulations():
