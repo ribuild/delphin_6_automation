@@ -88,7 +88,7 @@ def main_menu():
             add_geometry_file_to_db()
 
         elif choice == 'f':
-            pass
+            find_simulations()
 
         elif choice == 'w':
             view_weather_data()
@@ -99,6 +99,45 @@ def main_menu():
         elif not choice or choice == 'x':
             print("see ya!")
             break
+
+
+def get_simulation_status(id_):
+    delphin_document = delphin_db.Delphin.objects(id=id_).first()
+
+    if delphin_document.simulating:
+        status = "Is currently being simulated."
+    elif delphin_document.simulated:
+        status = f"Was simulated on {delphin_document.simulated}"
+    else:
+        status = 'Is waiting to be simulated'
+
+    print('')
+    print(f'Simulation with ID: {id_}\n'
+          f'\tAdded: {delphin_document.added_date}\n'
+          f'\t{status}')
+
+    if status == f"Was simulated on {delphin_document.simulated}":
+        print('')
+        download = input("Do you wish to download the results? y/n >")
+
+        if download == 'y':
+            print(f'Simulation result will be saved on the Desktop as in the folder: {id_}')
+            user_desktop = os.path.join(os.environ["HOMEPATH"], "Desktop")
+
+            print(type(delphin_document.results_raw))
+            general_interactions.download_raw_result(delphin_document.results_raw.id, user_desktop + f'/{id_}')
+
+
+def find_simulations():
+    print('')
+    print("The simulations will be identified by their database ID")
+
+    database_ids = input("What is the database ID?\n"
+                         "If more than 1 simulation is wished, then the IDs have to be separated with a comma. >")
+    database_ids = [id_.strip()
+                    for id_ in database_ids.split(',')]
+    for id_ in database_ids:
+        get_simulation_status(id_)
 
 
 def view_material_data():

@@ -6,7 +6,7 @@ __version__ = "0.0.1"
 # IMPORTS
 
 # Modules:
-
+import os
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
@@ -34,6 +34,9 @@ def download_raw_result(result_id: str, download_path: str) -> bool:
     """
 
     result_obj = result_db.Result.objects(id=result_id).first()
+
+    if not os.path.exists(download_path):
+        os.mkdir(download_path)
 
     delphin_parser.write_log_files(result_obj, download_path)
     delphin_interact.download_result_files(result_obj, download_path)
