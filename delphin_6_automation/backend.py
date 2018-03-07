@@ -1,4 +1,4 @@
-__author__ = "Christian Kongsgaard"
+__author__ = "Thomas Perkov"
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -87,7 +87,7 @@ def main_menu():
             pass
 
         elif choice == 'w':
-            pass
+            view_weather_data()
 
         elif choice == 's':
             start_simulation()
@@ -95,6 +95,25 @@ def main_menu():
         elif not choice or choice == 'x':
             print("see ya!")
             break
+
+
+def view_weather_data():
+
+    while True:
+        print('')
+        print("[v] List weather stations")
+        print("[x] Return to main menu")
+        print('')
+
+        choice = input("> ").strip().lower()
+
+        if choice == 'v':
+            print('The RIBuild Database currently contains the following weather stations:\n')
+            weather_stations = general_interactions.list_weather_stations()
+            general_interactions.print_weather_stations_dict(weather_stations)
+
+        elif choice == 'x':
+            return None
 
 
 def add_to_queue():
@@ -105,7 +124,7 @@ def add_to_queue():
 
     sim_id = general_interactions.add_to_simulation_queue(delphin_file, priority)
     weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
-    location_name, years = add_weather(sim_id)
+    location_name, years = add_weather_to_simulation(sim_id)
 
     print('Simulation ID:', sim_id,
           '\n To retrieve the results of a simulation the simulation ID is needed.')
@@ -152,7 +171,7 @@ def save_ids(simulation_id):
         return
 
 
-def add_weather(simulation_id):
+def add_weather_to_simulation(simulation_id):
 
     location_name = str(input("What weather station should be used? >"))
     years = input("Which years should be used?.\n"
