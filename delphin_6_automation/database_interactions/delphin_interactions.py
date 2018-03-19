@@ -233,3 +233,18 @@ def change_entry_weather(original_id, weather_stations, queue_priority):
             modified_ids.append(modified_id)
 
     return modified_ids
+
+
+def change_entry_boundary_coefficient(original_id, boundary_condition, coefficient_name,
+                                      coefficient_list, queue_priority):
+
+    delphin_document = delphin_db.Delphin.objects(id=original_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    modified_ids = []
+
+    for coefficient in coefficient_list:
+        modified_dict = permutations.change_boundary_coefficient(delphin_dict, boundary_condition,
+                                                                 coefficient_name, coefficient)
+        modified_ids.append(str(upload_delphin_dict_to_database(modified_dict, queue_priority)))
+
+    return modified_ids

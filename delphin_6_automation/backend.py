@@ -319,10 +319,10 @@ def layer_material_permutation(original_id, priority):
     for material in material_list.split(','):
         try:
             materials.append(int(material.strip()))
-            print('Material ID was given')
+            print('Material identified by ID')
         except ValueError:
             materials.append(material.strip())
-            print('Matierial Name was given')
+            print('Material identified by Material Name')
 
     print('')
     print(f'Following values given: {materials}')
@@ -346,7 +346,7 @@ def weather_permutation(original_id, priority):
         weather_stations['stations'].append(station.strip())
 
     year_list = input(f"Input wished years for the following weather stations: {stations}.\n"
-                  f"If more than 1 year is wished, then the years have to be separated with a comma. >")
+                      f"If more than 1 year is wished, then the years have to be separated with a comma. >")
 
     year_list = [[int(year.strip())
                   for year in years.strip().split(' ')]
@@ -380,8 +380,23 @@ def wall_permutation(original_id, priority):
 
 def boundary_permutation(original_id, priority):
     # TODO - boundary_permutation
-    print('Not implemented')
-    return
+
+    print('')
+
+    boundary_condition = input("Input wished boundary condition to change.\n")
+    coefficient_name = input("Input wished climate coefficient to change.\n")
+    coefficient_list = input("Input wished boundary coefficients.\n"
+                             "If more than 1 coefficient is wished, "
+                             "then the values have to be separated with a comma. >")
+    coefficient_list = [float(coefficient.strip())
+                        for coefficient in coefficient_list.split(',')]
+
+    print('')
+    print(f'Following values given: {coefficient_list}')
+    print('')
+
+    return delphin_interactions.change_entry_boundary_coefficient(original_id, boundary_condition, coefficient_name,
+                                                                  coefficient_list, priority)
 
 
 def list_latest_added_simulations():
