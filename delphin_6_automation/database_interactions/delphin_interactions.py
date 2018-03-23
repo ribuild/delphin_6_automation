@@ -154,7 +154,7 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
     return True
 
 
-def change_entry_layer_width(original_id, layer_material, widths, queue_priority):
+def permutate_entry_layer_width(original_id, layer_material, widths, queue_priority):
 
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
@@ -167,7 +167,7 @@ def change_entry_layer_width(original_id, layer_material, widths, queue_priority
     return modified_ids
 
 
-def change_entry_layer_material(original_id, original_material, new_materials, queue_priority):
+def permutate_entry_layer_material(original_id, original_material, new_materials, queue_priority):
 
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
@@ -204,7 +204,7 @@ def change_entry_layer_material(original_id, original_material, new_materials, q
     return modified_ids
 
 
-def change_entry_orientation(original_id, orientation_list, queue_priority):
+def permutate_entry_orientation(original_id, orientation_list, queue_priority):
 
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
@@ -217,7 +217,7 @@ def change_entry_orientation(original_id, orientation_list, queue_priority):
     return modified_ids
 
 
-def change_entry_weather(original_id, weather_stations, queue_priority):
+def permutate_entry_weather(original_id, weather_stations, queue_priority):
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     modified_ids = []
@@ -235,7 +235,7 @@ def change_entry_weather(original_id, weather_stations, queue_priority):
     return modified_ids
 
 
-def change_entry_boundary_coefficient(original_id, boundary_condition, coefficient_name,
+def permutate_entry_boundary_coefficient(original_id, boundary_condition, coefficient_name,
                                       coefficient_list, queue_priority):
 
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
@@ -248,3 +248,27 @@ def change_entry_boundary_coefficient(original_id, boundary_condition, coefficie
         modified_ids.append(str(upload_delphin_dict_to_database(modified_dict, queue_priority)))
 
     return modified_ids
+
+
+def permutate_entry_simulation_length(original_id, length_list, unit_list, queue_priority):
+    delphin_document = delphin_db.Delphin.objects(id=original_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    modified_ids = []
+
+    for unit in unit_list:
+        for length in length_list:
+            modified_dict = permutations.change_simulation_length(delphin_dict, length, unit)
+            modified_ids.append(str(upload_delphin_dict_to_database(modified_dict, queue_priority)))
+
+    return modified_ids
+
+
+def change_entry_simulation_length(sim_id, length, unit):
+
+    delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    permutations.change_simulation_length(delphin_dict, length, unit)
+
+    delphin_document.update(set__dp6_file=delphin_dict)
+
+    return delphin_document.id

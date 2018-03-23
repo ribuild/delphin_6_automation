@@ -7,6 +7,7 @@ __author__ = "Christian Kongsgaard"
 # Modules:
 import copy
 from scipy.optimize import fsolve
+from collections import namedtuple
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
@@ -291,3 +292,21 @@ def sub_division(width: float, stretch_factor: float,  minimum_division=0.001, m
 
     new_grid = left_side + right_side[::-1]
     return new_grid
+
+
+def change_simulation_length(delphin_dict: dict, simulation_length: int, length_unit: str) -> dict:
+
+    simulation_properties = delphin_dict['DelphinProject']['Init']['SimulationParameter']['Interval']['IBK:Parameter']
+    simulation_properties['#text'] = str(simulation_length)
+    simulation_properties['@unit'] = length_unit
+
+    return delphin_dict
+
+
+def get_simulation_length(delphin_dict: dict) -> tuple:
+
+    SimulationLength = namedtuple('SimulationLength', ['length', 'unit'])
+
+    simulation_properties = delphin_dict['DelphinProject']['Init']['SimulationParameter']['Interval']['IBK:Parameter']
+
+    return SimulationLength(int(simulation_properties['#text']), simulation_properties['@unit'])

@@ -122,3 +122,21 @@ def test_change_coefficient_2():
     helper.clean_up_test_folders()
     assert new_delphin['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition'][1]['IBK:Parameter'][0]['#text'] == str(3*10**-6)
     assert new_delphin['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition'][1]['IBK:Parameter'][1]['#text'] == str(3)
+
+
+def test_get_simulation_length():
+    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+    test_path, _ = helper.setup_test_folders()
+    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
+    length = delphin_permutations.get_simulation_length(delphin_dict)
+
+    assert length == (2, 'a')
+
+
+def test_change_simulation_length():
+    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+    test_path, _ = helper.setup_test_folders()
+    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
+    modified_dict = delphin_permutations.change_simulation_length(delphin_dict, 5, 'h')
+
+    assert delphin_permutations.get_simulation_length(modified_dict) == (5, 'h')

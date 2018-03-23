@@ -176,6 +176,7 @@ def view_weather_data():
         choice = input("> ").strip().lower()
 
         if choice == 'v':
+            print('Looking up the weather stations may take some time. Please wait.')
             print('The RIBuild Database currently contains the following weather stations:\n')
             weather_stations = general_interactions.list_weather_stations()
             general_interactions.print_weather_stations_dict(weather_stations)
@@ -194,8 +195,13 @@ def add_to_queue():
     weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
     location_name, years = add_weather_to_simulation(sim_id)
 
+    change_year = input('Do you wish to change the simulation length to match the weather input? [Y/n] >')
+    if change_year != 'n':
+        delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
+        print(f'Simulation length changed to {len(years)} a')
+
     print('Simulation ID:', sim_id,
-          '\n To retrieve the results of a simulation the simulation ID is needed.')
+          '\nTo retrieve the results of a simulation the simulation ID is needed.')
 
     return sim_id, general_interactions.queue_priorities(priority), location_name, years, climate_class
 
@@ -261,6 +267,7 @@ def list_permutation_options(original_id, priority):
     print("[c] Change weather")
     print("[d] Change wall orientation")
     print("[e] Change boundary coefficient")
+    print("[f] Change simulation length")
     print("[x] Exit")
     print()
 
@@ -280,6 +287,9 @@ def list_permutation_options(original_id, priority):
 
     elif choice == 'e':
         ids = boundary_permutation(original_id, priority)
+
+    elif choice == 'f':
+        ids = simulation_length_permutation(original_id, priority)
 
     else:
         ids = ''
@@ -302,7 +312,7 @@ def layer_width_permutation(simulation_id, priority):
     print(f'Following values given: {widths}')
     print('')
 
-    ids = delphin_interactions.change_entry_layer_width(simulation_id, layer_material, widths, priority)
+    ids = delphin_interactions.permutate_entry_layer_width(simulation_id, layer_material, widths, priority)
 
     return ids
 
@@ -328,7 +338,7 @@ def layer_material_permutation(original_id, priority):
     print(f'Following values given: {materials}')
     print('')
 
-    ids = delphin_interactions.change_entry_layer_material(original_id, layer_material, materials, priority)
+    ids = delphin_interactions.permutate_entry_layer_material(original_id, layer_material, materials, priority)
 
     return ids
 
@@ -358,7 +368,7 @@ def weather_permutation(original_id, priority):
     print(f'Following values given: {weather_stations}')
     print('')
 
-    return delphin_interactions.change_entry_weather(original_id, weather_stations, priority)
+    return delphin_interactions.permutate_entry_weather(original_id, weather_stations, priority)
 
 
 def wall_permutation(original_id, priority):
@@ -375,16 +385,15 @@ def wall_permutation(original_id, priority):
     print(f'Following values given: {orientation_list}')
     print('')
 
-    return delphin_interactions.change_entry_orientation(original_id, orientation_list, priority)
+    return delphin_interactions.permutate_entry_orientation(original_id, orientation_list, priority)
 
 
 def boundary_permutation(original_id, priority):
-    # TODO - boundary_permutation
 
     print('')
 
-    boundary_condition = input("Input wished boundary condition to change.\n")
-    coefficient_name = input("Input wished climate coefficient to change.\n")
+    boundary_condition = input("Input wished boundary condition to change. >")
+    coefficient_name = input("Input wished climate coefficient to change. >")
     coefficient_list = input("Input wished boundary coefficients.\n"
                              "If more than 1 coefficient is wished, "
                              "then the values have to be separated with a comma. >")
@@ -395,7 +404,7 @@ def boundary_permutation(original_id, priority):
     print(f'Following values given: {coefficient_list}')
     print('')
 
-    return delphin_interactions.change_entry_boundary_coefficient(original_id, boundary_condition, coefficient_name,
+    return delphin_interactions.permutate_entry_boundary_coefficient(original_id, boundary_condition, coefficient_name,
                                                                   coefficient_list, priority)
 
 
@@ -428,6 +437,27 @@ def download_simulation_result():
     else:
         print('Simulation is not done yet. Please return later')
         return
+
+
+def simulation_length_permutation(original_id, priority):
+    print('')
+
+    length_list = input("Input wished simulation lengths.\n"
+                        "If more than 1 length is wished, then the values have to be separated with a comma. >")
+    unit_list = input("Input wished simulation unit.\n"
+                      "If more than 1 unit is wished, then the values have to be separated with a comma. >")
+
+    length_list = [int(length.strip())
+                   for length in length_list.split(',')]
+
+    unit_list = [unit.strip()
+                 for unit in unit_list.split(',')]
+
+    print('')
+    print(f'Following simulation values given:\nLengths: {length_list}\nUnits: {unit_list}')
+    print('')
+
+    return delphin_interactions.permutate_entry_simulation_length(original_id, length_list, unit_list, priority)
 
 
 def start_simulation():
