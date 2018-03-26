@@ -8,6 +8,7 @@ import os
 import platform
 from pathlib import Path
 import subprocess
+from datetime import datetime
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions import simulation_interactions
@@ -45,9 +46,11 @@ def worker(id_):
         os.mkdir(delphin_path)
 
     # Download, solve, upload
+    time_0 = datetime.now()
     general_interactions.download_full_project_from_database(str(id_), delphin_path)
-    solve_delphin(delphin_path + '/' + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=1)
+    solve_delphin(delphin_path + '/' + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
     id_result = delphin_interactions.upload_results_to_database(delphin_path + '/' + id_)
+    delta_time = time_0 - datetime.now()
 
     # Check if uploaded:
     test_doc = result_db.Result.objects(id=id_result).first()
@@ -56,6 +59,7 @@ def worker(id_):
 
     if test_doc:
         simulation_interactions.clean_simulation_folder(delphin_path)
+        print(f'Finished solving {id_}. Simulation duration: {delta_time}')
         return True
     else:
         raise FileNotFoundError('Could not find result entry')
