@@ -50,7 +50,7 @@ def worker(id_):
     general_interactions.download_full_project_from_database(str(id_), delphin_path)
     solve_delphin(delphin_path + '/' + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
     id_result = delphin_interactions.upload_results_to_database(delphin_path + '/' + id_)
-    delta_time = time_0 - datetime.now()
+    delta_time = datetime.now() - time_0
 
     # Check if uploaded:
     test_doc = result_db.Result.objects(id=id_result).first()
@@ -59,7 +59,7 @@ def worker(id_):
 
     if test_doc:
         simulation_interactions.clean_simulation_folder(delphin_path)
-        print(f'Finished solving {id_}. Simulation duration: {delta_time}')
+        print(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
         return True
     else:
         raise FileNotFoundError('Could not find result entry')
@@ -68,7 +68,7 @@ def worker(id_):
 def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1):
     """Solves a delphin file"""
 
-    print(f'Solves {file}\n')
+    print(f'Solves {file}')
 
     verbosity = "verbosity-level=" + str(verbosity_level)
     command_string = '"' + str(delphin_exe) + '" --close-on-exit --' + verbosity + ' "' + file + '"'
