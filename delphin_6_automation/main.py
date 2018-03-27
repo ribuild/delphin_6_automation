@@ -8,6 +8,7 @@ __license__ = 'MIT'
 import os
 import sys
 import logging
+import logging.config
 
 source_folder = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, source_folder)
@@ -19,6 +20,9 @@ from delphin_6_automation.backend import *
 # BACKEND
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='simulation_worker.log', level=logging.DEBUG)
-    logging.info('Started')
-    main()
+    logging.config.fileConfig('logging.conf')
+    logger = logging.getLogger('ribuild-debug')
+    try:
+        main()
+    except Exception:
+        logger.exception('Error in main')
