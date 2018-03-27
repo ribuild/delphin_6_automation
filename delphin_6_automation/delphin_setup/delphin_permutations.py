@@ -1,5 +1,5 @@
 __author__ = "Christian Kongsgaard"
-
+__license__ = 'MIT'
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -17,6 +17,8 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 
 
 def change_layer_width(delphin_dict, original_material: str, new_width: float) -> dict:
+    # TODO - FIX LAYER WIDTH!!!
+
     """
     Changes the width of a single layer, while keeping number of elements in the project.
 
