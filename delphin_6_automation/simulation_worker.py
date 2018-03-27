@@ -9,6 +9,7 @@ import platform
 from pathlib import Path
 import subprocess
 from datetime import datetime
+import logging
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions import simulation_interactions
@@ -17,11 +18,11 @@ from delphin_6_automation.database_interactions import general_interactions
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 from delphin_6_automation.database_interactions.auth import dtu_byg
-from delphin_6_automation.ribuild_logger import logger
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION WORKER, DELPHIN SOLVER,
+logger = logging.getLogger(__name__)
 
 
 def worker(id_):
