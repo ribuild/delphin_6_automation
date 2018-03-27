@@ -8,6 +8,7 @@ __license__ = 'MIT'
 import logging
 import os
 from notifiers.logging import NotificationHandler
+import platform
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.auth import gmail
@@ -50,7 +51,7 @@ def notifiers_logger(name):
 
     # create console handler and set level to debug
     message_dict = {'to': 'ocni@dtu.dk',
-                    'subject': 'Fatal Error',
+                    'subject': f'Fatal Error on {platform.node()}',
                     'username': gmail['mail'],
                     'password': gmail['password']}
 
