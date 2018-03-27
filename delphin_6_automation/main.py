@@ -24,4 +24,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception:
+        print('Exited with error!')
         logger.exception('Error in main')

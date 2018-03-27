@@ -71,14 +71,16 @@ def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSo
     """Solves a delphin file"""
 
     print(f'Solves {file}')
+    logger.info(f'Solves {file}')
 
     verbosity = "verbosity-level=" + str(verbosity_level)
     command_string = '"' + str(delphin_exe) + '" --close-on-exit --' + verbosity + ' "' + file + '"'
     process = subprocess.run(command_string, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+
     output = process.stdout.decode()
     if output:
         logger.info(output)
-        print(output)
+
     return True
 
 
