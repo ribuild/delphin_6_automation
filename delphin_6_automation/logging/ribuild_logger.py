@@ -1,5 +1,19 @@
+__author__ = 'Christian Kongsgaard'
+__license__ = 'MIT'
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# IMPORTS
+
+# Modules:
 import logging
 import os
+from notifiers.logging import NotificationHandler
+
+# RiBuild Modules:
+from delphin_6_automation.database_interactions.auth import gmail
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# LOGGERS
 
 
 def ribuild_logger(name):
@@ -24,5 +38,32 @@ def ribuild_logger(name):
 
     # add ch to logger
     logger.addHandler(fh)
+
+    return logger
+
+
+def notifiers_logger(name):
+
+    # create logger
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.ERROR)
+
+    # create console handler and set level to debug
+    message_dict = {'to': 'ocni@dtu.dk',
+                    'subject': 'Fatal Error',
+                    'username': gmail['mail'],
+                    'password': gmail['password']}
+
+    nh = NotificationHandler('gmail', defaults=message_dict)
+    nh.setLevel(logging.ERROR)
+
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # add formatter to ch
+    nh.setFormatter(formatter)
+
+    # add ch to logger
+    logger.addHandler(nh)
 
     return logger

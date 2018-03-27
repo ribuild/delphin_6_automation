@@ -22,6 +22,7 @@ from delphin_6_automation.database_interactions.auth import dtu_byg
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION WORKER, DELPHIN SOLVER,
+
 logger = ribuild_logger(__name__)
 
 
