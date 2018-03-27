@@ -22,8 +22,10 @@ from delphin_6_automation.backend import main
 if __name__ == "__main__":
     local_logger = ribuild_logger(__name__)
     notifier_logger = notifiers_logger(__name__)
+
     try:
         main()
+
     except Exception:
         print('Exited with error!')
         notifier_logger.exception('Error in main')

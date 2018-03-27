@@ -4,3 +4,4 @@ xmltodict
 numpy
 scipy
 pytest
+notifiers
