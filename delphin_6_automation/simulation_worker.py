@@ -17,6 +17,7 @@ from delphin_6_automation.database_interactions import general_interactions
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 from delphin_6_automation.database_interactions.auth import dtu_byg
+from delphin_6_automation.ribuild_logger import logger
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -72,8 +73,10 @@ def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSo
 
     verbosity = "verbosity-level=" + str(verbosity_level)
     command_string = '"' + str(delphin_exe) + '" --close-on-exit --' + verbosity + ' "' + file + '"'
-
-    return subprocess.run(command_string, shell=True)
+    process = subprocess.run(command_string, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+    logger.info = process.stdout
+    logger.error = process.stderr
+    return True
 
 
 def github_updates():
