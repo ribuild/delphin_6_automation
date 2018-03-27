@@ -1,4 +1,5 @@
-__author__ = ''
+__author__ = 'Christian Kongsgaard, Thomas Perkov'
+__license__ = 'MIT'
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -11,7 +12,7 @@ import subprocess
 from datetime import datetime
 
 # RiBuild Modules:
-from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger, notifiers_logger
 from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import general_interactions
@@ -43,6 +44,7 @@ def worker(id_):
         delphin_path = home + '/ribuild'
         exe_path = ''
     else:
+        logger.error('OS not supported')
         raise NameError('OS not supported')
 
     if not os.path.isdir(delphin_path):
@@ -50,9 +52,11 @@ def worker(id_):
 
     # Download, solve, upload
     time_0 = datetime.now()
+
     general_interactions.download_full_project_from_database(str(id_), delphin_path)
     solve_delphin(delphin_path + '/' + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
     id_result = delphin_interactions.upload_results_to_database(delphin_path + '/' + id_)
+
     delta_time = datetime.now() - time_0
 
     # Check if uploaded:
@@ -63,8 +67,10 @@ def worker(id_):
     if test_doc:
         simulation_interactions.clean_simulation_folder(delphin_path)
         print(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
+        logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}')
         return True
     else:
+        logger.error('Could not find result entry')
         raise FileNotFoundError('Could not find result entry')
 
 
@@ -86,7 +92,7 @@ def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSo
 
 
 def github_updates():
-    # Check for github update to code
+    # TODO - Check for github update to code
     pass
 
 
@@ -105,5 +111,11 @@ def simulation_worker():
 if __name__ == "__main__":
     # Setup connection
     mongo_setup.global_init(dtu_byg)
+    notifier_logger = notifiers_logger(__name__)
 
-    simulation_worker()
+    try:
+        simulation_worker()
+
+    except Exception:
+        print('Exited with error!')
+        notifier_logger.exception('Error in main')
