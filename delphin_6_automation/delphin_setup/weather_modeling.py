@@ -1,4 +1,5 @@
 __author__ = "Christian Kongsgaard"
+__license__ = 'MIT'
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -126,15 +127,15 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
                          f'Method given was: {calculation_method}')
 
 
-def driving_rain(vertical_rain, wind_direction, wind_speed, location, orientation, inclination=90,):
+def driving_rain(precipitation, wind_direction, wind_speed, location, orientation, inclination=90, ):
 
     # Load catch ratio and catch ratio parameters
     catch_ratio = np.load(os.path.join(os.path.dirname(__file__), 'data', 'catch_ratio.npy'))
     catch_parameters = {'height': [0.0, 5.0, 8.0, 8.5, 9.0, 9.25, 9.5, 9.75, 10.0],
-                        'horizontal rain intensity': [0.0, 0.1, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0,
+                        'horizontal_rain_intensity': [0.0, 0.1, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0,
                                                       12.0, 15.0, 20.0, 25.0, 30.0],
                         'width': [0.0, 2.5, 5.0, 7.5, 10.0],
-                        'wind speed': [0, 1, 2, 3, 4, 5, 6, 8, 10]}
+                        'wind_speed': [0, 1, 2, 3, 4, 5, 6, 8, 10]}
 
     # Convert deg to rad
     orientation = np.deg2rad(orientation)
@@ -143,16 +144,21 @@ def driving_rain(vertical_rain, wind_direction, wind_speed, location, orientatio
                                for direction in wind_direction])
 
     # Calculate rain load on facade, for each time step
-    horizontal_rain = []
     wind_driven_rain = []
 
-    for time_index in range(len(vertical_rain)):
-        pass
+    for time_index in range(len(precipitation)):
+        local_wind = wind_speed[time_index] * np.cos(wind_direction[time_index] - orientation)
 
-    return None
+        # Check if wind driven rain falls on facade
+        if precipitation * local_wind > 0:
+            pass
+
+        else:
+            wind_driven_rain.append(0)
+
+    return wind_driven_rain
 
 
-"""
 def calcRainLoad(path_climate, ori, number, loc=[5, 5], path_save=None):
     # If the inclination of the wall is not specified, set default incination 90 deg
     if not isinstance(ori, list):
@@ -249,7 +255,6 @@ def calcRainLoad(path_climate, ori, number, loc=[5, 5], path_save=None):
 
         # Calculate total rain load (horizontal + wind driven) on facade
         rain.append(round(rain_h[t] * m.cos(ori[1]) + rain_v[t] * m.sin(ori[1]), 8))
-"""
 
 
 def short_wave_radiation():
