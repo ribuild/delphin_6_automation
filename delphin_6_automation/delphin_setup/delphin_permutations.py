@@ -8,17 +8,20 @@ __license__ = 'MIT'
 import copy
 from scipy.optimize import fsolve
 from collections import namedtuple
+import typing
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN PERMUTATION FUNCTIONS
 
 
 def change_layer_width(delphin_dict, original_material: str, new_width: float) -> dict:
-    # TODO - FIX LAYER WIDTH!!!
-
     """
     Changes the width of a single layer, while keeping number of elements in the project.
 
@@ -33,24 +36,99 @@ def change_layer_width(delphin_dict, original_material: str, new_width: float) -
     """
 
     layers = get_layers(delphin_dict)
-    x_list = convert_discretization_to_list(delphin_dict)
-    new_x_list = None
-
-    for layer in layers:
-        if layers[layer]['material'] == original_material:
-            range_ = layers[layer]['x_index']
-            steps = range_[1] - range_[0]
-            new_discretization = discrete_layer(new_width, steps)
-            new_x_list = x_list[:range_[0]] + new_discretization + x_list[range_[1]:]
-
-    if new_x_list:
-        delphin_dict['DelphinProject']['Discretization']['XSteps']['#text'] = ' '.join([str(value_)
-                                                                                        for value_ in new_x_list])
-    else:
-        raise KeyError(f'Could not find original_material in DelphinProject. original_material given was: '
-                       f'{original_material}')
+    layer = identify_layer(layers, original_material)
+    new_discretization = discretize_layer(new_width)
+    update_range_of_assignments(delphin_dict, layer, new_discretization)
 
     return delphin_dict
+
+
+def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
+    """
+    Returns a layer given a identifier of that layer. Identifiers can be name of the material or the index of the
+    material.
+
+    :param layers: Layers to look in
+    :type layers: dict
+    :param identifier: Identifier to identify layer by
+    :type identifier: str or int
+    :return: The found layer
+    :rtype: dict
+    """
+
+    if isinstance(identifier, int):
+        return layers[identifier]
+    elif isinstance(identifier, str):
+        for layer_ in layers:
+            if layers[layer_]['material'] == identifier:
+                return layers[layer_]
+    else:
+        error_message = f'identifier should be int or str. Type given was: {type(identifier)}'
+        logger.ERROR(error_message)
+        raise TypeError(error_message)
+
+
+def update_range_of_assignments(delphin_dict: dict, layer: dict, new_discretization: list) -> dict:
+    """
+    Update the ranges of all assignments in a Delphin dict, given a layer and a new discretization of that layer
+
+    :param delphin_dict: Delphin dict to update
+    :type delphin_dict: dict
+    :param layer: Layer to update
+    :type layer: dict
+    :param new_discretization: New discretization
+    :type new_discretization: list
+    :return: Updated Delphin dict
+    :rtype: dict
+    """
+
+    # Update discretization
+    current_x_list = convert_discretization_to_list(delphin_dict)
+    range_ = layer['x_index']
+    new_x_list = current_x_list[:range_[0]] + new_discretization + current_x_list[range_[1]:]
+    delphin_dict['DelphinProject']['Discretization']['XSteps']['#text'] = ' '.join([str(value_)
+                                                                                    for value_ in new_x_list])
+    # Update layer range
+    old_range_length = range_[1] - range_[0]
+    new_range_length = len(new_discretization)
+
+    if old_range_length == new_range_length:
+        return delphin_dict
+
+    else:
+        delta_range = new_range_length - old_range_length
+
+        for assignment in delphin_dict['DelphinProject']['Assignments']['Assignment']:
+            if assignment['@location'] != 'Coordinate':
+                update_assignment_range(assignment, delta_range, range_[1])
+
+        return delphin_dict
+
+
+def update_assignment_range(assignment: dict, delta_range: int, range_to_update_after: int) -> None:
+    """
+    Updates the range of a single assignment.
+
+    :param assignment: Assignment to change
+    :type assignment: dict
+    :param delta_range: Change in range
+    :type delta_range: int
+    :param range_to_update_after: After which the ranges should be updated
+    :type range_to_update_after: int
+    """
+
+    range_list = [int(r)
+                  for r in assignment['Range'].split(' ')]
+    if range_list[0] >= range_to_update_after:
+        range_list[0] += delta_range
+
+    if range_list[2] >= range_to_update_after:
+        range_list[2] += delta_range
+
+    assignment['Range'] = ' '.join([str(r)
+                                    for r in range_list])
+
+    return None
 
 
 def change_layer_widths(delphin_dict: dict, layer_material: str, widths: list) -> list:
@@ -215,29 +293,6 @@ def get_layers(delphin_dict: dict) -> dict:
     return layers_dict
 
 
-def discrete_layer(width: float, steps: int) -> list:
-    """
-    Discretization of width in a given number of steps.
-
-    :param width: Width in m
-    :type width: float
-    :param steps: Number of steps or discretizations to make.
-    :type steps: int
-    :return: A list with the discretizated values.
-    :rtype: list
-    """
-
-    min_x = 0.001
-    steps = steps/2
-
-    def sum_function(stretch_factor):
-        return width - min_x * ((1 - stretch_factor**steps)/(1 - stretch_factor))
-
-    stretch = float(fsolve(sum_function, 1.3)[0])
-
-    return sub_division(width, min_x, stretch)
-
-
 def convert_discretization_to_list(delphin_dict: dict) -> list:
     """
     Get the discretized elements of a project.
@@ -254,7 +309,7 @@ def convert_discretization_to_list(delphin_dict: dict) -> list:
     return x_list
 
 
-def sub_division(width: float, stretch_factor: float,  minimum_division=0.001, maximum_division=0.2) -> list:
+def discretize_layer(width: float, stretch_factor: float = 1.3,  minimum_division=0.001, maximum_division=0.2) -> list:
     """
     Creates a subdivision of the material to be used for the discretization.
 
@@ -293,6 +348,7 @@ def sub_division(width: float, stretch_factor: float,  minimum_division=0.001, m
         next_ = min(next_ * stretch_factor, maximum_division)
 
     new_grid = left_side + right_side[::-1]
+
     return new_grid
 
 
