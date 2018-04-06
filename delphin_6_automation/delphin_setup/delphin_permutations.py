@@ -6,12 +6,10 @@ __license__ = 'MIT'
 
 # Modules:
 import copy
-from scipy.optimize import fsolve
 from collections import namedtuple
 import typing
 
 # RiBuild Modules:
-from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
