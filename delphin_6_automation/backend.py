@@ -61,6 +61,7 @@ def main_menu():
         print("[g] Add Ribuild Geometry file to database")
         print("[f] Find simulation")
         print("[w] Queue and view weather data")
+        print("[v] Download Simulations")
         print("[s] Start simulation worker")
         print("[x] Exit")
         print()
@@ -92,6 +93,9 @@ def main_menu():
 
         elif choice == 'w':
             view_weather_data()
+
+        elif choice == 'v':
+            download_simulation_result()
 
         elif choice == 's':
             start_simulation()
@@ -429,6 +433,45 @@ def download_delphin_material():
 
 
 def download_simulation_result():
+    print('')
+    choice = input('Do you wish to download a [s]ingle result or [m]ultiple? >')
+
+    if choice == 's':
+        download_single_result()
+    elif choice == 'm':
+        download_result_from_file()
+    else:
+        return
+
+
+def download_result_from_file():
+    print('')
+    file_path = str(input('Path to text file with simulation IDs >'))
+    download_path = str(input('The path to which the results should be downloaded? >'))
+
+    file = open(file_path, 'r')
+    lines = file.readlines()
+    file.close()
+
+    for line in lines:
+        sim_id = line.strip()
+        if not general_interactions.does_simulation_exists(sim_id):
+            print(f'Simulation ID: {sim_id} can not be found in database. Skipping to next ID.')
+            pass
+        elif general_interactions.is_simulation_finished(sim_id):
+            print(f'Downloading: {sim_id}')
+            general_interactions.download_raw_result(sim_id, download_path)
+        else:
+            print(f'Simulation with ID: {sim_id} is not done yet. Skipping to next ID.')
+            pass
+
+    print(f'Wanted files are now downloaded to: {download_path}')
+    return
+
+
+def download_single_result():
+    print('')
+
     sim_id = str(input('Simulation ID to retrieve? >'))
     if general_interactions.is_simulation_finished(sim_id):
         print('Simulation is ready to download.')

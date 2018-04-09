@@ -179,3 +179,19 @@ def print_material_dict(materials):
               f'\tName: {key}\n'
               f'\tDelphin Material ID: {materials[key]["material_id"]}\n'
               f'\tDatabase ID: {materials[key]["database_id"]}\n')
+
+
+def does_simulation_exists(sim_id: str) -> bool:
+    """
+    Checks if a Delphin project entry is in the database or not.
+
+    :param sim_id: Database entry to check
+    :return: True if it is in database otherwise returns False.
+    """
+
+    object_ = delphin_db.Delphin.objects(id=sim_id).first()
+
+    if object_:
+        return True
+    else:
+        return False
