@@ -7,6 +7,7 @@ __license__ = 'MIT'
 # Modules:
 import numpy as np
 import os
+import pickle
 
 # RiBuild Modules:
 
@@ -127,15 +128,10 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
                          f'Method given was: {calculation_method}')
 
 
-def driving_rain(precipitation, wind_direction, wind_speed, location, orientation, inclination=90, ):
+def driving_rain(precipitation, wind_direction, wind_speed, wall_location, orientation, inclination=90, ):
 
     # Load catch ratio and catch ratio parameters
-    catch_ratio = np.load(os.path.join(os.path.dirname(__file__), 'data', 'catch_ratio.npy'))
-    catch_parameters = {'height': [0.0, 5.0, 8.0, 8.5, 9.0, 9.25, 9.5, 9.75, 10.0],
-                        'horizontal_rain_intensity': [0.0, 0.1, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0,
-                                                      12.0, 15.0, 20.0, 25.0, 30.0],
-                        'width': [0.0, 2.5, 5.0, 7.5, 10.0],
-                        'wind_speed': [0, 1, 2, 3, 4, 5, 6, 8, 10]}
+    catch_ratio_model = pickle.load(open(os.path.join(os.path.dirname(__file__), 'k_nearest_3_model.sav'), 'rb'))
 
     # Convert deg to rad
     orientation = np.deg2rad(orientation)
@@ -146,15 +142,18 @@ def driving_rain(precipitation, wind_direction, wind_speed, location, orientatio
     # Calculate rain load on facade, for each time step
     wind_driven_rain = []
 
-    for time_index in range(len(precipitation)):
+    for time_index in range(0, len(precipitation)):
         local_wind = wind_speed[time_index] * np.cos(wind_direction[time_index] - orientation)
 
         # Check if wind driven rain falls on facade
-        if precipitation * local_wind > 0:
-            pass
+        if precipitation[time_index] * local_wind > 0:
+            horizontal_rain = catch_ratio_model.predict([[local_wind, precipitation[time_index],
+                                                        wall_location['height'], wall_location['width']]])
+            wind_driven_rain.append(horizontal_rain * np.sin(inclination) +
+                                    precipitation[time_index] * np.cos(inclination))
 
         else:
-            wind_driven_rain.append(0)
+            wind_driven_rain.append(precipitation[time_index] * np.cos(inclination))
 
     return wind_driven_rain
 

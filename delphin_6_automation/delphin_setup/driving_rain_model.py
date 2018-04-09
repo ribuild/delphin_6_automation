@@ -6,16 +6,11 @@ __license__ = 'MIT'
 
 # Modules
 import numpy as np
-import pandas as pd
-from scipy.optimize import curve_fit
 import os
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import PolynomialFeatures
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
 from sklearn.neighbors import KNeighborsRegressor
 import pickle
 
@@ -71,13 +66,12 @@ print('Width:', len(width_list))
 print('')
 
 y_data = np.array(catch_ratio_list)
-x_data = np.vstack(np.array([height_list, horizontal_rain_intensity_list, wind_speed_list, width_list]).T)
-
-print('y_data shape:', y_data.shape)
-print('x_data shape:', x_data.shape)
-print('')
-
+x_data = np.vstack(np.array([wind_speed_list, horizontal_rain_intensity_list, height_list, width_list]).T)
 X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, random_state=0)
+
+
+# Models
+
 linreg = linear_model.LinearRegression(normalize=True)
 linreg.fit(X_train, y_train)
 
@@ -157,40 +151,21 @@ print('')
 
 X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, random_state=0)
 
-knnreg = KNeighborsRegressor(n_neighbors=5).fit(X_train, y_train)
+knn_reg5 = KNeighborsRegressor(n_neighbors=5).fit(X_train, y_train)
 
 print('K-nearest regression (5 neighbors)')
-print(knnreg.predict(X_test))
-print('R-squared train score: {:.5f}'.format(knnreg.score(X_train, y_train)))
-print('R-squared test score: {:.5f}'.format(knnreg.score(X_test, y_test)))
+print(knn_reg5.predict(X_test))
+print('R-squared train score: {:.5f}'.format(knn_reg5.score(X_train, y_train)))
+print('R-squared test score: {:.5f}'.format(knn_reg5.score(X_test, y_test)))
 print('')
 
-knnreg = KNeighborsRegressor(n_neighbors=3).fit(X_train, y_train)
+knn_reg3 = KNeighborsRegressor(n_neighbors=3).fit(X_train, y_train)
 
 print('K-nearest regression (3 neighbors)')
-print(knnreg.predict(X_test))
-print('R-squared train score: {:.5f}'.format(knnreg.score(X_train, y_train)))
-print('R-squared test score: {:.5f}'.format(knnreg.score(X_test, y_test)))
-
-"""
-X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, random_state=0)
-# Instanciate a Gaussian Process model
-kernel = C(1.0, (1e-3, 1e3)) * RBF(10, (1e-2, 1e2))
-gp = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=9)
-
-# Fit to data using Maximum Likelihood Estimation of the parameters
-gp.fit(X_train, y_train)
-
-#print('(gaussian) model coeff (w):\n{}'.format(gp.coef_))
-#print('(gaussian) model intercept (b): {:.5f}'.format(gp.intercept_))
-print('(gaussian) R-squared score (training): {:.5f}'.format(gp.score(X_train, y_train)))
-print('(gaussian) R-squared score (test): {:.5f}'.format(gp.score(X_test, y_test)))
-print('')
-"""
+print(knn_reg3.predict(X_test))
+print('R-squared train score: {:.5f}'.format(knn_reg3.score(X_train, y_train)))
+print('R-squared test score: {:.5f}'.format(knn_reg3.score(X_test, y_test)))
 
 # Save final model
-filename_kn = 'k_nearest_model.sav'
-pickle.dump(knnreg, open(filename_kn, 'wb'))
-
-filename_p2 = 'poly2_model.sav'
-pickle.dump(linridge_poly, open(filename_p2, 'wb'))
+filename_kn = 'k_nearest_3_model.sav'
+pickle.dump(knn_reg3, open(filename_kn, 'wb'))

@@ -294,4 +294,15 @@ def wac_to_db(file_path: str) -> list:
     return entry_ids
 
 
+def ccd_to_list(file_path: str) -> list:
+    file = open(file_path, 'r')
+    lines = file.readlines()
+    file.close()
 
+    data = []
+
+    for line in lines:
+        if line.startswith(' '):
+            data.append(float(line.split(' ')[-1].strip()))
+
+    return data
