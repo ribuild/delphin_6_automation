@@ -19,7 +19,10 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 import delphin_6_automation.delphin_setup.delphin_permutations as permutations
 from delphin_6_automation.file_parsing import delphin_parser
+from delphin_6_automation.logging import ribuild_logger
 
+# Logger
+logger = ribuild_logger.ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES
@@ -272,3 +275,158 @@ def change_entry_simulation_length(sim_id, length, unit):
     delphin_document.update(set__dp6_file=delphin_dict)
 
     return delphin_document.id
+
+
+def check_delphin_file(delphin_dict: dict):
+    """
+    Checks if a Delphin project file is valid for simulation.
+
+    :return:
+    :rtype:
+    """
+
+    error = False
+
+    # 1D or 2D?
+    if len(delphin_dict['DelphinProject']['Discretization']) > 2:
+        logger.warning('Delphin Project File is 3 dimensional. Permutations are not guaranteed to work!')
+    elif len(delphin_dict['DelphinProject']['Discretization']) > 1:
+        logger.warning('Delphin Project File is 2 dimensional. Permutations are not guaranteed to work!')
+    else:
+        logger.info('Delphin Project File is 1 dimensional.')
+
+    # Is materials correct?
+    material_error = False
+
+    for material in delphin_dict['DelphinProject']['Materials']['MaterialReference']:
+        material_id = material['@name'][-5:]
+        if not material_id.startswith('[') and material_id.endswith(']'):
+            logger.error(f'Material name should end with: [XXX], where XXX is the Delphin Material ID. '
+                         f'Material ended with: {material_id}')
+            material_error = True
+
+        try:
+            material_int = int(material_id[1:-1])
+        except ValueError:
+            logger.error(f'Material name should end with: [XXX], where XXX is the Delphin Material ID. '
+                         f'Delphin Material ID {material_id} was not an integer, but a: {type(material_id[1:-1])}')
+            material_error = True
+
+    if not material_error:
+        logger.info('Material check passed')
+    else:
+        error = True
+        logger.error('Material check did not pass')
+
+    # Is interface correct?
+    interface_error = False
+
+    interfaces = delphin_dict['DelphinProject']['Conditions']['Interfaces']['Interface']
+
+    if interfaces[0]['@name'].lower() != 'indoor surface' and str(interfaces[0]['@name'].lower()) != 'interior surface':
+        logger.warning(f'Interior surface should be named: indoor surface or interior surface. '
+                       f'Named given was: {interfaces[0]["@name"].lower()}')
+
+    if interfaces[0]['@type'] != 'Detailed':
+        logger.error(f'Interior interface should be: Detailed. Interface type given was: {interfaces[0]["@type"]}')
+        interface_error = True
+
+    interior_boundaries = ['IndoorHeatConduction', 'IndoorVaporDiffusion']
+    for bc_ref in interfaces[0]['BCReference']:
+        try:
+            index = interior_boundaries.index(bc_ref.split(':')[-1])
+            interior_boundaries.pop(index)
+        except ValueError:
+            logger.error(f'Boundary condition not part of: {interior_boundaries}. '
+                         f'Boundary condition given was: {bc_ref.split(":")[-1]}')
+            interface_error = True
+
+    if str(interfaces[1]['@name'].lower()) != 'outdoor surface' and str(interfaces[0]['@name'].lower()) != 'exterior surface':
+        logger.warning(f'Exterior surface should be named: outdoor surface or exterior surface. '
+                       f'Named given was: {interfaces[1]["@name"].lower()}')
+
+    if interfaces[1]['@type'] != 'Detailed':
+        logger.error(f'Exterior interface should be: Detailed. Interface type given was: {interfaces[1]["@type"]}')
+        interface_error = True
+
+    exterior_boundaries = ['OutdoorHeatConduction', 'OutdoorVaporDiffusion', 'OutdoorShortWaveRadiation',
+                           'OutdoorLongWaveRadiation', 'OutdoorWindDrivenRain']
+    for bc_ref in interfaces[1]['BCReference']:
+        try:
+            index = exterior_boundaries.index(bc_ref.split(':')[-1])
+            exterior_boundaries.pop(index)
+        except ValueError:
+            logger.error(f'Boundary condition not part of: {exterior_boundaries}. '
+                         f'Boundary condition given was: {bc_ref.split(":")[-1]}')
+            interface_error = True
+
+    if not interface_error:
+        logger.info('Interface check passed')
+    else:
+        error = True
+        logger.error('Interface check did not pass')
+
+    # Is climate conditions correct?
+    climate_error = False
+
+    for climate_condition in delphin_dict['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']:
+        if climate_condition['@kind'] != 'TabulatedData':
+            logger.error(f'Climate condition kind should be TabulatedData. '
+                         f'Given kind was: {climate_condition["@kind"]}')
+            climate_error = True
+
+        if climate_condition['IBK:Flag']['#text'] != 'false':
+            logger.error(f'Climate condition should not use ExtendData. '
+                         f'Given value was: {climate_condition[2]["#text"]}')
+            climate_error = True
+
+    if not climate_error:
+        logger.info('Climate condition check passed')
+    else:
+        error = True
+        logger.error('Climate condition check did not pass')
+
+    # Is boundary conditions correct?
+    boundary_error = False
+
+    for boundary_condition in delphin_dict['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition']:
+        if boundary_condition['@type'] == 'HeatConduction':
+            if boundary_condition['@kind'] != 'Exchange':
+                logger.error(f'Heat conduction should be of the boundary condition kind: Exchange. '
+                             f'Given kind was: {boundary_condition["@kind"]}')
+                boundary_error = True
+
+        elif boundary_condition['@type'] == 'VaporDiffusion':
+            if boundary_condition['@kind'] != 'Exchange':
+                logger.error(f'Vapor diffusion should be of the boundary condition kind: Exchange. '
+                             f'Given kind was: {boundary_condition["@kind"]}')
+                boundary_error = True
+
+        elif boundary_condition['@type'] == 'WindDrivenRain':
+            if boundary_condition['@kind'] != 'ImposedFlux':
+                logger.error(f'Wind driven rain should be of the boundary condition kind: ImposedFlux. '
+                             f'Given kind was: {boundary_condition["@kind"]}')
+                boundary_error = True
+
+        elif boundary_condition['@type'] == 'ShortWaveRadiation':
+            if boundary_condition['@kind'] != 'ImposedFlux':
+                logger.error(f'Short wave radiation should be of the boundary condition kind: ImposedFlux. '
+                             f'Given kind was: {boundary_condition["@kind"]}')
+                boundary_error = True
+
+        elif boundary_condition['@type'] == 'LongWaveRadiation':
+            if boundary_condition['@kind'] != 'ImposedFlux':
+                logger.error(f'Long wave radiation should be of the boundary condition kind: ImposedFlux. '
+                             f'Given kind was: {boundary_condition["@kind"]}')
+                boundary_error = True
+
+    if not boundary_error:
+        logger.info('Boundary condition check passed')
+    else:
+        error = True
+        logger.error('Boundary condition check did not pass')
+
+    # Is outputs correct?
+    # TODO - To be determined
+
+    return error

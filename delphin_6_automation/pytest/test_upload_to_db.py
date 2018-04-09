@@ -26,8 +26,9 @@ import delphin_6_automation.database_interactions.delphin_interactions as delphi
 import delphin_6_automation.database_interactions.material_interactions as material_interact
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 import delphin_6_automation.database_interactions.weather_interactions as weather_interact
-import delphin_6_automation.file_parsing.weather_parser as weather_parser
+from delphin_6_automation.file_parsing import weather_parser
 import delphin_6_automation.pytest.pytest_helper_functions as helper
+from delphin_6_automation.file_parsing import delphin_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
@@ -206,3 +207,9 @@ def test_upload_results_1():
 
     # Assert
     assert test_dict == source_entry
+
+
+def test_delphin_file_checker_1():
+    folder = os.path.dirname(os.path.abspath(__file__)) + '/test_files'
+    delphin_dict = delphin_parser.dp6_to_dict(folder + '/delphin_project.d6p')
+    assert delphin_interact.check_delphin_file(delphin_dict) == True

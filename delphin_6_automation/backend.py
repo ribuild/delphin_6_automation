@@ -17,6 +17,7 @@ from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.simulation_worker import simulation_worker
+from delphin_6_automation.file_parsing import delphin_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN PERMUTATION FUNCTIONS
@@ -195,19 +196,23 @@ def add_to_queue():
     priority = str(input("Simulation Priority - high, medium or low >"))
     climate_class = str(input('What climate class should be assigned? A or B can be chosen. >'))
 
-    sim_id = general_interactions.add_to_simulation_queue(delphin_file, priority)
-    weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
-    location_name, years = add_weather_to_simulation(sim_id)
+    if check_delphin_file(delphin_file):
+        sim_id = general_interactions.add_to_simulation_queue(delphin_file, priority)
+        weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
+        location_name, years = add_weather_to_simulation(sim_id)
 
-    change_year = input('Do you wish to change the simulation length to match the weather input? [Y/n] >')
-    if change_year != 'n':
-        delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
-        print(f'Simulation length changed to {len(years)} a')
+        change_year = input('Do you wish to change the simulation length to match the weather input? [Y/n] >')
+        if change_year != 'n':
+            delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
+            print(f'Simulation length changed to {len(years)} a')
 
-    print('Simulation ID:', sim_id,
-          '\nTo retrieve the results of a simulation the simulation ID is needed.')
+        print('Simulation ID:', sim_id,
+              '\nTo retrieve the results of a simulation the simulation ID is needed.')
 
-    return sim_id, general_interactions.queue_priorities(priority), location_name, years, climate_class
+        return sim_id, general_interactions.queue_priorities(priority), location_name, years, climate_class
+
+    else:
+        return
 
 
 def add_permutations_to_queue():
@@ -248,6 +253,25 @@ def save_ids(simulation_id):
     else:
         print('Simulation ID was not saved.')
         return
+
+
+def check_delphin_file(delphin_file):
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file)
+
+    if delphin_interactions.check_delphin_file(delphin_dict):
+        print('Uploaded Delphin Project does not comply with the guidelines for the simulation system.')
+        print('The following error log has been created:\n')
+
+        log_file = open(os.path.dirname(os.path.abspath(__file__)) +
+                        '/logging/delphin_6_automation.database_interactions.delphin_interactions.log')
+        lines = log_file.readlines()
+        for line in lines:
+            print(line.strip())
+
+        return False
+
+    else:
+        return True
 
 
 def add_weather_to_simulation(simulation_id):
