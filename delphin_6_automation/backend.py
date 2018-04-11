@@ -192,7 +192,12 @@ def view_weather_data():
 
 def add_to_queue():
 
-    delphin_file = str(input("File path for the Delphin file >"))
+    delphin_file = ' '
+    while not os.path.isfile(delphin_file):
+        delphin_file = str(input("File path for the Delphin file >"))
+        if not os.path.isfile(delphin_file):
+            print('Could not find file. Please try again')
+
     priority = str(input("Simulation Priority - high, medium or low >"))
     climate_class = str(input('What climate class should be assigned? A or B can be chosen. >'))
 
@@ -212,7 +217,7 @@ def add_to_queue():
         return sim_id, general_interactions.queue_priorities(priority), location_name, years, climate_class
 
     else:
-        return
+        return None
 
 
 def add_permutations_to_queue():
@@ -235,24 +240,28 @@ def add_permutations_to_queue():
 
 def save_ids(simulation_id):
 
-    save = str(input('Save Simulation ID to text file? (y/n)'))
-    if save == 'y':
-        print('Simulation will be saved on the Desktop as simulation_id.txt ')
-        user_desktop = os.path.join(os.environ["HOMEPATH"], "Desktop")
-        id_file = open(user_desktop + '/simulation_id.txt', 'w')
-
-        if not isinstance(simulation_id, list):
-            id_file.write(str(simulation_id))
-
-        else:
-            for id_ in simulation_id:
-                id_file.write(str(id_) + '\n')
-
-        id_file.close()
+    if not simulation_id:
+        return
 
     else:
-        print('Simulation ID was not saved.')
-        return
+        save = str(input('Save Simulation ID to text file? (y/n)'))
+        if save == 'y':
+            print('Simulation will be saved on the Desktop as simulation_id.txt ')
+            user_desktop = os.path.join(os.environ["HOMEPATH"], "Desktop")
+            id_file = open(user_desktop + '/simulation_id.txt', 'w')
+
+            if not isinstance(simulation_id, list):
+                id_file.write(str(simulation_id))
+
+            else:
+                for id_ in simulation_id:
+                    id_file.write(str(id_) + '\n')
+
+            id_file.close()
+
+        else:
+            print('Simulation ID was not saved.')
+            return
 
 
 def check_delphin_file(delphin_file):
