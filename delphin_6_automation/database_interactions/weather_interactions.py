@@ -146,8 +146,8 @@ def change_weather_file_location(delphin_id: str, folder: str):
             elif climate_conditions[index]['@type'] == 'SWRadiationDirect':
                 climate_conditions[index]['Filename'] = folder + '/direct_radiation.ccd'
 
-            elif climate_conditions[index]['@type'] == 'RainFluxHorizontal':
-                climate_conditions[index]['Filename'] = folder + '/vertical_rain.ccd'
+            elif climate_conditions[index]['@type'] == 'RainFluxNormal':
+                climate_conditions[index]['Filename'] = folder + '/wind_driven_rain.ccd'
 
             elif climate_conditions[index]['@type'] == 'WindDirection':
                 climate_conditions[index]['Filename'] = folder + '/wind_direction.ccd'
@@ -155,7 +155,7 @@ def change_weather_file_location(delphin_id: str, folder: str):
             elif climate_conditions[index]['@type'] == 'WindVelocity':
                 climate_conditions[index]['Filename'] = folder + '/wind_speed.ccd'
 
-            elif climate_conditions[index]['@type'] == 'LWRadiationBalance':
+            elif climate_conditions[index]['@type'] == 'LWRadiationSkyEmission':
                 climate_conditions[index]['Filename'] = folder + '/long_wave_radiation.ccd'
 
     delphin_document.update(set__dp6_file=delphin_dict)
