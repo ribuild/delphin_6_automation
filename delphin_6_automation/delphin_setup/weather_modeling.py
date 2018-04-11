@@ -149,13 +149,13 @@ def driving_rain(precipitation, wind_direction, wind_speed, wall_location, orien
         if precipitation[time_index] * local_wind > 0:
             horizontal_rain = catch_ratio_model.predict([[local_wind, precipitation[time_index],
                                                         wall_location['height'], wall_location['width']]])
-            wind_driven_rain.append(horizontal_rain * np.sin(inclination) +
-                                    precipitation[time_index] * np.cos(inclination))
+            wind_driven_rain.append(float(horizontal_rain * np.sin(inclination) +
+                                    precipitation[time_index] * np.cos(inclination)))
 
         else:
             wind_driven_rain.append(precipitation[time_index] * np.cos(inclination))
 
-    return wind_driven_rain
+    return list(wind_driven_rain)
 
 
 def short_wave_radiation(radiation, longitude, latitude, hour_of_the_year, surface_angle, surface_azimuth):

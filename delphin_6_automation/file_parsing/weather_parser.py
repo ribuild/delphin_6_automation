@@ -58,14 +58,19 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                        "abr": "CI"},
 
         "direct_radiation": {"description": "Direct Horizontal Solar Radiation [W/m2] (ISvar) [ISGH - ISD]",
-                            "intro": "DIRRAD  W/m2",
-                            "factor": 1,
-                            "abr": "ISVAR"},
+                             "intro": "DIRRAD  W/m2",
+                             "factor": 1,
+                             "abr": "ISVAR"},
 
         "vertical_rain": {"description": "Rain intensity[mm/h] (RN)",
-                         "intro": "HORRAIN   l/m2h",
-                         "factor": 1,
-                         "abr": "RN"},
+                          "intro": "HORRAIN   l/m2h",
+                          "factor": 1,
+                          "abr": "RN"},
+
+        "wind_driven_rain": {"description": "Rain intensity[mm/h] (RN)",
+                             "intro": "NORRAIN   l/m2h",
+                             "factor": 1,
+                             "abr": "RN"},
 
         "TotalPressure": {"description": "Air pressure [hPa] (PSTA)",
                           "intro": "GASPRESS   hPa",
@@ -73,9 +78,9 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                           "abr": "PSTA"},
 
         "long_wave_radiation": {"description": "Atmospheric Horizontal Long wave Radiation [W/m2] (ILTH)",
-                         "intro": "SKYEMISS  W/m2",
-                         "factor": 1,
-                         "abr": "ILTH"},
+                                "intro": "SKYEMISS  W/m2",
+                                "factor": 1,
+                                "abr": "ILTH"},
 
         "TerrainCounterRadiation": {"description": "Terrain counter radiation [W/m2](ILAH)",
                                     "intro": "GRINDEMISS  W/m2",
@@ -92,13 +97,13 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                                        "factor": 1},
 
         "indoor_temperature": {"description": "Indoor Air temperature after EN15026 [C] (TA)",
-                                 "intro": "TEMPER   C",
-                                 "factor": 1},
+                               "intro": "TEMPER   C",
+                               "factor": 1},
     }
 
     for weather_key in weather_dict.keys():
         if weather_key in ['temperature', 'relative_humidity',
-                           'vertical_rain', 'wind_direction',
+                           'wind_driven_rain', 'wind_direction',
                            'wind_speed', 'long_wave_radiation',
                            'diffuse_radiation', 'direct_radiation',
                            'indoor_temperature',

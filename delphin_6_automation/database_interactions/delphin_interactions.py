@@ -54,6 +54,7 @@ def upload_delphin_dict_to_database(delphin_dict: dict, queue_priority: int) -> 
 
     entry = delphin_db.Delphin()
     entry.queue_priority = queue_priority
+    delphin_dict = weather_interactions.update_short_wave_condition(delphin_dict)
     entry.dp6_file = delphin_dict
     entry.materials = material_interactions.find_material_ids(material_interactions.list_project_materials(entry))
 

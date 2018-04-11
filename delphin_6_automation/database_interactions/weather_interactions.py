@@ -171,7 +171,35 @@ def download_weather(delphin_id: str, folder: str) -> bool:
     weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
         weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
                                                            delphin_document.indoor_climate)
+    orientation = int(delphin_document.dp6_file['DelphinProject']['Conditions']['Interfaces']['Interface'][0]['IBK:Parameter']['#text'])
+    wall_location = {'height': 5, 'width': 5}
+    weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],
+                                                                weather['wind_speed'], wall_location, orientation)
     weather_parser.dict_to_ccd(weather, folder)
     change_weather_file_location(delphin_id, folder)
 
     return True
+
+
+def update_short_wave_condition(delphin_dict):
+
+    climate_conditions = delphin_dict['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']
+
+    for climate_condition in climate_conditions:
+        if climate_condition['@type'] == 'SWRadiationDiffuse':
+            diffuse_radiation = climate_condition['@name']
+        elif climate_condition['@type'] == 'SWRadiationDirect':
+            direct_radiation = climate_condition['@name']
+
+    boundary_conditions = delphin_dict['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition']
+
+    for boundary_condition in boundary_conditions:
+        if boundary_condition['@type'] == 'ShortWaveRadiation':
+            for cc_ref in boundary_condition['CCReference']:
+                if cc_ref['@type'] == 'SWRadiationDirect':
+                    cc_ref['#text'] = direct_radiation
+
+                elif cc_ref['@type'] == 'SWRadiationDiffuse':
+                    cc_ref['#text'] = diffuse_radiation
+
+    return delphin_dict
