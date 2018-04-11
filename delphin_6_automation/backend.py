@@ -522,12 +522,14 @@ def download_result_from_file():
 
     for line in lines:
         sim_id = line.strip()
+
         if not general_interactions.does_simulation_exists(sim_id):
             print(f'Simulation ID: {sim_id} can not be found in database. Skipping to next ID.')
             pass
         elif general_interactions.is_simulation_finished(sim_id):
             print(f'Downloading: {sim_id}')
-            general_interactions.download_raw_result(sim_id, download_path)
+            result_id = delphin_db.Delphin.objects(id=sim_id).first().results_raw.id
+            general_interactions.download_raw_result(result_id, download_path)
         else:
             print(f'Simulation with ID: {sim_id} is not done yet. Skipping to next ID.')
             pass
@@ -543,7 +545,8 @@ def download_single_result():
     if general_interactions.is_simulation_finished(sim_id):
         print('Simulation is ready to download.')
         download_path = str(input('Download Path? >'))
-        general_interactions.download_raw_result(sim_id, download_path)
+        result_id = delphin_db.Delphin.objects(id=sim_id).first().results_raw.id
+        general_interactions.download_raw_result(result_id, download_path)
     else:
         print('Simulation is not done yet. Please return later')
         return
