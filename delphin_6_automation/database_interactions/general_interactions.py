@@ -66,10 +66,10 @@ def queue_priorities(priority: str)-> int:
             priority_number = int(max_priority)
 
         elif priority == 'medium':
-            priority_number = int(span * 0.5 + min_priority)
+            priority_number = int(span + 0.5 * min_priority)
 
         elif priority == 'low':
-            priority_number = int(span * 0.25 + min_priority)
+            priority_number = int(span + 0.25 * min_priority)
 
         else:
             raise ValueError('priority has to be: high, medium or low. Value given was: ' + str(priority))
