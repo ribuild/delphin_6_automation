@@ -5,7 +5,7 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules:
-
+from collections import OrderedDict
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
@@ -195,11 +195,17 @@ def update_short_wave_condition(delphin_dict):
 
     for boundary_condition in boundary_conditions:
         if boundary_condition['@type'] == 'ShortWaveRadiation':
-            for cc_ref in boundary_condition['CCReference']:
-                if cc_ref['@type'] == 'SWRadiationDirect':
-                    cc_ref['#text'] = direct_radiation
+            try:
+                for cc_ref in boundary_condition['CCReference']:
+                    if cc_ref['@type'] == 'SWRadiationDirect':
+                        cc_ref['#text'] = direct_radiation
 
-                elif cc_ref['@type'] == 'SWRadiationDiffuse':
-                    cc_ref['#text'] = diffuse_radiation
+                    elif cc_ref['@type'] == 'SWRadiationDiffuse':
+                        cc_ref['#text'] = diffuse_radiation
+            except KeyError:
+                boundary_condition['CCReference'] = [OrderedDict((('@type', 'SWRadiationDirect'),
+                                                                 ('#text', direct_radiation))),
+                                                     OrderedDict((('@type', 'SWRadiationDiffuse'),
+                                                                 ('#text', diffuse_radiation)))]
 
     return delphin_dict
