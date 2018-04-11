@@ -1,5 +1,5 @@
 longitude = -122.25
-latitude =  37.46
+latitude = 37.46
 radiation = 200
 hour_of_the_year = 28*24+10
 surface_angle = 45.0

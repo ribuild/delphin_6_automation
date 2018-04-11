@@ -158,306 +158,97 @@ def driving_rain(precipitation, wind_direction, wind_speed, wall_location, orien
     return wind_driven_rain
 
 
-def calcRainLoad(path_climate, ori, number, loc=[5, 5], path_save=None):
-    # If the inclination of the wall is not specified, set default incination 90 deg
-    if not isinstance(ori, list):
-        ori = [ori]
-        ori.append(90)
+def short_wave_radiation(radiation, longitude, latitude, hour_of_the_year, surface_angle, surface_azimuth):
 
-    # Load catch ratio and catch ratio parameters
-    catch_ratio = np.load(os.path.join(os.path.dirname(__file__), 'data', 'catch_ratio.npy'))
-    catch_param = {'height': [0.0, 5.0, 8.0, 8.5, 9.0, 9.25, 9.5, 9.75, 10.0],
-                   'horizontal rain intensity': [0.0, 0.1, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0, 15.0,
-                                                 20.0, 25.0, 30.0],
-                   'width': [0.0, 2.5, 5.0, 7.5, 10.0],
-                   'wind speed': [0, 1, 2, 3, 4, 5, 6, 8, 10]}
+    sin = lambda x: np.sin(np.radians(x))
+    cos = lambda x: np.cos(np.radians(x))
+    acos = lambda x: np.degrees(np.arccos(x))
 
-    # Calculate rain load on facade, for each time step
-    rain = list()
-    rain_v = list()
+    def day_of_year(hour_of_the_year: int) -> int:
+        return int(hour_of_the_year / 24) + 1
 
-    for t in range(len(rain_h)):
-        # Wind speed at facade
-        Vloc = windvel[t] * m.cos(winddir[t] - ori[1])
-        # Check if wind driven rain falls on facade
-        if rain_h[t] * Vloc > 0:
-            
-            # STEP 1: interpolation based on vertical and horizontal location
-            # 1.1a Interpolation boundary for vertical location
-            k = len(catch_param['height']) - 2
-            for knm in range(len(catch_param['height']) - 1):
-                if loc[0] >= catch_param['height'][knm] and loc[0] < catch_param['height'][knm + 1]:
-                    k = knm
-                    break
-            
-            # 1.1b Interpolation boundary for horizontal location
-            l = len(catch_param['width']) - 2
-            for lnm in range(len(catch_param['width']) - 1):
-                if loc[1] >= catch_param['width'][lnm] and loc[1] < catch_param['width'][lnm + 1]:
-                    l = lnm
-                    break
-            
-            # 1.2 Interpolating horizontal and vertical location
-            # interpolating horizontal location for vertical location 1
-            x = loc[1]
-            x1, x2 = catch_param['width'][l], catch_param['width'][l + 1]
-            y1, y2 = catch_ratio[:, :, k, l], catch_ratio[:, :, k, l + 1]
-            catc5 = y1 + (y2 - y1) * ((x - x1) / (x2 - x1))
-            
-            # interpolating horizontal location for vertical location 2
-            y1, y2 = catch_ratio[:, :, k + 1, l], catch_ratio[:, :, k + 1, l + 1]
-            catc6 = y1 + (y2 - y1) * ((x - x1) / (x2 - x1))
-            
-            # interpolating vertical location for interpolated horizontal location
-            x = loc[0]
-            x1, x2 = catch_param['height'][k], catch_param['height'][k + 1]
-            catc = catc5 + (catc6 - catc5) * ((x - x1) / (x2 - x1))
+    def hour_of_day(hour_of_the_year: int) -> int:
+        return hour_of_the_year % 24
 
-            # STEP 2: interpolation based on wind speed and rain intensity
-            # 2.1a Interpolation boundary for wind speed
-            i = catc.shape[0] - 2
-            for inm in range(catc.shape[0] - 1):
-                if Vloc >= catch_param['wind speed'][inm] and Vloc < catch_param['wind speed'][inm + 1]:
-                    i = inm
-                    break
-            
-            # 2.1a Interpolation boundary for rain intensity
-            j = catc.shape[1] - 2
-            for jnm in range(catc.shape[1] - 1):
-                if rain_h[t] >= catch_param['horizontal rain intensity'][jnm] and rain_h[t] < \
-                        catch_param['horizontal rain intensity'][jnm + 1]:
-                    j = jnm
-                    break
-            
-            # 2.2 Interpolation wind speed and rain intensity
-            # interpolating rain intensity for wind speed 1
-            x = rain_h[t]
-            x1, x2 = catch_param['horizontal rain intensity'][j], catch_param['horizontal rain intensity'][j + 1]
-            y1, y2 = catc[i, j], catc[i, j + 1]
-            cat5 = y1 + (y2 - y1) * ((x - x1) / (x2 - x1))
-            
-            # interpolating rain intensity for wind speed 2
-            y1, y2 = catc[i + 1, j], catc[i + 1, j + 1]
-            cat6 = y1 + (y2 - y1) * ((x - x1) / (x2 - x1))
-            
-            # interpolation wind speed for interpolated rain intensity
-            x = Vloc
-            x1, x2 = catch_param['wind speed'][i], catch_param['wind speed'][i + 1]
-            cat = (cat5 + (cat6 - cat5) * (x - x1) / (x2 - x1))
+    def local_time_constant(longitude: float) -> float:
+        """Local time constant K in minutes - DK: Lokal tids konstant"""
 
-            # STEP 3: Calculate wind driven rain
-            rain_v.append(rain_h[t] * cat)
+        time_median_longitude = int(longitude / 15) * 15
+        longitude_deg = longitude / abs(longitude) * (abs(int(longitude)) + abs(longitude) % 1 * 100 / 60)
+        local_time_constant = 4 * (time_median_longitude - longitude_deg)
+        return local_time_constant
 
-        # No wind driven rain on facade
-        else:
-            rain_v.append(0)
+    def time_ekvation(day_of_year: int) -> float:
+        """The difference between true solar time and mean solar time in Febuary (+/- 16 min) in minutes -
+        DK: tidsækvationen"""
 
-        # Calculate total rain load (horizontal + wind driven) on facade
-        rain.append(round(rain_h[t] * m.cos(ori[1]) + rain_v[t] * m.sin(ori[1]), 8))
+        b = (day_of_year - 1) * 360 / 365
+        time_ekvation = 229.2 * (
+                    0.000075 + 0.001868 * cos(b) - 0.032077 * sin(b) - 0.014615 * cos(2 * b) - 0.04089 * sin(2 * b))
+        return time_ekvation
 
+    def true_solar_time(hour_of_day: float, local_time_constant: float, time_ekvation: float) -> float:
+        """True solar time in hours - DK: Sand soltid"""
 
-def short_wave_radiation():
-    Pi2_365 = m.pi * 2 / 365
-    Pi_180 = m.pi / 180
-    Pi2 = m.pi * 2
-    Kt1 = 10 + 365 / 4
-    Fakt1 = -23.5
-    Fakt2 = Fakt1 * Pi_180
-    Fakt3 = Fakt1 * Pi_180 * Pi2_365
+        true_solar_time = hour_of_day + (local_time_constant - time_ekvation) / 60
+        return true_solar_time
 
-    def solar_time_shift(time_days):
+    def declination(day_of_year: int) -> float:
+        """Deklination - Earth angle compared to route around sun"""
 
-        factor_1 = 1.1*10**-4
-        factor_2 = 0.123*np.cos(2*time_days*180/365 + 85.88)
-        factor_3 = 0.166*np.cos(4*time_days*180/365 + 108.896)
-        factor_4 = 0.005645*np.cos(6*time_days*180/365+195.195)
+        deklination = 23.45 * sin(((284 + day_of_year) * 360) / 365)
+        return deklination
 
-        return factor_1 + factor_2 + factor_3 + factor_4
+    def latitude_deg(latitude: float) -> float:
+        return latitude / abs(latitude) * (int(latitude) + abs(latitude) % 1 * 100 / 60)
 
-    def solar_time(time_days, longitude, time_hours=0, time_zone=1):
-        return time_hours + solar_time_shift(time_days) + 1/15 * longitude - time_zone
+    def time_angle(true_solar_time: float) -> float:
+        time_angle = 15 * (true_solar_time - 12)
+        return time_angle
 
-    def solar_angle(time_days, longitude, time_hours=0, time_zone=1):
-        """Calculates the solar angle in degrees"""
+    def incident_angle(declination: float, latitude_deg: float, surface_angle: float, surface_azimut: float,
+                       time_angle: float) -> float:
+        """... DK: Indfaldsvinklen"""
 
-        return 15 * solar_time(time_days, longitude, time_hours, time_zone)
+        incident_angle = acos(
+            sin(declination) * (sin(latitude_deg) * cos(surface_angle) - cos(latitude_deg) * sin(surface_angle) * cos(
+                surface_azimut)) + cos(declination) * (cos(latitude_deg) * cos(surface_angle) * cos(time_angle)
+                                                       + sin(latitude_deg) * sin(surface_angle) * cos(
+                        surface_azimut) * cos(time_angle)
+                                                       + sin(surface_angle) * sin(surface_azimut) * sin(time_angle))
+        )
+        return incident_angle
 
-    def solar_declination(time_days):
+    def zenit_angle(declination: float, latitude_deg: float, surface_angle: float, surface_azimut: float,
+                    time_angle: float) -> float:
+        """... DK: Zenitvinkelen"""
 
-        factor_1 = 23.256 * np.cos(2 * time_days * 180/365 + 9.053)
-        factor_2 = 0.392 * np.cos(4 * time_days * 180/365 + 5.329)
-        factor_3 = 0.176 * np.cos(6 * time_days * 180/365 - 10.084)
+        zenit_angle = acos(
+            sin(declination) * sin(latitude_deg) + cos(declination) * cos(latitude_deg) * cos(time_angle))
+        return zenit_angle
 
-        return 0.395 - factor_1 - factor_2 - factor_3
+    def radiation_ratio(incident_angle: float, zenit_angle: float) -> float:
+        """... DK: Bestrålingsstyrkeforholdet"""
 
-    def ecliptical_length(time_days):
-        return 0.986 * (time_days - 2.875) + 1.914 * np.sin(0.017 * (time_days - 2.875)) - 77.94
+        radiation_ratio = cos(incident_angle) / cos(zenit_angle)
+        return radiation_ratio
 
-    def sun_height(geographical_location, time_days):
-        delt = Fakt2 * np.sin(Pi2_365 * (time_days + Kt1))
-        ret = np.sin(phi) * np.sin(delt)
-        return ret - np.cos(phi) * np.cos(delt) * np.cos(Pi2 * time_days)
+    def radiation_strength(radiation_ratio: float, radiation: float) -> float:
+        """... DK: Bestrålingsstyrken"""
 
-    return None
+        return radiation_ratio * radiation
 
+    day_of_year = day_of_year(hour_of_the_year)
+    hour_of_day = hour_of_day(hour_of_the_year)
+    local_time_constant = local_time_constant(longitude)
+    time_ekvation = time_ekvation(day_of_year)
+    true_solar_time = true_solar_time(hour_of_day, local_time_constant, time_ekvation)
+    declination = declination(day_of_year)
+    latitude_deg = latitude_deg(latitude)
+    time_angle = time_angle(true_solar_time)
+    incident_angle = incident_angle(declination, latitude_deg, surface_angle, surface_azimuth, time_angle)
+    zenit_angle = zenit_angle(declination, latitude_deg, surface_angle, surface_azimuth, time_angle)
+    radiation_ratio = radiation_ratio(incident_angle, zenit_angle)
+    radiation_strength = radiation_strength(radiation_ratio, radiation)
 
-def calcSWRad(path_climate, ori, sun_abs, number, loc_geo=50.8, gr_relf=0.2, path_save=None):
-    # Inner functions
-    def signum(val):
-        if val < 0.0:
-            return -1.0
-        else:
-            return 1.0
-
-    def f_deltG(t):
-        return Fakt1 * m.sin(Pi2_365 * (t + Kt1))
-
-    def f_delta(t):
-        return f_deltG(t) * Pi_180
-
-    def f_sin_h(phi, t):
-        delt = Fakt2 * m.sin(Pi2_365 * (t + Kt1))
-        ret = m.sin(phi) * m.sin(delt)
-        return ret - m.cos(phi) * m.cos(delt) * m.cos(Pi2 * t)
-
-    def f_cos_h(phi, t):
-        sinh = f_sin_h(phi, t)
-        return m.sqrt(1 - sinh * sinh)
-
-    def f_h_t(phi, t):
-        return m.asin(f_sin_h(phi, t))
-
-    def f_D_t(sinh):
-        if m.asin(sinh) >= 0.0:
-            return 1.0
-        else:
-            return 0.0
-
-    def f_sin_a(phi, t):
-        ret = m.cos(f_delta(t)) * m.sin(Pi2 * t)
-        return ret / f_cos_h(phi, t)
-
-    def f_sinK1(t):
-        return Fakt2 * m.sin(Pi2_365 * (t + Kt1))
-
-    def f_cosK1(t):
-        return Fakt3 * m.cos(Pi2_365 * (t + Kt1))
-
-    def f_csKt(t):
-        return m.cos(f_sinK1(t))
-
-    def f_ssKt(t):
-        return m.sin(f_sinK1(t))
-
-    def f_dsin_a(phi, t):
-        sPhi = m.sin(phi)
-        cPhi = m.cos(phi)
-        spi2t = m.sin(Pi2 * t)
-        cpi2t = m.cos(Pi2 * t)
-        CssKt = f_ssKt(t)
-        CcsKt = f_csKt(t)
-        fakt = sPhi * CssKt - cPhi * CcsKt * cpi2t
-        Nenner = m.sqrt(1.0 - fakt * fakt)
-        CcosK1 = f_cosK1(t)
-
-        f1 = -CssKt * CcosK1 * spi2t / Nenner
-        f1 = f1 + CcsKt * cpi2t * Pi2 / Nenner
-        f2 = sPhi * CssKt - cPhi * CcsKt * cpi2t
-        f2 = f2 * CcosK1 * (sPhi * CcsKt * + cPhi * CssKt * cpi2t) + cPhi * CcsKt * spi2t * Pi2
-        f2 = f2 * CcsKt * spi2t / Nenner / Nenner
-        return f1 + f2
-
-    def f_a1(phi, t):
-        ret = f_sin_a(phi, t) * -1.0
-        return ret * signum(f_dsin_a(phi, t))
-
-    def f_B2(sinh, beta, phi, t):
-        sina = f_sin_a(phi, t)
-        ret = m.sqrt(1.0 - sina * sina) * m.cos(beta) * signum(f_dsin_a(phi, t))
-        ret = ret + sina * m.sin(beta)
-        ret = ret / sinh
-        return ret * m.sqrt(1.0 - sinh * sinh)
-
-    def f_S(Dt, b2, alpha):
-        calpha = m.cos(alpha)
-        if Dt == 0.0 or calpha == 1.0:
-            if calpha > 0.0:
-                return 1.0
-            else:
-                return 0.0
-        else:
-            s1 = calpha + m.sin(alpha) * b2 * Dt
-            if s1 > 0.0:
-                return 1.0
-            else:
-                return 0.0
-
-    # If the inclination of the wall is not specified, set default incination 90 deg
-    if not isinstance(ori, list):
-        ori = [ori]
-        ori.append(90)
-    # Load exterior climate (rain, wind direction, wind speed)
-    if number != None and path_climate[-4:] == '%03i_' % number:
-        dirrad = supp.readccd(path_climate + 'DirectRadiation.ccd')
-        diffrad = supp.readccd(path_climate + 'DiffuseRadiation.ccd')
-    else:
-        dirrad = supp.readccd(path_climate + 'DirectRadiation.ccd')
-        diffrad = supp.readccd(path_climate + 'DiffuseRadiation.ccd')
-    # Parameters
-    alpha = m.radians(ori[1])  # inlination, radians
-    beta = m.radians(ori[0])  # orientation, radians
-    phi = m.radians(loc_geo)  # geographical location, radians
-
-    # Calculate H_soldir
-    # f_DirRad
-    f_DirRad = list()
-    Pi2_365 = m.pi * 2 / 365
-    Pi_180 = m.pi / 180
-    Pi2 = m.pi * 2
-    Kt1 = 10 + 365 / 4
-    Fakt1 = -23.5
-    Fakt2 = Fakt1 * Pi_180
-    Fakt3 = Fakt1 * Pi_180 * Pi2_365
-    for s in range(1, len(dirrad) + 1):  # Loop over time [h]
-        t = s / 24  # Loop over time [d]
-        sinh = f_sin_h(phi, t)  # sun height h
-        Dt = f_D_t(sinh)
-        if Dt == 0.0:  # if sun is to low, no radiation on surface
-            f_DirRadfact = 0.0
-        else:
-            cB2 = f_B2(sinh, beta, phi, t)
-            cS = f_S(Dt, cB2, alpha)
-            if cS == 0.0:
-                f_DirRadfact = 0.0
-            else:
-                ret = m.cos(alpha)
-                ret = ret + m.sin(alpha) * cB2
-                ret = ret * cS * Dt
-                if ret < 0.0:
-                    f_DirRadfact = 0.0
-                else:
-                    if ret > 5.0:
-                        f_DirRadfact = 5.0
-                    else:
-                        f_DirRadfact = ret
-        f_DirRad.append(f_DirRadfact)
-    # H_soldir
-    H_dir_n = [f * dirr for f, dirr in zip(f_DirRad, dirrad)]  # W/m2
-
-    # Calculate H_soldiff
-    H_diff_n = [
-        m.cos(alpha / 2) * m.cos(alpha / 2) * diffr + gr_relf * m.sin(alpha / 2) * m.sin(alpha / 2) * (dirr + diffr) for
-        diffr, dirr in zip(dirrad, diffrad)]  # W/m2
-
-    # Calculate H_sol
-    H_sol = [sun_abs * (Hdir + Hdiff) for Hdir, Hdiff in zip(H_dir_n, H_diff_n)]  # W/m2
-
-    # Save short wave radiation to ccd or return rain load
-    if path_save == None:
-        return H_sol
-    else:
-        if number != None:
-            supp.saveccd(os.path.join(path_save, '%03i_ShortWaveRadiation.ccd' % number), H_sol)
-        else:
-            supp.saveccd(os.path.join(path_save, 'ShortWaveRadiation.ccd'), H_sol)
-
+    return radiation_strength
