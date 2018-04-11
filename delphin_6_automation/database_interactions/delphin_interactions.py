@@ -375,7 +375,7 @@ def check_delphin_file(delphin_dict: dict):
                          f'Given kind was: {climate_condition["@kind"]}')
             climate_error = True
 
-        if climate_condition['IBK:Flag']['#text'] != 'false':
+        if climate_condition['IBK:Flag'][1]['#text'] != 'false':
             logger.error(f'Climate condition should not use ExtendData. '
                          f'Given value was: {climate_condition[2]["#text"]}')
             climate_error = True
@@ -409,14 +409,14 @@ def check_delphin_file(delphin_dict: dict):
                 boundary_error = True
 
         elif boundary_condition['@type'] == 'ShortWaveRadiation':
-            if boundary_condition['@kind'] != 'ImposedFlux':
-                logger.error(f'Short wave radiation should be of the boundary condition kind: ImposedFlux. '
+            if boundary_condition['@kind'] != 'StandardRadiationModel':
+                logger.error(f'Short wave radiation should be of the boundary condition kind: StandardRadiationModel. '
                              f'Given kind was: {boundary_condition["@kind"]}')
                 boundary_error = True
 
         elif boundary_condition['@type'] == 'LongWaveRadiation':
-            if boundary_condition['@kind'] != 'ImposedFlux':
-                logger.error(f'Long wave radiation should be of the boundary condition kind: ImposedFlux. '
+            if boundary_condition['@kind'] != 'LongWaveComponents':
+                logger.error(f'Long wave radiation should be of the boundary condition kind: LongWaveComponents. '
                              f'Given kind was: {boundary_condition["@kind"]}')
                 boundary_error = True
 
