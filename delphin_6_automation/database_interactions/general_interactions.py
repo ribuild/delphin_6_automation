@@ -209,4 +209,5 @@ def create_account(name: str, email: str) -> user_entry.User:
 
 def find_account_by_email(email: str) -> user_entry.User:
     user = user_entry.User.objects(email=email).first()
+
     return user
