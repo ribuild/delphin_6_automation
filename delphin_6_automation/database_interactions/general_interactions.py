@@ -17,7 +17,7 @@ from delphin_6_automation.file_parsing import delphin_parser
 from delphin_6_automation.database_interactions import delphin_interactions as delphin_interact
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
-
+from delphin_6_automation.database_interactions.db_templates import user_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL INTERACTIONS
@@ -195,3 +195,18 @@ def does_simulation_exists(sim_id: str) -> bool:
         return True
     else:
         return False
+
+
+def create_account(name: str, email: str) -> user_entry.User:
+    user = user_entry.User()
+    user.name = name
+    user.email = email
+
+    user.save()
+
+    return user
+
+
+def find_account_by_email(email: str) -> user_entry.User:
+    user = user_entry.User.objects(email=email).first()
+    return user

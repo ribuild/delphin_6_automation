@@ -26,3 +26,6 @@ processed_result_db = {'db_alias': 'local',
 
 delphin_db = {'db_alias': 'local',
               'collection': 'delphin'}
+
+user_db = {'db_alias': 'local',
+           'collection': 'users'}

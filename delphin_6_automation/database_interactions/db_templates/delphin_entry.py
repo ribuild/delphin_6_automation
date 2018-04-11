@@ -4,18 +4,16 @@ __license__ = "MIT"
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
-from datetime import datetime
-
-import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
-import delphin_6_automation.database_interactions.db_templates.result_raw_entry as raw_db
-import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
 # Modules:
 import mongoengine
+from datetime import datetime
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.database_collections as collections
 import delphin_6_automation.database_interactions.db_templates.result_processed_entry as processed_db
-
+import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
+import delphin_6_automation.database_interactions.db_templates.result_raw_entry as raw_db
+import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN CLASS

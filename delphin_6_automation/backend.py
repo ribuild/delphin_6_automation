@@ -19,6 +19,7 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.simulation_worker import simulation_worker
 from delphin_6_automation.file_parsing import delphin_parser
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN PERMUTATION FUNCTIONS
 
@@ -33,6 +34,7 @@ Backend user interface:
 def main():
     print_header()
     config_mongo()
+    login()
     main_menu()
 
 
@@ -48,6 +50,39 @@ def print_header():
 
 def config_mongo():
     mongo_setup.global_init(dtu_byg)
+
+
+def login():
+    print('')
+    print('------------------- LOGIN -------------------------')
+
+    email = input('What is your email? >').strip().lower()
+    account = general_interactions.find_account_by_email(email)
+
+    if not account:
+        print(f'Could not find account with email {email}.')
+        create = input('Do you which to create a new account? [y/n] >').strip().lower()
+        if create == 'y':
+            create_account(email)
+        else:
+            return
+
+    print('Logged in successfully.')
+    
+
+def create_account(email: str):
+    print('')
+    print('------------------- REGISTER ----------------------')
+
+    name = input('What is your name? >')
+
+    old_account = general_interactions.find_account_by_email(email)
+    if old_account:
+        print(f"ERROR: Account with email {email} already exists.")
+        return
+
+    general_interactions.create_account(name, email)
+    #print(f"Created new account with id {state.active_account.id}.")
 
 
 def main_menu():
