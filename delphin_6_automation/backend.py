@@ -82,7 +82,6 @@ def create_account(email: str):
         return
 
     general_interactions.create_account(name, email)
-    #print(f"Created new account with id {state.active_account.id}.")
 
 
 def main_menu():
@@ -332,8 +331,8 @@ def add_weather_to_simulation(simulation_id):
 
 def list_permutation_options(original_id, priority):
 
-    print()
-    print("Available actions:")
+    print('-------------- PERMUTATION OPTIONS ----------------')
+    print("Available options:")
     print("[a] Change layer width")
     print("[b] Change layer material")
     print("[c] Change weather")
@@ -572,6 +571,8 @@ def simulation_length_permutation(original_id, priority):
 
 
 def start_simulation():
+    print('--------------- SIMULATION WORKER -----------------')
+
     answer = input("Have you read and followed the the PDF guideline for installing and setups? (y/n): ")
     if answer == "y":
         simulation_worker()
