@@ -41,9 +41,11 @@ def main():
 def print_header():
     print('---------------------------------------------------')
     print('|                                                  |')
-    print('|           RiBuild EU research project            |')
-    print('|           for hygrothermal simulations           |')
-    print('|              (WIP) Test environment              |')
+    print('|           RiBuild EU Research Project            |')
+    print('|           for Hygrothermal Simulations           |')
+    print('|                                                  |')
+    print('|                 WORK IN PROGRESS                 |')
+    print('|                 Test Environment                 |')
     print('|                                                  |')
     print('---------------------------------------------------')
 
@@ -86,7 +88,9 @@ def create_account(email: str):
 
 def main_menu():
     while True:
-        print()
+        print('')
+        print('------------------- MAIN MENU ---------------------')
+        print('')
         print("Available actions:")
         print("[a] Add new simulation to queue")
         print("[b] Add new simulation with permutations to queue")
@@ -181,6 +185,8 @@ def view_material_data():
 
     while True:
         print('')
+        print('------------------- MATERIALS ---------------------')
+        print('')
         print("[l] List materials")
         print("[m] Add Delphin material to the database")
         print("[d] Download material")
@@ -207,6 +213,8 @@ def view_material_data():
 def view_weather_data():
 
     while True:
+        print('')
+        print('------------------ WEATHER DATA -------------------')
         print('')
         print("[v] List weather stations")
         print("[x] Return to main menu")
@@ -332,6 +340,7 @@ def add_weather_to_simulation(simulation_id):
 def list_permutation_options(original_id, priority):
 
     print('-------------- PERMUTATION OPTIONS ----------------')
+    print('')
     print("Available options:")
     print("[a] Change layer width")
     print("[b] Change layer material")
@@ -576,8 +585,9 @@ def simulation_length_permutation(original_id, priority):
 def start_simulation():
     print('--------------- SIMULATION WORKER -----------------')
 
-    answer = input("Have you read and followed the the PDF guideline for installing and setups? (y/n): ")
+    answer = input("Have you read and followed the the PDF guideline for installing and setups? [y/n] >")
     if answer == "y":
+        print('')
         simulation_worker()
     else:
         print("Please start by reading and following the PDF guidelines!")
