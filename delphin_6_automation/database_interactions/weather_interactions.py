@@ -118,13 +118,6 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
             elif weather_key in ['year', 'location_name', 'altitude']:
                 weather_dict[weather_key].append(weather_document_as_dict[weather_key])
 
-    for weather_key in weather_dict:
-        if weather_key in ['temperature', 'vertical_rain',
-                           'wind_direction', 'wind_speed',
-                           'long_wave_radiation', 'diffuse_radiation',
-                           'direct_radiation', 'relative_humidity']:
-            weather_dict[weather_key].append(weather_dict[weather_key][-1])
-
     return weather_dict
 
 
@@ -182,6 +175,10 @@ def download_weather(delphin_id: str, folder: str) -> bool:
     wall_location = {'height': 5, 'width': 5}
     weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],
                                                                 weather['wind_speed'], wall_location, orientation)
+
+    for weather_key in weather.keys():
+        weather[weather_key].append(weather[weather_key][-1])
+
     weather_parser.dict_to_ccd(weather, folder)
     change_weather_file_location(delphin_id, folder)
 
