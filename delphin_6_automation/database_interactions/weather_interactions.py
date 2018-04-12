@@ -118,6 +118,13 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
             elif weather_key in ['year', 'location_name', 'altitude']:
                 weather_dict[weather_key].append(weather_document_as_dict[weather_key])
 
+    for weather_key in weather_dict:
+        if weather_key in ['temperature', 'vertical_rain',
+                           'wind_direction', 'wind_speed',
+                           'long_wave_radiation', 'diffuse_radiation',
+                           'direct_radiation', 'relative_humidity']:
+            weather_dict[weather_key].append(weather_dict[weather_key][-1])
+
     return weather_dict
 
 
