@@ -212,4 +212,11 @@ def test_upload_results_1():
 def test_delphin_file_checker_1():
     folder = os.path.dirname(os.path.abspath(__file__)) + '/test_files'
     delphin_dict = delphin_parser.dp6_to_dict(folder + '/delphin_project.d6p')
-    assert delphin_interact.check_delphin_file(delphin_dict) == True
+    assert delphin_interact.check_delphin_file(delphin_dict)
+
+
+def test_cvode_stats():
+    folder = os.path.dirname(os.path.abspath(__file__)) + '/test_files'
+    integrator_dict = delphin_parser.cvode_stats_to_dict(folder)
+
+    assert isinstance(integrator_dict, dict)

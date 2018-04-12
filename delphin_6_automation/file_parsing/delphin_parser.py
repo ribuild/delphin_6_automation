@@ -1,4 +1,5 @@
 __author__ = "Christian Kongsgaard"
+__license__ = 'MIT'
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -9,6 +10,7 @@ import xmltodict
 import datetime
 import os
 import shutil
+from collections import OrderedDict
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
@@ -182,32 +184,25 @@ def cvode_stats_to_dict(path: str) -> dict:
     :return: converted tsv dict
     """
 
-    file_obj = open(path + '/integrator_cvode_stats.tsv', 'r')
+    for file in os.listdir(path):
+        if file.endswith('.tsv'):
+            file_name = file
+
+    file_obj = open(path + '/' + file_name, 'r')
     lines = file_obj.readlines()
     file_obj.close()
 
-    tsv_dict = {'time': [],
-                'steps': [],
-                'rhs_evaluations': [],
-                'lin_setups': [],
-                'number_iterations': [],
-                'number_conversion_fails': [],
-                'number_error_fails': [],
-                'order': [],
-                'step_size': []
-                }
+    tsv_dict = OrderedDict()
+    for name in lines[0].split('\t'):
+        name = name.strip().lower()
+        tsv_dict[name] = []
 
+    tsv_keys = list(tsv_dict.keys())
     for i in range(1, len(lines)):
         line = lines[i].split('\t')
-        tsv_dict['time'].append(float(line[0].strip()))
-        tsv_dict['steps'].append(int(line[1].strip()))
-        tsv_dict['rhs_evaluations'].append(int(line[2].strip()))
-        tsv_dict['lin_setups'].append(int(line[3].strip()))
-        tsv_dict['number_iterations'].append(int(line[4].strip()))
-        tsv_dict['number_conversion_fails'].append(int(line[5].strip()))
-        tsv_dict['number_error_fails'].append(int(line[6].strip()))
-        tsv_dict['order'].append(int(line[7].strip()))
-        tsv_dict['step_size'].append(float(line[8].strip()))
+
+        for index, value in enumerate(line):
+            tsv_dict[tsv_keys[index]].append(float(value.strip()))
 
     return tsv_dict
 
