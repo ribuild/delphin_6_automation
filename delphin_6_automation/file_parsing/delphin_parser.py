@@ -41,7 +41,7 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
     """
 
     # Helper functions
-    def d6o_1d(d6o_lines):
+    def d6o(d6o_lines):
         result_dict_ = dict()
         result_dict_['D6OARLZ'] = lines[0].split(' ')[-1].strip()
 
@@ -57,14 +57,27 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
             elif name == 'geo_file' or name == 'geo_file_hash':
                 value = line[1][1:-1]
                 meta_dict_[name] = value
+            elif name == 'indices':
+                value = [int(i)
+                         for i in line[1].strip().split(' ')]
+                result_dict_[name] = value
             else:
                 value = line[1].strip()
                 result_dict_[name] = value
 
-        result_values = []
+        result_values = dict()
+
+        for index_ in result_dict_['indices']:
+            cell = 'cell_' + str(index_)
+            result_values[cell] = []
+
         for j in range(15, len(d6o_lines)):
-            line = lines[j].split('\t')
-            result_values.append(float(line[1].strip()))
+
+            line = lines[j].strip().split('\t')
+
+            for index, value in enumerate(line[1:]):
+                cell = 'cell_' + str(result_dict_['indices'][index])
+                result_values[cell].append(float(value.strip()))
 
         result_dict_['result'] = result_values
 
@@ -74,7 +87,7 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
     lines = file_obj.readlines()
     file_obj.close()
 
-    result_dict, meta_dict = d6o_1d(lines)
+    result_dict, meta_dict = d6o(lines)
 
     return result_dict, meta_dict
 
