@@ -478,7 +478,8 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
     file_obj.write('VALUE_UNIT    = ' + str(result_dict['results'][result_name]['value_unit']) + '\n')
     file_obj.write('TIME_UNIT     = ' + str(result_dict['results'][result_name]['time_unit']) + '\n')
     file_obj.write('START_YEAR    = ' + str(result_dict['results'][result_name]['start_year']) + '\n')
-    file_obj.write('INDICES       = ' + str(result_dict['results'][result_name]['indices']) + ' \n\n')
+    file_obj.write('INDICES       = ' + ' '.join([str(i) for i in result_dict['results'][result_name]['indices']]) +
+                   ' \n\n')
 
     result_keys = list(result_dict['results'][result_name]['result'].keys())
     for count in range(0, len(result_dict['results'][result_name]['result'][result_keys[0]])):
