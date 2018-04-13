@@ -102,6 +102,7 @@ def github_updates():
 def simulation_worker():
     try:
         while True:
+            github_updates()
             id_ = simulation_interactions.find_next_sim_in_queue()
             if id_:
                 worker(id_)
