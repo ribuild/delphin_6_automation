@@ -81,6 +81,10 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
                 cell = 'cell_' + str(result_dict_['indices'][index])
                 result_values[cell].append(float(value.strip()))
 
+        for cell in result_values.keys():
+            if not result_values[cell]:
+                del result_values[cell]
+
         result_dict_['result'] = result_values
 
         return result_dict_, meta_dict_
@@ -319,39 +323,13 @@ def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
 
     file_obj = open(log_path + '/integrator_cvode_stats.tsv', 'w')
 
-    file_obj.write('                 Time [s]\t     Steps\t  RhsEvals\t LinSetups\t  NIters\t NConvFails\t  NErrFails'
-                   '\t Order\t  StepSize [s]\n')
+    file_obj.write('\t\t\t'.join(file_dict.keys()) + '\n')
 
     for line_index in range(0, len(file_dict['time'])):
-        time_string = ' ' * (25 - len(str("{:.10f}".format(file_dict['time'][line_index])))) + \
-                      str("{:.10f}".format(file_dict['time'][line_index]))
 
-        steps_string = ' ' * (10 - len(str(file_dict['steps'][line_index]))) + \
-                       str(file_dict['steps'][line_index])
-
-        rhs_string = ' ' * (10 - len(str(file_dict['rhs_evaluations'][line_index]))) + \
-                     str(file_dict['rhs_evaluations'][line_index])
-
-        lin_string = ' ' * (10 - len(str(file_dict['lin_setups'][line_index]))) + \
-                     str(file_dict['lin_setups'][line_index])
-
-        iterations_string = ' ' * (8 - len(str(file_dict['number_iterations'][line_index]))) + \
-                            str(file_dict['number_iterations'][line_index])
-
-        conversion_fails_string = ' ' * (11 - len(str(file_dict['number_conversion_fails'][line_index]))) + \
-                                  str(file_dict['number_conversion_fails'][line_index])
-
-        error_fails_string = ' ' * (11 - len(str(file_dict['number_error_fails'][line_index]))) + \
-                             str(file_dict['number_error_fails'][line_index])
-
-        order_string = ' ' * (6 - len(str(file_dict['order'][line_index]))) + str(file_dict['order'][line_index])
-
-        step_size_string = ' ' * (14 - len(str("{:.6f}".format(file_dict['step_size'][line_index])))) + \
-                           str("{:.6f}".format(file_dict['step_size'][line_index]))
-
-        file_obj.write(time_string + '\t' + steps_string + '\t' + rhs_string + '\t' + lin_string + '\t'
-                       + iterations_string + '\t' + conversion_fails_string + '\t' + error_fails_string + '\t'
-                       + order_string + '\t' + step_size_string + '\n')
+        line = '\t'.join([str(file_dict[log_key][line_index])
+                          for log_key in file_dict.keys()])
+        file_obj.write(line + '\n')
 
     file_obj.close()
 
@@ -406,9 +384,13 @@ def write_log_files(result_obj: result_db.Result, download_path: str) -> bool:
         shutil.rmtree(log_path)
         os.mkdir(log_path)
 
-    dict_to_progress_file(log_dict['progress'], log_path)
-    dict_to_cvode_stats_file(log_dict['integrator_cvode_stats'], log_path)
-    dict_to_les_stats_file(log_dict['les_direct_stats'], log_path)
+    for log_key in log_dict.keys():
+        if log_key == 'progress':
+            dict_to_progress_file(log_dict['progress'], log_path)
+        elif log_key.startswith('integrator'):
+            dict_to_cvode_stats_file(log_dict[log_key], log_path)
+        elif log_key.startswith('les_'):
+            dict_to_les_stats_file(log_dict[log_key], log_path)
 
     return True
 
@@ -498,13 +480,23 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
     file_obj.write('START_YEAR    = ' + str(result_dict['results'][result_name]['start_year']) + '\n')
     file_obj.write('INDICES       = ' + str(result_dict['results'][result_name]['indices']) + ' \n\n')
 
-    for count, value in enumerate(result_dict['results'][result_name]['result']):
+    result_keys = list(result_dict['results'][result_name]['result'].keys())
+    for count in range(0, len(result_dict['results'][result_name]['result'][result_keys[0]])):
         space_count = ' ' * (13 - len(str(count)))
+        line_to_write = str(count) + space_count
 
-        if value == int(value):
-            value = int(value)
-        space_value = ' ' * (15 - len(str(value)))
-        file_obj.write(str(count) + space_count + '\t' + str(value) + space_value + '\t\n')
+        for key in result_keys:
+            try:
+                value = result_dict['results'][result_name]['result'][key][count]
+                if value == int(value):
+                    value = int(value)
+                space_value = ' ' * (15 - len(str(value)))
+                line_to_write += '\t' + str(value) + space_value
+
+            except IndexError:
+                pass
+
+        file_obj.write(line_to_write + '\t\n')
 
     file_obj.close()
 

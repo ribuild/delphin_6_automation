@@ -113,8 +113,8 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
     entry = result_db.Result()
 
     entry.delphin = delphin_entry
-    entry.log['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
-    entry.log['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
+    entry.log['integrator_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
+    #entry.log['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
     entry.log['progress'] = delphin_parser.progress_to_dict(log_path)
     entry.geometry_file = geometry_dict
     entry.results = result_dict
