@@ -6,6 +6,8 @@ __license__ = "MIT"
 
 # Modules:
 import os
+import subprocess
+import github
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
@@ -212,3 +214,13 @@ def find_account_by_email(email: str) -> user_entry.User:
     user = user_entry.User.objects(email=email).first()
 
     return user
+
+
+def get_github_version():
+    gh = github.Github()
+    rp = gh.get_repo('ribuild/delphin_6_automation')
+    return rp.get_commits()[0].sha
+
+
+def get_git_revision_hash():
+    return subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode()

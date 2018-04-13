@@ -92,8 +92,11 @@ def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSo
 
 
 def github_updates():
-    # TODO - Check for github update to code
-    pass
+    if general_interactions.get_github_version() != general_interactions.get_git_revision_hash():
+        print('New version of Delphin 6 Automation is available on Github!!')
+        return False
+    else:
+        return True
 
 
 def simulation_worker():
