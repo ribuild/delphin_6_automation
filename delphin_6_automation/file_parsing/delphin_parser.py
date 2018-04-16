@@ -81,9 +81,7 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
                 cell = 'cell_' + str(result_dict_['indices'][index])
                 result_values[cell].append(float(value.strip()))
 
-        for cell in result_values.keys():
-            if not result_values[cell]:
-                del result_values[cell]
+        result_values = {cell: value for cell, value in result_values.items() if value}
 
         result_dict_['result'] = result_values
 
