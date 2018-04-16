@@ -177,7 +177,7 @@ def download_weather(delphin_id: str, folder: str) -> bool:
                                                                 weather['wind_speed'], wall_location, orientation)
 
     for weather_key in weather.keys():
-        weather[weather_key].append(weather[weather_key][-1])
+        weather[weather_key].extend(weather[weather_key][-2:])
 
     weather_parser.dict_to_ccd(weather, folder)
     change_weather_file_location(delphin_id, folder)
