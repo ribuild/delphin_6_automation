@@ -11,7 +11,10 @@ from notifiers.logging import NotificationHandler
 import platform
 
 # RiBuild Modules:
-from delphin_6_automation.database_interactions.auth import gmail
+try:
+    from delphin_6_automation.database_interactions.auth import gmail
+except ModuleNotFoundError:
+    gmail = {'mail': None, 'password': None}
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # LOGGERS
