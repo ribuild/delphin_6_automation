@@ -158,7 +158,7 @@ def driving_rain(precipitation, wind_direction, wind_speed, wall_location, orien
     return list(wind_driven_rain)
 
 
-def short_wave_radiation(radiation, longitude, latitude, hour_of_the_year, surface_angle, surface_azimuth):
+def short_wave_radiation(radiation, longitude, latitude, hour_of_the_year, inclination, orientation):
 
     sin = lambda x: np.sin(np.radians(x))
     cos = lambda x: np.cos(np.radians(x))
@@ -246,8 +246,8 @@ def short_wave_radiation(radiation, longitude, latitude, hour_of_the_year, surfa
     declination = declination(day_of_year)
     latitude_deg = latitude_deg(latitude)
     time_angle = time_angle(true_solar_time)
-    incident_angle = incident_angle(declination, latitude_deg, surface_angle, surface_azimuth, time_angle)
-    zenit_angle = zenit_angle(declination, latitude_deg, surface_angle, surface_azimuth, time_angle)
+    incident_angle = incident_angle(declination, latitude_deg, inclination, orientation, time_angle)
+    zenit_angle = zenit_angle(declination, latitude_deg, inclination, orientation, time_angle)
     radiation_ratio = radiation_ratio(incident_angle, zenit_angle)
     radiation_strength = radiation_strength(radiation_ratio, radiation)
 
