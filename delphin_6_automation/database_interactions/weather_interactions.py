@@ -129,13 +129,13 @@ def change_weather_file_location(delphin_id: str, folder: str):
 
     for index in range(0, len(climate_conditions)):
             if climate_conditions[index]['@type'] == 'Temperature':
-                if 'indoor' in climate_conditions[index]['@name']:
+                if 'indoor' in climate_conditions[index]['@name'] or 'interior' in climate_conditions[index]['@name']:
                     climate_conditions[index]['Filename'] = folder + '/indoor_temperature.ccd'
                 else:
                     climate_conditions[index]['Filename'] = folder + '/temperature.ccd'
 
             elif climate_conditions[index]['@type'] == 'RelativeHumidity':
-                if 'indoor' in climate_conditions[index]['@name']:
+                if 'indoor' in climate_conditions[index]['@name'] or 'interior' in climate_conditions[index]['@name']:
                     climate_conditions[index]['Filename'] = folder + '/indoor_relative_humidity.ccd'
                 else:
                     climate_conditions[index]['Filename'] = folder + '/relative_humidity.ccd'
