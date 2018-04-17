@@ -186,25 +186,31 @@ def cvode_stats_to_dict(path: str) -> dict:
     :return: converted tsv dict
     """
 
-    for file in os.listdir(path):
-        if file.endswith('.tsv'):
-            file_name = file
-
-    file_obj = open(path + '/' + file_name, 'r')
+    file_obj = open(path + '/integrator_cvode_stats.tsv', 'r')
     lines = file_obj.readlines()
     file_obj.close()
 
-    tsv_dict = OrderedDict()
-    for name in lines[0].split('\t'):
-        name = name.strip().lower()
-        tsv_dict[name] = []
+    tsv_dict = {'time': [],
+                'steps': [],
+                'rhs_evaluations': [],
+                'lin_setups': [],
+                'number_iterations': [],
+                'number_conversion_fails': [],
+                'number_error_fails': [],
+                'order': [],
+                'step_size': []}
 
-    tsv_keys = list(tsv_dict.keys())
     for i in range(1, len(lines)):
         line = lines[i].split('\t')
-
-        for index, value in enumerate(line):
-            tsv_dict[tsv_keys[index]].append(float(value.strip()))
+        tsv_dict['time'].append(float(line[0].strip()))
+        tsv_dict['steps'].append(int(line[1].strip()))
+        tsv_dict['rhs_evaluations'].append(int(line[2].strip()))
+        tsv_dict['lin_setups'].append(int(line[3].strip()))
+        tsv_dict['number_iterations'].append(int(line[4].strip()))
+        tsv_dict['number_conversion_fails'].append(int(line[5].strip()))
+        tsv_dict['number_error_fails'].append(int(line[6].strip()))
+        tsv_dict['order'].append(int(line[7].strip()))
+        tsv_dict['step_size'].append(float(line[8].strip()))
 
     return tsv_dict
 
@@ -321,13 +327,40 @@ def dict_to_cvode_stats_file(file_dict: dict, log_path: str) -> bool:
 
     file_obj = open(log_path + '/integrator_cvode_stats.tsv', 'w')
 
-    file_obj.write('\t\t\t'.join(file_dict.keys()) + '\n')
+    file_obj.write('                 Time [s]\t     Steps\t  RhsEvals\t LinSetups\t  NIters\t NConvFails\t  NErrFails\t'
+                   ' Order\t  StepSize [s]\n')
 
     for line_index in range(0, len(file_dict['time'])):
+        time_string = ' ' * (25 - len(str("{:.10f}".format(file_dict['time'][line_index])))) + \
+                      str("{:.10f}".format(file_dict['time'][line_index]))
 
-        line = '\t'.join([str(file_dict[log_key][line_index])
-                          for log_key in file_dict.keys()])
-        file_obj.write(line + '\n')
+        steps_string = ' ' * (10 - len(str(file_dict['steps'][line_index]))) + \
+                       str(file_dict['steps'][line_index])
+
+        rhs_string = ' ' * (10 - len(str(file_dict['rhs_evaluations'][line_index]))) + \
+                     str(file_dict['rhs_evaluations'][line_index])
+
+        lin_string = ' ' * (10 - len(str(file_dict['lin_setups'][line_index]))) + \
+                     str(file_dict['lin_setups'][line_index])
+
+        iterations_string = ' ' * (8 - len(str(file_dict['number_iterations'][line_index]))) + \
+                            str(file_dict['number_iterations'][line_index])
+
+        conversion_fails_string = ' ' * (11 - len(str(file_dict['number_conversion_fails'][line_index]))) + \
+                                  str(file_dict['number_conversion_fails'][line_index])
+
+        error_fails_string = ' ' * (11 - len(str(file_dict['number_error_fails'][line_index]))) + \
+                             str(file_dict['number_error_fails'][line_index])
+
+        order_string = ' ' * (6 - len(str(file_dict['order'][line_index]))) + \
+                       str(file_dict['order'][line_index])
+
+        step_size_string = ' ' * (14 - len(str("{:.6f}".format(file_dict['step_size'][line_index])))) + \
+                           str("{:.6f}".format(file_dict['step_size'][line_index]))
+
+        file_obj.write(time_string + '\t' + steps_string + '\t' + rhs_string + '\t' + lin_string + '\t'
+                       + iterations_string + '\t' + conversion_fails_string + '\t' + error_fails_string + '\t'
+                       + order_string + '\t' + step_size_string + '\n')
 
     file_obj.close()
 
