@@ -144,8 +144,7 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
     :return: True
     """
 
-    result_dict = result_obj.to_mongo()
-
+    result_dict: dict = bson.BSON.decode(result_obj.results.read())
     result_path = download_path + '/results'
 
     if not os.path.exists(result_path):
@@ -156,8 +155,9 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
 
     delphin_parser.dict_to_g6a(dict(result_obj.geometry_file), result_path)
 
-    for result_name in result_dict['results'].keys():
-        delphin_parser.dict_to_d6o(result_dict, result_name, result_path)
+    for result_name in result_dict.keys():
+        delphin_parser.dict_to_d6o(result_dict, result_name, result_path, result_obj.simulation_started,
+                                   result_obj.geometry_file['name'], result_obj.geometry_file_hash)
 
     return True
 

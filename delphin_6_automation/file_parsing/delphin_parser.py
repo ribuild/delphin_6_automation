@@ -10,7 +10,7 @@ import xmltodict
 import datetime
 import os
 import shutil
-from collections import OrderedDict
+import bson
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
@@ -405,7 +405,8 @@ def write_log_files(result_obj: result_db.Result, download_path: str) -> bool:
     :param download_path: Path to were the log file should be written
     :return: True
     """
-    log_dict = dict(result_obj.log)
+
+    log_dict = bson.BSON.decode(result_obj.log.read())
 
     log_path = download_path + '/log'
 
@@ -484,7 +485,8 @@ def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
     return True
 
 
-def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
+def dict_to_d6o(result_dict: dict, result_name: str, result_path: str, simulation_start: datetime,
+                geometry_file_name: str, geometry_file_hash: int) -> bool:
     """
     Turns a dictionary into a delphin result file.
 
@@ -496,30 +498,30 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str) -> bool:
 
     file_obj = open(result_path + '/' + result_name + '.d6o', 'w')
 
-    file_obj.write('D6OARLZ! ' + str(result_dict['results'][result_name]['D6OARLZ']) + '\n')
-    file_obj.write('TYPE          = ' + str(result_dict['results'][result_name]['type']) + '\n')
-    file_obj.write('PROJECT_FILE  = ' + str(result_dict['results'][result_name]['project_file']) + '\n')
-    file_obj.write('CREATED       = ' + str(result_dict['simulation_started'].strftime('%a %b %d %H:%M:%S %Y')) + '\n')
-    file_obj.write('GEO_FILE      = ' + str(result_dict['geometry_file']['name']) + '.g6a' + '\n')
-    file_obj.write('GEO_FILE_HASH = ' + str(result_dict['geometry_file_hash']) + '\n')
-    file_obj.write('QUANTITY      = ' + str(result_dict['results'][result_name]['quantity']) + '\n')
-    file_obj.write('QUANTITY_KW   = ' + str(result_dict['results'][result_name]['quantity_kw']) + '\n')
-    file_obj.write('SPACE_TYPE    = ' + str(result_dict['results'][result_name]['space_type']) + '\n')
-    file_obj.write('TIME_TYPE     = ' + str(result_dict['results'][result_name]['time_type']) + '\n')
-    file_obj.write('VALUE_UNIT    = ' + str(result_dict['results'][result_name]['value_unit']) + '\n')
-    file_obj.write('TIME_UNIT     = ' + str(result_dict['results'][result_name]['time_unit']) + '\n')
-    file_obj.write('START_YEAR    = ' + str(result_dict['results'][result_name]['start_year']) + '\n')
-    file_obj.write('INDICES       = ' + ' '.join([str(i) for i in result_dict['results'][result_name]['indices']]) +
+    file_obj.write('D6OARLZ! ' + str(result_dict[result_name]['D6OARLZ']) + '\n')
+    file_obj.write('TYPE          = ' + str(result_dict[result_name]['type']) + '\n')
+    file_obj.write('PROJECT_FILE  = ' + str(result_dict[result_name]['project_file']) + '\n')
+    file_obj.write('CREATED       = ' + str(simulation_start.strftime('%a %b %d %H:%M:%S %Y')) + '\n')
+    file_obj.write('GEO_FILE      = ' + str(geometry_file_name) + '.g6a' + '\n')
+    file_obj.write('GEO_FILE_HASH = ' + str(geometry_file_hash) + '\n')
+    file_obj.write('QUANTITY      = ' + str(result_dict[result_name]['quantity']) + '\n')
+    file_obj.write('QUANTITY_KW   = ' + str(result_dict[result_name]['quantity_kw']) + '\n')
+    file_obj.write('SPACE_TYPE    = ' + str(result_dict[result_name]['space_type']) + '\n')
+    file_obj.write('TIME_TYPE     = ' + str(result_dict[result_name]['time_type']) + '\n')
+    file_obj.write('VALUE_UNIT    = ' + str(result_dict[result_name]['value_unit']) + '\n')
+    file_obj.write('TIME_UNIT     = ' + str(result_dict[result_name]['time_unit']) + '\n')
+    file_obj.write('START_YEAR    = ' + str(result_dict[result_name]['start_year']) + '\n')
+    file_obj.write('INDICES       = ' + ' '.join([str(i) for i in result_dict[result_name]['indices']]) +
                    ' \n\n')
 
-    result_keys = list(result_dict['results'][result_name]['result'].keys())
-    for count in range(0, len(result_dict['results'][result_name]['result'][result_keys[0]])):
+    result_keys = list(result_dict[result_name]['result'].keys())
+    for count in range(0, len(result_dict[result_name]['result'][result_keys[0]])):
         space_count = ' ' * (13 - len(str(count)))
         line_to_write = str(count) + space_count
 
         for key in result_keys:
             try:
-                value = result_dict['results'][result_name]['result'][key][count]
+                value = result_dict[result_name]['result'][key][count]
                 if value == int(value):
                     value = int(value)
                 space_value = ' ' * (15 - len(str(value)))
