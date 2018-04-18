@@ -53,6 +53,9 @@ def worker(id_):
     # Download, solve, upload
     time_0 = datetime.now()
 
+    print(f'\nDownloads project with ID: {id_}')
+    logger.info(f'Downloads project with ID: {id_}')
+
     general_interactions.download_full_project_from_database(str(id_), delphin_path)
     solve_delphin(delphin_path + '/' + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
     id_result = delphin_interactions.upload_results_to_database(delphin_path + '/' + id_)
