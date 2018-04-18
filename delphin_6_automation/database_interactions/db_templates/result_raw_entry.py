@@ -19,19 +19,17 @@ import delphin_6_automation.database_interactions.database_collections as collec
 # -------------------------------------------------------------------------------------------------------------------- #
 # RESULT CLASS
 
-
 class Result(mongoengine.Document):
+    meta = collections.raw_result_db
 
     added_date = mongoengine.DateTimeField(default=datetime.now)
     delphin = mongoengine.GenericReferenceField(required=True)
     results_processed = mongoengine.GenericReferenceField()
 
-    log = mongoengine.DictField(required=True)
-    results = mongoengine.DictField(required=True)
+    log = mongoengine.FileField(required=True, db_alias=meta['db_alias'], collection_name=meta['collection'])
+    results = mongoengine.FileField(required=True, db_alias=meta['db_alias'], collection_name=meta['collection'])
     geometry_file = mongoengine.DictField(required=True)
     geometry_file_hash = mongoengine.IntField(required=True)
     simulation_started = mongoengine.DateTimeField(required=True)
-
-    meta = collections.raw_result_db
 
 

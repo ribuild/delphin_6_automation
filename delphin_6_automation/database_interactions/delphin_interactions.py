@@ -10,6 +10,7 @@ import os
 import shutil
 import xmltodict
 from collections import OrderedDict
+import bson
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
@@ -113,11 +114,14 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
     entry = result_db.Result()
 
     entry.delphin = delphin_entry
-    entry.log['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
-    entry.log['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
-    entry.log['progress'] = delphin_parser.progress_to_dict(log_path)
+    log_dict = dict()
+    log_dict['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
+    log_dict['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
+    log_dict['progress'] = delphin_parser.progress_to_dict(log_path)
+    entry.log.put(bson.BSON.encode(log_dict))
+
     entry.geometry_file = geometry_dict
-    entry.results = result_dict
+    entry.results.put(bson.BSON.encode(result_dict))
     entry.simulation_started = meta_dict['created']
     entry.geometry_file_hash = meta_dict['geo_file_hash']
     entry.save()
