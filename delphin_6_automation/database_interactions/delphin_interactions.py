@@ -116,7 +116,7 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
     entry.delphin = delphin_entry
     log_dict = dict()
     log_dict['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
-    log_dict['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
+    #log_dict['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
     log_dict['progress'] = delphin_parser.progress_to_dict(log_path)
     entry.log.put(bson.BSON.encode(log_dict))
 
