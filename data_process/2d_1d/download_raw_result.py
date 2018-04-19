@@ -5,8 +5,13 @@ from delphin_6_automation.database_interactions import delphin_interactions
 mongo_setup.global_init(dtu_byg)
 
 
-result_ids = ['5ad723b82e2cb22ff0a202f1', '5ad7240c2e2cb22ff0a20333', '5ad858392e2cb24344ad4ecb']
-sim_ids = ['5ad7229b5d9460f77e36d297', '5ad7229c5d9460f77e36d298', '5ad726ca5d9460090787f5e9']
+result_ids = ['5ad894572e2cb21b4c5bdd07', '5ad894e72e2cb21b4c5bdd44', '5ad895882e2cb21b4c5bdd81',
+              '5ad896442e2cb21b4c5bddbe', '5ad898312e2cb21b4c5bddfb', '5ad898a02e2cb21b4c5bde38',
+              '5ad899592e2cb21b4c5bde75', '5ad89b592e2cb21b4c5bdeb2']
+sim_ids = ['5ad892e65d9460a45f7bddeb', '5ad892e85d9460a45f7bddec', '5ad892e85d9460a45f7bdded',
+           '5ad892e85d9460a45f7bddee', '5ad892fb5d94609e5b584f69', '5ad892fc5d94609e5b584f6a',
+           '5ad892fc5d94609e5b584f6b', '5ad892fd5d94609e5b584f6c']
+
 folder = r'U:\RIBuild\2D_1D\Results'
 
 

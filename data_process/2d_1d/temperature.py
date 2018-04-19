@@ -213,8 +213,10 @@ def differences(i):
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
     plt.ylabel('%')
 
-    local_df = pd.DataFrame(columns=[brick_1d[i]['x'], brick_1d[i]['x'], brick_1d[i]['x'], brick_1d[i]['x']],
-                            index=pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1), freq='h', periods=len(brick_rel)),
+    local_df = pd.DataFrame(columns=[f"{brick_1d[i]['x']:.04f}", f"{brick_1d[i]['x']:.04f}",
+                                     f"{brick_1d[i]['x']:.04f}", f"{brick_1d[i]['x']:.04f}"],
+                            index=pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1),
+                                                   freq='h', periods=len(brick_rel)),
                             data=np.vstack([brick_rel, brick_abs, mortar_rel, mortar_abs]).T)
 
     local_df.columns = pd.MultiIndex.from_arrays([local_df.columns, ['brick', 'brick', 'mortar', 'mortar'],
