@@ -10,6 +10,7 @@ import numpy as np
 import os
 import datetime
 import matplotlib.dates as mdates
+import pandas as pd
 
 # RiBuild Modules
 from delphin_6_automation.file_parsing import delphin_parser
@@ -43,15 +44,15 @@ def add_data_to_points(points: list, results: dict, result_name: str):
 # Application
 colors = {'top': '#FBBA00', 'mid': '#B81A5D', 'bottom': '#79C6C0', '1d_brick': '#000000', '1d_mortar': '#BDCCD4'}
 result_folder = r'U:\RIBuild\2D_1D\Results'
-projects = ['5ad5da522e2cb21a90397b85', '5ad5dac32e2cb21a90397b86', '5ad5e05d5d9460d762130f93']
-files = ['Moisture content integral [2].d6o']
+projects = ['5ad723b82e2cb22ff0a202f1', '5ad7240c2e2cb22ff0a20333', '5ad858392e2cb24344ad4ecb']
+files = ['Moisture content integral.d6o']
 
 parsed_dicts = {'brick_1d': {'moisture': {}, 'geo': {}},
                 'mortar_1d': {'moisture': {}, 'geo': {}},
                 '2d': {'moisture': {}, 'geo': {}}, }
 
-map_projects = {'5ad5da522e2cb21a90397b85': 'brick_1d', '5ad5dac32e2cb21a90397b86': 'mortar_1d',
-                '5ad5e05d5d9460d762130f93': '2d'}
+map_projects = {'5ad723b82e2cb22ff0a202f1': 'brick_1d', '5ad7240c2e2cb22ff0a20333': 'mortar_1d',
+                '5ad858392e2cb24344ad4ecb': '2d'}
 for project in projects:
     for mp_key in map_projects.keys():
         if project == mp_key:
@@ -114,13 +115,13 @@ def rel_diff(x1, x2):
     return (abs(x2 - x1))/x2 * 100
 
 
-brick_abs = abs_diff(brick_1d[0]['moisture_integral'][:len(sim_2d[10]['moisture_integral'])],
+brick_abs = abs_diff(brick_1d[0]['moisture_integral'],
                      sim_2d[10]['moisture_integral']*7.351860020585208)
-mortar_abs = abs_diff(mortar_1d[0]['moisture_integral'][:len(sim_2d[10]['moisture_integral'])],
+mortar_abs = abs_diff(mortar_1d[0]['moisture_integral'],
                       sim_2d[10]['moisture_integral']*7.351860020585208)
-brick_rel = rel_diff(brick_1d[0]['moisture_integral'][:len(sim_2d[10]['moisture_integral'])],
+brick_rel = rel_diff(brick_1d[0]['moisture_integral'],
                      sim_2d[10]['moisture_integral']*7.351860020585208)
-mortar_rel = rel_diff(mortar_1d[0]['moisture_integral'][:len(sim_2d[10]['moisture_integral'])],
+mortar_rel = rel_diff(mortar_1d[0]['moisture_integral'],
                       sim_2d[10]['moisture_integral']*7.351860020585208)
 
 # Moisture Integral
@@ -142,12 +143,31 @@ plt.gcf().autofmt_xdate()
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
 plt.ylabel('%')
 
-print('Relative Difference:')
-print()
-print(f"25th PERCENTILE:\tBrick: {np.percentile(brick_rel, 25):.03f}\tMortar: {np.percentile(mortar_rel, 25):.03f}")
-print(f"MEAN:\t\t\t\tBrick: {np.mean(brick_rel):.03f}\tMortar: {np.mean(mortar_rel):.03f}")
-print(f"MEDIAN:\t\t\t\tBrick: {np.median(brick_rel):.03f}\tMortar: {np.median(mortar_rel):.03f}")
-print(f"75th PERCENTILE:\tBrick: {np.percentile(brick_rel, 75):.03f}\tMortar: {np.percentile(mortar_rel, 75):.03f}")
-print(f"STANDARD DEVIATION:\tBrick: {np.std(brick_rel):.03f}\tMortar: {np.std(mortar_rel):.03f}")
-
 plt.show()
+
+absolute_df = pd.DataFrame(columns=['brick', 'mortar', ],
+                           index=pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1),
+                                                  freq='h', periods=len(brick_rel)),
+                           data=np.vstack([brick_abs, mortar_abs]).T)
+
+relative_df = pd.DataFrame(columns=['brick', 'mortar', ],
+                           index=pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1),
+                                                  freq='h', periods=len(brick_rel)),
+                           data=np.vstack([brick_rel, mortar_rel]).T)
+
+plt.figure()
+ax = absolute_df.boxplot()
+ax.set_ylabel('Moisture Content - kg')
+ax.set_title('Absolute Differences')
+plt.show()
+
+
+def excel():
+    out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
+    writer = pd.ExcelWriter(out_folder + '/moisture_integral.xlsx')
+    relative_df.describe().to_excel(writer, 'relative')
+    absolute_df.describe().to_excel(writer, 'absolute')
+    writer.save()
+
+
+excel()

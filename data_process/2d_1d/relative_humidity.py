@@ -47,9 +47,9 @@ result_folder = r'U:\RIBuild\2D_1D\Results'
 projects = ['5ad723b82e2cb22ff0a202f1', '5ad7240c2e2cb22ff0a20333', '5ad858392e2cb24344ad4ecb']
 files = ['temperature profile.d6o']
 
-parsed_dicts = {'brick_1d': {'temp': {}, 'geo': {}},
-                'mortar_1d': {'temp': {}, 'geo': {}},
-                '2d': {'temp': {}, 'geo': {}}, }
+parsed_dicts = {'brick_1d': {'rh': {}, 'geo': {}},
+                'mortar_1d': {'rh': {}, 'geo': {}},
+                '2d': {'rh': {}, 'geo': {}}, }
 
 map_projects = {'5ad723b82e2cb22ff0a202f1': 'brick_1d', '5ad7240c2e2cb22ff0a20333': 'mortar_1d',
                 '5ad858392e2cb24344ad4ecb': '2d'}
@@ -63,32 +63,28 @@ for project in projects:
                 for file in os.listdir(folder)
                 if file.endswith('.g6a')][0]
 
-    parsed_dicts[key]['temp'], _ = delphin_parser.d6o_to_dict(folder, files[0])
+    parsed_dicts[key]['rh'], _ = delphin_parser.d6o_to_dict(folder, files[0])
     parsed_dicts[key]['geo'] = delphin_parser.g6a_to_dict(folder, geo_file)
 
-x = np.linspace(0, len(parsed_dicts['brick_1d']['temp']['result']['cell_0'][8760:]),
-                len(parsed_dicts['brick_1d']['temp']['result']['cell_0'][8760:]))
+x = np.linspace(0, len(parsed_dicts['brick_1d']['rh']['result']['cell_0'][8760:]),
+                len(parsed_dicts['brick_1d']['rh']['result']['cell_0'][8760:]))
 x_date = [datetime.datetime(2020, 1, 1) + datetime.timedelta(hours=i)
-          for i in range(len(parsed_dicts['brick_1d']['temp']['result']['cell_0'][8760:]))]
-x_2d = np.linspace(0, len(parsed_dicts['2d']['temp']['result']['cell_66'][8760:]),
-                   len(parsed_dicts['2d']['temp']['result']['cell_66'][8760:]))
-x_date_2d = [datetime.datetime(2020, 1, 1) + datetime.timedelta(hours=i)
-             for i in range(len(parsed_dicts['2d']['temp']['result']['cell_66'][8760:]))]
+          for i in range(len(parsed_dicts['brick_1d']['rh']['result']['cell_0'][8760:]))]
 
 # Brick 1D
-brick_1d = get_points(parsed_dicts['brick_1d']['temp'], parsed_dicts['brick_1d']['geo'])
+brick_1d = get_points(parsed_dicts['brick_1d']['rh'], parsed_dicts['brick_1d']['geo'])
 brick_1d.sort(key=lambda point: point['x'])
-add_data_to_points(brick_1d, parsed_dicts['brick_1d']['temp'], 'temperature')
+add_data_to_points(brick_1d, parsed_dicts['brick_1d']['rh'], 'relative_humidity')
 
 # Mortar 1D
-mortar_1d = get_points(parsed_dicts['mortar_1d']['temp'], parsed_dicts['mortar_1d']['geo'])
+mortar_1d = get_points(parsed_dicts['mortar_1d']['rh'], parsed_dicts['mortar_1d']['geo'])
 mortar_1d.sort(key=lambda point: point['x'])
-add_data_to_points(mortar_1d, parsed_dicts['mortar_1d']['temp'], 'temperature')
+add_data_to_points(mortar_1d, parsed_dicts['mortar_1d']['rh'], 'relative_humidity')
 
 # 2D
-sim_2d = get_points(parsed_dicts['2d']['temp'], parsed_dicts['2d']['geo'])
+sim_2d = get_points(parsed_dicts['2d']['rh'], parsed_dicts['2d']['geo'])
 sim_2d.sort(key=lambda point: (point['x'], point['y']))
-add_data_to_points(sim_2d, parsed_dicts['2d']['temp'], 'temperature')
+add_data_to_points(sim_2d, parsed_dicts['2d']['rh'], 'relative_humidity')
 
 
 # Plots
@@ -98,9 +94,9 @@ def plot_locations(quantity):
     plt.title(f"{quantity}\n1D-Location: {brick_1d[0]['x']:.4f} and 2D-Location: {sim_2d[0]['x']:.4f}")
     plt.plot(x_date, brick_1d[0][quantity], color=colors['1d_brick'], label=f"1D Brick")
     plt.plot(x_date, mortar_1d[0][quantity], color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.plot(x_date_2d, sim_2d[0][quantity], color=colors['bottom'], label=f"2D Bottom")
-    plt.plot(x_date_2d, sim_2d[1][quantity], color=colors['mid'], label=f"2D Mid")
-    plt.plot(x_date_2d, sim_2d[2][quantity], color=colors['top'], label=f"2D Top")
+    plt.plot(x_date, sim_2d[0][quantity], color=colors['bottom'], label=f"2D Bottom")
+    plt.plot(x_date, sim_2d[1][quantity], color=colors['mid'], label=f"2D Mid")
+    plt.plot(x_date, sim_2d[2][quantity], color=colors['top'], label=f"2D Top")
     plt.legend()
     plt.gcf().autofmt_xdate()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
@@ -111,9 +107,9 @@ def plot_locations(quantity):
     plt.title(f"{quantity}\n1D-Location: {brick_1d[1]['x']:.4f} and 2D-Location: {sim_2d[3]['x']:.4f}")
     plt.plot(x_date, brick_1d[1][quantity], color=colors['1d_brick'], label=f"1D Brick")
     plt.plot(x_date, mortar_1d[1][quantity], color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.plot(x_date_2d, sim_2d[3][quantity], color=colors['bottom'], label=f"2D Bottom")
-    plt.plot(x_date_2d, sim_2d[4][quantity], color=colors['mid'], label=f"2D Mid")
-    plt.plot(x_date_2d, sim_2d[5][quantity], color=colors['top'], label=f"2D Top")
+    plt.plot(x_date, sim_2d[3][quantity], color=colors['bottom'], label=f"2D Bottom")
+    plt.plot(x_date, sim_2d[4][quantity], color=colors['mid'], label=f"2D Mid")
+    plt.plot(x_date, sim_2d[5][quantity], color=colors['top'], label=f"2D Top")
     plt.legend()
     plt.gcf().autofmt_xdate()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
@@ -124,9 +120,9 @@ def plot_locations(quantity):
     plt.title(f"{quantity}\n1D-Location: {brick_1d[2]['x']:.4f} and 2D-Location: {sim_2d[6]['x']:.4f}")
     plt.plot(x_date, brick_1d[2][quantity], color=colors['1d_brick'], label=f"1D Brick")
     plt.plot(x_date, mortar_1d[2][quantity], color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.plot(x_date_2d, sim_2d[6][quantity], color=colors['bottom'], label=f"2D Bottom")
-    plt.plot(x_date_2d, sim_2d[7][quantity], color=colors['mid'], label=f"2D Mid")
-    plt.plot(x_date_2d, sim_2d[8][quantity], color=colors['top'], label=f"2D Top")
+    plt.plot(x_date, sim_2d[6][quantity], color=colors['bottom'], label=f"2D Bottom")
+    plt.plot(x_date, sim_2d[7][quantity], color=colors['mid'], label=f"2D Mid")
+    plt.plot(x_date, sim_2d[8][quantity], color=colors['top'], label=f"2D Top")
     plt.legend()
     plt.gcf().autofmt_xdate()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
@@ -137,9 +133,9 @@ def plot_locations(quantity):
     plt.title(f"{quantity}\n1D-Location: {brick_1d[3]['x']:.4f} and 2D-Location: {sim_2d[9]['x']:.4f}")
     plt.plot(x_date, brick_1d[3][quantity], color=colors['1d_brick'], label=f"1D Brick")
     plt.plot(x_date, mortar_1d[3][quantity], color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.plot(x_date_2d, sim_2d[9][quantity], color=colors['bottom'], label=f"2D Bottom")
-    plt.plot(x_date_2d, sim_2d[10][quantity], color=colors['mid'], label=f"2D Mid")
-    plt.plot(x_date_2d, sim_2d[11][quantity], color=colors['top'], label=f"2D Top")
+    plt.plot(x_date, sim_2d[9][quantity], color=colors['bottom'], label=f"2D Bottom")
+    plt.plot(x_date, sim_2d[10][quantity], color=colors['mid'], label=f"2D Mid")
+    plt.plot(x_date, sim_2d[11][quantity], color=colors['top'], label=f"2D Top")
     plt.legend()
     plt.gcf().autofmt_xdate()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
@@ -150,9 +146,9 @@ def plot_locations(quantity):
     plt.title(f"{quantity}\n1D-Location: {brick_1d[4]['x']:.4f} and 2D-Location: {sim_2d[12]['x']:.4f}")
     plt.plot(x_date, brick_1d[4][quantity], color=colors['1d_brick'], label=f"1D Brick")
     plt.plot(x_date, mortar_1d[4][quantity], color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.plot(x_date_2d, sim_2d[12][quantity], color=colors['bottom'], label=f"2D Bottom")
-    plt.plot(x_date_2d, sim_2d[13][quantity], color=colors['mid'], label=f"2D Mid")
-    plt.plot(x_date_2d, sim_2d[14][quantity], color=colors['top'], label=f"2D Top")
+    plt.plot(x_date, sim_2d[12][quantity], color=colors['bottom'], label=f"2D Bottom")
+    plt.plot(x_date, sim_2d[13][quantity], color=colors['mid'], label=f"2D Mid")
+    plt.plot(x_date, sim_2d[14][quantity], color=colors['top'], label=f"2D Top")
     plt.legend()
     plt.gcf().autofmt_xdate()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
@@ -163,16 +159,16 @@ def plot_locations(quantity):
     plt.title(f"{quantity}\n1D-Location: {brick_1d[5]['x']:.4f} and 2D-Location: {sim_2d[15]['x']:.4f}")
     plt.plot(x_date, brick_1d[5][quantity], color=colors['1d_brick'], label=f"1D Brick")
     plt.plot(x_date, mortar_1d[5][quantity], color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.plot(x_date_2d, sim_2d[15][quantity], color=colors['bottom'], label=f"2D Bottom")
-    plt.plot(x_date_2d, sim_2d[16][quantity], color=colors['mid'], label=f"2D Mid")
-    plt.plot(x_date_2d, sim_2d[17][quantity], color=colors['top'], label=f"2D Top")
+    plt.plot(x_date, sim_2d[15][quantity], color=colors['bottom'], label=f"2D Bottom")
+    plt.plot(x_date, sim_2d[16][quantity], color=colors['mid'], label=f"2D Mid")
+    plt.plot(x_date, sim_2d[17][quantity], color=colors['top'], label=f"2D Top")
     plt.legend()
     plt.gcf().autofmt_xdate()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
     plt.ylabel(f'{quantity}')
 
 
-#plot_locations(quantity='temperature')
+#plot_locations(quantity='relative_humidity')
 #plt.show()
 
 
@@ -186,35 +182,81 @@ def rel_diff(x1, x2):
 
 def differences(i):
 
-    avg_2d = np.mean([sim_2d[i]['temperature'],  sim_2d[i+2]['temperature'],  sim_2d[i+2]['temperature']], axis=0)
-    brick_abs = abs_diff(brick_1d[i]['temperature'], avg_2d)
-    mortar_abs = abs_diff(mortar_1d[i]['temperature'], avg_2d)
-    brick_rel = rel_diff(brick_1d[i]['temperature'], avg_2d)
-    mortar_rel = rel_diff(mortar_1d[i]['temperature'], avg_2d)
+    avg_2d = np.mean([sim_2d[i]['relative_humidity'],  sim_2d[i+2]['relative_humidity'],  sim_2d[i+2]['relative_humidity']], axis=0)
+    brick_abs = abs_diff(brick_1d[i]['relative_humidity'], avg_2d)
+    mortar_abs = abs_diff(mortar_1d[i]['relative_humidity'], avg_2d)
+    brick_rel = rel_diff(brick_1d[i]['relative_humidity'], avg_2d)
+    mortar_rel = rel_diff(mortar_1d[i]['relative_humidity'], avg_2d)
 
     # Plot
     plt.figure()
-    plt.title(f"Temperature - Absolute Difference\n"
+    plt.title(f"relative_humidity - Absolute Difference\n"
               f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
-    plt.plot(x_date_2d, brick_abs, color=colors['1d_brick'], label=f"1D Brick")
-    plt.plot(x_date_2d, mortar_abs, color=colors['1d_mortar'], label=f"1D Mortar")
+    plt.plot(x_date, brick_abs, color=colors['1d_brick'], label=f"1D Brick")
+    plt.plot(x_date, mortar_abs, color=colors['1d_mortar'], label=f"1D Mortar")
     plt.legend()
     plt.gcf().autofmt_xdate()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
-    plt.ylabel('C')
+    plt.ylabel('%')
 
     plt.figure()
-    plt.title(f"Temperature - Relative Difference\n"
+    plt.title(f"relative_humidity - Relative Difference\n"
               f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
-    plt.plot(x_date_2d, brick_rel, color=colors['1d_brick'], label=f"1D Brick")
-    plt.plot(x_date_2d, mortar_rel, color=colors['1d_mortar'], label=f"1D Mortar")
+    plt.plot(x_date, brick_rel, color=colors['1d_brick'], label=f"1D Brick")
+    plt.plot(x_date, mortar_rel, color=colors['1d_mortar'], label=f"1D Mortar")
     plt.legend()
     plt.gcf().autofmt_xdate()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
     plt.ylabel('%')
 
     local_df = pd.DataFrame(columns=[brick_1d[i]['x'], brick_1d[i]['x'], brick_1d[i]['x'], brick_1d[i]['x']],
-                            index=pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1), freq='h', periods=len(brick_rel)),
+                            index=pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1),
+                                                   freq='h', periods=len(brick_rel)),
+                            data=np.vstack([brick_rel, brick_abs, mortar_rel, mortar_abs]).T)
+
+    local_df.columns = pd.MultiIndex.from_arrays([local_df.columns, ['brick', 'brick', 'mortar', 'mortar'],
+                                                 ['relative', 'absolute', 'relative', 'absolute']],
+                                                 names=['location', 'material', 'type'])
+
+    return local_df
+
+
+def differences_weighted(i):
+
+    avg_2d = np.average(a=[sim_2d[i]['relative_humidity'],
+                           sim_2d[i+2]['relative_humidity'],
+                           sim_2d[i+2]['relative_humidity']],
+                        axis=0,
+                        weights=[56, 24.02, 56])
+    brick_abs = abs_diff(brick_1d[i]['relative_humidity'], avg_2d)
+    mortar_abs = abs_diff(mortar_1d[i]['relative_humidity'], avg_2d)
+    brick_rel = rel_diff(brick_1d[i]['relative_humidity'], avg_2d)
+    mortar_rel = rel_diff(mortar_1d[i]['relative_humidity'], avg_2d)
+
+    # Plot
+    plt.figure()
+    plt.title(f"Relative Humidity - Weighted Absolute Difference\n"
+              f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
+    plt.plot(x_date, brick_abs, color=colors['1d_brick'], label=f"1D Brick")
+    plt.plot(x_date, mortar_abs, color=colors['1d_mortar'], label=f"1D Mortar")
+    plt.legend()
+    plt.gcf().autofmt_xdate()
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
+    plt.ylabel('%')
+
+    plt.figure()
+    plt.title(f"Relative Humidity - Weighted Relative Difference\n"
+              f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
+    plt.plot(x_date, brick_rel, color=colors['1d_brick'], label=f"1D Brick")
+    plt.plot(x_date, mortar_rel, color=colors['1d_mortar'], label=f"1D Mortar")
+    plt.legend()
+    plt.gcf().autofmt_xdate()
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
+    plt.ylabel('%')
+
+    local_df = pd.DataFrame(columns=[brick_1d[i]['x'], brick_1d[i]['x'], brick_1d[i]['x'], brick_1d[i]['x']],
+                            index=pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1),
+                                                   freq='h', periods=len(brick_rel)),
                             data=np.vstack([brick_rel, brick_abs, mortar_rel, mortar_abs]).T)
 
     local_df.columns = pd.MultiIndex.from_arrays([local_df.columns, ['brick', 'brick', 'mortar', 'mortar'],
@@ -225,11 +267,14 @@ def differences(i):
 
 
 dataframes = []
+weighted_dataframes = []
 for index in range(len(brick_1d)):
     dataframes.append(differences(index))
-    plt.show()
+    weighted_dataframes.append(differences_weighted(index))
+    #plt.show()
 
 result_dataframe = pd.concat(dataframes, axis=1)
+w_result_dataframe = pd.concat(weighted_dataframes, axis=1)
 
 #print(result_dataframe.loc[:, pd.IndexSlice[:, :, 'absolute']].describe())
 
@@ -241,16 +286,29 @@ relative_df.columns = relative_df.columns.droplevel(level=2)
 plt.figure()
 ax = absolute_df.boxplot()
 ax.set_ylim(-20, 20)
-ax.set_ylabel('Temperature - C')
-ax.set_title('Absolute Differences')
-plt.show()
+ax.set_ylabel('Relative Humidity - %')
+ax.set_title('Non-Weighted Absolute Differences')
+
+w_absolute_df = w_result_dataframe.loc[:, pd.IndexSlice[:, :, 'absolute']]
+w_absolute_df.columns = w_absolute_df.columns.droplevel(level=2)
+w_relative_df = w_result_dataframe.loc[:, pd.IndexSlice[:, :, 'relative']]
+w_relative_df.columns = w_relative_df.columns.droplevel(level=2)
+
+plt.figure()
+ax = w_absolute_df.boxplot()
+ax.set_ylim(-20, 20)
+ax.set_ylabel('Relative Humidity - %')
+ax.set_title('Weighted Absolute Differences')
+#plt.show()
 
 
 def excel():
     out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
-    writer = pd.ExcelWriter(out_folder + '/temperature.xlsx')
+    writer = pd.ExcelWriter(out_folder + '/relative_humidity.xlsx')
     relative_df.describe().to_excel(writer, 'relative')
+    w_relative_df.describe().to_excel(writer, 'relative_weighted')
     absolute_df.describe().to_excel(writer, 'absolute')
+    w_absolute_df.describe().to_excel(writer, 'absolute_weighted')
     writer.save()
 
 
