@@ -44,15 +44,16 @@ def add_data_to_points(points: list, results: dict, result_name: str):
 # Application
 colors = {'top': '#FBBA00', 'mid': '#B81A5D', 'bottom': '#79C6C0', '1d_brick': '#000000', '1d_mortar': '#BDCCD4'}
 result_folder = r'U:\RIBuild\2D_1D\Results'
-projects = ['5ad723b82e2cb22ff0a202f1', '5ad7240c2e2cb22ff0a20333', '5ad858392e2cb24344ad4ecb']
+projects = ['5ad9e0ba2e2cb22f2c4f15f1', '5ad9e3bf2e2cb22f2c4f166b', '5adb2dc02e2cb22f2c4f1873']
 files = ['temperature profile.d6o']
 
 parsed_dicts = {'brick_1d': {'rh': {}, 'geo': {}},
                 'mortar_1d': {'rh': {}, 'geo': {}},
                 '2d': {'rh': {}, 'geo': {}}, }
 
-map_projects = {'5ad723b82e2cb22ff0a202f1': 'brick_1d', '5ad7240c2e2cb22ff0a20333': 'mortar_1d',
-                '5ad858392e2cb24344ad4ecb': '2d'}
+map_projects = {'5ad9e0ba2e2cb22f2c4f15f1': 'brick_1d', '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
+                '5adb2dc02e2cb22f2c4f1873': '2d'}
+
 for project in projects:
     for mp_key in map_projects.keys():
         if project == mp_key:
@@ -180,7 +181,7 @@ def rel_diff(x1, x2):
     return (abs(x2 - x1))/x2 * 100
 
 
-def differences(i):
+def differences(i, plots=False):
 
     avg_2d = np.mean([sim_2d[i]['relative_humidity'],  sim_2d[i+2]['relative_humidity'],  sim_2d[i+2]['relative_humidity']], axis=0)
     brick_abs = abs_diff(brick_1d[i]['relative_humidity'], avg_2d)
@@ -188,26 +189,27 @@ def differences(i):
     brick_rel = rel_diff(brick_1d[i]['relative_humidity'], avg_2d)
     mortar_rel = rel_diff(mortar_1d[i]['relative_humidity'], avg_2d)
 
-    # Plot
-    plt.figure()
-    plt.title(f"relative_humidity - Absolute Difference\n"
-              f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
-    plt.plot(x_date, brick_abs, color=colors['1d_brick'], label=f"1D Brick")
-    plt.plot(x_date, mortar_abs, color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.legend()
-    plt.gcf().autofmt_xdate()
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
-    plt.ylabel('%')
+    if plots:
+        # Plot
+        plt.figure()
+        plt.title(f"relative_humidity - Absolute Difference\n"
+                  f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
+        plt.plot(x_date, brick_abs, color=colors['1d_brick'], label=f"1D Brick")
+        plt.plot(x_date, mortar_abs, color=colors['1d_mortar'], label=f"1D Mortar")
+        plt.legend()
+        plt.gcf().autofmt_xdate()
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
+        plt.ylabel('%')
 
-    plt.figure()
-    plt.title(f"relative_humidity - Relative Difference\n"
-              f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
-    plt.plot(x_date, brick_rel, color=colors['1d_brick'], label=f"1D Brick")
-    plt.plot(x_date, mortar_rel, color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.legend()
-    plt.gcf().autofmt_xdate()
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
-    plt.ylabel('%')
+        plt.figure()
+        plt.title(f"relative_humidity - Relative Difference\n"
+                  f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
+        plt.plot(x_date, brick_rel, color=colors['1d_brick'], label=f"1D Brick")
+        plt.plot(x_date, mortar_rel, color=colors['1d_mortar'], label=f"1D Mortar")
+        plt.legend()
+        plt.gcf().autofmt_xdate()
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
+        plt.ylabel('%')
 
     local_df = pd.DataFrame(columns=[f"{brick_1d[i]['x']:.04f}", f"{brick_1d[i]['x']:.04f}",
                                      f"{brick_1d[i]['x']:.04f}", f"{brick_1d[i]['x']:.04f}"],
@@ -222,7 +224,7 @@ def differences(i):
     return local_df
 
 
-def differences_weighted(i):
+def differences_weighted(i, plots=False):
 
     avg_2d = np.average(a=[sim_2d[i]['relative_humidity'],
                            sim_2d[i+2]['relative_humidity'],
@@ -234,26 +236,27 @@ def differences_weighted(i):
     brick_rel = rel_diff(brick_1d[i]['relative_humidity'], avg_2d)
     mortar_rel = rel_diff(mortar_1d[i]['relative_humidity'], avg_2d)
 
-    # Plot
-    plt.figure()
-    plt.title(f"Relative Humidity - Weighted Absolute Difference\n"
-              f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
-    plt.plot(x_date, brick_abs, color=colors['1d_brick'], label=f"1D Brick")
-    plt.plot(x_date, mortar_abs, color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.legend()
-    plt.gcf().autofmt_xdate()
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
-    plt.ylabel('%')
+    if plots:
+        # Plot
+        plt.figure()
+        plt.title(f"Relative Humidity - Weighted Absolute Difference\n"
+                  f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
+        plt.plot(x_date, brick_abs, color=colors['1d_brick'], label=f"1D Brick")
+        plt.plot(x_date, mortar_abs, color=colors['1d_mortar'], label=f"1D Mortar")
+        plt.legend()
+        plt.gcf().autofmt_xdate()
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
+        plt.ylabel('%')
 
-    plt.figure()
-    plt.title(f"Relative Humidity - Weighted Relative Difference\n"
-              f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
-    plt.plot(x_date, brick_rel, color=colors['1d_brick'], label=f"1D Brick")
-    plt.plot(x_date, mortar_rel, color=colors['1d_mortar'], label=f"1D Mortar")
-    plt.legend()
-    plt.gcf().autofmt_xdate()
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
-    plt.ylabel('%')
+        plt.figure()
+        plt.title(f"Relative Humidity - Weighted Relative Difference\n"
+                  f"1D-Location: {brick_1d[i]['x']:.4f} and 2D-Location: {sim_2d[i*3]['x']:.4f}")
+        plt.plot(x_date, brick_rel, color=colors['1d_brick'], label=f"1D Brick")
+        plt.plot(x_date, mortar_rel, color=colors['1d_mortar'], label=f"1D Mortar")
+        plt.legend()
+        plt.gcf().autofmt_xdate()
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B'))
+        plt.ylabel('%')
 
     local_df = pd.DataFrame(columns=[f"{brick_1d[i]['x']:.04f}", f"{brick_1d[i]['x']:.04f}",
                                      f"{brick_1d[i]['x']:.04f}", f"{brick_1d[i]['x']:.04f}"],
@@ -285,27 +288,33 @@ absolute_df.columns = absolute_df.columns.droplevel(level=2)
 relative_df = result_dataframe.loc[:, pd.IndexSlice[:, :, 'relative']]
 relative_df.columns = relative_df.columns.droplevel(level=2)
 
-plt.figure()
-ax = absolute_df.boxplot()
-ax.set_ylim(-20, 20)
-ax.set_ylabel('Relative Humidity - %')
-ax.set_title('Non-Weighted Absolute Differences')
-
 w_absolute_df = w_result_dataframe.loc[:, pd.IndexSlice[:, :, 'absolute']]
 w_absolute_df.columns = w_absolute_df.columns.droplevel(level=2)
 w_relative_df = w_result_dataframe.loc[:, pd.IndexSlice[:, :, 'relative']]
 w_relative_df.columns = w_relative_df.columns.droplevel(level=2)
 
-plt.figure()
-ax = w_absolute_df.boxplot()
-ax.set_ylim(-20, 20)
-ax.set_ylabel('Relative Humidity - %')
-ax.set_title('Weighted Absolute Differences')
-#plt.show()
+
+def boxplots():
+    plt.figure()
+    ax = absolute_df.boxplot()
+    ax.set_ylim(-20, 20)
+    ax.set_ylabel('Relative Humidity - %')
+    ax.set_title('Non-Weighted Absolute Differences')
+    plt.figure()
+    ax = w_absolute_df.boxplot()
+    ax.set_ylim(-20, 20)
+    ax.set_ylabel('Relative Humidity - %')
+    ax.set_title('Weighted Absolute Differences')
+    # plt.show()
+
+
+boxplots()
+
+out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
 
 
 def excel():
-    out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
+
     writer = pd.ExcelWriter(out_folder + '/relative_humidity.xlsx')
     relative_df.describe().to_excel(writer, 'relative')
     w_relative_df.describe().to_excel(writer, 'relative_weighted')
@@ -315,3 +324,11 @@ def excel():
 
 
 #excel()
+
+
+def save_relative():
+    hdf_file = out_folder + '/relative_humidity.h5'
+    w_relative_df.to_hdf(hdf_file, 'dresdenzd_highratio_4a', append=True)
+
+
+save_relative()
