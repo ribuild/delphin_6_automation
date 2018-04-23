@@ -44,15 +44,15 @@ def add_data_to_points(points: list, results: dict, result_name: str):
 # Application
 colors = {'top': '#FBBA00', 'mid': '#B81A5D', 'bottom': '#79C6C0', '1d_brick': '#000000', '1d_mortar': '#BDCCD4'}
 result_folder = r'U:\RIBuild\2D_1D\Results'
-projects = ['5ad9e0ba2e2cb22f2c4f15f1', '5ad9e3bf2e2cb22f2c4f166b', '5adb2dc02e2cb22f2c4f1873']
+projects = ['5ad9e3462e2cb22f2c4f162e', '5ad9e3bf2e2cb22f2c4f166b', '5adcc9702e2cb22f2c4f18fd']
 files = ['moisture content profile.d6o']
 
 parsed_dicts = {'brick_1d': {'moisture_content': {}, 'geo': {}},
                 'mortar_1d': {'moisture_content': {}, 'geo': {}},
                 '2d': {'moisture_content': {}, 'geo': {}}, }
 
-map_projects = {'5ad9e0ba2e2cb22f2c4f15f1': 'brick_1d', '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
-                '5adb2dc02e2cb22f2c4f1873': '2d'}
+map_projects = {'5ad9e3462e2cb22f2c4f162e': 'brick_1d', '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
+                '5adcc9702e2cb22f2c4f18fd': '2d'}
 
 for project in projects:
     for mp_key in map_projects.keys():
@@ -308,11 +308,11 @@ def boxplots():
     plt.show()
 
 
-boxplots()
+#boxplots()
+out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
 
 
-def excel():
-    out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
+def excel_summery():
     writer = pd.ExcelWriter(out_folder + '/moisture_content_DresdenZD_HighRatio.xlsx')
     relative_df.describe().to_excel(writer, 'relative')
     w_relative_df.describe().to_excel(writer, 'relative_weighted')
@@ -321,4 +321,12 @@ def excel():
     writer.save()
 
 
-excel()
+#excel_summery()
+
+
+def save_relative():
+    hdf_file = out_folder + '/relative_moisture_content.h5'
+    w_relative_df.to_hdf(hdf_file, 'postdam_highratio_4a', append=True)
+
+
+save_relative()
