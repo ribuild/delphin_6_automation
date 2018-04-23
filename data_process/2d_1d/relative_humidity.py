@@ -281,8 +281,6 @@ for index in range(len(brick_1d)):
 result_dataframe = pd.concat(dataframes, axis=1)
 w_result_dataframe = pd.concat(weighted_dataframes, axis=1)
 
-#print(result_dataframe.loc[:, pd.IndexSlice[:, :, 'absolute']].describe())
-
 absolute_df = result_dataframe.loc[:, pd.IndexSlice[:, :, 'absolute']]
 absolute_df.columns = absolute_df.columns.droplevel(level=2)
 relative_df = result_dataframe.loc[:, pd.IndexSlice[:, :, 'relative']]
