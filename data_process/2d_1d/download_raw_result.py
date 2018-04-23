@@ -20,6 +20,6 @@ def download(sim_obj):
 
 for entry in delphin_entry.Delphin.objects():
     if entry.simulated and not os.path.exists(folder + f'\{str(entry.results_raw.id)}'):
-        download(entry)
         print(f"Simulation ID: {str(entry.id)}, Result ID: {str(entry.results_raw.id)}, "
               f"Materials: {' '.join([mat.material_name for mat in entry.materials])}\n")
+        download(entry)
