@@ -15,13 +15,13 @@ import pandas as pd
 # RiBuild Modules
 from delphin_6_automation.file_parsing import delphin_parser
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
 
 # Functions
 def get_points(result: dict, geo: dict):
-
     points = []
     for index_ in result['indices']:
         x_ = geo['element_geometry'][index_][1]
@@ -43,23 +43,61 @@ def add_data_to_points(points: list, results: dict, result_name: str):
 
 # Application
 colors = {'top': '#FBBA00', 'mid': '#B81A5D', 'bottom': '#79C6C0', '1d_brick': '#000000', '1d_mortar': '#BDCCD4'}
+
+project_dict = {'dresden_zd_high_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e0ba2e2cb22f2c4f15f1': 'brick_1d',
+                          '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
+                          '5adb2dc02e2cb22f2c4f1873': '2d'}
+                     },
+                'dresden_zp_high_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e0352e2cb22f2c4f15b4': 'brick_1d',
+                          '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
+                          '5adb0a102e2cb22f2c4f17e9': '2d'}
+                     },
+                'potsdam_high_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e3462e2cb22f2c4f162e': 'brick_1d',
+                          '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
+                          '5adcc9702e2cb22f2c4f18fd': '2d'}
+                     },
+                'dresden_zp_low_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e6192e2cb22f2c4f175f': 'brick_1d',
+                          '5ad9e5812e2cb22f2c4f1722': 'mortar_1d',
+                          '5adda7172e2cb20baca57c6e': '2d'}
+                     },
+                'dresden_zd_low_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e44f2e2cb22f2c4f16a8': 'brick_1d',
+                          '5ad9e5812e2cb22f2c4f1722': 'mortar_1d',
+                          '5adcd4402e2cb22f2c4f1987': '2d'}
+                     },
+                'potsdam_low_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e4f22e2cb22f2c4f16e5': 'brick_1d',
+                          '5ad9e5812e2cb22f2c4f1722': 'mortar_1d',
+                          '5add9b902e2cb20baca57be4': '2d'}
+                     },
+                }
+
+project = list(project_dict.keys())[5]
 result_folder = r'U:\RIBuild\2D_1D\Results'
-projects = ['5ad9e0ba2e2cb22f2c4f15f1', '5ad9e3bf2e2cb22f2c4f166b', '5adb2dc02e2cb22f2c4f1873']
-files = ['temperature profile.d6o']
+projects = list(project_dict[project]['map'].keys())
+files = ['relative humidity profile.d6o']
 
 parsed_dicts = {'brick_1d': {'rh': {}, 'geo': {}},
                 'mortar_1d': {'rh': {}, 'geo': {}},
                 '2d': {'rh': {}, 'geo': {}}, }
 
-map_projects = {'5ad9e0ba2e2cb22f2c4f15f1': 'brick_1d', '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
-                '5adb2dc02e2cb22f2c4f1873': '2d'}
 
-for project in projects:
-    for mp_key in map_projects.keys():
-        if project == mp_key:
-            key = map_projects[mp_key]
+for project_ in projects:
+    for mp_key in project_dict[project]['map'].keys():
+        if project_ == mp_key:
+            key = project_dict[project]['map'][mp_key]
 
-    folder = result_folder + f'/{project}/results'
+    folder = result_folder + f'/{project_}/results'
     geo_file = [file
                 for file in os.listdir(folder)
                 if file.endswith('.g6a')][0]
@@ -169,8 +207,8 @@ def plot_locations(quantity):
     plt.ylabel(f'{quantity}')
 
 
-#plot_locations(quantity='relative_humidity')
-#plt.show()
+# plot_locations(quantity='relative_humidity')
+# plt.show()
 
 
 def abs_diff(x1, x2):
@@ -178,12 +216,13 @@ def abs_diff(x1, x2):
 
 
 def rel_diff(x1, x2):
-    return (abs(x2 - x1))/x2 * 100
+    return (abs(x2 - x1)) / x2 * 100
 
 
 def differences(i, plots=False):
-
-    avg_2d = np.mean([sim_2d[i]['relative_humidity'],  sim_2d[i+2]['relative_humidity'],  sim_2d[i+2]['relative_humidity']], axis=0)
+    avg_2d = np.mean(
+        [sim_2d[i]['relative_humidity'], sim_2d[i + 2]['relative_humidity'], sim_2d[i + 2]['relative_humidity']],
+        axis=0)
     brick_abs = abs_diff(brick_1d[i]['relative_humidity'], avg_2d)
     mortar_abs = abs_diff(mortar_1d[i]['relative_humidity'], avg_2d)
     brick_rel = rel_diff(brick_1d[i]['relative_humidity'], avg_2d)
@@ -218,19 +257,18 @@ def differences(i, plots=False):
                             data=np.vstack([brick_rel, brick_abs, mortar_rel, mortar_abs]).T)
 
     local_df.columns = pd.MultiIndex.from_arrays([local_df.columns, ['brick', 'brick', 'mortar', 'mortar'],
-                                                 ['relative', 'absolute', 'relative', 'absolute']],
+                                                  ['relative', 'absolute', 'relative', 'absolute']],
                                                  names=['location', 'material', 'type'])
 
     return local_df
 
 
 def differences_weighted(i, plots=False):
-
     avg_2d = np.average(a=[sim_2d[i]['relative_humidity'],
-                           sim_2d[i+2]['relative_humidity'],
-                           sim_2d[i+2]['relative_humidity']],
+                           sim_2d[i + 2]['relative_humidity'],
+                           sim_2d[i + 2]['relative_humidity']],
                         axis=0,
-                        weights=[56, 24.02, 56])
+                        weights=[56., 24., 56.])
     brick_abs = abs_diff(brick_1d[i]['relative_humidity'], avg_2d)
     mortar_abs = abs_diff(mortar_1d[i]['relative_humidity'], avg_2d)
     brick_rel = rel_diff(brick_1d[i]['relative_humidity'], avg_2d)
@@ -265,7 +303,7 @@ def differences_weighted(i, plots=False):
                             data=np.vstack([brick_rel, brick_abs, mortar_rel, mortar_abs]).T)
 
     local_df.columns = pd.MultiIndex.from_arrays([local_df.columns, ['brick', 'brick', 'mortar', 'mortar'],
-                                                 ['relative', 'absolute', 'relative', 'absolute']],
+                                                  ['relative', 'absolute', 'relative', 'absolute']],
                                                  names=['location', 'material', 'type'])
 
     return local_df
@@ -276,7 +314,7 @@ weighted_dataframes = []
 for index in range(len(brick_1d)):
     dataframes.append(differences(index))
     weighted_dataframes.append(differences_weighted(index))
-    #plt.show()
+    # plt.show()
 
 result_dataframe = pd.concat(dataframes, axis=1)
 w_result_dataframe = pd.concat(weighted_dataframes, axis=1)
@@ -298,21 +336,21 @@ def boxplots():
     ax.set_ylim(-20, 20)
     ax.set_ylabel('Relative Humidity - %')
     ax.set_title('Non-Weighted Absolute Differences')
+
     plt.figure()
     ax = w_absolute_df.boxplot()
     ax.set_ylim(-20, 20)
     ax.set_ylabel('Relative Humidity - %')
     ax.set_title('Weighted Absolute Differences')
-    # plt.show()
+    plt.show()
 
 
-boxplots()
+# boxplots()
 
 out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
 
 
 def excel():
-
     writer = pd.ExcelWriter(out_folder + '/relative_humidity.xlsx')
     relative_df.describe().to_excel(writer, 'relative')
     w_relative_df.describe().to_excel(writer, 'relative_weighted')
@@ -321,12 +359,12 @@ def excel():
     writer.save()
 
 
-#excel()
+# excel()
 
 
 def save_relative():
     hdf_file = out_folder + '/relative_humidity.h5'
-    w_relative_df.to_hdf(hdf_file, 'dresdenzd_highratio_4a', append=True)
+    w_relative_df.to_hdf(hdf_file, project, append=True)
 
 
 save_relative()

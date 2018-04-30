@@ -43,22 +43,60 @@ def add_data_to_points(points: list, results: dict, result_name: str):
 
 # Application
 colors = {'top': '#FBBA00', 'mid': '#B81A5D', 'bottom': '#79C6C0', '1d_brick': '#000000', '1d_mortar': '#BDCCD4'}
+project_dict = {'dresden_zd_high_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e0ba2e2cb22f2c4f15f1': 'brick_1d',
+                          '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
+                          '5adb2dc02e2cb22f2c4f1873': '2d'}
+                     },
+                'dresden_zp_high_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e0352e2cb22f2c4f15b4': 'brick_1d',
+                          '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
+                          '5adb0a102e2cb22f2c4f17e9': '2d'}
+                     },
+                'potsdam_high_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e3462e2cb22f2c4f162e': 'brick_1d',
+                          '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
+                          '5adcc9702e2cb22f2c4f18fd': '2d'}
+                     },
+                'dresden_zp_low_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e6192e2cb22f2c4f175f': 'brick_1d',
+                          '5ad9e5812e2cb22f2c4f1722': 'mortar_1d',
+                          '5adda7172e2cb20baca57c6e': '2d'}
+                     },
+                'dresden_zd_low_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e44f2e2cb22f2c4f16a8': 'brick_1d',
+                          '5ad9e5812e2cb22f2c4f1722': 'mortar_1d',
+                          '5adcd4402e2cb22f2c4f1987': '2d'}
+                     },
+                'potsdam_low_ratio_uninsulated_4a':
+                    {'map':
+                         {'5ad9e4f22e2cb22f2c4f16e5': 'brick_1d',
+                          '5ad9e5812e2cb22f2c4f1722': 'mortar_1d',
+                          '5add9b902e2cb20baca57be4': '2d'}
+                     },
+                }
+
+project = list(project_dict.keys())[5]
 result_folder = r'U:\RIBuild\2D_1D\Results'
-projects = ['5ad9e3462e2cb22f2c4f162e', '5ad9e3bf2e2cb22f2c4f166b', '5adcc9702e2cb22f2c4f18fd']
+projects = list(project_dict[project]['map'].keys())
 files = ['temperature profile.d6o']
 
 parsed_dicts = {'brick_1d': {'temp': {}, 'geo': {}},
                 'mortar_1d': {'temp': {}, 'geo': {}},
                 '2d': {'temp': {}, 'geo': {}}, }
 
-map_projects = {'5ad9e3462e2cb22f2c4f162e': 'brick_1d', '5ad9e3bf2e2cb22f2c4f166b': 'mortar_1d',
-                '5adcc9702e2cb22f2c4f18fd': '2d'}
-for project in projects:
-    for mp_key in map_projects.keys():
-        if project == mp_key:
-            key = map_projects[mp_key]
 
-    folder = result_folder + f'/{project}/results'
+for project_ in projects:
+    for mp_key in project_dict[project]['map'].keys():
+        if project_ == mp_key:
+            key = project_dict[project]['map'][mp_key]
+
+    folder = result_folder + f'/{project_}/results'
     geo_file = [file
                 for file in os.listdir(folder)
                 if file.endswith('.g6a')][0]
@@ -233,7 +271,7 @@ def differences_weighted(i, plots=False):
                            sim_2d[i+2]['temperature'],
                            sim_2d[i+2]['temperature']],
                         axis=0,
-                        weights=[56, 24.02, 56])
+                        weights=[56, 24., 56])
     brick_abs = abs_diff(brick_1d[i]['temperature'], avg_2d)
     mortar_abs = abs_diff(mortar_1d[i]['temperature'], avg_2d)
     brick_rel = rel_diff(brick_1d[i]['temperature'], avg_2d)
@@ -316,7 +354,7 @@ def excel():
 
 def save_relative():
     hdf_file = out_folder + '/relative_temperature.h5'
-    w_relative_df.to_hdf(hdf_file, 'potsdam_highratio_4a', append=True)
+    w_relative_df.to_hdf(hdf_file, project, append=True)
 
 
 save_relative()
