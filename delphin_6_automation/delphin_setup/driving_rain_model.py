@@ -151,21 +151,37 @@ print('')
 
 X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, random_state=0)
 
-knn_reg5 = KNeighborsRegressor(n_neighbors=5).fit(X_train, y_train)
+knn_reg5_uni = KNeighborsRegressor(n_neighbors=5).fit(X_train, y_train)
 
 print('K-nearest regression (5 neighbors)')
-print(knn_reg5.predict(X_test))
-print('R-squared train score: {:.5f}'.format(knn_reg5.score(X_train, y_train)))
-print('R-squared test score: {:.5f}'.format(knn_reg5.score(X_test, y_test)))
+print(knn_reg5_uni.predict(X_test))
+print('R-squared train score: {:.5f}'.format(knn_reg5_uni.score(X_train, y_train)))
+print('R-squared test score: {:.5f}'.format(knn_reg5_uni.score(X_test, y_test)))
 print('')
 
-knn_reg3 = KNeighborsRegressor(n_neighbors=3).fit(X_train, y_train)
+knn_reg5_dis = KNeighborsRegressor(n_neighbors=5, weights='distance').fit(X_train, y_train)
+
+print('K-nearest regression (5 neighbors, Weights = Distance)')
+print(knn_reg5_dis.predict(X_test))
+print('R-squared train score: {:.5f}'.format(knn_reg5_dis.score(X_train, y_train)))
+print('R-squared test score: {:.5f}'.format(knn_reg5_dis.score(X_test, y_test)))
+print('')
+
+knn_reg3_uni = KNeighborsRegressor(n_neighbors=3).fit(X_train, y_train)
 
 print('K-nearest regression (3 neighbors)')
-print(knn_reg3.predict(X_test))
-print('R-squared train score: {:.5f}'.format(knn_reg3.score(X_train, y_train)))
-print('R-squared test score: {:.5f}'.format(knn_reg3.score(X_test, y_test)))
+print(knn_reg3_uni.predict(X_test))
+print('R-squared train score: {:.5f}'.format(knn_reg3_uni.score(X_train, y_train)))
+print('R-squared test score: {:.5f}'.format(knn_reg3_uni.score(X_test, y_test)))
+
+
+knn_reg3_dis = KNeighborsRegressor(n_neighbors=3, weights='distance').fit(X_train, y_train)
+
+print('K-nearest regression (3 neighbors, Weights = Distance)')
+print(knn_reg3_dis.predict(X_test))
+print('R-squared train score: {:.5f}'.format(knn_reg3_dis.score(X_train, y_train)))
+print('R-squared test score: {:.5f}'.format(knn_reg3_dis.score(X_test, y_test)))
 
 # Save final model
-filename_kn = 'k_nearest_3_model.sav'
-pickle.dump(knn_reg3, open(filename_kn, 'wb'))
+#filename_kn = 'k_nearest_3_model.sav'
+#pickle.dump(knn_reg3, open(filename_kn, 'wb'))
