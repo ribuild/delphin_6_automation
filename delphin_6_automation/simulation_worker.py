@@ -112,7 +112,7 @@ def simulation_worker():
             else:
                 pass
     except KeyboardInterrupt:
-        pass
+        return
 
 
 if __name__ == "__main__":
@@ -125,4 +125,4 @@ if __name__ == "__main__":
 
     except Exception:
         print('Exited with error!')
-        notifier_logger.exception('Error in main')
+        notifier_logger.error('Error in main')

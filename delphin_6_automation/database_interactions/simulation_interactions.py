@@ -13,7 +13,10 @@ import shutil
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 from delphin_6_automation.database_interactions import general_interactions as general_interact
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
+# Logger
+logger = ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION FUNCTIONS AND CLASSES
@@ -104,9 +107,11 @@ def clean_simulation_folder(path: str) -> bool:
     """
 
     shutil.rmtree(path)
-    os.mkdir(path)
 
-    if os.path.isdir(path):
-        return True
-    else:
-        raise FileNotFoundError('Could not find simulation folder after it was cleaned.')
+    try:
+        os.mkdir(path)
+        logger.info(f'Deleted and restored {path}')
+    except PermissionError:
+        logger.info(f'Deleted {path} permission to create folder denied')
+
+    return True
