@@ -18,10 +18,10 @@ from delphin_6_automation.database_interactions import delphin_interactions
 
 mongo_setup.global_init(dtu_byg)
 
-delphin_file0 = r'U:\RIBuild\2D_1D\Delphin Project\4A_36cm_brick_1D.d6p'
-delphin_file1 = r'U:\RIBuild\2D_1D\Delphin Project\4A_36cm_brick_ins_1D.d6p'
-delphin_file2 = r'U:\RIBuild\2D_1D\Delphin Project\4A_36cm_2D.d6p'
-delphin_file3 = r'U:\RIBuild\2D_1D\Delphin Project\4A_36cm_ins_2D.d6p'
+delphin_file0 = r'U:\RIBuild\2D_1D\Delphin Project\4A\4A_36cm_brick_1D.d6p'
+delphin_file1 = r'U:\RIBuild\2D_1D\Delphin Project\4A\4A_36cm_brick_ins_1D.d6p'
+delphin_file2 = r'U:\RIBuild\2D_1D\Delphin Project\4A\4A_36cm_2D.d6p'
+delphin_file3 = r'U:\RIBuild\2D_1D\Delphin Project\4A\4A_36cm_ins_2D.d6p'
 
 priority = 'high'
 climate_class = 'a'
