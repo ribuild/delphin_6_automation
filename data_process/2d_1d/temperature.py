@@ -249,7 +249,7 @@ def main(project_):
     
     
     def rel_diff(x1, x2):
-        return (abs(x2 - x1))/x2 * 100
+        return (abs(x2 - x1))/abs(x2) * 100
     
     
     def differences(i, plots=False):

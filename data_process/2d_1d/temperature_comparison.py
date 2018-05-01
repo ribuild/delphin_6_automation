@@ -51,7 +51,7 @@ def plots(plot, save=False):
     if plot == 'uninsulated' or plot == 'all':
         plt.figure('dresdenzp_highratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzp_highratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-10, 400)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -61,7 +61,7 @@ def plots(plot, save=False):
 
         plt.figure('dresdenzd_highratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzd_highratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-10, 400)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -71,7 +71,7 @@ def plots(plot, save=False):
 
         plt.figure('postdam_highratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         postdam_highratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-10, 400)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -81,7 +81,7 @@ def plots(plot, save=False):
 
         plt.figure('dresdenzp_lowratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzp_lowratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-10, 400)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -91,7 +91,7 @@ def plots(plot, save=False):
 
         plt.figure('dresdenzd_lowratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzd_lowratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-10, 400)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -101,7 +101,7 @@ def plots(plot, save=False):
 
         plt.figure('postdam_lowratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         postdam_lowratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-10, 400)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Relative Humidity\n'
@@ -111,7 +111,7 @@ def plots(plot, save=False):
 
         plt.figure('total_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         total_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-10, 400)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -122,7 +122,7 @@ def plots(plot, save=False):
     if plot == 'insulated' or plot == 'all':
         plt.figure('dresdenzp_highratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzp_highratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-100, 450)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -132,7 +132,7 @@ def plots(plot, save=False):
 
         plt.figure('dresdenzd_highratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzd_highratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-100, 450)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -142,7 +142,7 @@ def plots(plot, save=False):
 
         plt.figure('postdam_highratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         postdam_highratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-100, 450)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -152,7 +152,7 @@ def plots(plot, save=False):
 
         plt.figure('dresdenzp_lowratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzp_lowratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-100, 450)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -162,7 +162,7 @@ def plots(plot, save=False):
 
         plt.figure('dresdenzd_lowratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzd_lowratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-100, 450)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -172,7 +172,7 @@ def plots(plot, save=False):
 
         plt.figure('postdam_lowratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         postdam_lowratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-100, 450)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Relative Humidity\n'
@@ -182,7 +182,7 @@ def plots(plot, save=False):
 
         plt.figure('total_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         total_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-100, 450)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
                   'Temperature\n'
@@ -320,4 +320,4 @@ def insulated():
     return std2_insulated_ratio_
 
 
-std3_ratio(False, True)
+#std3_ratio(False, True)
