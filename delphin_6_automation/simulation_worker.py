@@ -10,8 +10,10 @@ import platform
 from pathlib import Path
 import subprocess
 from datetime import datetime
+import numpy as np
 
 # RiBuild Modules:
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger, notifiers_logger
 from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
@@ -66,6 +68,7 @@ def local_worker(id_):
     test_doc = result_db.Result.objects(id=id_result).first()
 
     simulation_interactions.set_simulated(id_)
+    simulation_interactions.set_simulation_time(id_, delta_time)
 
     if test_doc:
         simulation_interactions.clean_simulation_folder(delphin_path)
@@ -104,7 +107,14 @@ def github_updates():
 
 def get_average_computation_time(sim_id):
     # TODO - Get the average time for this type of construction (2D or 1D)
-    pass
+
+    sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
+    dimension = sim_obj.dimensions
+    sim_time = []
+    for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension, simulation_time__exists=True):
+        sim_time.append(simulation_entry.simulation_time)
+
+    return np.mean(sim_time).total_seconds()/60
 
 
 def create_submit_file(sim_id, simulation_folder):
@@ -155,22 +165,25 @@ def hpc_worker(id_):
         os.mkdir(simulation_folder)
 
     # Download, solve, upload
-    time_0 = datetime.now()
-
     print(f'\nDownloads project with ID: {id_}')
     logger.info(f'Downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(str(id_), simulation_folder)
     submit_file, estimated_time = create_submit_file(str(id_), simulation_folder)
     job_id = submit_job(submit_file)
-    wait_until_finished(str(id_), job_id, estimated_time)
 
+    time_0 = datetime.now()
+    wait_until_finished(str(id_), job_id, estimated_time)
     delta_time = datetime.now() - time_0
 
-    id_result = delphin_interactions.upload_results_to_database(simulation_folder + '/' + id_)
+    delphin_interactions.upload_results_to_database(simulation_folder + '/' + id_)
 
     simulation_interactions.set_simulated(id_)
     simulation_interactions.set_simulation_time(id_, delta_time)
+    simulation_interactions.clean_simulation_folder(simulation_folder)
+
+    print(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
+    logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}')
 
 
 def simulation_worker(sim_location):

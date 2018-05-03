@@ -118,4 +118,8 @@ def clean_simulation_folder(path: str) -> bool:
 
 
 def set_simulation_time(sim_id, computation_time):
-    return None
+
+    delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_entry.simulation_time = computation_time
+
+    return sim_id.id

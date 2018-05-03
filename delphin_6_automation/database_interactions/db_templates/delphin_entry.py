@@ -21,9 +21,11 @@ import delphin_6_automation.database_interactions.db_templates.weather_entry as 
 
 class Delphin(mongoengine.Document):
 
+    # Meta Data
     added_date = mongoengine.DateTimeField(default=datetime.now)
     simulated = mongoengine.DateTimeField()
     simulating = mongoengine.BooleanField(default=False)
+    simulation_time = mongoengine.DateTimeField()
     queue_priority = mongoengine.IntField(default=1)
     dimensions = mongoengine.IntField(required=True)
 
