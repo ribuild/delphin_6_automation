@@ -28,14 +28,14 @@ climate_class = 'a'
 location_name = 'KobenhavnTaastrup'
 years = [2020, 2020, 2021, 2022]
 
-sim_id = general_interactions.add_to_simulation_queue(delphin_file1, priority)
+sim_id = general_interactions.add_to_simulation_queue(delphin_file3, priority)
 weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
 weather_interactions.assign_weather_by_name_and_years(sim_id, location_name, years)
 delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
 
 
 def permutate_uploads():
-    materials = [492, 542, 148]
+    materials = [492, 542, ]
     layer_material = 'Old Building Brick Dresden ZP [504]'
     second_layer = 'Lime cement mortar [717]'
     second_material = [718]

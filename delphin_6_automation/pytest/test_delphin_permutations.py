@@ -102,7 +102,7 @@ def test_change_coefficient_1():
     source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
     test_path, _ = helper.setup_test_folders()
     delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
-    new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict, 'Indoor heat conduction',
+    new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict, 'Indoor surface:IndoorHeatConduction',
                                                                    'ExchangeCoefficient', 12)
 
     xmltodict.unparse(new_delphin, output=open(test_path + '/modified_delphin_project.d6p', 'w'), pretty=True)
@@ -114,7 +114,7 @@ def test_change_coefficient_2():
     source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
     test_path, _ = helper.setup_test_folders()
     delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
-    delphin_permutations.change_boundary_coefficient(delphin_dict, 'INdoor vapour diffusion',
+    delphin_permutations.change_boundary_coefficient(delphin_dict, 'Indoor vapour diffusion',
                                                                    'ExchangeCoefficient', 3*10**-6)
     new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict, 'INdoor vapour diffusion',
                                                                    'SDValue', 3)

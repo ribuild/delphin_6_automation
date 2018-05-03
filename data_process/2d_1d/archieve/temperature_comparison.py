@@ -13,9 +13,10 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
+# Folders
 out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
 graphic_folder = r'U:\RIBuild\2D_1D\Processed Results\4A'
-hdf_file = out_folder + '/relative_moisture_content.h5'
+hdf_file = out_folder + '/relative_temperature.h5'
 
 # Open HDF
 # Uninsulated
@@ -25,7 +26,6 @@ postdam_highratio_uninsulated_4a = pd.read_hdf(hdf_file, 'potsdam_high_ratio_uni
 dresdenzp_lowratio_uninsulated_4a = pd.read_hdf(hdf_file, 'dresden_zp_low_ratio_uninsulated_4a')
 dresdenzd_lowratio_uninsulated_4a = pd.read_hdf(hdf_file, 'dresden_zd_low_ratio_uninsulated_4a')
 postdam_lowratio_uninsulated_4a = pd.read_hdf(hdf_file, 'potsdam_low_ratio_uninsulated_4a')
-
 total_uninsulated_4a = pd.concat([dresdenzp_highratio_uninsulated_4a, dresdenzd_highratio_uninsulated_4a,
                                   postdam_highratio_uninsulated_4a, dresdenzp_lowratio_uninsulated_4a,
                                   dresdenzd_lowratio_uninsulated_4a, postdam_lowratio_uninsulated_4a])
@@ -49,151 +49,151 @@ def plots(plot, save=False):
     """
 
     if plot == 'uninsulated' or plot == 'all':
-        plt.figure('dresdenzp_highratio_uninsulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('dresdenzp_highratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzp_highratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 1100)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Dresden ZP - Mortar: High Cement Ratio - Insulation: None')
         if save:
-            plt.savefig(f"{graphic_folder}/dresdenzp_highratio_uninsulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/dresdenzp_highratio_uninsulated_4a_temp")
 
-        plt.figure('dresdenzd_highratio_uninsulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('dresdenzd_highratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzd_highratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 1100)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Dresden ZD - Mortar: High Cement Ratio - Insulation: None')
         if save:
-            plt.savefig(f"{graphic_folder}/dresdenzd_highratio_uninsulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/dresdenzd_highratio_uninsulated_4a_temp")
 
-        plt.figure('postdam_highratio_uninsulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('postdam_highratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         postdam_highratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 1100)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Potsdam - Mortar: High Cement Ratio - Insulation: None')
         if save:
-            plt.savefig(f"{graphic_folder}/postdam_highratio_uninsulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/postdam_highratio_uninsulated_4a_temp")
 
-        plt.figure('dresdenzp_lowratio_uninsulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('dresdenzp_lowratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzp_lowratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 1100)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Dresden ZP - Mortar: Low Cement Ratio - Insulation: None')
         if save:
-            plt.savefig(f"{graphic_folder}/dresdenzp_lowratio_uninsulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/dresdenzp_lowratio_uninsulated_4a_temp")
 
-        plt.figure('dresdenzd_lowratio_uninsulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('dresdenzd_lowratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzd_lowratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 1100)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Dresden ZD - Mortar: Low Cement Ratio - Insulation: None')
         if save:
-            plt.savefig(f"{graphic_folder}/dresdenzd_lowratio_uninsulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/dresdenzd_lowratio_uninsulated_4a_temp")
 
-        plt.figure('postdam_lowratio_uninsulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('postdam_lowratio_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         postdam_lowratio_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 1100)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Relative Humidity\n'
                   'Brick: Potsdam - Mortar: Low Cement Ratio - Insulation: None')
         if save:
-            plt.savefig(f"{graphic_folder}/postdam_lowratio_uninsulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/postdam_lowratio_uninsulated_4a_relhum")
 
-        plt.figure('total_uninsulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('total_uninsulated_4a_temp', figsize=(16, 8), tight_layout=True)
         total_uninsulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 1100)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: All - Mortar: All - Insulation: None')
         if save:
-            plt.savefig(f"{graphic_folder}/total_uninsulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/total_uninsulated_4a_temp")
 
     if plot == 'insulated' or plot == 'all':
-        plt.figure('dresdenzp_highratio_insulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('dresdenzp_highratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzp_highratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 2000)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Dresden ZP - Mortar: High Cement Ratio - Insulation: Calcium Silicate')
         if save:
-            plt.savefig(f"{graphic_folder}/dresdenzp_highratio_insulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/dresdenzp_highratio_insulated_4a_temp")
 
-        plt.figure('dresdenzd_highratio_insulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('dresdenzd_highratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzd_highratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 2000)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Dresden ZD - Mortar: High Cement Ratio - Insulation: Calcium Silicate')
         if save:
-            plt.savefig(f"{graphic_folder}/dresdenzd_highratio_insulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/dresdenzd_highratio_insulated_4a_temp")
 
-        plt.figure('postdam_highratio_insulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('postdam_highratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         postdam_highratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 2000)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Potsdam - Mortar: High Cement Ratio - Insulation: Calcium Silicate')
         if save:
-            plt.savefig(f"{graphic_folder}/postdam_highratio_insulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/postdam_highratio_insulated_4a_temp")
 
-        plt.figure('dresdenzp_lowratio_insulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('dresdenzp_lowratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzp_lowratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 2000)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Dresden ZP - Mortar: Low Cement Ratio - Insulation: Calcium Silicate')
         if save:
-            plt.savefig(f"{graphic_folder}/dresdenzp_lowratio_insulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/dresdenzp_lowratio_insulated_4a_temp")
 
-        plt.figure('dresdenzd_lowratio_insulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('dresdenzd_lowratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         dresdenzd_lowratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 2000)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: Dresden ZD - Mortar: Low Cement Ratio - Insulation: Calcium Silicate')
         if save:
-            plt.savefig(f"{graphic_folder}/dresdenzd_lowratio_insulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/dresdenzd_lowratio_insulated_4a_temp")
 
-        plt.figure('postdam_lowratio_insulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('postdam_lowratio_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         postdam_lowratio_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 2000)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Relative Humidity\n'
                   'Brick: Potsdam - Mortar: Low Cement Ratio - Insulation: Calcium Silicate')
         if save:
-            plt.savefig(f"{graphic_folder}/postdam_lowratio_insulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/postdam_lowratio_insulated_4a_relhum")
 
-        plt.figure('total_insulated_4a_moisture', figsize=(16, 8), tight_layout=True)
+        plt.figure('total_insulated_4a_temp', figsize=(16, 8), tight_layout=True)
         total_insulated_4a.boxplot(showfliers=False)
-        plt.ylim(-5, 2000)
+        plt.ylim(-5, 500)
         plt.ylabel('Relative Difference in %')
         plt.title('Weighted Relative Difference between 1D and 2D\n'
-                  'Moisture Content\n'
+                  'Temperature\n'
                   'Brick: All - Mortar: All - Insulation: Calcium Silicate')
         if save:
-            plt.savefig(f"{graphic_folder}/total_insulated_4a_moisture")
+            plt.savefig(f"{graphic_folder}/total_insulated_4a_temp")
 
     plt.show()
 
 
-#plots('all', True)
+plots('all', False)
 
 
 def std3_ratio(print_=False, excel=False):
@@ -211,7 +211,7 @@ def std3_ratio(print_=False, excel=False):
         print(std3_insulated_ratio_)
 
     if excel:
-        writer = pd.ExcelWriter(f'{out_folder}/moisture_std_ratios.xlsx')
+        writer = pd.ExcelWriter(f'{out_folder}/temp_std_ratios.xlsx')
         std3_uninsulated_ratio_.to_excel(writer, 'Uninsulated')
         std3_insulated_ratio_.to_excel(writer, 'Insulated')
         writer.save()
@@ -320,4 +320,4 @@ def insulated():
     return std2_insulated_ratio_
 
 
-std3_ratio(False, True)
+#std3_ratio(False, True)
