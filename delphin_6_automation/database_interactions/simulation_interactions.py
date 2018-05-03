@@ -115,3 +115,7 @@ def clean_simulation_folder(path: str) -> bool:
         logger.info(f'Deleted {path} permission to create folder denied')
 
     return True
+
+
+def set_simulation_time(sim_id, computation_time):
+    return None

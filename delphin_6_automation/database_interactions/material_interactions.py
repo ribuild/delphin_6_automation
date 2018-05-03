@@ -103,6 +103,7 @@ def change_material_location(delphin_id: str, path: str) -> str:
     :rtype: str
     """
 
+    # TODO - Make path project folder related!
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     delphin_dict['DelphinProject']['DirectoryPlaceholders']['Placeholder'][1]['#text'] = path
