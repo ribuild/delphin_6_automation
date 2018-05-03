@@ -105,7 +105,7 @@ def github_updates():
         return True
 
 
-def get_average_computation_time(sim_id):
+def get_average_computation_time(sim_id: str) -> int:
     # TODO - Get the average time for this type of construction (2D or 1D)
 
     sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
@@ -114,7 +114,12 @@ def get_average_computation_time(sim_id):
     for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension, simulation_time__exists=True):
         sim_time.append(simulation_entry.simulation_time)
 
-    return np.mean(sim_time).total_seconds()/60
+    if sim_time:
+        return int(np.mean(sim_time).total_seconds()/60)
+    elif dimension == 2:
+        return 60
+    else:
+        return 15
 
 
 def create_submit_file(sim_id, simulation_folder):
