@@ -11,6 +11,9 @@ from pathlib import Path
 import subprocess
 from datetime import datetime
 import numpy as np
+import time
+import threading
+import paramiko
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -20,7 +23,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import general_interactions
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
-from delphin_6_automation.database_interactions.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import hpc
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -122,7 +125,7 @@ def get_average_computation_time(sim_id: str) -> int:
         return 15
 
 
-def create_submit_file(sim_id, simulation_folder):
+def create_submit_file(sim_id, simulation_folder, restart=False):
     delphin_path = '~/Delphin-6.0/bin/DelphinSolver'
     computation_time = get_average_computation_time(sim_id)
     cpus = 24
@@ -142,43 +145,72 @@ def create_submit_file(sim_id, simulation_folder):
     file.write('')
     file.write(f"export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n")
     file.write('')
-    file.write(f"{delphin_path} {sim_id}.d6p")
+
+    if not restart:
+        file.write(f"{delphin_path} {sim_id}.d6p")
+    else:
+        file.write(f"{delphin_path} --restart {sim_id}.d6p")
 
     file.close()
 
     return submit_file, computation_time
 
 
-def submit_job(submit_file):
+def submit_job(submit_file, sim_id):
     # TODO - SSH to HPC, call bsub < submit_file, get job_id from HPC
-    terminal_call = f"bsub < {submit_file}\n"
-    return job_id
+
+    terminal_call = f"bsub < ~/ribuild/{sim_id}/{submit_file}\n"
+
+    key = paramiko.RSAKey.from_private_key_file(hpc['key_path'], password=hpc['key_pw'])
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    logger.info('Connecting to HPC')
+    client.connect(hostname=hpc['ip'], username=hpc['user'], port=hpc['port'], pkey=key)
+
+    client.exec_command(terminal_call)
+    print('Submitted job')
+    logger.info('Submitted job')
+
+    client.close()
 
 
-def wait_until_finished(sim_id, job_id, estimated_run_time):
+def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
     # TODO - Look for summary file. If it is created, continue. If it is not created and the estimated time runs out.
     # Then submit a new job continuing the simulation from where it ended.
 
-    pass
+    finished = False
+    start_time = datetime.now()
+    while not finished:
+        simulation_ends = start_time + estimated_run_time
+
+        if os.path.exists(f"{simulation_folder}/{sim_id}/log/summary.txt"):
+            finished = True
+        elif datetime.now() > simulation_ends:
+            submit_file, estimated_time = create_submit_file(sim_id, simulation_folder, restart=True)
+            start_time = datetime.now()
+            submit_job(submit_file, sim_id)
+        else:
+            time.sleep(60)
 
 
-def hpc_worker(id_):
+def hpc_worker(id_: str, thread_name: str):
 
-    simulation_folder = 'H:/ribuild'
+    simulation_folder = f'H:/ribuild/{id_}'
 
     if not os.path.isdir(simulation_folder):
         os.mkdir(simulation_folder)
 
     # Download, solve, upload
-    print(f'\nDownloads project with ID: {id_}')
-    logger.info(f'Downloads project with ID: {id_}')
+    print(f'\n{thread_name} downloads project with ID: {id_}')
+    logger.info(f'{thread_name} downloads project with ID: {id_}')
 
-    general_interactions.download_full_project_from_database(str(id_), simulation_folder)
-    submit_file, estimated_time = create_submit_file(str(id_), simulation_folder)
-    job_id = submit_job(submit_file)
+    general_interactions.download_full_project_from_database(id_, simulation_folder)
+    submit_file, estimated_time = create_submit_file(id_, simulation_folder)
+    submit_job(submit_file, id_)
 
     time_0 = datetime.now()
-    wait_until_finished(str(id_), job_id, estimated_time)
+    wait_until_finished(id_, estimated_time, simulation_folder)
     delta_time = datetime.now() - time_0
 
     delphin_interactions.upload_results_to_database(simulation_folder + '/' + id_)
@@ -187,22 +219,22 @@ def hpc_worker(id_):
     simulation_interactions.set_simulation_time(id_, delta_time)
     simulation_interactions.clean_simulation_folder(simulation_folder)
 
-    print(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
-    logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}')
+    print(f'{thread_name} finished solving {id_}. Simulation duration: {delta_time}\n')
+    logger.info(f'{thread_name} finished solving {id_}. Simulation duration: {delta_time}')
 
 
-def simulation_worker(sim_location):
+def simulation_worker(sim_location, thread_name=None):
     try:
         while True:
-            #github_updates()
             id_ = simulation_interactions.find_next_sim_in_queue()
             if id_:
                 if sim_location == 'local':
-                    local_worker(id_)
+                    local_worker(str(id_))
                 elif sim_location == 'hpc':
-                    hpc_worker(id_)
+                    hpc_worker(str(id_), thread_name)
             else:
                 pass
+
     except KeyboardInterrupt:
         return
 
@@ -239,4 +271,14 @@ def menu():
             simulation_worker('local')
 
         elif choice == 'b':
-            simulation_worker('hpc')
+            n_threads = 5
+
+            for n in range(n_threads):
+                t_name = f"Worker_{n}"
+                thread = threading.Thread(target=simulation_worker, args=('hpc', t_name))
+                thread.name = t_name
+                thread.daemon = True
+                thread.start()
+                print(f'Created thread with name: {t_name}')
+                logger.info(f'Created thread with name: {t_name}')
+
