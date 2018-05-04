@@ -101,7 +101,6 @@ def main_menu():
         print("[f] Find simulation")
         print("[w] Queue and view weather data")
         print("[v] Download Simulations")
-        print("[s] Start simulation worker")
         print("[x] Exit")
         print()
 
@@ -135,9 +134,6 @@ def main_menu():
 
         elif choice == 'v':
             download_simulation_result()
-
-        elif choice == 's':
-            start_simulation()
 
         elif not choice or choice == 'x':
             print("see ya!")
@@ -580,15 +576,3 @@ def simulation_length_permutation(original_id, priority):
     print('')
 
     return delphin_interactions.permutate_entry_simulation_length(original_id, length_list, unit_list, priority)
-
-
-def start_simulation():
-    print('--------------- SIMULATION WORKER -----------------')
-
-    answer = input("Have you read and followed the the PDF guideline for installing and setups? [y/n] >")
-    if answer == "y":
-        print('')
-        simulation_worker()
-    else:
-        print("Please start by reading and following the PDF guidelines!")
-        return
