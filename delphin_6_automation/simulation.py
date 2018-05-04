@@ -17,7 +17,7 @@ sys.path.insert(0, source_folder)
 from delphin_6_automation.logging.ribuild_logger import notifiers_logger
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import dtu_byg
-from delphin_6_automation.simulation_worker import simulation_worker
+from delphin_6_automation.simulation_worker import main
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     notifier_logger = notifiers_logger(__name__)
 
     try:
-        simulation_worker()
+        main()
 
     except Exception:
         print('Exited with error!')

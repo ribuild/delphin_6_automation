@@ -209,7 +209,7 @@ def abs_diff(x1, x2):
 
 
 def rel_diff(x1, x2):
-    return (abs(x2 - x1))/x2 * 100
+    return (abs(x2 - x1))/abs(x2) * 100
 
 
 brick_abs = abs_diff(brick_1d[0]['moisture_integral'][:len(sim_2d[0]['moisture_integral'])],

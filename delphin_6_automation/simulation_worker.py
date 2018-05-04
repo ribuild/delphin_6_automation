@@ -278,6 +278,7 @@ def menu():
                 thread = threading.Thread(target=simulation_worker, args=('hpc', t_name))
                 thread.name = t_name
                 thread.daemon = True
+                time.sleep(1)
                 thread.start()
                 print(f'Created thread with name: {t_name}')
                 logger.info(f'Created thread with name: {t_name}')
