@@ -1,24 +1,40 @@
-# from sshtunnel import SSHTunnelForwarder
+from sshtunnel import SSHTunnelForwarder
 import mongoengine
 
 
-"""
-server = SSHTunnelForwarder(
-(HOST_IP, HOST_PORT),
-ssh_username = SSH_USER,
-ssh_password = SSH_PASS,
-remote_bind_address = ('localhost', 27017)
-)
-"""
-
-
 def global_init(auth_dict):
-    mongoengine.register_connection(
-                                    alias=auth_dict['alias'],
-                                    name=auth_dict['name'],
-                                    host=auth_dict['ip'],
-                                    port=auth_dict['port']
+
+
+    if auth_dict['ssh']:
+
+        server = SSHTunnelForwarder(
+                                    (auth_dict['ssh_ip'], auth_dict['ssh_port']),
+                                    ssh_username=auth_dict['ssh_user'],
+                                    ssh_password=auth_dict['ssh_password'],
+                                    remote_bind_address=('localhost', 27017)
                                     )
+
+        print(42)
+        server.start()
+        print(43)
+
+        mongoengine.register_connection(
+                                        alias=auth_dict['alias'],
+                                        name=auth_dict['name'],
+                                        username=auth_dict['username'],
+                                        password=auth_dict['password'],
+                                        host=auth_dict['ip'],
+                                        port=server.local_bind_port
+                                        )
+
+    else:
+        mongoengine.register_connection(
+                                        alias=auth_dict['alias'],
+                                        name=auth_dict['name'],
+                                        host=auth_dict['ip'],
+                                        port=auth_dict['port']
+                                        )
+
 
     # TODO - Delete below if not needed.
 

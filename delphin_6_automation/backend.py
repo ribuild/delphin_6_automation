@@ -10,13 +10,13 @@ import os
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
 
-from delphin_6_automation.database_interactions.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.database_interactions import material_interactions
-from delphin_6_automation.simulation_worker import simulation_worker
+#from delphin_6_automation.simulation_worker import simulation_worker
 from delphin_6_automation.file_parsing import delphin_parser
 
 
@@ -30,12 +30,23 @@ Backend user interface:
 - Queue and watch finished simulations
 """
 
-
+    # TODO Fix when AIT connection established
 def main():
-    print_header()
+    #print_header()
+
     config_mongo()
-    login()
-    main_menu()
+    # login()
+    # main_menu()
+
+    print("\nrunning...\n")
+    materials = general_interactions.list_materials()
+    general_interactions.print_material_dict(materials)
+
+    if auth_dict['ssh']:
+        mongo_setup.server.stop()
+
+    print("\ndone")
+
 
 
 def print_header():
@@ -51,7 +62,7 @@ def print_header():
 
 
 def config_mongo():
-    mongo_setup.global_init(dtu_byg)
+    mongo_setup.global_init(auth_dict)
 
 
 def login():
@@ -101,6 +112,7 @@ def main_menu():
         print("[f] Find simulation")
         print("[w] Queue and view weather data")
         print("[v] Download Simulations")
+        print("[t] Test Connection")
         print("[x] Exit")
         print()
 
@@ -134,6 +146,7 @@ def main_menu():
 
         elif choice == 'v':
             download_simulation_result()
+
 
         elif not choice or choice == 'x':
             print("see ya!")
@@ -204,6 +217,13 @@ def view_material_data():
 
         elif choice == 'x':
             return None
+
+
+def test_connection():
+    print('if materials are printing the sh#t is running:\n')
+    materials = general_interactions.list_materials()
+    general_interactions.print_material_dict(materials)
+
 
 
 def view_weather_data():

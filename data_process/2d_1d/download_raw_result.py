@@ -1,12 +1,12 @@
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 import os
 
 
-mongo_setup.global_init(dtu_byg)
+mongo_setup.global_init(auth_dict)
 
 
 folder = r'U:\RIBuild\2D_1D\Results'

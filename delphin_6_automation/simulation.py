@@ -16,7 +16,7 @@ sys.path.insert(0, source_folder)
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import notifiers_logger
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.simulation_worker import main
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -25,7 +25,7 @@ from delphin_6_automation.simulation_worker import main
 
 if __name__ == "__main__":
     # Setup connection
-    mongo_setup.global_init(dtu_byg)
+    mongo_setup.global_init(auth_dict)
     notifier_logger = notifiers_logger(__name__)
 
     try:

@@ -18,7 +18,7 @@ import delphin_6_automation.database_interactions.db_templates.result_raw_entry 
 import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
 
 try:
-    from delphin_6_automation.database_interactions.auth import dtu_byg as authorisation
+    from delphin_6_automation.database_interactions.auth import auth_dict as authorisation
 except ModuleNotFoundError:
     from delphin_6_automation.database_interactions.auth_travis import test_db as authorisation
 
