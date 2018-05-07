@@ -8,7 +8,7 @@ __license__ = 'MIT'
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import dtu_byg
+from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
@@ -16,7 +16,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
-mongo_setup.global_init(dtu_byg)
+mongo_setup.global_init(auth_dict)
 
 delphin_file0 = r'U:\RIBuild\2D_1D\Delphin Project\4A\4A_36cm_brick_1D.d6p'
 delphin_file1 = r'U:\RIBuild\2D_1D\Delphin Project\4A\4A_36cm_brick_ins_1D.d6p'
