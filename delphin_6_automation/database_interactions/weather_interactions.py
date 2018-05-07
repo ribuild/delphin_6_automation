@@ -62,7 +62,7 @@ def assign_weather_to_project(delphin_id: str, weather_documents: list) -> str:
     if delphin_document.weather:
         delphin_document.update(pull_all__weather=delphin_document.weather)
 
-    delphin_document.update(push_all__weather=weather_documents)
+    [delphin_document.update(push__weather=weather) for weather in weather_documents]
 
     return delphin_document.id
 

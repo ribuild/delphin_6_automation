@@ -33,8 +33,8 @@ class Delphin(mongoengine.Document):
     results_raw = mongoengine.ReferenceField(document_type=raw_db.Result)
     result_processed = mongoengine.ReferenceField(document_type=processed_db.ProcessedResult)
     dp6_file = mongoengine.DictField(required=True)
-    materials = mongoengine.ListField(mongoengine.ReferenceField(material_db.Material))
-    weather = mongoengine.ListField(mongoengine.ReferenceField(weather_db.Weather))
+    materials = mongoengine.ListField(mongoengine.ReferenceField(document_type=material_db.Material))
+    weather = mongoengine.ListField(mongoengine.ReferenceField(document_type=weather_db.Weather))
     indoor_climate = mongoengine.StringField()
 
     meta = collections.delphin_db
