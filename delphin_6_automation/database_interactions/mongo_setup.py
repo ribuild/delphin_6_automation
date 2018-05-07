@@ -18,6 +18,7 @@ def global_init(auth_dict):
 
         server.start()
 
+
         mongoengine.register_connection(
                                         alias=auth_dict['alias'],
                                         name=auth_dict['name'],
