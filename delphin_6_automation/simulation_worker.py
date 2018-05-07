@@ -264,6 +264,7 @@ def menu():
         print("Available actions:")
         print("[a] Simulate locally")
         print("[b] Simulate on DTU HPC")
+        print("[x] Exit")
 
         choice = input("> ").strip().lower()
 
@@ -283,3 +284,6 @@ def menu():
                 print(f'Created thread with name: {t_name}')
                 logger.info(f'Created thread with name: {t_name}')
 
+        elif choice == 'x':
+            print("Goodbye")
+            break
