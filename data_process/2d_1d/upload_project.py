@@ -63,3 +63,5 @@ def permutate_uploads():
 
 
 permutate_uploads()
+
+mongo_setup.global_end_ssh(auth_dict)

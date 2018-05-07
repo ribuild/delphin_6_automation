@@ -30,7 +30,8 @@ Backend user interface:
 - Queue and watch finished simulations
 """
 
-    # TODO Fix when AIT connection established
+
+# TODO Fix when AIT connection established
 def main():
     print_header()
     config_mongo()
@@ -56,7 +57,7 @@ def config_mongo():
 
 
 def close_connections():
-    mongo_setup.global_end_ssh()
+    mongo_setup.global_end_ssh(auth_dict)
 
 
 def login():
