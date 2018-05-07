@@ -32,21 +32,11 @@ Backend user interface:
 
     # TODO Fix when AIT connection established
 def main():
-    #print_header()
-
+    print_header()
     config_mongo()
-    # login()
-    # main_menu()
-
-    print("\nrunning...\n")
-    materials = general_interactions.list_materials()
-    general_interactions.print_material_dict(materials)
-
-    if auth_dict['ssh']:
-        mongo_setup.server.stop()
-
-    print("\ndone")
-
+    login()
+    main_menu()
+    close_connections()
 
 
 def print_header():
@@ -63,6 +53,10 @@ def print_header():
 
 def config_mongo():
     mongo_setup.global_init(auth_dict)
+
+
+def close_connections():
+    mongo_setup.global_end_ssh()
 
 
 def login():
