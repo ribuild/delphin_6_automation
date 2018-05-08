@@ -132,7 +132,7 @@ def create_submit_file(sim_id, simulation_folder, restart=False):
     ram_per_cpu = '10MB'
     submit_file = f'submit_{sim_id}.sh'
 
-    file = open(f"{simulation_folder}/{submit_file}", 'w')
+    file = open(f"{simulation_folder}/{submit_file}", 'w', newline='\n')
     file.write("#!/bin/bash\n")
     file.write("#BSUB -J DelphinJob\n")
     file.write("#BSUB -o DelphinJob_%J.out\n")
@@ -142,15 +142,16 @@ def create_submit_file(sim_id, simulation_folder, restart=False):
     file.write(f'#BSUB -R "rusage[mem={ram_per_cpu}] span[hosts=1]"\n')
     file.write(f"#BSUB -n {cpus}\n")
     file.write(f"#BSUB -N\n")
-    file.write('')
+    file.write('\n')
     file.write(f"export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n")
-    file.write('')
+    file.write('\n')
 
     if not restart:
-        file.write(f"{delphin_path} {sim_id}.d6p")
+        file.write(f"{delphin_path} {sim_id}.d6p\n")
     else:
-        file.write(f"{delphin_path} --restart {sim_id}.d6p")
+        file.write(f"{delphin_path} --restart {sim_id}.d6p\n")
 
+    file.write('\n')
     file.close()
 
     return submit_file, computation_time
@@ -182,7 +183,7 @@ def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
     finished = False
     start_time = datetime.datetime.now()
     while not finished:
-        simulation_ends = start_time + datetime.timedelta(seconds=estimated_run_time*60)
+        simulation_ends = start_time + datetime.timedelta(minutes=estimated_run_time)
 
         if os.path.exists(f"{simulation_folder}/{sim_id}/log/summary.txt"):
             finished = True
