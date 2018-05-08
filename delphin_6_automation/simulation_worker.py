@@ -9,7 +9,7 @@ import os
 import platform
 from pathlib import Path
 import subprocess
-from datetime import datetime
+import datetime
 import numpy as np
 import time
 import threading
@@ -56,7 +56,7 @@ def local_worker(id_):
         os.mkdir(delphin_path)
 
     # Download, solve, upload
-    time_0 = datetime.now()
+    time_0 = datetime.datetime.now()
 
     print(f'\nDownloads project with ID: {id_}')
     logger.info(f'Downloads project with ID: {id_}')
@@ -65,7 +65,7 @@ def local_worker(id_):
     solve_delphin(delphin_path + '/' + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
     id_result = delphin_interactions.upload_results_to_database(delphin_path + '/' + id_)
 
-    delta_time = datetime.now() - time_0
+    delta_time = datetime.datetime.now() - time_0
 
     # Check if uploaded:
     test_doc = result_db.Result.objects(id=id_result).first()
@@ -180,15 +180,15 @@ def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
     # Then submit a new job continuing the simulation from where it ended.
 
     finished = False
-    start_time = datetime.now()
+    start_time = datetime.datetime.now()
     while not finished:
-        simulation_ends = start_time + estimated_run_time
+        simulation_ends = start_time + datetime.timedelta(seconds=estimated_run_time*60)
 
         if os.path.exists(f"{simulation_folder}/{sim_id}/log/summary.txt"):
             finished = True
-        elif datetime.now() > simulation_ends:
+        elif datetime.datetime.now() > simulation_ends:
             submit_file, estimated_time = create_submit_file(sim_id, simulation_folder, restart=True)
-            start_time = datetime.now()
+            start_time = datetime.datetime.now()
             submit_job(submit_file, sim_id)
         else:
             time.sleep(60)
@@ -209,9 +209,9 @@ def hpc_worker(id_: str, thread_name: str):
     submit_file, estimated_time = create_submit_file(id_, simulation_folder)
     submit_job(submit_file, id_)
 
-    time_0 = datetime.now()
+    time_0 = datetime.datetime.now()
     wait_until_finished(id_, estimated_time, simulation_folder)
-    delta_time = datetime.now() - time_0
+    delta_time = datetime.datetime.now() - time_0
 
     delphin_interactions.upload_results_to_database(simulation_folder + '/' + id_)
 
