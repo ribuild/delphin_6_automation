@@ -121,8 +121,9 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
     return weather_dict
 
 
-def change_weather_file_location(delphin_id: str, folder: str):
+def change_weather_file_location(delphin_id: str):
 
+    folder = '${Project Directory}/weather'
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     climate_conditions = delphin_dict['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']
