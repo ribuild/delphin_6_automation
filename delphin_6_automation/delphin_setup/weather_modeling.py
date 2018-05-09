@@ -158,8 +158,10 @@ def driving_rain(precipitation, wind_direction, wind_speed, wall_location, orien
     return list(wind_driven_rain)
 
 
-def short_wave_radiation(radiation: np.array, longitude: float, latitude: float, hour_of_the_year: np.array,
+def short_wave_radiation(radiation: np.array, longitude: float, latitude: float,
                          inclination: float, orientation: float) -> np.array:
+
+    hour_of_the_year = np.array([int(i) for i in range(8760)] * int(len(radiation)/8760))
 
     def sin_deg(x):
         return np.sin(np.radians(x))

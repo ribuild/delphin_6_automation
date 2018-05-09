@@ -6,6 +6,7 @@ __license__ = 'MIT'
 
 # Modules:
 from collections import OrderedDict
+import numpy as np
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
@@ -147,6 +148,9 @@ def change_weather_file_location(delphin_id: str):
             elif climate_conditions[index]['@type'] == 'SWRadiationDirect':
                 climate_conditions[index]['Filename'] = folder + '/direct_radiation.ccd'
 
+            elif climate_conditions[index]['@type'] == 'SWRadiationImposed':
+                climate_conditions[index]['Filename'] = folder + '/short_wave_radiation.ccd'
+
             elif climate_conditions[index]['@type'] == 'RainFluxNormal':
                 climate_conditions[index]['Filename'] = folder + '/wind_driven_rain.ccd'
 
@@ -177,11 +181,17 @@ def download_weather(delphin_id: str, folder: str) -> bool:
     weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],
                                                                 weather['wind_speed'], wall_location, orientation)
 
+    latitude = delphin_document.weather[0].location[0]
+    longitude = delphin_document.weather[0].location[1]
+    radiation = np.array(weather['diffuse_radiation']) + np.array(weather['diffuse_radiation'])
+    weather['short_wave_radiation'] = weather_modeling.short_wave_radiation(radiation, longitude,
+                                                                            latitude, 0, orientation)
+
     for weather_key in weather.keys():
         weather[weather_key].extend(weather[weather_key][-2:])
 
     weather_parser.dict_to_ccd(weather, folder)
-    change_weather_file_location(delphin_id, folder)
+    change_weather_file_location(delphin_id)
 
     return True
 

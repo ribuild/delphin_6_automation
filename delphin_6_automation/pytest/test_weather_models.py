@@ -35,8 +35,7 @@ def test_solar_radiation():
     diff_rad = np.array(weather_parser.ccd_to_list(folder + '/diffuse_radiation.ccd'))
     dir_rad = np.array(weather_parser.ccd_to_list(folder + '/direct_radiation.ccd'))
     radiation = diff_rad + dir_rad
-    hour_of_the_year = np.array([int(i) for i in range(8760)] * 3)
-    short_wave = weather_modeling.short_wave_radiation(radiation, -2.083, 57.167, hour_of_the_year, 0, 230)
+    short_wave = weather_modeling.short_wave_radiation(radiation, -2.083, 57.167, 0, 230)
 
     plt.figure()
     plt.plot(np.linspace(0, len(radiation), len(radiation)), short_wave)
