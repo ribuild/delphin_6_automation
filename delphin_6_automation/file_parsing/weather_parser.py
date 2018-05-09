@@ -103,9 +103,9 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
 
     for weather_key in weather_dict.keys():
         if weather_key in ['temperature', 'relative_humidity',
-                           'wind_driven_rain', 'wind_direction',
-                           'wind_speed', 'long_wave_radiation',
-                           'diffuse_radiation', 'direct_radiation',
+                           'wind_driven_rain',
+                           'long_wave_radiation',
+                           'short_wave_radiation',
                            'indoor_temperature',
                            'indoor_relative_humidity']:
 
