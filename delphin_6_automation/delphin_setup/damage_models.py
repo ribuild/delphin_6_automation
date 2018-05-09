@@ -18,9 +18,8 @@ logger = ribuild_logger(__name__)
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
-
-def mould_index(relative_humidity: typing.List[float], temperature: typing.List[float], draw_back: 1 < int < 4,
-                sensitivity_class: 1 < int < 4, surface_quality: 0 < int < 1) -> typing.List[float]:
+def mould_index(relative_humidity: typing.List[float], temperature: typing.List[float], draw_back: int,
+                sensitivity_class: int, surface_quality: int) -> typing.List[float]:
     """
     Computes a time series of the mould index
     Source: T. Ojanen, H. Viitanen - Mold growth modeling of building structures using sensitivity classes of materials - 2010
@@ -109,7 +108,7 @@ def mould_index(relative_humidity: typing.List[float], temperature: typing.List[
     return result
 
 
-def frost_risk(relative_humidity: typing.List[float], temperature: typing.List[float]) -> typing.List[bool]:
+def frost_risk(relative_humidity: np.array, temperature: np.array) -> np.array:
     """
     Evaluates frost risk
     Returns: List - Containing 0's and 1's. Where a 0 indicates no frost risk and an 1 indicate frost risk
@@ -120,25 +119,21 @@ def frost_risk(relative_humidity: typing.List[float], temperature: typing.List[f
     water_density = 1000  # kg/m3
     specific_heat_capacity_water = 4187  # J/(kgK)
     specific_heat_capacity_water_ice = 2100  # J/(kgK)
-    temperature_kelvin = 273.15  # C
+    reference_temperature = 273.15  # K
     enthalpy_water_ice = -333500  # J/kg
     gas_constant_vapour = 461.5  # J/(kgK)
 
-    result = []
+    temperature_in_kelvin = temperature + reference_temperature
 
-    for i in range(len(temperature)):
-        f_pu = water_density * (-(enthalpy_water_ice / temperature_kelvin * (temperature[i] - temperature_kelvin)) + (
-                specific_heat_capacity_water - specific_heat_capacity_water_ice) * (
-                                        temperature[i] * np.log(temperature[i] / temperature_kelvin) - (
-                                        temperature[i] - temperature_kelvin)))
-        f_phi = np.exp(f_pu / (water_density * gas_constant_vapour * temperature[i])) * 100
+    f_pu = water_density * (-(enthalpy_water_ice / reference_temperature *
+                              (temperature_in_kelvin - reference_temperature)) +
+                            (specific_heat_capacity_water - specific_heat_capacity_water_ice) *
+                            (temperature_in_kelvin * np.log(temperature_in_kelvin / reference_temperature) -
+                             (temperature_in_kelvin - reference_temperature)))
 
-        if relative_humidity[i] <= f_phi:
-            result.append(False)
-        elif relative_humidity[i] > f_phi:
-            result.append(True)
+    f_phi = np.exp(f_pu / (water_density * gas_constant_vapour * temperature_in_kelvin)) * 100
 
-    return result
+    return (relative_humidity > f_phi).astype(int)
 
 
 def frost_curves(temperature: typing.List[float]):
@@ -170,7 +165,7 @@ def frost_curves(temperature: typing.List[float]):
 
 
 def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typing.List[float]) \
-        -> typing.Tuple(typing.List[float], typing.List[float]):
+        -> tuple:
 
     def time_critical(relative_humidity, temperature):
         return (2.3 * temperature + 0.035 * relative_humidity - 0.024 * temperature * relative_humidity) / \
@@ -184,17 +179,17 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
             return -1/17520
 
     def delta_mass_loss(relative_humidity, temperature):
-        return -5.96 * 10**-2 + 1.96 * 10**-4 * temperature + 6.25 * 10**-4 * relative_humidity
+        return -5.96 * 10**(-2) + 1.96 * 10**(-4) * temperature + 6.25 * 10**(-4) * relative_humidity
 
     alpha = [0, ]
     mass_loss = [0, ]
 
     for i in range(len(relative_humidity_list)):
-        alpha.append(alpha[-1] + delta_alpha(relative_humidity_list[i], temperature_list[i]))
+        alpha.append(max(alpha[-1] + delta_alpha(relative_humidity_list[i], temperature_list[i]), 0))
 
         if alpha[-1] >= 1:
             mass_loss.append(mass_loss[-1] + delta_mass_loss(relative_humidity_list[i], temperature_list[i]))
         else:
             mass_loss.append(mass_loss[-1])
 
-    return mass_loss, alpha
+    return mass_loss[1:], alpha[1:]
