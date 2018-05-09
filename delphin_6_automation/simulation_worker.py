@@ -272,7 +272,7 @@ def menu():
             simulation_worker('local')
 
         elif choice == 'b':
-            n_threads = 5
+            n_threads = 2
 
             for n in range(n_threads):
                 t_name = f"Worker_{n}"
