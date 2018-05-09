@@ -42,6 +42,11 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                              "factor": 1,
                              "abr": "ISD"},
 
+        "short_wave_radiation": {"description": "Short Wave Radiation [W/m2] (ISD)",
+                              "intro": "SHWRAD   W/m2",
+                              "factor": 1,
+                              "abr": "SWR"},
+
         "wind_direction": {"description": "Wind Direction [degrees] (WD)",
                           "intro": "WINDDIR   Deg",
                           "factor": 1,
