@@ -106,7 +106,7 @@ def change_material_location(delphin_id: str, path: str) -> str:
     # TODO - Make path project folder related!
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
-    delphin_dict['DelphinProject']['DirectoryPlaceholders']['Placeholder'][0]['#text'] = '${Project Directory}/materials'
+    delphin_dict['DelphinProject']['DirectoryPlaceholders']['Placeholder']['#text'] = '${Project Directory}/materials'
     delphin_document.update(set__dp6_file=delphin_dict)
 
     return delphin_document.id
