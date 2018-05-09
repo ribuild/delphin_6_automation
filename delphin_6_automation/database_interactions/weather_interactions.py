@@ -208,6 +208,7 @@ def update_short_wave_condition(delphin_dict):
 
     boundary_conditions = delphin_dict['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition']
 
+    """
     for boundary_condition in boundary_conditions:
         if boundary_condition['@type'] == 'ShortWaveRadiation':
             try:
@@ -222,5 +223,6 @@ def update_short_wave_condition(delphin_dict):
                                                                  ('#text', direct_radiation))),
                                                      OrderedDict((('@type', 'SWRadiationDiffuse'),
                                                                  ('#text', diffuse_radiation)))]
+    """
 
     return delphin_dict
