@@ -23,7 +23,7 @@ graphic_folder = r'U:\RIBuild\2D_1D\Processed Results\4A'
 #dp.process_results(acronym_file, result_folder, out_folder)
 
 quantities = ['heat loss', 'temperature', 'relative humidity', 'moisture content', 'moisture integral']
-quantity = quantities[4]
+quantity = quantities[3]
 hdf_file = out_folder + '/' + quantity + '.h5'
 
 
@@ -42,16 +42,16 @@ def uninsulated(save=False):
     if save:
         plt.savefig(f'{graphic_folder}/{quantity}_rel_diff_uninsulated.png')
 
-    dp.plot_linear_relation(total_uninsulated_4a, 'mortar', (0, 3), quantity.title(), '4A 36cm Uninsulated')
+    dp.plot_linear_relation(total_uninsulated_4a, 'mortar', (-50, 200), quantity.title(), '4A 36cm Uninsulated')
     if save:
         plt.savefig(f'{graphic_folder}/{quantity}_linear_relation_mortar_uninsulated.png')
 
-    dp.plot_linear_relation(total_uninsulated_4a, 'brick', (0, 3), quantity.title(), '4A 36cm Uninsulated')
+    dp.plot_linear_relation(total_uninsulated_4a, 'brick', (-50, 200), quantity.title(), '4A 36cm Uninsulated')
     if save:
         plt.savefig(f'{graphic_folder}/{quantity}_linear_relation_brick_uninsulated.png')
 
 
-uninsulated(True)
+uninsulated(False)
 
 
 def insulated(save=False):

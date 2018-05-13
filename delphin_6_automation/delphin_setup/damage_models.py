@@ -103,7 +103,7 @@ def mould_index(relative_humidity: typing.List[float], temperature: typing.List[
         if m < 0:
             m = 0
 
-        result.append(m)
+        result.append(min(m, 6.0))
 
     return result
 
@@ -179,16 +179,16 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
             return -1/17520
 
     def delta_mass_loss(relative_humidity, temperature):
-        return -5.96 * 10**(-2) + 1.96 * 10**(-4) * temperature + 6.25 * 10**(-4) * relative_humidity
+        return max(-5.96 * 10**(-2) + 1.96 * 10**(-4) * temperature + 6.25 * 10**(-4) * relative_humidity, 0)
 
-    alpha = [0, ]
-    mass_loss = [0, ]
+    alpha = [0.0, ]
+    mass_loss = [0.0, ]
 
     for i in range(len(relative_humidity_list)):
         alpha.append(max(alpha[-1] + delta_alpha(relative_humidity_list[i], temperature_list[i]), 0))
 
         if alpha[-1] >= 1:
-            mass_loss.append(mass_loss[-1] + delta_mass_loss(relative_humidity_list[i], temperature_list[i]))
+            mass_loss.append(min(mass_loss[-1] + delta_mass_loss(relative_humidity_list[i], temperature_list[i]), 100.0))
         else:
             mass_loss.append(mass_loss[-1])
 
