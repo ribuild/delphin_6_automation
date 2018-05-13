@@ -159,7 +159,7 @@ def create_submit_file(sim_id, simulation_folder, restart=False):
 def submit_job(submit_file, sim_id):
     # TODO - SSH to HPC, call bsub < submit_file, get job_id from HPC
 
-    terminal_call = f"cd ~/ribuild/{sim_id}; bsub < {submit_file}"
+    terminal_call = f"cd ~/ribuild/{sim_id}\n", f"bsub < {submit_file}\n"
 
     key = paramiko.RSAKey.from_private_key_file(hpc['key_path'], password=hpc['key_pw'])
     client = paramiko.SSHClient()
@@ -168,10 +168,20 @@ def submit_job(submit_file, sim_id):
     logger.info('Connecting to HPC')
     client.connect(hostname=hpc['ip'], username=hpc['user'], port=hpc['port'], pkey=key)
 
-    client.exec_command(terminal_call)
-    print('Submitted job')
-    logger.info('Submitted job')
+    channel = client.invoke_shell()
+    channel_data = ''
+    time.sleep(0.5)
+    channel.send(terminal_call[0])
+    channel.send(terminal_call[1])
+    time.sleep(0.5)
+    channel_bytes = channel.recv(9999)
+    channel_data += channel_bytes.decode("utf-8")
+    logger.info(channel_data)
 
+    print(f'Submitted job {sim_id}')
+    logger.info(f'Submitted job {sim_id}')
+
+    channel.close()
     client.close()
 
 
