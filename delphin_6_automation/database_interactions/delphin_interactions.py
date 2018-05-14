@@ -136,7 +136,7 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
     delphin_entry.update(set__results_raw=entry)
 
     if delete_files:
-        shutil.rmtree(path_)
+        shutil.rmtree(path_, ignore_errors=True)
 
     return entry.id
 
