@@ -196,7 +196,7 @@ def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
 
         if os.path.exists(f"{simulation_folder}/{sim_id}/log/summary.txt"):
             finished = True
-        elif datetime.datetime.now() > simulation_ends:
+        elif datetime.datetime.now() > simulation_ends + datetime.timedelta(seconds=10):
             submit_file, estimated_time = create_submit_file(sim_id, simulation_folder, restart=True)
             start_time = datetime.datetime.now()
             submit_job(submit_file, sim_id)
