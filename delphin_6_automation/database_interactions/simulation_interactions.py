@@ -117,4 +117,4 @@ def set_simulation_time(sim_id, computation_time):
     delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
     delphin_entry.simulation_time = computation_time
 
-    return sim_id.id
+    return sim_id
