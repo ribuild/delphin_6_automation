@@ -27,9 +27,9 @@ class Delphin(mongoengine.Document):
     simulating = mongoengine.BooleanField(default=False)
     simulation_time = mongoengine.DateTimeField()
     queue_priority = mongoengine.IntField(default=1)
-    dimensions = mongoengine.IntField(required=True)
 
     # References
+    dimensions = mongoengine.IntField(required=True)
     results_raw = mongoengine.ReferenceField(document_type=raw_db.Result)
     result_processed = mongoengine.ReferenceField(document_type=processed_db.ProcessedResult)
     dp6_file = mongoengine.DictField(required=True)

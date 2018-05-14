@@ -58,17 +58,23 @@ def upload_delphin_dict_to_database(delphin_dict: dict, queue_priority: int) -> 
     delphin_dict = weather_interactions.update_short_wave_condition(delphin_dict)
     entry.dp6_file = delphin_dict
     entry.materials = material_interactions.find_material_ids(material_interactions.list_project_materials(entry))
-
-    if len(delphin_dict['DelphinProject']['Discretization']) > 2:
-        entry.dimensions = 3
-    elif len(delphin_dict['DelphinProject']['Discretization']) > 1:
-        entry.dimensions = 2
-    else:
-        entry.dimensions = 1
-
+    entry.dimensions = get_delphin_project_dimension(delphin_dict)
     entry.save()
 
     return entry.id
+
+
+def get_delphin_project_dimension(delphin_dict: dict):
+
+    if len(delphin_dict['DelphinProject']['Discretization']) > 2:
+        dimension = 3
+
+    elif len(delphin_dict['DelphinProject']['Discretization']['YSteps']['#text'].split(' ')) > 1:
+        dimension = 2
+    else:
+        dimension = 1
+
+    return dimension
 
 
 def download_delphin_entry(document_id: str, path: str) -> bool:
