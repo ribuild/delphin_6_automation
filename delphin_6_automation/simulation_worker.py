@@ -267,33 +267,34 @@ def print_header():
 
 
 def menu():
-    while True:
-        print('')
-        print('------------------- SIMULATION MENU ---------------------')
-        print('')
-        print("Available actions:")
-        print("[a] Simulate locally")
-        print("[b] Simulate on DTU HPC")
-        print("[x] Exit")
 
-        choice = input("> ").strip().lower()
+    print('')
+    print('------------------- SIMULATION MENU ---------------------')
+    print('')
+    print("Available actions:")
+    print("[a] Simulate locally")
+    print("[b] Simulate on DTU HPC")
+    print("[x] Exit")
 
-        if choice == 'a':
-            simulation_worker('local')
+    choice = input("> ").strip().lower()
 
-        elif choice == 'b':
-            n_threads = 2
+    if choice == 'a':
+        print('Local Simulation Chosen\n')
+        simulation_worker('local')
 
-            for n in range(n_threads):
-                t_name = f"Worker_{n}"
-                thread = threading.Thread(target=simulation_worker, args=('hpc', t_name))
-                thread.name = t_name
-                thread.daemon = True
-                time.sleep(1)
-                thread.start()
-                print(f'Created thread with name: {t_name}')
-                logger.info(f'Created thread with name: {t_name}')
+    elif choice == 'b':
+        n_threads = 2
 
-        elif choice == 'x':
-            print("Goodbye")
-            break
+        for n in range(n_threads):
+            print('Simulation on DTU HPC Chosen\n')
+            t_name = f"Worker_{n}"
+            thread = threading.Thread(target=simulation_worker, args=('hpc', t_name))
+            thread.name = t_name
+            thread.daemon = True
+            time.sleep(1)
+            thread.start()
+            print(f'Created thread with name: {t_name}')
+            logger.info(f'Created thread with name: {t_name}')
+
+    elif choice == 'x':
+        print("Goodbye")
