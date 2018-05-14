@@ -67,14 +67,13 @@ def upload_delphin_dict_to_database(delphin_dict: dict, queue_priority: int) -> 
 def get_delphin_project_dimension(delphin_dict: dict):
 
     if len(delphin_dict['DelphinProject']['Discretization']) > 2:
-        dimension = 3
+        return 3
 
     elif len(delphin_dict['DelphinProject']['Discretization']['YSteps']['#text'].split(' ')) > 1:
-        dimension = 2
-    else:
-        dimension = 1
+        return 2
 
-    return dimension
+    else:
+        return 1
 
 
 def download_delphin_entry(document_id: str, path: str) -> bool:
@@ -123,7 +122,7 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
     log_dict = dict()
     log_dict['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
     #log_dict['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
-    log_dict['progress'] = delphin_parser.progress_to_dict(log_path)
+    #log_dict['progress'] = delphin_parser.progress_to_dict(log_path)
     entry.log.put(bson.BSON.encode(log_dict))
 
     entry.geometry_file = geometry_dict
