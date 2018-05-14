@@ -112,14 +112,17 @@ def get_average_computation_time(sim_id: str) -> int:
 
     sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
     dimension = sim_obj.dimensions
-    sim_time = []
-    for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension, simulation_time__exists=True):
-        sim_time.append(simulation_entry.simulation_time)
+
+    sim_time = [simulation_entry.simulation_time
+                for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension,
+                                                                      simulation_time__exists=True)]
 
     if sim_time:
-        return int(np.mean(sim_time)/60)
+        return np.ceil(np.mean(sim_time)/60)
+
     elif dimension == 2:
         return 60
+
     else:
         return 15
 
