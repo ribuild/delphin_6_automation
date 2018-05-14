@@ -118,7 +118,7 @@ def get_average_computation_time(sim_id: str) -> int:
                                                                       simulation_time__exists=True)]
 
     if sim_time:
-        return np.ceil(np.mean(sim_time)/60)
+        return int(np.ceil(np.mean(sim_time)/60))
 
     elif dimension == 2:
         return 60
