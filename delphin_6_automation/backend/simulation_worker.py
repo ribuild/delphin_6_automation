@@ -294,15 +294,16 @@ def menu():
 
     elif choice == 'b':
         print('Simulation on DTU HPC Chosen\n')
-        n_threads = 2
+        n_threads = 8
 
         for n in range(n_threads):
             t_name = f"Worker_{n}"
             thread = threading.Thread(target=simulation_worker, args=('hpc', t_name))
             thread.name = t_name
             thread.daemon = True
-            time.sleep(1)
             thread.start()
+
+            time.sleep(1)
             print(f'Created thread with name: {t_name}')
             logger.info(f'Created thread with name: {t_name}')
 
