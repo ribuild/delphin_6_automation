@@ -117,7 +117,7 @@ def get_average_computation_time(sim_id: str) -> int:
         sim_time.append(simulation_entry.simulation_time)
 
     if sim_time:
-        return int(np.mean(sim_time).total_seconds()/60)
+        return int(np.mean(sim_time)/60)
     elif dimension == 2:
         return 60
     else:

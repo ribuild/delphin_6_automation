@@ -115,6 +115,6 @@ def clean_simulation_folder(path: str) -> bool:
 def set_simulation_time(sim_id: str, computation_time: datetime.timedelta):
 
     delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
-    delphin_entry.update(set__simulation_time=computation_time)
+    delphin_entry.update(set__simulation_time=computation_time.total_seconds())
 
     return sim_id

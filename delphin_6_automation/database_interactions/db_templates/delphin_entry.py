@@ -25,7 +25,7 @@ class Delphin(mongoengine.Document):
     added_date = mongoengine.DateTimeField(default=datetime.now)
     simulated = mongoengine.DateTimeField()
     simulating = mongoengine.BooleanField(default=False)
-    simulation_time = mongoengine.DateTimeField()
+    simulation_time = mongoengine.FloatField()
     queue_priority = mongoengine.IntField(default=1)
 
     # References
