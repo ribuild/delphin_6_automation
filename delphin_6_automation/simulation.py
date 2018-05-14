@@ -17,7 +17,7 @@ sys.path.insert(0, source_folder)
 from delphin_6_automation.logging.ribuild_logger import notifiers_logger
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_dict
-from delphin_6_automation.simulation_worker import main
+from delphin_6_automation.backend.simulation_worker import main
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild

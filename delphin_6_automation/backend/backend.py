@@ -24,7 +24,7 @@ from delphin_6_automation.file_parsing import delphin_parser
 # DELPHIN PERMUTATION FUNCTIONS
 
 """
-Backend user interface:
+backend user interface:
 - Add new simulation(s)
 - Monitor the simulation process
 - Queue and watch finished simulations
