@@ -283,10 +283,10 @@ def menu():
         simulation_worker('local')
 
     elif choice == 'b':
+        print('Simulation on DTU HPC Chosen\n')
         n_threads = 2
 
         for n in range(n_threads):
-            print('Simulation on DTU HPC Chosen\n')
             t_name = f"Worker_{n}"
             thread = threading.Thread(target=simulation_worker, args=('hpc', t_name))
             thread.name = t_name
