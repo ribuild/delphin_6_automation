@@ -1,9 +1,11 @@
-longitude = -122.25
-latitude = 37.46
+import math
+
+latitude = 56.2639
+longitude = 9.5018
 radiation = 200
-hour_of_the_year = 28*24+10
-surface_angle = 45.0
-surface_azimut = 22.5
+hour_of_the_year = 28*24+9
+surface_angle = 90.0
+surface_azimut = 180
 
 sin = lambda x: math.sin(math.radians(x))
 cos = lambda x: math.cos(math.radians(x))
@@ -72,7 +74,8 @@ def zenit_angle(declination: float, latitude_deg: float, surface_angle: float, s
 
 def radiation_ratio(incident_angle: float, zenit_angle: float) -> float:
     """... DK: Bestrålingsstyrkeforholdet"""
-    radiation_ratio = cos(incident_angle)/cos(zenit_angle)
+    radiation_ratio = max(0, cos(incident_angle)/cos(zenit_angle))
+
     return radiation_ratio
 
 
@@ -94,6 +97,14 @@ zenit_angle = zenit_angle(declination, latitude_deg, surface_angle, surface_azim
 radiation_ratio = radiation_ratio(incident_angle, zenit_angle)
 radiation_strength = radiation_strength(radiation_ratio, radiation)
 
-print(radiation_strength)
+#print(local_time_constant)
+#print(time_ekvation)
+print("true_solar_time:", true_solar_time)
+#print(declination)
+print("latitude_deg", latitude_deg)
+#print(time_angle)
+print("incident_angle", incident_angle)
+print("radiation_ratio", radiation_ratio)
+print("radiation_strength", radiation_strength)
 
 # TODO - Build this sh#t into the project...
