@@ -5,10 +5,8 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
-# Modules:
 import os
 import sys
-
 
 source_folder = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, source_folder)
