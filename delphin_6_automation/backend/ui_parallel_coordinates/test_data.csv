@@ -1,0 +1,64 @@
+"name","group","ce","rho","theta-80","theta-eff","theta-por","aw","lambda","mew"
+"DE: Rotbrandziegel |EN: Red-burnt Brick |IT: Mattone in cotto rosso |RU: ??????? ????????? ??????","brick",900,1300,0.006,0.351,0.351,0.162,0.452,7.5
+"DE: Ziegel Schlagmann (Vollziegel) |EN: Brick Schlagmann (solid brick)","brick",1018.69,1394.62,0.0133102,0.4031,0.473727,0.443465,0.26625,13.9999
+"DE: Normziegel |EN: Normal Brick |IT: Mattone standart? |RU: ??????????? ??????","brick",1000,1400,0.0114,0.319,0.354,0.1773,0.55,19
+"DE: Altbauziegel Tivoli Berlin (Au¤enziegel 2) |EN: Old Building Brick Tivoli Berlin (outer brick 2)","brick",1014.88,1469.25,0.00567822,0.44,0.445568,0.489092,0.4295,7.2499
+"DE: Rotbrandziegel |EN: Red-burnt Brick |IT: Mattone in cotto rosso |RU: ??????? ????????? ??????","brick",900,1500,0.007,0.345,0.345,0.208,0.552,8
+"DE: Altbauziegel Schloss GÙterfelde (EG Au¤enwand 2) |EN: Old Building Brick Schloss GÙterfelde (GF outer brick 2)","brick",906.973,1531.81,0.00486913,0.357,0.421959,0.217556,0.38275,10.3658
+"DE: Altbauziegel Tivoli Berlin (Innenziegel) |EN: Old Building Brick Tivoli Berlin (inner brick)","brick",963.632,1565.92,0.00486913,0.357,0.409088,0.226624,0.545857,11.2607
+"DE: Altbauziegel Dresden ZD |EN: Old Building Brick Dresden ZD","brick",953.143,1619.51,0.00366226,0.361043,0.388864,0.380526,0.4025,10.4726
+"DE: Altbauziegel US-Hauptquartier Berlin |EN: Old Building Brick US Headquarter Berlin","brick",936.972,1628.88,0.00268771,0.34524,0.385327,0.427334,0.755,6.83869
+"DE: Altbauziegel Schloss GÙterfelde (EG_Au¤enwand 1) |EN: Old Building Brick Schloss GÙterfelde (GF outer brick 1)","brick",920.215,1646.76,0.0069055,0.3221,0.37858,0.113225,0.4635,16.4382
+"DE: Altbauziegel Dresden ZE |EN: Old Building Brick Dresden ZE","brick",906.973,1657.18,0.00486913,0.357,0.374651,0.215048,0.574333,12.8226
+"DE: Ziegel |EN: Brick |RU: ??????","brick",1000,1660,0.0083,0.41,0.41,0.233333,0.66,9.5
+"DE: Vollziegel |EN: Solid brick |RU: ?????? ??????????","brick",1000,1670,0.0065,0.3,0.3,0.108333,0.7,11
+"DE: Altbauziegel Am Weinberg Berlin innen |EN: Old Building Brick Am Weinberg Berlin inside","brick",933,1674.2,0.00486913,0.357,0.368,0.215048,0.685,12.8226
+"DE: Altbauziegel Dresden ZL |EN: Old Building Brick Dresden ZL","brick",933.847,1676.5,0.00473982,0.34383,0.367357,0.356793,0.5215,13.2483
+"DE: Rotbrandziegel |EN: Red-burnt Brick |IT: Mattone in cotto rosso |RU: ??????? ????????? ??????","brick",900,1700,0.008,0.323,0.323,0.24,0.65,9
+"DE: Hart-Graubrandziegel |EN: Hard-grey-burnt Brick |IT: Mattone in cotto grigio-duro |RU: ?????? ?????????? ????? ??????","old brick",900,1700,0.005,0.289,0.289,0.22,0.75,9
+"DE: Altbauziegel |EN: Historical Brick |IT: Mattone storico |RU: ???????????? ??????","old brick",900,1710,0.005,0.319,0.319,0.333,0.8,8.3
+"DE: Altbauziegel (Cluster 4) |EN: Historical Brick (Cluster 4) |IT: Mattone storico (Cluster 4) |RU: ???????????? ?????? (??????? 4)","old brick",1000,1710,0.0048,0.319,0.33,0.278,0.8,8.3
+"DE: Altbauziegel Dresden ZG |EN: Old Building Brick Dresden ZG","old brick",920.215,1715.15,0.00690718,0.3221,0.356413,0.137472,0.543,22.1694
+"DE: Altbauziegel Dresden ZM |EN: Old Building Brick Dresden ZM","old brick",917.444,1719.56,0.00418074,0.338911,0.35111,0.116685,0.64225,19.094
+"DE: Altbauziegel |EN: Historical Brick |IT: Mattone storico |RU: ???????????? ??????","old brick",900,1720,0.015,0.34,0.34,0.245,0.842,9
+"DE: Vollziegel |EN: Solid brick |RU: ?????? ??????????","old brick",1000,1730,0.0041,0.38,0.38,0.3,0.7,15
+"DE: Altbauziegel Dresden ZK |EN: Old Building Brick Dresden ZK","old brick",919.247,1734.11,0.0148866,0.32401,0.34562,0.107073,0.6565,24.5039
+"DE: Altbauziegel Dresden ZI |EN: Old Building Brick Dresden ZI","old brick",881.308,1736.44,0.0171791,0.320121,0.344741,0.0339851,0.45575,21.3351
+"DE: Vollziegel |EN: Solid brick |RU: ?????? ??????????","old brick",890,1740,0.0025,0.33,0.33,0.3,0.55,15
+"DE: Altbauziegel ZS |EN: Old building brick ZS |RU: ???????????? ??????","old brick",910,1740,0.0089,0.34,0.34,0.118333,0.67,23
+"DE: Altbauziegel Dresden ZN |EN: Old Building Brick Dresden ZN","old brick",880.809,1741.23,0.0260304,0.32716,0.342931,0.0519124,0.5284,35.0965
+"DE: Hartbrandziegel |EN: Hard-burnt Brick |IT: Mattone in cotto duro |RU: ?????? ?????????? ??????","old brick",900,1750,0.009,0.343,0.343,0.1186,0.7,23
+"DE: Altbauziegel Bolonga 3enCult |EN: Old Building Brick Bologna 3enCult","old brick",1092.18,1758.96,0.00755924,0.318403,0.336243,0.184923,0.6235,24.5325
+"DE: Altbauziegel Dresden ZB |EN: Old Building Brick Dresden ZB","old brick",1000,1769.17,0.00909167,0.334,0.349093,0.15,0.788568,8.55728
+"DE: Altbauziegel Tivoli Berlin (Au¤enziegel 1) |EN: Old Building Brick Tivoli Berlin (outer brick 1)","old brick",862.366,1773.07,0.00871202,0.23,0.330917,0.0470756,0.83825,43.0974
+"DE: Normziegel |EN: Normal Brick","older brick",888.665,1786.25,0.0135377,0.319382,0.353511,0.198664,0.548333,18.0084
+"DE: Normziegel |EN: Normal Brick","older brick",1000,1786.25,0.0135377,0.319382,0.353511,0.177287,0.801,18.7819
+"DE: Altbauziegel Dresden ZJ |EN: Old Building Brick Dresden ZJ","older brick",867.873,1787.02,0.00373328,0.29189,0.325652,0.184058,0.4965,17.0527
+"DE: Ziegel |EN: Brick","older brick",799.734,1787.9,0.000506537,0.239861,0.325319,0.0311825,0.8112,28.2873
+"DE: Vollziegel |EN: Solid brick |RU: ?????? ??????????","older brick",1000,1790,0.0008,0.3,0.3,0.266667,0.8,11
+"DE: Vollziegel Joens |EN: Brick Joens |IT: Mattone pieno Joens |RU: ?????? ?????????? Joens","older brick",868,1790,0.0025,0.35,0.36,0.227,0.87,14
+"DE: Vollziegel ARB |EN: Solid brick |RU: ?????? ?????????? ARB","older brick",860,1810,0.0015,0.32,0.32,0.25,0.7,10
+"DE: Altbauziegel |EN: Historical Brick |IT: Mattone storico |RU: ???????????? ??????","older brick",900,1810,0.001,0.318,0.318,0.2513,0.705,10
+"DE: Altbauziegel Reithalle Potsdam (Au¤enziegel 3) |EN: Old Building Brick Reithalle Potsdam (outer brick 3)","older brick",824.953,1818.29,0.0249849,0.2994,0.313854,0.0950549,0.5855,30.9734
+"DE: Altbauziegel Dresden ZA |EN: Old Building Brick Dresden ZA","older brick",814.592,1835.62,0.00540696,0.282862,0.307313,0.182397,0.5278,15.6615
+"DE: Altbauziegel Rote Kaserne Potsdam (Au¤enziegel 1) |EN: Old Building Brick  Rote Kaserne Potsdam (outer brick 1)","older brick",772.224,1842.47,0.00198504,0.28399,0.304727,0.0668929,0.7975,37.5558
+"DE: Altbauziegel Dresden ZH |EN: Old Building Brick Dresden ZH","older brick",794.094,1851.89,0.00234755,0.2825,0.301173,0.261771,0.659,12.031
+"DE: Altbauziegel Reithalle Potsdam (Au¤enziegel2) |EN: Old Building Brick Reithalle Potsdam (outer brick 2)","red brick",809.727,1852.48,0.0229875,0.2871,0.300952,0.0406742,0.682,27.0715
+"DE: Altbauziegel Au¤enziegel II |EN: Old Building Brick Bornst_tter Feld","red brick",788,1853.9,0.00441544,0.192893,0.3,0.0547,0.7224,42.55
+"DE: Altbauziegel Rote Kaserne Potsdam (Au¤enziegel 2) |EN: Old Building Brick Rote Kaserne Potsdam (outer brick 2)","red brick",788.015,1853.92,0.00380912,0.22,0.300408,0.0546755,0.722417,42.5052
+"DE: Altbauziegel Dresden ZO |EN: Old Building Brick Dresden ZO","red brick",827.249,1881.73,0.00441544,0.192893,0.289914,0.0682705,0.837833,46.2109
+"DE: Altbauziegel Elbphilharmonie Hamburg |EN: Old Building Brick Elbphilharmonie Hamburg","red brick",851.594,1885.21,0.00298409,0.212402,0.288599,0.201467,0.80825,23.9358
+"DE: Vollziegel |EN: Solid brick |RU: ?????? ??????????","red brick",860,1890,0.0012,0.28,0.28,0.183333,0.96,14
+"DE: Hart-Graubrandziegel |EN: Hard-grey-burnt Brick |IT: Mattone in cotto grigio-duro |RU: ?????? ?????????? ????? ??????","red brick",900,1900,0.006,0.255,0.255,0.11,0.8,14
+"DE: Altbauziegel Dresden ZC |EN: Old Building Brick Dresden ZC","red brick",847.362,1904.38,0.00309123,0.212402,0.281366,0.171824,0.80825,22.8781
+"DE: Altbauziegel Reithalle Potsdam (Au¤enziegel 1) |EN: Old Building Brick Reithalle Potsdam (outside 1)","red brick",781.819,1905.81,0.00380912,0.22,0.280826,0.0574695,0.7335,37.8434
+"DE: Keramischer Ziegel Belgien |EN: Ceramic Brick","red brick",862.624,1952.21,0.00124978,0.239,0.263317,0.141888,0.960833,19.368
+"DE: Altbauziegel Am Weinberg Berlin |EN: Old Building Brick Am Weinberg Berlin","red brick",878.906,1966.5,0.00096982,0.24011,0.257924,0.0596149,0.928333,26.4843
+"DE: Vollziegel |EN: Solid brick |RU: ?????? ??????????","red brick",1000,1970,0.00053,0.25,0.25,0.0816667,0.96,20
+"DE: Altbauziegel Dresden ZF |EN: Old Building Brick Dresden ZF","red brick",845.982,1975.67,0.00743909,0.169372,0.254466,0.0167829,1.01233,41.0646
+"DE: Altbauklinker |EN: Historical Clincker |IT: Clinker (laterizio) storico |RU: ???????????? ???????","red brick",900,1980,0.004,0.241,0.241,0.018,0.995,45
+"DE: Altbauziegel Dresden ZP |EN: Old Building Brick Dresden ZP","red brick",841.067,1980.69,0.00286653,0.16433,0.252571,0.0507483,0.890667,45.107
+"DE: Altbauklinker Hamburg Holstenkamp |EN: Old Building Clinker Hamburg Holstenkamp","red brick",843.584,2009.88,0.00743909,0.169372,0.254466,0.00580667,1.01233,41.0646
+"DE: Altbauziegel Rote Kaserne Potsdam (Innenziegel 2) |EN: Old Building Brick Rote Kaserne Potsdam (inner brick 2)","red brick",847,2048.8,0.00096982,0.24011,0.227,0.3359,0.8607,19.0307
+"DE: Altbauziegel Rote Kaserne Potsdam (Innenziegel 1) |EN: Old Building Brick Rote Kaserne Potsdam (inner brick 1)","red brick",846.592,2048.81,0.00431947,0.34,0.35,0.335939,0.860667,14.1762
+"DE: Vollziegel Bernhard |EN: Brick Bernhard |IT: Mattone pieno Bernhard |RU: ?????? ?????????? Bernhard","red brick",1000,2060,0.0009,0.23,0.25,0.1,1,19

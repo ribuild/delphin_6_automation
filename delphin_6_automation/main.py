@@ -14,7 +14,7 @@ sys.path.insert(0, source_folder)
 
 # RiBuild Modules:
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
-from delphin_6_automation.backend import main
+from delphin_6_automation.backend.backend import main
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # BACKEND
