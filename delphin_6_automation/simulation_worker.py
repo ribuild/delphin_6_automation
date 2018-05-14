@@ -190,7 +190,14 @@ def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
     # Then submit a new job continuing the simulation from where it ended.
 
     finished = False
-    start_time = datetime.datetime.now()
+    start_time = None
+
+    while not start_time:
+        if os.path.exists(f"{simulation_folder}/{sim_id}"):
+            start_time = datetime.datetime.now()
+        else:
+            time.sleep(2)
+
     while not finished:
         simulation_ends = start_time + datetime.timedelta(minutes=estimated_run_time)
 
