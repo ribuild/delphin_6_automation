@@ -54,10 +54,15 @@ def find_next_sim_in_queue():
         id_ = delphin_db.Delphin.objects(simulating=False, simulated=None).order_by('-queue_priority').first().id
         set_simulating(str(id_), True)
         return str(id_)
+
     except AttributeError:
         print('All Delphin Projects in the queue are simulated!')
         time.sleep(5)
         return None
+
+    except KeyError as err:
+        print('Error in Connection')
+        logger.error(err)
 
 
 def set_simulating(id_: str, set_to: bool) -> str:

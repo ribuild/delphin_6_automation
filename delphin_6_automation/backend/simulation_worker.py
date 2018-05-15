@@ -303,7 +303,7 @@ def menu():
             thread.daemon = True
             thread.start()
 
-            time.sleep(1)
+            time.sleep(2)
             print(f'Created thread with name: {t_name}')
             logger.info(f'Created thread with name: {t_name}')
 
