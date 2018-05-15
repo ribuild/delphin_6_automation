@@ -60,10 +60,6 @@ def find_next_sim_in_queue():
         time.sleep(5)
         return None
 
-    except KeyError as err:
-        print('Error in Connection')
-        logger.error(err)
-
 
 def set_simulating(id_: str, set_to: bool) -> str:
     """
