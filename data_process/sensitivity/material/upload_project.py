@@ -30,12 +30,19 @@ location_name = 'KobenhavnTaastrup'
 years = [2020, 2020, 2021, 2022]
 bricks = []
 
+not_hydrolic_computable_bricks = [53, 92, 93, 94, 99, 100, 101, 102, 104, 105, 106, 118, 176, 203, 204, 205, 213, 214,
+                                  215, 216, 217, 234, 237, 259, 260, 312, 313, 320, 321, 352, 353, 354, 355, 356, 357,
+                                  358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 374, 385,
+                                  386, 387, 388, 389, 390, 391]
+
 for material in material_entry.Material.objects():
-    if material.material_data['IDENTIFICATION-CATEGORY'] == 'BRICK' and not material.material_id == 504:
+    if material.material_data['IDENTIFICATION-CATEGORY'] == 'BRICK' and not material.material_id == 504 \
+            and material.material_id not in not_hydrolic_computable_bricks:
         bricks.append(material.material_id)
 
 
 def permutate_uploads(materials):
+    print('Uploading')
 
     sim_id = general_interactions.add_to_simulation_queue(delphin_file0, priority)
     weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
@@ -52,7 +59,7 @@ def permutate_uploads(materials):
         delphin_interactions.change_entry_simulation_length(modified_id, len(years), 'a')
 
 
-#print(len(bricks))
-permutate_uploads(bricks)
+print(len(bricks))
+#permutate_uploads(bricks)
 
 mongo_setup.global_end_ssh(auth_dict)
