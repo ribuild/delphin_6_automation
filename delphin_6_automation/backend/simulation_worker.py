@@ -295,6 +295,7 @@ def menu():
     elif choice == 'b':
         print('Simulation on DTU HPC Chosen\n')
         n_threads = 8
+        threads = []
 
         for n in range(n_threads):
             t_name = f"Worker_{n}"
@@ -302,10 +303,14 @@ def menu():
             thread.name = t_name
             thread.daemon = True
             thread.start()
+            threads.append(thread)
 
             time.sleep(10)
             print(f'Created thread with name: {t_name}')
             logger.info(f'Created thread with name: {t_name}')
+
+        for thread in threads:
+            thread.join()
 
     elif choice == 'x':
         print("Goodbye")
