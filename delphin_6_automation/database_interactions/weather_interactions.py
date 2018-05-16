@@ -122,10 +122,9 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
     return weather_dict
 
 
-def change_weather_file_location(delphin_id: str):
+def change_weather_file_location(delphin_document: delphin_db.Delphin):
 
     folder = '${Project Directory}/weather'
-    delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     climate_conditions = delphin_dict['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']
 
@@ -168,9 +167,7 @@ def change_weather_file_location(delphin_id: str):
     return delphin_document.id
 
 
-def download_weather(delphin_id: str, folder: str) -> bool:
-
-    delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
+def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
 
     weather = concatenate_weather(delphin_document)
     weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
@@ -191,7 +188,7 @@ def download_weather(delphin_id: str, folder: str) -> bool:
         weather[weather_key].extend(weather[weather_key][-2:])
 
     weather_parser.dict_to_ccd(weather, folder)
-    change_weather_file_location(delphin_id)
+    change_weather_file_location(delphin_document)
 
     return True
 

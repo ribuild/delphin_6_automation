@@ -91,41 +91,39 @@ def upload_material_file(material_path: str) -> delphin_db.Delphin.id:
     return entry.id
 
 
-def change_material_location(delphin_id: str, path: str) -> str:
+def change_material_location(delphin_object: delphin_db.Delphin) -> str:
     """
     Changes the location of the material database location for the Delphin Project file.
 
-    :param delphin_id: ID of entry
-    :type delphin_id: str
-    :param path: Path to change it to
-    :type path: str
+    :param delphin_object: ID of entry
+    :type delphin_object: delphin_db.Delphin
     :return: ID of entry
     :rtype: str
     """
 
     # TODO - Make path project folder related!
-    delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
-    delphin_dict = dict(delphin_document.dp6_file)
-    delphin_dict['DelphinProject']['DirectoryPlaceholders']['Placeholder']['#text'] = '${Project Directory}/materials'
-    delphin_document.update(set__dp6_file=delphin_dict)
 
-    return delphin_document.id
+    delphin_dict = dict(delphin_object.dp6_file)
+    delphin_dict['DelphinProject']['DirectoryPlaceholders']['Placeholder']['#text'] = "${Project Directory}/materials"
+    delphin_object.update(set__dp6_file=delphin_dict)
+
+    return delphin_object.id
 
 
-def download_materials(delphin_id: str, path: str) -> bool:
+def download_materials(delphin_object: delphin_db.Delphin, path: str) -> bool:
     """
     Downloads the materials of a Delphin Project
 
-    :param delphin_id: Delphin entry ID
-    :type delphin_id: str
+    :param delphin_object: Delphin entry ID
+    :type delphin_object: delphin_db.Delphin
     :param path: Path to save to
     :type path: str
     :return: True
     :rtype: bool
     """
 
-    materials_list = delphin_db.Delphin.objects(id=delphin_id).first().materials
-    change_material_location(delphin_id, path)
+    materials_list = delphin_object.materials
+    change_material_location(delphin_object)
 
     if not os.path.isdir(path):
         os.mkdir(path)

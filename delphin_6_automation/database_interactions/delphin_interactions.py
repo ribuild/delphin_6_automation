@@ -76,18 +76,17 @@ def get_delphin_project_dimension(delphin_dict: dict):
         return 1
 
 
-def download_delphin_entry(document_id: str, path: str) -> bool:
+def download_delphin_entry(delphin_document: delphin_db.Delphin, path: str) -> bool:
     """
     Converts a database.rst entry to Delphin 6 project file.
 
-    :param document_id: Database entry id.
+    :param delphin_document: Database entry id.
     :param path: Path to where the files should be written.
     :return: True
     """
 
-    delphin_document = delphin_db.Delphin.objects(id=document_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
-    xmltodict.unparse(delphin_dict, output=open(path + '/' + document_id + '.d6p', 'w'), pretty=True)
+    xmltodict.unparse(delphin_dict, output=open(path + '/' + str(delphin_document.id) + '.d6p', 'w'), pretty=True)
 
     return True
 
