@@ -57,7 +57,7 @@ def find_next_sim_in_queue():
 
     except AttributeError:
         print('All Delphin Projects in the queue are simulated!')
-        time.sleep(5)
+        time.sleep(60)
         return None
 
 
