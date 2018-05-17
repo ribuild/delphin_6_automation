@@ -20,7 +20,7 @@ acronym_file = r'U:\RIBuild\2D_1D\2D to 1D Transformation.xlsx'
 out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
 result_folder = r'U:\RIBuild\2D_1D\Results'
 graphic_folder = r'U:\RIBuild\2D_1D\Processed Results\4A'
-#dp.process_results(acronym_file, result_folder, out_folder)
+dp.process_results(acronym_file, result_folder, out_folder)
 
 quantities = ['heat loss', 'temperature', 'relative humidity', 'moisture content', 'moisture integral']
 quantity = quantities[1]
@@ -89,6 +89,6 @@ def time_plots():
             acro_data_frame.loc[:, pd.IndexSlice[str(i), :, 'out']].cumsum().plot()
             plt.title(f'{acro}\n{quantity}')
 
-time_plots()
+#time_plots()
 
 plt.show()

@@ -24,7 +24,7 @@ graphic_folder = r'U:\RIBuild\2D_1D\Processed Results\4A'
 #dp.process_results(acronym_file, result_folder, out_folder)
 
 quantities = ['heat loss', 'temperature', 'relative humidity', 'moisture content', 'moisture integral']
-quantity = quantities[4]
+quantity = quantities[2]
 hdf_file = out_folder + '/' + quantity + '.h5'
 
 
@@ -37,8 +37,11 @@ acros = [f'dresden_zp_high_cement_{insulation}_36_4a', f'dresden_zd_high_cement_
          f'potsdam_high_cement_{insulation}_36_4a', f'dresden_zp_low_cement_{insulation}_36_4a',
          f'dresden_zd_low_cement_{insulation}_36_4a', f'potsdam_low_cement_{insulation}_36_4a']
 
-acro_data_frame = pd.read_hdf(hdf_file, acros[0])
+acro_data_frame = pd.read_hdf(hdf_file, acros[1])
 
-test_data = acro_data_frame.loc[:, pd.IndexSlice[:, ('brick', '2d'), 'out']]
+for i in range(7):
+    test_data = acro_data_frame.loc[:, pd.IndexSlice[str(i), :, 'out']].rolling(24*7).mean()
+    test_data.plot()
+
 #granger_test_brick = statsmodels.grangercausalitytests(test_data)
-
+plt.show()
