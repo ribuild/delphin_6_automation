@@ -23,7 +23,7 @@ from delphin_6_automation.delphin_setup import damage_models
 
 # Functions
 def acronym_table(path):
-    table_ = pd.read_excel(path).dropna()
+    table_ = pd.read_excel(path)
 
     return table_
 
@@ -195,7 +195,7 @@ def plot_linear_relation(data_frame, material, bounds, quantity, title):
 
     quantities = ['heat loss', 'temperature', 'relative humidity', 'moisture content', 'moisture integral', 'damage',
                   'wood rot', 'mould index', 'frost']
-    units = ['W/m$^2$', '$^o$C', '%', 'kg/m$^3$', 'kg', '-', '%', '-', '-']
+    units = ['W/m$^2$', '$^\circ$C', '%', 'kg/m$^3$', 'kg', '-', '%', '-', '-']
     i = quantities.index(quantity.lower())
 
     if quantity.lower() in ['heat loss', 'moisture integral']:
@@ -224,11 +224,16 @@ def plot_linear_relation(data_frame, material, bounds, quantity, title):
             ax = axes[int(location)]
             ax.set_title(f'Location {location}')
 
-        slope, intercept, r_value, p_value, std_err = linregress(data_frame[location, material, 'out'],
-                                                                 data_frame[location, '2d', 'out'])
-        ax.scatter(data_frame[location, material, 'out'], data_frame[location, '2d', 'out'], label='Data')
-        ax.plot(data_frame[location, material, 'out'], intercept + slope * data_frame[location, material, 'out'], 'r',
-                label=f'f(x) = {slope:.4f} * x + {intercept:.4f}\nR$^2$ = {r_value:.2f}')
+        var_x = data_frame[location, material, 'out']
+        var_y = data_frame[location, '2d', 'out']
+        mask = ~np.isnan(var_x) & ~np.isnan(var_y)
+        slope, intercept, r_value, p_value, std_err = linregress(var_x[mask],
+                                                                 var_y[mask])
+        ax.scatter(var_x, var_y, label='Data', s=5)
+        ax.plot(var_x[mask], intercept + slope * var_x[mask], 'r',
+                label=f'f(x) = {slope:.4f} * x + {intercept:.4f}\nR$^2$ = {r_value:.4f}')
+
+        print(f'{title} - {quantity} - {material.title()}: \t\tSE: {std_err:.4f} - R2: {r_value:.4f} - f(x) = {slope:.4f} * x + {intercept:.4f}')
         ax.set_ylim(bounds[0], bounds[1])
         ax.set_xlim(bounds[0], bounds[1])
         ax.set_ylabel(f'2D Result - {units[i]}')
@@ -419,3 +424,29 @@ def plot_linear_relation_damage(data_frame, material, bounds, quantity, title):
         damage_plot(axes[0], bounds, data_frame, location[0], material)
         damage_plot(axes[1], bounds, data_frame, location[1], material)
         damage_plot(axes[2], bounds, data_frame, location[2], material)
+
+
+def remove_outlier(data_frame, based_on, type_):
+    data_frame = data_frame.drop(type_, axis=1, level=1)
+
+
+    df_out = pd.DataFrame()
+
+    for i in range(len(data_frame.columns.levels[0])):
+        df_loc = data_frame.loc[:, pd.IndexSlice[str(i), :, :]]
+
+        q25 = df_loc.loc[:, pd.IndexSlice[str(i), :, based_on]].quantile(0.25)
+        q75 = df_loc.loc[:, pd.IndexSlice[str(i), :, based_on]].quantile(0.75)
+        iqr = q75 - q25
+
+        fence_low = q25 - 1.5 * iqr
+        fence_high = q75 + 1.5 * iqr
+
+
+        df_loc = df_loc[(df_loc.loc[:, pd.IndexSlice[str(i), :, based_on]] > fence_low) & (df_loc.loc[:, pd.IndexSlice[str(i), :, based_on]] < fence_high)]
+        pattern = (df_loc.loc[:, pd.IndexSlice[str(i), :, based_on]].notnull())
+        df_loc = data_frame.loc[:, pd.IndexSlice[str(i), :, 'out']][pattern.values == True]
+        df_out = pd.concat([df_out, df_loc])
+
+    #df_out = data_frame[(data_frame.loc[:, pd.IndexSlice[:, :, based_on]] > fence_low) & (data_frame.loc[:, pd.IndexSlice[:, :, based_on]] < fence_high)]
+    return df_out

@@ -9,27 +9,26 @@ import data_process_functions as dp
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
-from scipy.stats import linregress
 
 # RiBuild Modules
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
-acronym_file = r'U:\RIBuild\2D_1D\2D to 1D Transformation.xlsx'
+acronym_file = r'U:\RIBuild\2D_1D\4A_36_Acronyms.xlsx'
 out_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\2d_1d\processed_data'
 result_folder = r'U:\RIBuild\2D_1D\Results'
 graphic_folder = r'U:\RIBuild\2D_1D\Processed Results\4A'
-dp.process_results(acronym_file, result_folder, out_folder)
+#dp.process_results(acronym_file, result_folder, out_folder)
 
 quantities = ['heat loss', 'temperature', 'relative humidity', 'moisture content', 'moisture integral']
-quantity = quantities[1]
+quantity = quantities[2]
 hdf_file = out_folder + '/' + quantity + '.h5'
 
 
 # Open HDF
-total_uninsulated_4a = pd.read_hdf(hdf_file, 'total_4a_36_uninsulated')
-total_insulated_4a = pd.read_hdf(hdf_file, 'total_4a_36_insulated')
+#total_uninsulated_4a = pd.read_hdf(hdf_file, 'total_4a_36_uninsulated')
+#total_insulated_4a = pd.read_hdf(hdf_file, 'total_4a_36_insulated')
 
 
 def uninsulated(save=False):
@@ -76,19 +75,114 @@ def insulated(save=False):
 #insulated(True)
 
 
-def time_plots():
+def rolling_mean_plots(mean_hours, save=False):
     insulation = 'insulated'
     acros = [f'dresden_zp_high_cement_{insulation}_36_4a', f'dresden_zd_high_cement_{insulation}_36_4a',
              f'potsdam_high_cement_{insulation}_36_4a', f'dresden_zp_low_cement_{insulation}_36_4a',
              f'dresden_zd_low_cement_{insulation}_36_4a', f'potsdam_low_cement_{insulation}_36_4a']
 
+    time_frame = pd.DataFrame()
+
     for acro in acros:
         acro_data_frame = pd.read_hdf(hdf_file, acro)
 
-        for i in range(5):
-            acro_data_frame.loc[:, pd.IndexSlice[str(i), :, 'out']].cumsum().plot()
-            plt.title(f'{acro}\n{quantity}')
+        time_frame = pd.concat([time_frame,
+                                acro_data_frame.loc[:, pd.IndexSlice[:, :, 'out']].rolling(mean_hours).mean()],
+                               ignore_index=True)
 
-#time_plots()
+    time_frame = dp.compute_differences(time_frame)
+    #time_frame_mortar = dp.remove_outlier(time_frame, 'abs_diff', 'brick')
+    #time_frame_brick = dp.remove_outlier(time_frame, 'abs_diff', 'mortar')
+
+    dp.abs_diff_boxplot(time_frame, (-2.5, 2.5), quantity.title(),
+                        f'4A 36cm {insulation.capitalize()}\nRolling Mean of {mean_hours} Hours')
+    if save:
+        plt.savefig(f'{graphic_folder}/{quantity}_rolling_mean_absolute_difference_{insulation}.png')
+
+    dp.rel_diff_boxplot(time_frame, (0., 40), quantity.title(),
+                        f'4A 36cm {insulation.capitalize()}\nRolling Mean of {mean_hours} Hours', log=False)
+    if save:
+        plt.savefig(f'{graphic_folder}/{quantity}_rolling_mean_relative_difference_{insulation}.png')
+
+    dp.plot_linear_relation(time_frame, 'brick', (-10, 20), quantity.title(),
+                            f'4A 36cm {insulation.capitalize()}\nRolling Mean of {mean_hours} Hours')
+    if save:
+        plt.savefig(f'{graphic_folder}/{quantity}_rolling_mean_linear_relation_brick_{insulation}.png')
+
+    dp.plot_linear_relation(time_frame, 'mortar', (-10, 20), quantity.title(),
+                            f'4A 36cm {insulation.capitalize()}\nRolling Mean of {mean_hours} Hours')
+    if save:
+        plt.savefig(f'{graphic_folder}/{quantity}_rolling_mean_linear_relation_mortar_{insulation}.png')
+
+
+#rolling_mean_plots(24, True)
+
+
+def accumulated_plots(save=False):
+    insulation = 'uninsulated'
+    acros = [f'dresden_zp_high_cement_{insulation}_36_4a', f'dresden_zd_high_cement_{insulation}_36_4a',
+             f'potsdam_high_cement_{insulation}_36_4a', f'dresden_zp_low_cement_{insulation}_36_4a',
+             f'dresden_zd_low_cement_{insulation}_36_4a', f'potsdam_low_cement_{insulation}_36_4a']
+
+    time_frame = pd.DataFrame()
+
+    for acro in acros:
+        acro_data_frame = pd.read_hdf(hdf_file, acro)
+
+        time_frame = pd.concat([time_frame, acro_data_frame.loc[:, pd.IndexSlice[:, :, 'out']].cumsum()],
+                               ignore_index=True)
+
+    time_frame = time_frame.divide(len(time_frame))
+    time_frame = dp.compute_differences(time_frame)
+
+
+    dp.abs_diff_boxplot(time_frame, (-15000, 5000), quantity.title(),
+                        f'4A 36cm {insulation.capitalize()}\nAccumulated Sum')
+    if save:
+        plt.savefig(f'{graphic_folder}/{quantity}_accumulated_sum_absolute_difference_{insulation}.png')
+
+    dp.rel_diff_boxplot(time_frame, (0.0, 200), quantity.title(),
+                        f'4A 36cm {insulation.capitalize()}\nAccumulated Sum', log=False)
+    if save:
+        plt.savefig(f'{graphic_folder}/{quantity}_accumulated_sum_relative_difference_{insulation}.png')
+
+    types = ['mortar', 'brick']
+    for type_ in types:
+        dp.plot_linear_relation(time_frame, type_, (-10, 30), quantity.title(),
+                                f'4A 36cm {insulation.capitalize()}\nAccumulated Sum')
+        if save:
+            plt.savefig(f'{graphic_folder}/{quantity}_accumulated_sum_linear_relation_{type_}_{insulation}.png')
+
+
+#accumulated_plots(False)
+
+
+def time_plots(save=False):
+    insulation = 'uninsulated'
+    acros = [f'dresden_zp_high_cement_{insulation}_36_4a', f'potsdam_low_cement_{insulation}_36_4a']
+
+    time_frame = pd.DataFrame()
+
+    for acro in acros:
+        acro_data_frame = pd.read_hdf(hdf_file, acro)
+
+        time_frame = acro_data_frame.loc[:, pd.IndexSlice[:, :, 'out']]
+
+        for i in time_frame.columns.levels[0]:
+            time_frame.loc[:, pd.IndexSlice[i, :, 'out']].cumsum().divide(len(time_frame)).plot()
+
+        if save:
+            plt.savefig(f'{graphic_folder}/{quantity}_accumulated_sum_absolute_difference_{insulation}.png')
+
+
+        types = ['mortar', 'brick']
+        for type_ in types:
+            dp.plot_linear_relation(time_frame.cumsum().divide(len(time_frame)), type_, (10, 110), quantity.title(),
+                                    f'4A 36cm {insulation.capitalize()}\nAccumulated Sum')
+            if save:
+                plt.savefig(f'{graphic_folder}/{quantity}_accumulated_sum_linear_relation_{type_}_{insulation}.png')
+
+
+time_plots(False)
 
 plt.show()
