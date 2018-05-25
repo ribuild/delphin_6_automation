@@ -9,6 +9,7 @@ import data_process_functions as dp
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
+import datetime
 
 # RiBuild Modules
 
@@ -22,7 +23,7 @@ graphic_folder = r'U:\RIBuild\2D_1D\Processed Results\4A'
 #dp.process_results(acronym_file, result_folder, out_folder)
 
 quantities = ['heat loss', 'temperature', 'relative humidity', 'moisture content', 'moisture integral']
-quantity = quantities[2]
+quantity = quantities[0]
 hdf_file = out_folder + '/' + quantity + '.h5'
 
 
@@ -164,23 +165,32 @@ def time_plots(save=False):
     time_frame = pd.DataFrame()
 
     for acro in acros:
+        if 'dresden' in acro:
+            brick_name = 'Brick: Dresden ZP, Mortar: High Cement Ratio'
+        else:
+            brick_name = 'Brick: Potsdam, Mortar: Low Cement Ratio'
+
         acro_data_frame = pd.read_hdf(hdf_file, acro)
 
         time_frame = acro_data_frame.loc[:, pd.IndexSlice[:, :, 'out']]
 
-        for i in time_frame.columns.levels[0]:
-            time_frame.loc[:, pd.IndexSlice[i, :, 'out']].cumsum().divide(len(time_frame)).plot()
+        indices = pd.DataFrame(columns=['2d', 'brick', 'mortar'])
+        indices['2d'] = np.arange(1, len(time_frame)+1)
+        indices['brick'] = np.arange(1, len(time_frame)+1)
+        indices['mortar'] = np.arange(1, len(time_frame)+1)
+        indices.index = pd.DatetimeIndex(start=datetime.datetime(2019, 1, 1),
+                                         freq='h', periods=len(indices))
 
+        running_mean = time_frame.loc[:, pd.IndexSlice[:, :, 'out']].cumsum().divide(indices, level=1)
+        dp.plot_running_mean(running_mean.iloc[8760:], (-20, 50), quantity.title(),
+                             f'4A 36cm {insulation.capitalize()}- {brick_name}\nRunning Mean')
         if save:
-            plt.savefig(f'{graphic_folder}/{quantity}_accumulated_sum_absolute_difference_{insulation}.png')
+            plt.savefig(f'{graphic_folder}/{quantity}_running_mean_{acro}.pdf')
 
-
-        types = ['mortar', 'brick']
-        for type_ in types:
-            dp.plot_linear_relation(time_frame.cumsum().divide(len(time_frame)), type_, (10, 110), quantity.title(),
-                                    f'4A 36cm {insulation.capitalize()}\nAccumulated Sum')
-            if save:
-                plt.savefig(f'{graphic_folder}/{quantity}_accumulated_sum_linear_relation_{type_}_{insulation}.png')
+        dp.plot_running_mean(time_frame.iloc[8760:].loc[:, pd.IndexSlice[:, :, 'out']], (-20, 50), quantity.title(),
+                             f'4A 36cm {insulation.capitalize()} - {brick_name}\nOutput Values')
+        if save:
+            plt.savefig(f'{graphic_folder}/{quantity}_output_values_{acro}.pdf')
 
 
 time_plots(False)

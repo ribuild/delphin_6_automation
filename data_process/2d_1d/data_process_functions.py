@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.stats import linregress
 import datetime
+import matplotlib.dates as mdates
 
 # RiBuild Modules
 from delphin_6_automation.file_parsing import delphin_parser
@@ -61,7 +62,7 @@ def load_results(folder, quantity, acro_dict):
             df[file.split('.')[0][-1]] = values
             indices += 1
 
-    df.index = pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1),
+    df.index = pd.DatetimeIndex(start=datetime.datetime(2019, 1, 1),
                                 freq='h', periods=len(values))
     df.columns = pd.MultiIndex.from_arrays([df.columns, ['brick', ] * indices, ['out', ] * indices],
                                            names=['location', 'simulation type', 'value type'])
@@ -344,7 +345,7 @@ def compute_damage_models(excel_file, folder):
             mould('5')
 
             # Heat Loss
-            heat_loss()
+            #heat_loss()
 
         else:
             damage_df = pd.DataFrame(columns=['0', '1', '2', '3', '4', '5', '6', 'surface']*3)
@@ -364,7 +365,7 @@ def compute_damage_models(excel_file, folder):
             mould('6')
 
             # Heat Loss
-            heat_loss()
+            #heat_loss()
 
         damage_df = compute_differences(damage_df)
         save_to_hdf(damage_df, acro_key, 'damage', folder)
@@ -450,3 +451,51 @@ def remove_outlier(data_frame, based_on, type_):
 
     #df_out = data_frame[(data_frame.loc[:, pd.IndexSlice[:, :, based_on]] > fence_low) & (data_frame.loc[:, pd.IndexSlice[:, :, based_on]] < fence_high)]
     return df_out
+
+
+def plot_running_mean(data_frame, bounds, quantity, title):
+
+    quantities = ['heat loss', 'temperature', 'relative humidity', 'moisture content', 'moisture integral', 'damage',
+                  'wood rot', 'mould index', 'frost']
+    units = ['W/m$^2$', '$^\circ$C', '%', 'kg/m$^3$', 'kg', '-', '%', '-', '-']
+    i = quantities.index(quantity.lower())
+
+    if quantity.lower() in ['heat loss', 'moisture integral']:
+        fig, axes = plt.subplots(figsize=(16, 8), )
+        fig.suptitle(f'{title} - {quantity}')
+
+    elif quantity.lower() in ['mould index', 'wood rot', 'frost']:
+        fig, axes = plt.subplots(ncols=2, nrows=1, sharex=True, sharey=True, figsize=(16, 8), )
+        fig.suptitle(f'{title} - {quantity}')
+        axes = axes.flatten()
+
+    elif 'Uninsulated' in title:
+        fig, axes = plt.subplots(ncols=3, nrows=2, sharex=True, sharey=True, figsize=(16, 8), )
+        fig.suptitle(f'{title} - {quantity}')
+        axes = axes.flatten()
+
+    else:
+        fig, axes = plt.subplots(ncols=4, nrows=2, sharex=True, sharey=True, figsize=(16, 8), )
+        fig.suptitle(f'{title} - {quantity}')
+        axes = axes.flatten()
+
+    for location in data_frame.columns.levels[0]:
+        if quantity.lower() in ['heat loss', 'moisture integral', ]:
+            ax = axes
+        else:
+            ax = axes[int(location)]
+            ax.set_title(f'Location {location}')
+
+        var_x = pd.Series(data_frame.index)
+
+        ax.plot(var_x, data_frame[location, '2d', 'out'], label='2D')
+        ax.plot(var_x, data_frame[location, 'brick', 'out'], label='Brick')
+        ax.plot(var_x, data_frame[location, 'mortar', 'out'], label='Mortar')
+
+        ax.set_ylim(bounds[0], bounds[1])
+        ax.set_ylabel(f'2D Result - {units[i]}')
+        ax.set_xlabel(f'1D Result - {units[i]}')
+        ax.legend()
+        date_format = mdates.DateFormatter('%b %Y')
+        ax.xaxis.set_major_formatter(date_format)
+        plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, horizontalalignment='right')
