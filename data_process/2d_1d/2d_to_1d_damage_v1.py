@@ -10,6 +10,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
 import datetime
+import matplotlib.dates as mdates
 
 # RiBuild Modules
 
@@ -42,14 +43,24 @@ def uninsulated(save=False, plot=True):
 
     # Wood Rot
     dp.plot_linear_relation_damage(total_uninsulated_4a.loc[:, pd.IndexSlice['2':'3', :, 'out']], 'mortar',
-                                   (-5, 50), 'Wood Rot', '4A 36cm Uninsulated')
+                                   (-5, 105), 'Wood Rot', '4A 36cm Uninsulated')
     if save:
         plt.savefig(f'{graphic_folder}/wood_rot_linear_relation_mortar_uninsulated.png')
 
     dp.plot_linear_relation_damage(total_uninsulated_4a.loc[:, pd.IndexSlice['2':'3', :, 'out']], 'brick',
-                                   (-5, 50), 'Wood Rot', '4A 36cm Uninsulated')
+                                   (-5, 105), 'Wood Rot', '4A 36cm Uninsulated')
     if save:
         plt.savefig(f'{graphic_folder}/wood_rot_linear_relation_brick_uninsulated.png')
+
+    """
+    dp.abs_diff_boxplot(total_uninsulated_4a.loc[:, pd.IndexSlice['2':'3', :, :]], (-60, 60), 'Wood Rot', '4A 36cm Uninsulated')
+    if save:
+        plt.savefig(f'{graphic_folder}/wood_rot_abs_diff_uninsulated.png')
+
+    dp.rel_diff_boxplot(total_uninsulated_4a.loc[:, pd.IndexSlice['2':'3', :, :]], (0.01, 400), 'Wood Rot', '4A 36cm Uninsulated', log=True)
+    if save:
+        plt.savefig(f'{graphic_folder}/wood_rot_rel_diff_uninsulated.png')
+    """
 
     # Mould Index
     dp.plot_linear_relation_damage(total_uninsulated_4a.loc[:, pd.IndexSlice['4':'5', :, 'out']], 'mortar',
@@ -62,6 +73,17 @@ def uninsulated(save=False, plot=True):
     if save:
         plt.savefig(f'{graphic_folder}/mould_index_linear_relation_brick_uninsulated.png')
 
+    """
+    dp.abs_diff_boxplot(total_uninsulated_4a.loc[:, pd.IndexSlice['4':'6', :, :]], (-2, 4), 'Mould Index',
+                        '4A 36cm Uninsulated')
+    if save:
+        plt.savefig(f'{graphic_folder}/mould_index_abs_diff_uninsulated.png')
+
+    dp.rel_diff_boxplot(total_uninsulated_4a.loc[:, pd.IndexSlice['4':'5', :, :]], (0.01, 400), 'Mould Index',
+                        '4A 36cm Uninsulated', log=True)
+    if save:
+        plt.savefig(f'{graphic_folder}/mould_index_rel_diff_uninsulated.png')
+    """
     """
     # Heat Loss
     dp.plot_linear_relation_damage(total_uninsulated_4a.loc[:, pd.IndexSlice['surface', :, 'out']], 'mortar',
@@ -78,13 +100,13 @@ def uninsulated(save=False, plot=True):
     if not plot:
         plt.close('all')
 
-#uninsulated(False, True)
+#uninsulated(True, False)
 
 
 def insulated(save=False, plot=True):
 
     summary = total_insulated_4a.loc[:, pd.IndexSlice['2':, :, ('abs_diff', 'rel_diff')]].describe()
-    print(summary)
+    #print(summary)
     if save:
         writer = pd.ExcelWriter(f'{graphic_folder}/damage_summary_insulated.xlsx')
         summary.to_excel(writer, 'Summary Statistics')
@@ -101,11 +123,11 @@ def insulated(save=False, plot=True):
     if save:
         plt.savefig(f'{graphic_folder}/wood_rot_linear_relation_brick_insulated.png')
 
-    dp.abs_diff_boxplot(total_insulated_4a.loc[:, pd.IndexSlice['2':'3', :, :]], (-30, 105), 'Wood Rot', '4A 36cm Insulated')
+    dp.abs_diff_boxplot(total_insulated_4a.loc[:, pd.IndexSlice['2':'3', :, :]], (-60, 60), 'Wood Rot', '4A 36cm Insulated')
     if save:
         plt.savefig(f'{graphic_folder}/wood_rot_abs_diff_insulated.png')
 
-    dp.rel_diff_boxplot(total_insulated_4a.loc[:, pd.IndexSlice['2':'3', :, :]], (-5, 200), 'Wood Rot', '4A 36cm Insulated')
+    dp.rel_diff_boxplot(total_insulated_4a.loc[:, pd.IndexSlice['2':'3', :, :]], (0.01, 400), 'Wood Rot', '4A 36cm Insulated', log=True)
     if save:
         plt.savefig(f'{graphic_folder}/wood_rot_rel_diff_insulated.png')
 
@@ -120,13 +142,13 @@ def insulated(save=False, plot=True):
     if save:
         plt.savefig(f'{graphic_folder}/mould_index_linear_relation_brick_insulated.png')
 
-    dp.abs_diff_boxplot(total_insulated_4a.loc[:, pd.IndexSlice['4':'6', :, :]], (-2, 10), 'Mould Index',
+    dp.abs_diff_boxplot(total_insulated_4a.loc[:, pd.IndexSlice['4':'6', :, :]], (-2, 4), 'Mould Index',
                         '4A 36cm Insulated')
     if save:
         plt.savefig(f'{graphic_folder}/mould_index_abs_diff_insulated.png')
 
-    dp.rel_diff_boxplot(total_insulated_4a.loc[:, pd.IndexSlice['4':'6', :, :]], (-2, 105), 'Mould Index',
-                        '4A 36cm Insulated')
+    dp.rel_diff_boxplot(total_insulated_4a.loc[:, pd.IndexSlice['4':'5', :, :]], (0.01, 400), 'Mould Index',
+                        '4A 36cm Insulated', log=True)
     if save:
         plt.savefig(f'{graphic_folder}/mould_index_rel_diff_insulated.png')
 
@@ -161,7 +183,7 @@ def insulated(save=False, plot=True):
 
 
 def time_plots(save=False):
-    insulation = 'uninsulated'
+    insulation = 'insulated'
     acros = [f'dresden_zp_high_cement_{insulation}_36_4a', f'potsdam_low_cement_{insulation}_36_4a']
 
     time_frame = pd.DataFrame()
@@ -180,25 +202,40 @@ def time_plots(save=False):
         indices['2d'] = np.arange(1, len(time_frame)+1)
         indices['brick'] = np.arange(1, len(time_frame)+1)
         indices['mortar'] = np.arange(1, len(time_frame)+1)
-        indices.index = pd.DatetimeIndex(start=datetime.datetime(2019, 1, 1),
+        indices.index = pd.DatetimeIndex(start=datetime.datetime(2020, 1, 1),
                                          freq='h', periods=len(indices))
 
-        running_mean = time_frame.loc[:, pd.IndexSlice[:, :, 'out']].cumsum().divide(indices, level=1)
-        running_mean.loc[:, pd.IndexSlice['4', :, 'out']].plot()
-        running_mean.loc[:, pd.IndexSlice['5', :, 'out']].plot()
-        """
-        dp.plot_running_mean(running_mean.iloc[8760:], (-20, 50), quantity.title(),
-                             f'4A 36cm {insulation.capitalize()}- {brick_name}\nRunning Mean')
-        if save:
-            plt.savefig(f'{graphic_folder}/{quantity}_running_mean_{acro}.pdf')
+        #running_mean = time_frame.loc[:, pd.IndexSlice[:, :, 'out']].cumsum().divide(indices, level=1)
+        running_mean = time_frame.loc[:, pd.IndexSlice[:, :, 'out']]
 
-        dp.plot_running_mean(time_frame.iloc[8760:].loc[:, pd.IndexSlice[:, :, 'out']], (-20, 50), quantity.title(),
-                             f'4A 36cm {insulation.capitalize()} - {brick_name}\nOutput Values')
-        if save:
-            plt.savefig(f'{graphic_folder}/{quantity}_output_values_{acro}.pdf')
-        """
+        fig, axes = plt.subplots(ncols=2, nrows=1, sharex=True, sharey=True, figsize=(16, 8), )
+        fig.suptitle(f'{brick_name} - {insulation.capitalize()}\nMould Index')
+        axes = axes.flatten()
+        var_x = pd.Series(running_mean.index)
 
-time_plots(False)
+        axes[0].set_title('Location 4')
+        axes[0].plot(var_x, running_mean.loc[:, pd.IndexSlice['4', '2d', 'out']].values, label='2D')
+        axes[0].plot(var_x, running_mean.loc[:, pd.IndexSlice['4', 'mortar', 'out']].values, label='Mortar')
+        axes[0].plot(var_x, running_mean.loc[:, pd.IndexSlice['4', 'brick', 'out']].values, label='Brick')
+
+        axes[1].set_title('Location 5')
+        axes[1].plot(var_x, running_mean.loc[:, pd.IndexSlice['5', '2d', 'out']].values, label='2D')
+        axes[1].plot(var_x, running_mean.loc[:, pd.IndexSlice['5', 'mortar', 'out']].values, label='Mortar')
+        axes[1].plot(var_x, running_mean.loc[:, pd.IndexSlice['5', 'brick', 'out']].values, label='Brick')
+
+        axes[0].set_ylabel(f'Mould Index - -')
+        date_format = mdates.DateFormatter('%b %Y')
+        axes[0].xaxis.set_major_formatter(date_format)
+        axes[1].xaxis.set_major_formatter(date_format)
+        plt.setp(axes[0].xaxis.get_majorticklabels(), rotation=45, horizontalalignment='right')
+        plt.setp(axes[1].xaxis.get_majorticklabels(), rotation=45, horizontalalignment='right')
+        axes[0].legend()
+        axes[1].legend()
+
+        if save:
+            plt.savefig(f'{graphic_folder}/mould_{acro}.pdf')
+
+time_plots(True)
 
 
 plt.show()

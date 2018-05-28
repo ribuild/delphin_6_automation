@@ -280,42 +280,42 @@ def compute_damage_models(excel_file, folder):
 
     def frost(location):
         damage_df[location, 'brick', 'out'] = damage_models.frost_risk(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'brick', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, 'brick', 'out'])
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'brick', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, 'brick', 'out'].iloc[8760:])
 
         damage_df[location, 'mortar', 'out'] = damage_models.frost_risk(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'mortar', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, 'mortar', 'out'])
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'mortar', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, 'mortar', 'out'].iloc[8760:])
 
         damage_df[location, '2d', 'out'] = damage_models.frost_risk(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, '2d', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, '2d', 'out'])
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, '2d', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, '2d', 'out'].iloc[8760:])
 
     def rot(location):
         damage_df[location, 'brick', 'out'] = damage_models.wood_rot(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'brick', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, 'brick', 'out'])[0]
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'brick', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, 'brick', 'out'].iloc[8760:])[0]
 
         damage_df[location, 'mortar', 'out'] = damage_models.wood_rot(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'mortar', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, 'mortar', 'out'])[0]
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'mortar', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, 'mortar', 'out'].iloc[8760:])[0]
 
         damage_df[location, '2d', 'out'] = damage_models.wood_rot(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, '2d', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, '2d', 'out'])[0]
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, '2d', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, '2d', 'out'].iloc[8760:])[0]
 
     def mould(location):
         damage_df[location, 'brick', 'out'] = damage_models.mould_index(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'brick', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, 'brick', 'out'], 3, 3, 1)
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'brick', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, 'brick', 'out'].iloc[8760:], 3, 3, 1)
 
         damage_df[location, 'mortar', 'out'] = damage_models.mould_index(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'mortar', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, 'mortar', 'out'], 3, 3, 1)
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, 'mortar', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, 'mortar', 'out'].iloc[8760:], 3, 3, 1)
 
         damage_df[location, '2d', 'out'] = damage_models.mould_index(
-            pd.read_hdf(relative_humidity_file, key=acro_key)[location, '2d', 'out'],
-            pd.read_hdf(temperature_file, key=acro_key)[location, '2d', 'out'], 3, 3, 1)
+            pd.read_hdf(relative_humidity_file, key=acro_key)[location, '2d', 'out'].iloc[8760:],
+            pd.read_hdf(temperature_file, key=acro_key)[location, '2d', 'out'].iloc[8760:], 3, 3, 1)
 
     def heat_loss():
         damage_df['surface', 'mortar', 'out'] = pd.read_hdf(heat_loss_file, key=acro_key)['s', 'mortar', 'out'].cumsum()
