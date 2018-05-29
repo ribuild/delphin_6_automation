@@ -66,13 +66,15 @@ def upload_delphin_dict_to_database(delphin_dict: dict, queue_priority: int) -> 
 
 def get_delphin_project_dimension(delphin_dict: dict):
 
-    if len(delphin_dict['DelphinProject']['Discretization']) > 2:
-        return 3
+    try:
+        if len(delphin_dict['DelphinProject']['Discretization']) > 2:
+            return 3
+        elif len(delphin_dict['DelphinProject']['Discretization']['YSteps']['#text'].split(' ')) > 1:
+            return 2
+        else:
+            return 1
 
-    elif len(delphin_dict['DelphinProject']['Discretization']['YSteps']['#text'].split(' ')) > 1:
-        return 2
-
-    else:
+    except KeyError:
         return 1
 
 
