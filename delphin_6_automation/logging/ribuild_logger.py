@@ -23,7 +23,8 @@ except ModuleNotFoundError:
 
 def ribuild_logger(name):
 
-    source_folder = os.path.dirname(os.path.realpath(__file__))
+    #source_folder = os.path.dirname(os.path.realpath(__file__))
+    source_folder = os.environ.get("_MEIPASS2", os.path.abspath("."))
     # create logger
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
