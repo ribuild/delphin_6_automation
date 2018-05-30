@@ -9,7 +9,8 @@ import mongoengine
 from _datetime import datetime
 
 # RiBuild Modules
-import delphin_6_automation.database_interactions.database_collections as collections
+from delphin_6_automation.database_interactions import database_collections
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild User
@@ -21,5 +22,6 @@ class User(mongoengine.Document):
     password = mongoengine.StringField(required=False)
     added_date = mongoengine.DateTimeField(default=datetime.now)
     name = mongoengine.StringField(required=True)
+    simulations = mongoengine.ListField(mongoengine.ReferenceField(document_type=delphin_entry.Delphin))
 
-    meta = collections.user_db
+    meta = database_collections.user_db
