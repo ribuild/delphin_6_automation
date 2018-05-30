@@ -5,8 +5,9 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules:
-from collections import OrderedDict
+import os
 import numpy as np
+import bson
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
@@ -99,10 +100,12 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
                     'wind_speed': [], 'long_wave_radiation': [],
                     'diffuse_radiation': [], 'direct_radiation': [],
                     'year': [], 'location_name': [], 'altitude': []}
+    sim_id = delphin_document.id
 
-    for weather_document in delphin_document.weather:
+    for index in range(len(delphin_document.weather)):
+        reloaded_delphin = delphin_db.Delphin.objects(id=sim_id).first()
 
-        weather_document_as_dict = weather_document.to_mongo()
+        weather_document_as_dict: dict = bson.BSON.decode(reloaded_delphin.weather[index].weather_data.read())
         for weather_key in weather_document_as_dict:
             if weather_key in ['temperature', 'vertical_rain',
                                'wind_direction', 'wind_speed',
@@ -223,3 +226,91 @@ def update_short_wave_condition(delphin_dict):
     """
 
     return delphin_dict
+
+
+def upload_weather_to_db(file_path: str) -> list:
+    weather_dict = weather_parser.wac_to_dict(file_path)
+
+    # Split years
+    def hours_per_year(start, stop):
+        while start < stop:
+            yield 8760
+            start += 1
+
+    def accumulate_hours(hour_list):
+        accumulated_list = [0, ]
+
+        for i in range(0, len(hour_list)):
+            accumulated_list.append(accumulated_list[i] + hour_list[i])
+
+        return accumulated_list
+
+    hours = [hour
+             for hour in hours_per_year(weather_dict['time'][0].year,
+                                        weather_dict['time'][-1].year)]
+
+    accumulated_hours = accumulate_hours(hours)
+
+    # Add yearly weather entries
+    entry_ids = []
+    for year_index in range(1, len(accumulated_hours)):
+        yearly_weather_entry = weather_db.Weather()
+
+        # Meta Data
+        yearly_weather_entry.location_name = os.path.split(file_path)[-1].split('_')[0]
+        year_dates = weather_dict['time'][accumulated_hours[year_index - 1]: accumulated_hours[year_index]]
+        yearly_weather_entry.dates = {'start': year_dates[0],
+                                      'stop': year_dates[-1]}
+
+        yearly_weather_entry.year = year_dates[0].year
+
+        yearly_weather_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
+        yearly_weather_entry.altitude = weather_dict['altitude']
+
+        yearly_weather_entry.source = {'comment': 'Climate for Culture',
+                                       'url': 'https://www.climateforculture.eu/',
+                                       'file': os.path.split(file_path)[-1]}
+
+        yearly_weather_entry.units = {'temperature': 'C',
+                                      'relative_humidity': '-',
+                                      'vertical_rain': 'mm/h',
+                                      'wind_direction': 'degrees',
+                                      'wind_speed': 'm/s',
+                                      'long_wave_radiation': 'W/m2',
+                                      'diffuse_radiation': 'W/m2',
+                                      'direct_radiation': 'W/m2'
+                                      }
+
+        # Climate Data
+        weather = {
+            'temperature': weather_dict['temperature'][
+                           accumulated_hours[year_index - 1]:
+                           accumulated_hours[year_index]],
+            'relative_humidity': weather_dict['relative_humidity'][
+                                 accumulated_hours[year_index - 1]:
+                                 accumulated_hours[year_index]],
+            'vertical_rain': weather_dict['vertical_rain'][
+                             accumulated_hours[year_index - 1]:
+                             accumulated_hours[year_index]],
+            'wind_direction': weather_dict['wind_direction'][
+                              accumulated_hours[year_index - 1]:
+                              accumulated_hours[year_index]],
+            'wind_speed': weather_dict['wind_speed'][
+                          accumulated_hours[year_index - 1]:
+                          accumulated_hours[year_index]],
+            'long_wave_radiation': weather_dict['atmospheric_counter_horizontal_long_wave_radiation'][
+                                   accumulated_hours[year_index - 1]:
+                                   accumulated_hours[year_index]],
+            'diffuse_radiation': weather_dict['diffuse_horizontal_solar_radiation'][
+                                 accumulated_hours[year_index - 1]:
+                                 accumulated_hours[year_index]],
+            'direct_radiation': weather_dict['horizontal_global_solar_radiation'][
+                                accumulated_hours[year_index - 1]:
+                                accumulated_hours[year_index]]
+        }
+
+        yearly_weather_entry.weather_data.put(bson.BSON.encode(weather))
+        yearly_weather_entry.save()
+        entry_ids.append(yearly_weather_entry.id)
+
+    return entry_ids
