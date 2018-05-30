@@ -8,7 +8,7 @@ import datetime
 import os
 
 # RiBuild Modules:
-import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # WEATHER PARSING
@@ -33,29 +33,29 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                         "abr": "TA"},
 
         "relative_humidity": {"description": "Relative Humidity [%] (HREL)",
-                             "intro": "RELHUM   %",
-                             "factor": 1,
-                             "abr": "HREL"},
+                              "intro": "RELHUM   %",
+                              "factor": 1,
+                              "abr": "HREL"},
 
         "diffuse_radiation": {"description": "Diffuse Horizontal Solar Radiation [W/m2] (ISD)",
-                             "intro": "DIFRAD   W/m2",
-                             "factor": 1,
-                             "abr": "ISD"},
+                              "intro": "DIFRAD   W/m2",
+                              "factor": 1,
+                              "abr": "ISD"},
 
         "short_wave_radiation": {"description": "Short Wave Radiation [W/m2] (ISD)",
-                              "intro": "SHWRAD   W/m2",
-                              "factor": 1,
-                              "abr": "SWR"},
+                                 "intro": "SHWRAD   W/m2",
+                                 "factor": 1,
+                                 "abr": "SWR"},
 
         "wind_direction": {"description": "Wind Direction [degrees] (WD)",
-                          "intro": "WINDDIR   Deg",
-                          "factor": 1,
-                          "abr": "WD"},
+                           "intro": "WINDDIR   Deg",
+                           "factor": 1,
+                           "abr": "WD"},
 
         "wind_speed": {"description": "Wind Velocity [m/s] (WS)",
-                         "intro": "WINDVEL   m/s",
-                         "factor": 1,
-                         "abr": "WS"},
+                       "intro": "WINDVEL   m/s",
+                       "factor": 1,
+                       "abr": "WS"},
 
         "CloudCover": {"description": "Cloud Cover [-] (CI)",
                        "intro": "CLOUDCOV   ---",
@@ -98,8 +98,8 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                             "abr": "ISGH"},
 
         "indoor_relative_humidity": {"description": "Indoor Relative Humidity after EN15026 [%] (HREL)",
-                                       "intro": "RELHUM   %",
-                                       "factor": 1},
+                                     "intro": "RELHUM   %",
+                                     "factor": 1},
 
         "indoor_temperature": {"description": "Indoor Air temperature after EN15026 [C] (TA)",
                                "intro": "TEMPER   C",
@@ -113,7 +113,6 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                            'short_wave_radiation',
                            'indoor_temperature',
                            'indoor_relative_humidity']:
-
             info_dict = dict(parameter_dict[weather_key], **{'year': weather_dict['year']})
             info_dict.update({'location_name': weather_dict['location_name']})
             list_to_ccd(weather_dict[weather_key], info_dict, folder + '/' + weather_key + '.ccd')
@@ -210,98 +209,6 @@ def wac_to_dict(file_path: str) -> dict:
         weather_dict['ground_reflectance'].append(float(splitted_line[13].strip()))
 
     return weather_dict
-
-
-def wac_to_db(file_path: str) -> list:
-
-    weather_dict = wac_to_dict(file_path)
-
-    # Split years
-    def hours_per_year(start, stop):
-        while start < stop:
-            yield 8760
-            start += 1
-
-    def accumulate_hours(hour_list):
-        accumulated_list = [0, ]
-
-        for i in range(0, len(hour_list)):
-            accumulated_list.append(accumulated_list[i] + hour_list[i])
-
-        return accumulated_list
-
-    hours = [hour
-             for hour in hours_per_year(weather_dict['time'][0].year,
-                                        weather_dict['time'][-1].year)]
-
-    accumulated_hours = accumulate_hours(hours)
-
-    # Add yearly weather entries
-    entry_ids = []
-    for year_index in range(1, len(accumulated_hours)):
-        yearly_weather_entry = weather_db.Weather()
-
-        # Meta Data
-        yearly_weather_entry.location_name = os.path.split(file_path)[-1].split('_')[0]
-        year_dates = weather_dict['time'][accumulated_hours[year_index - 1]: accumulated_hours[year_index]]
-        yearly_weather_entry.dates = {'start': year_dates[0],
-                                      'stop': year_dates[-1]}
-
-        yearly_weather_entry.year = year_dates[0].year
-
-        yearly_weather_entry.location = [weather_dict['longitude'], weather_dict['latitude']]
-        yearly_weather_entry.altitude = weather_dict['altitude']
-
-        yearly_weather_entry.source = {'comment': 'Climate for Culture',
-                                       'url': 'https://www.climateforculture.eu/',
-                                       'file': os.path.split(file_path)[-1]}
-
-        yearly_weather_entry.units = {'temperature': 'C',
-                                      'relative_humidity': '-',
-                                      'vertical_rain': 'mm/h',
-                                      'wind_direction': 'degrees',
-                                      'wind_speed': 'm/s',
-                                      'long_wave_radiation': 'W/m2',
-                                      'diffuse_radiation': 'W/m2',
-                                      'direct_radiation': 'W/m2'
-                                      }
-
-        # Climate Data
-        yearly_weather_entry.temperature = weather_dict['temperature'][
-                                           accumulated_hours[year_index - 1]:
-                                           accumulated_hours[year_index]]
-
-        yearly_weather_entry.relative_humidity = weather_dict['relative_humidity'][
-                                                 accumulated_hours[year_index - 1]:
-                                                 accumulated_hours[year_index]]
-
-        yearly_weather_entry.vertical_rain = weather_dict['vertical_rain'][
-                                             accumulated_hours[year_index - 1]:
-                                             accumulated_hours[year_index]]
-
-        yearly_weather_entry.wind_direction = weather_dict['wind_direction'][
-                                              accumulated_hours[year_index - 1]:
-                                              accumulated_hours[year_index]]
-
-        yearly_weather_entry.wind_speed = weather_dict['wind_speed'][
-                                          accumulated_hours[year_index - 1]:
-                                          accumulated_hours[year_index]]
-
-        yearly_weather_entry.long_wave_radiation = weather_dict['atmospheric_counter_horizontal_long_wave_radiation'][
-                                                   accumulated_hours[year_index - 1]:
-                                                   accumulated_hours[year_index]]
-
-        yearly_weather_entry.diffuse_radiation = weather_dict['diffuse_horizontal_solar_radiation'][
-                                                 accumulated_hours[year_index - 1]:
-                                                 accumulated_hours[year_index]]
-
-        yearly_weather_entry.direct_radiation = weather_dict['horizontal_global_solar_radiation'][
-                                                accumulated_hours[year_index - 1]:
-                                                accumulated_hours[year_index]]
-        yearly_weather_entry.save()
-        entry_ids.append(yearly_weather_entry.id)
-
-    return entry_ids
 
 
 def ccd_to_list(file_path: str) -> list:

@@ -168,8 +168,7 @@ def print_weather_stations_dict(weather_station_dict):
 
 def list_materials():
     materials = dict()
-    # TODO remove [:1] when connection to AIT established
-    for document in material_db.Material.objects()[:1]:
+    for document in material_db.Material.objects():
         materials[str(document.material_name)] = dict()
         materials[str(document.material_name)]['material_id'] = document.material_id
         materials[str(document.material_name)]['database_id'] = document.id
