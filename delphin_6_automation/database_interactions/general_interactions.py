@@ -201,22 +201,6 @@ def does_simulation_exists(sim_id: str) -> bool:
         return False
 
 
-def create_account(name: str, email: str) -> user_entry.User:
-    user = user_entry.User()
-    user.name = name
-    user.email = email
-
-    user.save()
-
-    return user
-
-
-def find_account_by_email(email: str) -> user_entry.User:
-    user = user_entry.User.objects(email=email).first()
-
-    return user
-
-
 def get_github_version():
     gh = github.Github()
     rp = gh.get_repo('ribuild/delphin_6_automation')
