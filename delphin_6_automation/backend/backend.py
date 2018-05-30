@@ -1,4 +1,5 @@
 __author__ = "Thomas Perkov"
+__license__ = 'MIT'
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -16,9 +17,8 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
 from delphin_6_automation.database_interactions import material_interactions
-#from delphin_6_automation.simulation_worker import simulation_worker
 from delphin_6_automation.file_parsing import delphin_parser
-
+from delphin_6_automation.database_interactions import user_interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN PERMUTATION FUNCTIONS
@@ -31,12 +31,11 @@ backend user interface:
 """
 
 
-# TODO Fix when AIT connection established
 def main():
     print_header()
     config_mongo()
-    login()
-    main_menu()
+    account = login()
+    main_menu(account)
     close_connections()
 
 
@@ -65,7 +64,7 @@ def login():
     print('------------------- LOGIN -------------------------')
 
     email = input('What is your email? >').strip().lower()
-    account = general_interactions.find_account_by_email(email)
+    account = user_interactions.find_account_by_email(email)
 
     if not account:
         print(f'Could not find account with email {email}.')
@@ -76,6 +75,7 @@ def login():
             return
 
     print('Logged in successfully.')
+    return account
     
 
 def create_account(email: str):
@@ -84,15 +84,16 @@ def create_account(email: str):
 
     name = input('What is your name? >')
 
-    old_account = general_interactions.find_account_by_email(email)
+    old_account = user_interactions.find_account_by_email(email)
     if old_account:
         print(f"ERROR: Account with email {email} already exists.")
         return
 
-    general_interactions.create_account(name, email)
+    return user_interactions.create_account(name, email)
 
 
-def main_menu():
+def main_menu(account):
+
     while True:
         print('')
         print('------------------- MAIN MENU ---------------------')
@@ -102,11 +103,7 @@ def main_menu():
         print("[b] Add new simulation with permutations to queue")
         print("[c] List simulations")
         print("[d] List materials")
-        print("[m] Add Delphin material to the database")
-        print("[g] Add Ribuild Geometry file to database")
-        print("[f] Find simulation")
-        print("[w] Queue and view weather data")
-        print("[v] Download Simulations")
+        print("[w] List weather")
         print("[t] Test Connection")
         print("[x] Exit")
         print()
@@ -115,37 +112,62 @@ def main_menu():
 
         if choice == 'a':
             [sim_id, *_] = add_to_queue()
-            save_ids(sim_id)
+            save_ids(sim_id, account)
 
         elif choice == 'b':
             id_list = add_permutations_to_queue()
-            save_ids(id_list)
+            save_ids(id_list, account)
 
         elif choice == 'c':
-            list_latest_added_simulations()
+            view_simulations(account)
 
         elif choice == 'd':
             view_material_data()
 
-        elif choice == 'm':
-            add_delphin_material_to_db()
-
-        elif choice == 'g':
-            add_geometry_file_to_db()
-
-        elif choice == 'f':
-            find_simulations()
-
         elif choice == 'w':
             view_weather_data()
-
-        elif choice == 'v':
-            download_simulation_result()
-
 
         elif not choice or choice == 'x':
             print("see ya!")
             break
+
+
+def view_simulations(account):
+
+    while True:
+        print('')
+        print('------------------ SIMULATIONS --------------------')
+        print('')
+        print("Available actions:")
+        print("[l] List simulations")
+        print("[f] Find simulation")
+        print("[d] Download simulations")
+        print("[a] Add new simulation to queue")
+        print("[b] Add new simulation with permutations to queue")
+        print("[x] Return to main menu")
+        print('')
+
+        choice = input("> ").strip().lower()
+
+        if choice == 'l':
+            user_interactions.list_user_simulations(account)
+
+        elif choice == 'f':
+            find_simulations()
+
+        elif choice == 'd':
+            download_simulation_result()
+
+        elif choice == 'a':
+            [sim_id, *_] = add_to_queue()
+            save_ids(sim_id, account)
+
+        elif choice == 'b':
+            id_list = add_permutations_to_queue()
+            save_ids(id_list, account)
+
+        elif choice == 'x':
+            return None
 
 
 def get_simulation_status(id_):
@@ -191,6 +213,7 @@ def view_material_data():
         print('')
         print('------------------- MATERIALS ---------------------')
         print('')
+        print("Available actions:")
         print("[l] List materials")
         print("[m] Add Delphin material to the database")
         print("[d] Download material")
@@ -220,20 +243,19 @@ def test_connection():
     general_interactions.print_material_dict(materials)
 
 
-
 def view_weather_data():
 
     while True:
         print('')
         print('------------------ WEATHER DATA -------------------')
         print('')
-        print("[v] List weather stations")
+        print("[l] List weather stations")
         print("[x] Return to main menu")
         print('')
 
         choice = input("> ").strip().lower()
 
-        if choice == 'v':
+        if choice == 'l':
             print('Looking up the weather stations may take some time. Please wait.')
             print('The RIBuild Database currently contains the following weather stations:\n')
             weather_stations = general_interactions.list_weather_stations()
@@ -291,12 +313,14 @@ def add_permutations_to_queue():
     return id_list
 
 
-def save_ids(simulation_id):
+def save_ids(simulation_id, account):
 
     if not simulation_id:
         return
 
     else:
+        user_interactions.add_simulation_to_user(account, delphin_db.Delphin.objects(id=simulation_id).first())
+
         save = str(input('Save Simulation ID to text file? (y/n)'))
         if save == 'y':
             print('Simulation will be saved on the Desktop as simulation_id.txt ')
