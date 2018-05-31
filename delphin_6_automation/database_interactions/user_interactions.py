@@ -38,6 +38,7 @@ def add_simulation_to_user(user: user_entry.User, simulation: delphin_entry.Delp
 
 
 def list_user_simulations(user):
+    user.reload()
 
     for document in user.simulations:
         print(f"ID: {document.id} - Added: {document.added_date} - With priority: {document.queue_priority}")

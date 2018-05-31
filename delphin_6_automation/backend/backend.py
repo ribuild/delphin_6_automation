@@ -10,7 +10,7 @@ import os
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
-
+from delphin_6_automation.logging import ribuild_logger
 from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
@@ -348,8 +348,8 @@ def check_delphin_file(delphin_file):
         print('Uploaded Delphin Project does not comply with the guidelines for the simulation system.')
         print('The following error log has been created:\n')
 
-        log_file = open(os.path.dirname(os.path.abspath(__file__)) +
-                        '/logging/delphin_6_automation.database_interactions.delphin_interactions.log')
+        delphin_logger = ribuild_logger.ribuild_logger("delphin_interactions")
+        log_file = open(delphin_logger.handlers[0].baseFilename, 'r')
         lines = log_file.readlines()
         for line in lines:
             print(line.strip())
@@ -572,8 +572,10 @@ def download_result_from_file():
             pass
         elif general_interactions.is_simulation_finished(sim_id):
             print(f'Downloading: {sim_id}')
-            result_id = delphin_db.Delphin.objects(id=sim_id).first().results_raw.id
+            delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
+            result_id = delphin_document.results_raw.id
             general_interactions.download_raw_result(result_id, download_path)
+            delphin_interactions.download_delphin_entry(delphin_document, download_path)
         else:
             print(f'Simulation with ID: {sim_id} is not done yet. Skipping to next ID.')
             pass
@@ -589,8 +591,10 @@ def download_single_result():
     if general_interactions.is_simulation_finished(sim_id):
         print('Simulation is ready to download.')
         download_path = str(input('Download Path? >'))
-        result_id = delphin_db.Delphin.objects(id=sim_id).first().results_raw.id
+        delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
+        result_id = delphin_document.results_raw.id
         general_interactions.download_raw_result(result_id, download_path)
+        delphin_interactions.download_delphin_entry(delphin_document, download_path)
     else:
         print('Simulation is not done yet. Please return later')
         return

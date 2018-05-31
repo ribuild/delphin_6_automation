@@ -424,8 +424,8 @@ def check_delphin_file(delphin_dict: dict):
                 boundary_error = True
 
         elif boundary_condition['@type'] == 'ShortWaveRadiation':
-            if boundary_condition['@kind'] != 'StandardRadiationModel':
-                logger.error(f'Short wave radiation should be of the boundary condition kind: StandardRadiationModel. '
+            if boundary_condition['@kind'] != 'ImposedFlux':
+                logger.error(f'Short wave radiation should be of the boundary condition kind: ImposedFlux. '
                              f'Given kind was: {boundary_condition["@kind"]}')
                 boundary_error = True
 
