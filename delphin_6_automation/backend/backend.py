@@ -345,14 +345,11 @@ def check_delphin_file(delphin_file):
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file)
 
     if delphin_interactions.check_delphin_file(delphin_dict):
-        print('Uploaded Delphin Project does not comply with the guidelines for the simulation system.')
-        print('The following error log has been created:\n')
-
         delphin_logger = ribuild_logger.ribuild_logger("delphin_interactions")
-        log_file = open(delphin_logger.handlers[0].baseFilename, 'r')
-        lines = log_file.readlines()
-        for line in lines:
-            print(line.strip())
+        log_file = delphin_logger.handlers[0].baseFilename
+
+        print('Uploaded Delphin Project does not comply with the guidelines for the simulation system.')
+        print(f'An error log has been created and can be found here:\n{log_file}')
 
         return False
 
