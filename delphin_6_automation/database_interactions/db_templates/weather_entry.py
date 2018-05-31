@@ -19,19 +19,16 @@ import delphin_6_automation.database_interactions.database_collections as collec
 
 
 class Weather(mongoengine.Document):
+    meta = collections.weather_db
 
     # Weather Data
-    temperature = mongoengine.ListField(required=True)
-    relative_humidity = mongoengine.ListField(required=True)
-    vertical_rain = mongoengine.ListField(required=True)
-    wind_direction = mongoengine.ListField(required=True)
-    wind_speed = mongoengine.ListField(required=True)
-    long_wave_radiation = mongoengine.ListField(required=True)
-    diffuse_radiation = mongoengine.ListField(required=True)
-    direct_radiation = mongoengine.ListField(required=True)
-    dates = mongoengine.DictField(mongoengine.DateTimeField, required=True)
+    weather_data = mongoengine.FileField(required=True, db_alias=meta['db_alias'],
+                                         collection_name=meta['collection'])
+    # weather_data = {'temperature': [], 'vertical_rain': [], 'wind_direction': [], 'wind_speed': [],
+    # 'long_wave_radiation': [], 'diffuse_radiation': [], 'direct_radiation': []}
 
     # Meta Data
+    dates = mongoengine.DictField(mongoengine.DateTimeField, required=True)
     year = mongoengine.IntField(required=True)
     location = mongoengine.GeoPointField(required=True)
     altitude = mongoengine.FloatField(required=True)
@@ -39,5 +36,3 @@ class Weather(mongoengine.Document):
     source = mongoengine.DictField(required=True)
     added_date = mongoengine.DateTimeField(default=datetime.now)
     units = mongoengine.DictField(required=True)
-
-    meta = collections.weather_db
