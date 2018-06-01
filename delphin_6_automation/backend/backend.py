@@ -319,7 +319,11 @@ def save_ids(simulation_id, account):
         return
 
     else:
-        user_interactions.add_simulation_to_user(account, delphin_db.Delphin.objects(id=simulation_id).first())
+        if isinstance(simulation_id, list):
+            for id_ in simulation_id:
+                user_interactions.add_simulation_to_user(account, delphin_db.Delphin.objects(id=id_).first())
+        else:
+            user_interactions.add_simulation_to_user(account, delphin_db.Delphin.objects(id=simulation_id).first())
 
         save = str(input('Save Simulation ID to text file? (y/n)'))
         if save == 'y':
