@@ -181,6 +181,7 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
     weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],
                                                                 weather['wind_speed'], wall_location, orientation)
 
+    delphin_document.reload()
     latitude = delphin_document.weather[0].location[0]
     longitude = delphin_document.weather[0].location[1]
     radiation = np.array(weather['diffuse_radiation']) + np.array(weather['diffuse_radiation'])

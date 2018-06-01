@@ -36,7 +36,6 @@ def main():
     config_mongo()
     account = login()
     main_menu(account)
-    close_connections()
 
 
 def print_header():
@@ -128,8 +127,9 @@ def main_menu(account):
             view_weather_data()
 
         elif not choice or choice == 'x':
+            close_connections()
             print("see ya!")
-            break
+            exit()
 
 
 def view_simulations(account):
@@ -438,7 +438,7 @@ def layer_material_permutation(original_id, priority):
     print('')
     print("The layer will be identified by the name of the material in the layer.")
 
-    layer_material = input("What is the name of the material? >")
+    layer_material = input("What is the name of the original material you want to change? >")
     material_list = input("Input wished layer materials.\n"
                           "If more than 1 material is wished, then the values have to be separated with a comma. >")
     materials = []

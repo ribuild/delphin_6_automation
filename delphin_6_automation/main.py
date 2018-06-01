@@ -22,9 +22,10 @@ from delphin_6_automation.backend.backend import main
 if __name__ == "__main__":
     local_logger = ribuild_logger(__name__)
 
-    try:
-        main()
+    while True:
+        try:
+            main()
 
-    except Exception:
-        print('Exited with error!')
-        local_logger.exception('Error in main')
+        except Exception:
+            print('Exited with error!')
+            local_logger.exception('Error in main')
