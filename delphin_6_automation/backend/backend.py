@@ -1,7 +1,6 @@
 __author__ = "Thomas Perkov"
 __license__ = 'MIT'
 
-
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
@@ -75,7 +74,7 @@ def login():
 
     print('Logged in successfully.')
     return account
-    
+
 
 def create_account(email: str):
     print('')
@@ -92,7 +91,6 @@ def create_account(email: str):
 
 
 def main_menu(account):
-
     while True:
         print('')
         print('------------------- MAIN MENU ---------------------')
@@ -133,7 +131,6 @@ def main_menu(account):
 
 
 def view_simulations(account):
-
     while True:
         print('')
         print('------------------ SIMULATIONS --------------------')
@@ -208,7 +205,6 @@ def find_simulations():
 
 
 def view_material_data():
-
     while True:
         print('')
         print('------------------- MATERIALS ---------------------')
@@ -244,7 +240,6 @@ def test_connection():
 
 
 def view_weather_data():
-
     while True:
         print('')
         print('------------------ WEATHER DATA -------------------')
@@ -266,7 +261,6 @@ def view_weather_data():
 
 
 def add_to_queue():
-
     delphin_file = ' '
     while not os.path.isfile(delphin_file):
         delphin_file = str(input("File path for the Delphin file >"))
@@ -314,7 +308,6 @@ def add_permutations_to_queue():
 
 
 def save_ids(simulation_id, account):
-
     if not simulation_id:
         return
 
@@ -362,7 +355,6 @@ def check_delphin_file(delphin_file):
 
 
 def add_weather_to_simulation(simulation_id):
-
     location_name = str(input("What weather station should be used? >"))
     years = input("Which years should be used?.\n"
                   "If more than 1 year is wished, then the values have to be separated with a comma. >")
@@ -374,7 +366,6 @@ def add_weather_to_simulation(simulation_id):
 
 
 def list_permutation_options(original_id, priority):
-
     print('-------------- PERMUTATION OPTIONS ----------------')
     print('')
     print("Available options:")
@@ -414,7 +405,6 @@ def list_permutation_options(original_id, priority):
 
 
 def layer_width_permutation(simulation_id, priority):
-
     print('')
     print("The layer will be identified by the name of the material in the layer.")
 
@@ -434,7 +424,6 @@ def layer_width_permutation(simulation_id, priority):
 
 
 def layer_material_permutation(original_id, priority):
-
     print('')
     print("The layer will be identified by the name of the material in the layer.")
 
@@ -488,7 +477,6 @@ def weather_permutation(original_id, priority):
 
 
 def wall_permutation(original_id, priority):
-
     print('')
 
     orientation_list = input("Input wished orientations.\n"
@@ -505,7 +493,6 @@ def wall_permutation(original_id, priority):
 
 
 def boundary_permutation(original_id, priority):
-
     print('')
 
     boundary_condition = input("Input wished boundary condition to change. >")
@@ -521,7 +508,7 @@ def boundary_permutation(original_id, priority):
     print('')
 
     return delphin_interactions.permutate_entry_boundary_coefficient(original_id, boundary_condition, coefficient_name,
-                                                                  coefficient_list, priority)
+                                                                     coefficient_list, priority)
 
 
 def list_latest_added_simulations():
@@ -532,7 +519,6 @@ def list_latest_added_simulations():
 
 
 def add_delphin_material_to_db():
-
     user_input = input("Please type the path a .m6 file or a folder with multiple files: ")
     id_ = material_interactions.upload_material_file(user_input)
     print(f'\nMaterial was upload with ID: {id_}')
@@ -576,7 +562,7 @@ def download_result_from_file():
             delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
             result_id = delphin_document.results_raw.id
             general_interactions.download_raw_result(result_id, download_path)
-            delphin_interactions.download_delphin_entry(delphin_document, download_path)
+            delphin_interactions.download_delphin_entry(delphin_document, f'{download_path}/{result_id}')
         else:
             print(f'Simulation with ID: {sim_id} is not done yet. Skipping to next ID.')
             pass
