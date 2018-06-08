@@ -41,4 +41,7 @@ def list_user_simulations(user):
     user.reload()
 
     for document in user.simulations:
-        print(f"ID: {document.id} - Added: {document.added_date} - With priority: {document.queue_priority}")
+        if delphin_entry.Delphin.objects(id=document.id).first():
+            print(f"ID: {document.id} - Added: {document.added_date} - With priority: {document.queue_priority}")
+        else:
+            user.update(pull__simulations=document)
