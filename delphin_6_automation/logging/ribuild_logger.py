@@ -52,7 +52,6 @@ def notifiers_logger(name):
 
     # create logger
     logger = logging.getLogger(name)
-    logger.setLevel(logging.ERROR)
 
     # create console handler and set level to debug
     message_dict = {'to': 'ocni@dtu.dk',
