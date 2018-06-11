@@ -334,46 +334,51 @@ def check_delphin_file(delphin_dict: dict):
 
     interfaces = delphin_dict['DelphinProject']['Conditions']['Interfaces']['Interface']
 
-    for interface in interfaces:
-        if interface['@name'].lower() == 'indoor surface' or interface['@name'].lower() == 'interior surface':
+    if not isinstance(interfaces, list):
+        logger.error(f'Only {interfaces["@name"]} assigned. Both an interior and exterior surface should be assigned.')
+        interface_error = True
 
-            if interface['@type'] != 'Detailed':
-                logger.error(f'Interior interface should be: Detailed. Interface type given was: {interface["@type"]}')
-                interface_error = True
+    else:
+        for interface in interfaces:
+            if interface['@name'].lower() == 'indoor surface' or interface['@name'].lower() == 'interior surface':
 
-            interior_boundaries = ['IndoorHeatConduction', 'IndoorVaporDiffusion']
-            for bc_ref in interface['BCReference']:
-                try:
-                    index = interior_boundaries.index(bc_ref.split(':')[-1])
-                    interior_boundaries.pop(index)
-                except ValueError:
-                    logger.error(f'Boundary condition not part of: {interior_boundaries}. '
-                                 f'Boundary condition given was: {bc_ref.split(":")[-1]}')
+                if interface['@type'] != 'Detailed':
+                    logger.error(f'Interior interface should be: Detailed. Interface type given was: {interface["@type"]}')
                     interface_error = True
 
-        elif interface['@name'].lower() == 'outdoor surface' or interface['@name'].lower() == 'exterior surface':
+                interior_boundaries = ['IndoorHeatConduction', 'IndoorVaporDiffusion']
+                for bc_ref in interface['BCReference']:
+                    try:
+                        index = interior_boundaries.index(bc_ref.split(':')[-1])
+                        interior_boundaries.pop(index)
+                    except ValueError:
+                        logger.error(f'Boundary condition not part of: {interior_boundaries}. '
+                                     f'Boundary condition given was: {bc_ref.split(":")[-1]}')
+                        interface_error = True
 
-            if interface['@type'] != 'Detailed':
-                logger.error(f'Exterior interface should be: Detailed. Interface type given was: {interface["@type"]}')
-                interface_error = True
+            elif interface['@name'].lower() == 'outdoor surface' or interface['@name'].lower() == 'exterior surface':
 
-            exterior_boundaries = ['OutdoorHeatConduction', 'OutdoorVaporDiffusion', 'OutdoorShortWaveRadiation',
-                                   'OutdoorLongWaveRadiation', 'OutdoorWindDrivenRain']
-            for bc_ref in interface['BCReference']:
-                try:
-                    index = exterior_boundaries.index(bc_ref.split(':')[-1])
-                    exterior_boundaries.pop(index)
-                except ValueError:
-                    logger.error(f'Boundary condition not part of: {exterior_boundaries}. '
-                                 f'Boundary condition given was: {bc_ref.split(":")[-1]}')
+                if interface['@type'] != 'Detailed':
+                    logger.error(f'Exterior interface should be: Detailed. Interface type given was: {interface["@type"]}')
                     interface_error = True
 
-        else:
-            logger.error(f'Could not recognize interface name.\n'
-                         f'Interior surface should be named: indoor surface or interior surface.\n'
-                         f'Exterior surface should be named: outdoor surface or exterior surface.\n'
-                         f'Named given was: {interface["@name"].lower()}')
-            interface_error = True
+                exterior_boundaries = ['OutdoorHeatConduction', 'OutdoorVaporDiffusion', 'OutdoorShortWaveRadiation',
+                                       'OutdoorLongWaveRadiation', 'OutdoorWindDrivenRain']
+                for bc_ref in interface['BCReference']:
+                    try:
+                        index = exterior_boundaries.index(bc_ref.split(':')[-1])
+                        exterior_boundaries.pop(index)
+                    except ValueError:
+                        logger.error(f'Boundary condition not part of: {exterior_boundaries}. '
+                                     f'Boundary condition given was: {bc_ref.split(":")[-1]}')
+                        interface_error = True
+
+            else:
+                logger.error(f'Could not recognize interface name.\n'
+                             f'Interior surface should be named: indoor surface or interior surface.\n'
+                             f'Exterior surface should be named: outdoor surface or exterior surface.\n'
+                             f'Named given was: {interface["@name"].lower()}')
+                interface_error = True
 
     if not interface_error:
         logger.info('Interface check passed')

@@ -6,6 +6,7 @@ __license__ = 'MIT'
 
 # Modules:
 import os
+import logging
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
@@ -342,11 +343,12 @@ def check_delphin_file(delphin_file):
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file)
 
     if delphin_interactions.check_delphin_file(delphin_dict):
-        delphin_logger = ribuild_logger.ribuild_logger("delphin_interactions")
+        delphin_logger = logging.getLogger("delphin_6_automation.database_interactions.delphin_interactions")
         log_file = delphin_logger.handlers[0].baseFilename
 
+        print('\n------------------- ERROR -------------------------')
         print('Uploaded Delphin Project does not comply with the guidelines for the simulation system.')
-        print(f'An error log has been created and can be found here:\n{log_file}')
+        print(f'An error log has been created and can be found here:\n{log_file}\n')
 
         return False
 
