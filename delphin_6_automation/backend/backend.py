@@ -7,10 +7,10 @@ __license__ = 'MIT'
 # Modules:
 import os
 import logging
+import sys
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
-from delphin_6_automation.logging import ribuild_logger
 from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
@@ -128,7 +128,7 @@ def main_menu(account):
         elif not choice or choice == 'x':
             close_connections()
             print("see ya!")
-            exit()
+            sys.exit()
 
 
 def view_simulations(account):
@@ -220,6 +220,7 @@ def view_material_data():
         choice = input("> ").strip().lower()
 
         if choice == 'l':
+            print('Looking up the weather stations may take some time. Please wait.')
             print('The RIBuild Database currently contains the following materials:\n')
             materials = general_interactions.list_materials()
             general_interactions.print_material_dict(materials)
