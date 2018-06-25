@@ -14,8 +14,6 @@ import mongoengine
 import delphin_6_automation.database_interactions.database_collections as collections
 
 
-#from delphin_6_automation.nosql.db_templates import delphin_entry as delphin_db
-
 # -------------------------------------------------------------------------------------------------------------------- #
 # RESULT CLASS
 
@@ -31,5 +29,3 @@ class Result(mongoengine.Document):
     geometry_file = mongoengine.DictField(required=True)
     geometry_file_hash = mongoengine.IntField(required=True)
     simulation_started = mongoengine.DateTimeField(required=True)
-
-

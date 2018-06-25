@@ -6,14 +6,11 @@ __author__ = "Christian Kongsgaard"
 
 # Modules:
 from collections import OrderedDict
-import os
-import xmltodict
 import pytest
 
 # RiBuild Modules:
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
-import delphin_6_automation.pytest.pytest_helper_functions as helper
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST

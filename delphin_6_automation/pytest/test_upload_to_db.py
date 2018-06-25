@@ -12,211 +12,135 @@ import shutil
 import bson.json_util
 
 # RiBuild Modules:
-import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
-import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
-import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
-import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
-
-try:
-    from delphin_6_automation.database_interactions.auth import auth_dict as authorisation
-except ModuleNotFoundError:
-    from delphin_6_automation.database_interactions.auth_travis import test_db as authorisation
-
-import delphin_6_automation.database_interactions.delphin_interactions as delphin_interact
-import delphin_6_automation.database_interactions.material_interactions as material_interact
-import delphin_6_automation.database_interactions.mongo_setup as mongo_setup
-import delphin_6_automation.database_interactions.weather_interactions as weather_interact
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
+from delphin_6_automation.database_interactions.db_templates import material_entry
+from delphin_6_automation.database_interactions.db_templates import result_raw_entry
+from delphin_6_automation.database_interactions.db_templates import weather_entry
+from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions import material_interactions
+from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.file_parsing import weather_parser
-import delphin_6_automation.pytest.pytest_helper_functions as helper
 from delphin_6_automation.file_parsing import delphin_parser
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
 
-mongo_setup.global_init(authorisation)
 
-
-def test_upload_weather_1():
+def test_upload_weather_1(test_folder, empty_database):
     # Local Files
-    folder = os.path.dirname(os.path.abspath(__file__)) + '/test_files'
     weather_file = 'Aberdeen_-2.083_57.167_2020_2050_A1B.WAC'
 
     # Upload
-    weather_ids = weather_parser.wac_to_db(folder + '/' + weather_file)
+    weather_interactions.upload_weather_to_db(test_folder + '/weather/' + weather_file)
 
-    # Convert uploaded entry back to dict
-    weather_dict = dict(weather_db.Weather.objects(id=weather_ids[15]).first().to_mongo())
-    with open(folder + '/Aberdeen_db_entry.txt') as outfile:
-        source_entry = bson.json_util.loads(json.load(outfile))
+    assert len(weather_entry.Weather.objects()) == 31
 
-    # Clean up mess
-    source_entry.pop('added_date')
-    source_entry.pop('_id')
-    source_entry.pop('dates')
-    weather_dict.pop('added_date')
-    weather_dict.pop('_id')
-    weather_dict.pop('dates')
+    for weather in weather_entry.Weather.objects():
+        assert isinstance(weather.year, int)
+        assert isinstance(weather.location, list)
+        assert weather.location[0] == -2.083
+        assert weather.location[1] == 57.167
+        assert weather.location_name == 'Aberdeen'
 
-    for weather_id in weather_ids:
-        weather_db.Weather.objects(id=weather_id).first().delete()
-
-    # Assert
-    assert weather_dict == source_entry
+        weather_data: dict = bson.BSON.decode(weather.weather_data.read())
+        for quantity in ['temperature', 'relative_humidity', 'vertical_rain', 'wind_direction',
+                         'wind_speed', 'long_wave_radiation', 'diffuse_radiation', 'direct_radiation']:
+            assert quantity in weather_data
 
 
-def test_upload_materials_1():
+def test_upload_materials_1(test_folder, empty_database):
+
     # Local Files
-    folder = os.path.dirname(os.path.abspath(__file__)) + '/test_files'
-    material_file = 'AltbauziegelDresdenZO_503.m6'
+    material_file = 'AltbauziegelDresdenZP_504.m6'
 
     # Upload
-    material_id = material_interact.upload_material_file(folder + '/' + material_file)
+    material_interactions.upload_material_file(test_folder + '/materials/' + material_file)
 
-    # Convert uploaded entry back to dict
-    material_doc = material_db.Material.objects(id=material_id).first()
-    material_dict = dict(material_doc.to_mongo())
-    with open(folder + '/AltbauZiegel_entry.txt') as outfile:
-        source_entry = bson.json_util.loads(json.load(outfile))
+    assert len(material_entry.Material.objects()) == 1
 
-    # Clean up mess
-    source_entry.pop('added_date')
-    source_entry.pop('_id')
-    source_entry['material_data'].pop('INFO-MATERIAL_NAME')
-    source_entry['material_data'].pop('INFO-LAST_MODIFIED')
-    source_entry['material_data'].pop('INFO-FILE')
-
-    material_dict.pop('added_date')
-    material_dict.pop('_id')
-    material_dict['material_data'].pop('INFO-MATERIAL_NAME')
-    material_dict['material_data'].pop('INFO-LAST_MODIFIED')
-    material_dict['material_data'].pop('INFO-FILE')
-
-    # Assert
-    material_doc.delete()
-    for key in material_dict.keys():
-        assert material_dict[key] == source_entry[key]
+    material = material_entry.Material.objects().first()
+    assert material.material_name == 'AltbauziegelDresdenZP'
+    assert material.material_id == 504
+    assert isinstance(material.material_data, dict)
 
 
-def test_upload_project_1():
+def test_upload_project_1(delphin_file_path, empty_database, add_two_materials):
     """Test upload of delphin project without any weather"""
 
-    material_ids = helper.upload_needed_materials('upload_project_1')
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    delphin_file = folder + '/delphin_project.d6p'
-    id_ = delphin_interact.upload_delphin_to_database(delphin_file, 10)
+    delphin_interactions.upload_delphin_to_database(delphin_file_path, 10)
 
-    test_doc = delphin_db.Delphin.objects(id=id_).first()
-    test_dict = test_doc.to_mongo()
-    test_dict.pop('_id')
-    test_dict.pop('added_date')
-    materials = test_dict.pop('materials')
+    assert len(delphin_entry.Delphin.objects()) == 1
+    test_doc = delphin_entry.Delphin.objects().first()
 
-    with open(folder + '/delphin_project_entry.txt') as outfile:
-        source_entry = bson.json_util.loads(json.load(outfile))
-
-    source_entry.pop('_id')
-    source_entry.pop('added_date')
-    source_entry.pop('materials')
-
-    # Clean up
-    test_doc.delete()
-    for id_ in material_ids:
-        material_db.Material.objects(id=id_).first().delete()
-
-    assert test_dict == source_entry
-    assert materials == material_ids
+    assert not test_doc.simulating
+    assert test_doc.dimensions == 1
+    assert isinstance(test_doc.dp6_file, dict)
+    assert isinstance(test_doc.materials, list)
+    assert not test_doc.weather
+    assert not test_doc.indoor_climate
+    assert not test_doc.results_raw
+    assert not test_doc.simulated
+    assert not test_doc.simulation_time
 
 
-def test_upload_project_2():
+def test_upload_project_2(delphin_file_path, empty_database, add_two_materials, add_three_years_weather):
     """Test upload of delphin project with weather"""
 
-    material_ids = helper.upload_needed_materials('upload_project_2')
-    weather_ids = helper.upload_needed_weather('upload_project_2')
+    id_ = delphin_interactions.upload_delphin_to_database(delphin_file_path, 10)
+    weather_interactions.assign_weather_to_project(id_, add_three_years_weather)
 
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    delphin_file = folder + '/delphin_project.d6p'
-    id_ = delphin_interact.upload_delphin_to_database(delphin_file, 10)
+    assert len(delphin_entry.Delphin.objects()) == 1
+    test_doc = delphin_entry.Delphin.objects().first()
 
-    test_doc = delphin_db.Delphin.objects(id=id_).first()
-    weather_interact.assign_weather_to_project(id_, weather_ids)
-    test_doc.reload()
-    test_dict = test_doc.to_mongo()
-    test_dict.pop('_id')
-    test_dict.pop('added_date')
-    materials = test_dict.pop('materials')
-    weather = test_dict.pop('weather')
-
-    with open(folder + '/delphin_project_with_weather_entry.txt') as outfile:
-        source_entry = bson.json_util.loads(json.load(outfile))
-
-    source_entry.pop('_id')
-    source_entry.pop('added_date')
-    source_entry.pop('materials')
-    source_entry.pop('weather')
-
-    # Clean up
-    test_doc.delete()
-    for material_id in material_ids:
-        material_db.Material.objects(id=material_id).first().delete()
-    for weather_id in weather_ids:
-        weather_db.Weather.objects(id=weather_id).first().delete()
-
-    assert test_dict == source_entry
-    assert materials == material_ids
-    assert weather == weather_ids
+    assert not test_doc.simulating
+    assert test_doc.dimensions == 1
+    assert isinstance(test_doc.dp6_file, dict)
+    assert isinstance(test_doc.materials, list)
+    assert len(test_doc.weather) == 3
+    assert not test_doc.indoor_climate
+    assert not test_doc.results_raw
+    assert not test_doc.simulated
+    assert not test_doc.simulation_time
 
 
-def test_upload_results_1():
-    # Create test folders
-    result_folder, source_path = helper.setup_test_folders()
+def test_upload_results_1(db_one_project, test_folder, tmpdir):
 
-    # Upload Delphin Project, so it can be linked to
-    material_ids = helper.upload_needed_materials('upload_project_1')
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    delphin_file = folder + '/delphin_project.d6p'
-    delphin_id = delphin_interact.upload_delphin_to_database(delphin_file, 10)
+    temp_folder = tmpdir.mkdir('test')
+    delphin_doc = delphin_entry.Delphin.objects().first()
 
     # Upload results
-    result_zip = folder + '/delphin_results.zip'
-    shutil.unpack_archive(result_zip, result_folder)
-    os.rename(result_folder + '/delphin_results', result_folder + '/' + str(delphin_id))
-    result_id = delphin_interact.upload_results_to_database(result_folder + '/' + str(delphin_id))
+    result_zip = test_folder + '/raw_results/delphin_results.zip'
+    shutil.unpack_archive(result_zip, temp_folder)
+    os.rename(os.path.join(temp_folder, 'delphin_results'), os.path.join(temp_folder, str(delphin_doc.id)))
+    result_id = delphin_interactions.upload_results_to_database(os.path.join(temp_folder, str(delphin_doc.id)))
 
     # Prepare test
-    test_doc = result_db.Result.objects(id=result_id).first()
-    test_dict = test_doc.to_mongo()
-    test_dict.pop('_id')
-    test_dict.pop('added_date')
-    test_dict.pop('delphin')
-    test_dict.pop('simulation_started')
+    assert result_raw_entry.Result.objects()
 
-    with open(folder + '/delphin_result_entry.txt') as outfile:
-        source_entry = bson.json_util.loads(json.load(outfile))
-
-    source_entry.pop('_id')
-    source_entry.pop('added_date')
-    source_entry.pop('delphin')
-    source_entry.pop('simulation_started')
-
-    # Clean up
-    test_doc.delete()
-    delphin_db.Delphin.objects(id=delphin_id).first().delete()
-    for material_id in material_ids:
-        material_db.Material.objects(id=material_id).first().delete()
-    helper.clean_up_test_folders()
+    result_doc = result_raw_entry.Result.objects(id=result_id).first()
+    delphin_doc.reload()
 
     # Assert
-    assert test_dict == source_entry
+    assert result_doc.delphin == delphin_doc
+    assert delphin_doc.results_raw == result_doc
+    assert result_doc.log
+    assert result_doc.results
+    assert isinstance(result_doc.geometry_file, dict)
+    assert result_doc.geometry_file_hash
 
 
-def test_delphin_file_checker_1():
-    folder = os.path.dirname(os.path.abspath(__file__)) + '/test_files'
-    delphin_dict = delphin_parser.dp6_to_dict(folder + '/delphin_project.d6p')
-    assert delphin_interact.check_delphin_file(delphin_dict)
+def test_delphin_file_checker_1(delphin_file_path):
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+    assert not delphin_interactions.check_delphin_file(delphin_dict)
 
 
-def test_cvode_stats():
-    folder = os.path.dirname(os.path.abspath(__file__)) + '/test_files'
-    integrator_dict = delphin_parser.cvode_stats_to_dict(folder)
+def test_cvode_stats(test_folder, tmpdir):
+
+    temp_folder = tmpdir.mkdir('test')
+    result_zip = test_folder + '/raw_results/delphin_results.zip'
+    shutil.unpack_archive(result_zip, temp_folder)
+    integrator_dict = delphin_parser.cvode_stats_to_dict(os.path.join(temp_folder,
+                                                                      'delphin_results/log'))
 
     assert isinstance(integrator_dict, dict)

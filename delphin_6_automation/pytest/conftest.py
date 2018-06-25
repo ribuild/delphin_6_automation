@@ -84,9 +84,9 @@ def add_two_materials(test_folder, setup_database):
 @pytest.fixture()
 def add_three_years_weather(setup_database, test_folder):
 
-    weather_interactions.upload_weather_to_db(test_folder + '/weather/Aberdeen_3_years.WAC')
+    weather_ids = weather_interactions.upload_weather_to_db(test_folder + '/weather/Aberdeen_3_years.WAC')
 
-    yield
+    return weather_ids
 
 
 @pytest.fixture()
