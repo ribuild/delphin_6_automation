@@ -220,12 +220,14 @@ def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
     :rtype: dict
     """
 
+    assert 0 <= new_orientation <= 360
+    assert isinstance(new_orientation, int)
+
     # Find current orientation
     interfaces = delphin_dict['DelphinProject']['Conditions']['Interfaces']['Interface']
 
     for index in range(len(interfaces)):
         try:
-            #print(interfaces[index]['IBK:Parameter']['@name'])
             interfaces[index]['IBK:Parameter']['#text'] = str(new_orientation)
         except KeyError:
             pass
@@ -366,4 +368,4 @@ def get_simulation_length(delphin_dict: dict) -> tuple:
 
     simulation_properties = delphin_dict['DelphinProject']['Init']['SimulationParameter']['Interval']['IBK:Parameter']
 
-    return SimulationLength(int(simulation_properties['#text']), simulation_properties['@unit'])
+    return SimulationLength(float(simulation_properties['#text']), simulation_properties['@unit'])

@@ -50,4 +50,3 @@ def indoor_climate(random_number):
 
     else:
         return 'b'
-

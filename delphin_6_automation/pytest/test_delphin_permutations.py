@@ -8,6 +8,7 @@ __author__ = "Christian Kongsgaard"
 from collections import OrderedDict
 import os
 import xmltodict
+import pytest
 
 # RiBuild Modules:
 from delphin_6_automation.delphin_setup import delphin_permutations
@@ -18,123 +19,136 @@ import delphin_6_automation.pytest.pytest_helper_functions as helper
 # TEST
 
 
-def test_get_layers_1():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
+def test_get_layers_1(delphin_file_path):
+
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     delphin_layers = delphin_permutations.get_layers(delphin_dict)
 
-    correct_layer_dict = {0: {'material': 'Lime Cement Plaster light [630]',
-                              'x_width': 0.009999999999999998,
-                              'x_index': (0, 6)},
-                          1: {'material': 'Normal Brick [512]',
-                              'x_width': 0.3499998,
-                              'x_index': (7, 37)},
-                          2: {'material': 'iQ-Fix [437]',
-                              'x_width': 0.005,
-                              'x_index': (45, 49)},
-                          3: {'material': 'iQ-Therm [438]',
-                              'x_width': 0.08,
-                              'x_index': (50, 68)},
-                          4: {'material': 'iQ-Top [726]',
-                              'x_width': 0.009999999999999998,
-                              'x_index': (69, 75)},
-                          5: {'material': 'Restoration Render [210]',
-                              'x_width': 0.010000000000000002,
-                              'x_index': (38, 44)}
+    correct_layer_dict = {0: {'material': 'Lime cement mortar [717]',
+                              'x_width': 0.012,
+                              'x_index': (0, 7)},
+
+                          1: {'material': 'Old Building Brick Dresden ZP [504]',
+                              'x_width': 0.3479997,
+                              'x_index': (8, 38)},
+
+                          2: {'material': 'Lime cement mortar [717]',
+                              'x_width': 0.012,
+                              'x_index': (39, 46)},
                           }
     assert delphin_layers == correct_layer_dict
 
 
-def test_change_material_1():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    test_path, _ = helper.setup_test_folders()
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
+def test_change_material_1(delphin_file_path):
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+
     new_material = OrderedDict((('@name', 'Aerated Concrete [6]'),
                                 ('@color', '#ff404060'),
                                 ('@hatchCode', '13'),
                                 ('#text', '${Material Database}/AeratedConcrete_6.m6')))
-    new_delphin = delphin_permutations.change_layer_material(delphin_dict, 'Normal Brick [512]', new_material)
-    xmltodict.unparse(new_delphin, output=open(test_path + '/modified_delphin_project.d6p', 'w'), pretty=True)
-    helper.clean_up_test_folders()
+
+    new_delphin = delphin_permutations.change_layer_material(delphin_dict,
+                                                             'Old Building Brick Dresden ZP [504]',
+                                                             new_material)
 
     assert new_delphin['DelphinProject']['Materials']['MaterialReference'][1] == new_material
 
 
-def test_change_layer_width():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    test_path, _ = helper.setup_test_folders()
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
+def test_change_layer_width(delphin_file_path):
+
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     old_width = sum(delphin_permutations.convert_discretization_to_list(delphin_dict))
 
-    new_delphin = delphin_permutations.change_layer_width(delphin_dict, 'Normal Brick [512]', 1.0)
-    xmltodict.unparse(new_delphin, output=open(test_path + '/modified_delphin_project.d6p', 'w'), pretty=True)
-    helper.clean_up_test_folders()
+    new_delphin = delphin_permutations.change_layer_width(delphin_dict, 'Old Building Brick Dresden ZP [504]', 1.0)
+    new_width = sum(delphin_permutations.convert_discretization_to_list(new_delphin)) - old_width - 0.65
 
-    assert sum(delphin_permutations.convert_discretization_to_list(new_delphin)) - old_width - 0.65 <= 0.0015
+    assert new_width == pytest.approx(0.0, abs=0.005)
 
 
-def test_change_weather():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    test_path, _ = helper.setup_test_folders()
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
-    weather_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files/temperature.ccd'
+def test_change_weather(test_folder, delphin_file_path):
+
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+    weather_path = test_folder + '/weather/temperature.ccd'
     new_delphin = delphin_permutations.change_weather(delphin_dict,
-                                                      'Temp Out',
+                                                      'exterior temperature',
                                                       weather_path)
-    xmltodict.unparse(new_delphin, output=open(test_path + '/modified_delphin_project.d6p', 'w'), pretty=True)
-    helper.clean_up_test_folders()
+    new_weather = new_delphin['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition'][0]['Filename']
 
-    assert new_delphin['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition'][2]['Filename'] == weather_path
-
-
-def test_change_orientation():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    test_path, _ = helper.setup_test_folders()
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
-    new_delphin = delphin_permutations.change_orientation(delphin_dict, 300)
-
-    xmltodict.unparse(new_delphin, output=open(test_path + '/modified_delphin_project.d6p', 'w'), pretty=True)
-    helper.clean_up_test_folders()
-    assert new_delphin['DelphinProject']['Conditions']['Interfaces']['Interface'][0]['IBK:Parameter']['#text'] == str(300)
+    assert new_weather == weather_path
 
 
-def test_change_coefficient_1():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    test_path, _ = helper.setup_test_folders()
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
-    new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict, 'Indoor surface:IndoorHeatConduction',
-                                                                   'ExchangeCoefficient', 12)
+@pytest.mark.parametrize('orientation',
+                         [0, 15, 30, 45, 90, 180, 220, 300, 360])
+def test_change_orientation(delphin_file_path, orientation):
 
-    xmltodict.unparse(new_delphin, output=open(test_path + '/modified_delphin_project.d6p', 'w'), pretty=True)
-    helper.clean_up_test_folders()
-    assert new_delphin['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition'][0]['IBK:Parameter']['#text'] == str(12)
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+    new_delphin = delphin_permutations.change_orientation(delphin_dict, orientation)
+    new_orientation = new_delphin['DelphinProject']['Conditions'][
+        'Interfaces']['Interface'][0]['IBK:Parameter']['#text']
 
-
-def test_change_coefficient_2():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    test_path, _ = helper.setup_test_folders()
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
-    delphin_permutations.change_boundary_coefficient(delphin_dict, 'Indoor vapour diffusion',
-                                                                   'ExchangeCoefficient', 3*10**-6)
-    new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict, 'INdoor vapour diffusion',
-                                                                   'SDValue', 3)
-    xmltodict.unparse(new_delphin, output=open(test_path + '/modified_delphin_project.d6p', 'w'), pretty=True)
-    helper.clean_up_test_folders()
-    assert new_delphin['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition'][1]['IBK:Parameter'][0]['#text'] == str(3*10**-6)
-    assert new_delphin['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition'][1]['IBK:Parameter'][1]['#text'] == str(3)
+    assert new_orientation == str(orientation)
 
 
-def test_get_simulation_length():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
+@pytest.mark.parametrize('orientation',
+                         [-10, 430, 0.3])
+@pytest.mark.xfail()
+def test_change_orientation_fail(delphin_file_path, orientation):
+
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+    new_delphin = delphin_permutations.change_orientation(delphin_dict, orientation)
+    new_orientation = new_delphin['DelphinProject']['Conditions'][
+        'Interfaces']['Interface'][0]['IBK:Parameter']['#text']
+
+    assert new_orientation == str(orientation)
+
+
+@pytest.mark.parametrize('coefficient',
+                         [0.3, 10, 20])
+def test_change_coefficient_1(delphin_file_path, coefficient):
+
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+    new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict,
+                                                                   'IndoorHeatConduction',
+                                                                   'ExchangeCoefficient',
+                                                                   coefficient)
+
+    assert new_delphin['DelphinProject']['Conditions']['BoundaryConditions'][
+               'BoundaryCondition'][5]['IBK:Parameter']['#text'] == str(coefficient)
+
+
+@pytest.mark.parametrize('coefficient',
+                         [0.3, 10**-6, 20])
+@pytest.mark.parametrize('sd_value',
+                         [0.3, 10, 20])
+def test_change_coefficient_2(delphin_file_path, coefficient, sd_value):
+
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+    delphin_permutations.change_boundary_coefficient(delphin_dict, 'IndoorVaporDiffusion',
+                                                                   'ExchangeCoefficient', coefficient)
+    new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict, 'IndoorVaporDiffusion',
+                                                                   'SDValue', sd_value)
+
+    assert new_delphin['DelphinProject']['Conditions']['BoundaryConditions'][
+               'BoundaryCondition'][6]['IBK:Parameter'][0]['#text'] == str(coefficient)
+    assert new_delphin['DelphinProject']['Conditions']['BoundaryConditions'][
+               'BoundaryCondition'][6]['IBK:Parameter'][1]['#text'] == str(sd_value)
+
+
+def test_get_simulation_length(delphin_file_path):
+
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     length = delphin_permutations.get_simulation_length(delphin_dict)
 
-    assert length == (2, 'a')
+    assert length == (4, 'a')
 
 
-def test_change_simulation_length():
-    source_path = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    delphin_dict = delphin_parser.dp6_to_dict(source_path + '/delphin_project.d6p')
-    modified_dict = delphin_permutations.change_simulation_length(delphin_dict, 5, 'h')
+@pytest.mark.parametrize('length',
+                         [0, 0.5, 3, 10])
+@pytest.mark.parametrize('value',
+                         ['a', 'h'])
+def test_change_simulation_length(delphin_file_path, length, value):
 
-    assert delphin_permutations.get_simulation_length(modified_dict) == (5, 'h')
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+    modified_dict = delphin_permutations.change_simulation_length(delphin_dict, length, value)
+
+    assert delphin_permutations.get_simulation_length(modified_dict) == (length, value)

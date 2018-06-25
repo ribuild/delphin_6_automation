@@ -49,42 +49,55 @@ def empty_database(setup_database):
 
 
 @pytest.fixture()
+def test_folder():
+
+    return os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+
+
+@pytest.fixture()
+def delphin_file_path(test_folder):
+
+    delphin_file = test_folder + '/delphin/delphin_project_1d.d6p'
+
+    return delphin_file
+
+
+@pytest.fixture()
 def add_single_user(setup_database):
+
     user_interactions.create_account('User Test', 'test@test.com')
 
     yield
 
 
 @pytest.fixture()
-def add_two_materials(setup_database):
+def add_two_materials(test_folder, setup_database):
 
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
     material_files = ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6', ]
 
     for file in material_files:
-        material_interactions.upload_material_file(folder + '/materials/' + file)
+        material_interactions.upload_material_file(test_folder + '/materials/' + file)
 
     yield
 
 
 @pytest.fixture()
-def add_three_years_weather(setup_database):
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    weather_interactions.upload_weather_to_db(folder + '/weather/Aberdeen_3_years.WAC')
+def add_three_years_weather(setup_database, test_folder):
+
+    weather_interactions.upload_weather_to_db(test_folder + '/weather/Aberdeen_3_years.WAC')
 
     yield
 
 
 @pytest.fixture()
-def db_one_project(empty_database, add_single_user, add_two_materials, add_three_years_weather):
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/test_files'
-    delphin_file = folder + '/delphin/delphin_project_1d.d6p'
+def db_one_project(empty_database, delphin_file_path, add_single_user, add_two_materials, add_three_years_weather):
+
     priority = 'high'
     climate_class = 'a'
     location_name = 'Aberdeen'
     years = [2020, 2020, 2021]
 
-    sim_id = general_interactions.add_to_simulation_queue(delphin_file, priority)
+    sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
     weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
     weather_interactions.assign_weather_by_name_and_years(sim_id, location_name, years)
     delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
