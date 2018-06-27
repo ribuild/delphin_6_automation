@@ -9,6 +9,7 @@ import pytest
 from mongoengine.connection import get_connection
 import os
 import shutil
+import sys
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -20,17 +21,25 @@ from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
 
 @pytest.fixture(scope='session')
 def setup_database():
-    auth_dict = {"ip": "192.38.64.134",
-                 "port": 27017,
-                 "alias": "local",
-                 "name": "test",
-                 "ssh": False}
+    if sys.platform == 'win32':
+        auth_dict = {"ip": "192.38.64.134",
+                     "port": 27017,
+                     "alias": "local",
+                     "name": "test",
+                     "ssh": False}
+    else:
+        auth_dict = {"ip": "127.0.0.1",
+                     "port": 27017,
+                     "alias": "local",
+                     "name": "test",
+                     "ssh": False}
 
     mongo_setup.global_init(auth_dict)
 
@@ -43,7 +52,6 @@ def setup_database():
 
 @pytest.fixture(scope='function')
 def empty_database(setup_database):
-
     db = get_connection('local')
     db.drop_database('test')
 
@@ -52,13 +60,11 @@ def empty_database(setup_database):
 
 @pytest.fixture()
 def test_folder():
-
     return os.path.dirname(os.path.realpath(__file__)) + '/test_files'
 
 
 @pytest.fixture()
 def delphin_file_path(test_folder):
-
     delphin_file = test_folder + '/delphin/delphin_project_1d.d6p'
 
     return delphin_file
@@ -66,7 +72,6 @@ def delphin_file_path(test_folder):
 
 @pytest.fixture()
 def add_single_user(setup_database):
-
     user_interactions.create_account('User Test', 'test@test.com')
 
     yield
@@ -74,7 +79,6 @@ def add_single_user(setup_database):
 
 @pytest.fixture()
 def add_two_materials(test_folder, setup_database):
-
     material_files = ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6', ]
 
     for file in material_files:
@@ -85,7 +89,6 @@ def add_two_materials(test_folder, setup_database):
 
 @pytest.fixture()
 def add_three_years_weather(setup_database, test_folder):
-
     weather_ids = weather_interactions.upload_weather_to_db(test_folder + '/weather/Aberdeen_3_years.WAC')
 
     return weather_ids
@@ -93,7 +96,6 @@ def add_three_years_weather(setup_database, test_folder):
 
 @pytest.fixture()
 def db_one_project(empty_database, delphin_file_path, add_single_user, add_two_materials, add_three_years_weather):
-
     priority = 'high'
     climate_class = 'a'
     location_name = 'Aberdeen'
@@ -109,7 +111,6 @@ def db_one_project(empty_database, delphin_file_path, add_single_user, add_two_m
 
 @pytest.fixture()
 def add_results(db_one_project, tmpdir, test_folder):
-
     temp_folder = tmpdir.mkdir('upload')
     delphin_doc = delphin_entry.Delphin.objects().first()
 
