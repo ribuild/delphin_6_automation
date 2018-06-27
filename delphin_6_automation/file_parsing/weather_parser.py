@@ -113,9 +113,10 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                            'short_wave_radiation',
                            'indoor_temperature',
                            'indoor_relative_humidity']:
+
             info_dict = dict(parameter_dict[weather_key], **{'year': weather_dict['year']})
             info_dict.update({'location_name': weather_dict['location_name']})
-            list_to_ccd(weather_dict[weather_key], info_dict, folder + '/' + weather_key + '.ccd')
+            list_to_ccd(weather_dict[weather_key], info_dict, os.path.join(folder, f'{weather_key}.ccd'))
 
     return True
 

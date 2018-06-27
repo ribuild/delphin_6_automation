@@ -8,6 +8,7 @@ __license__ = 'MIT'
 import pytest
 from mongoengine.connection import get_connection
 import os
+import shutil
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -17,6 +18,7 @@ from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -95,7 +97,7 @@ def db_one_project(empty_database, delphin_file_path, add_single_user, add_two_m
     priority = 'high'
     climate_class = 'a'
     location_name = 'Aberdeen'
-    years = [2020, 2020, 2021]
+    years = [2020, 2021, 2022]
 
     sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
     weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
@@ -103,3 +105,18 @@ def db_one_project(empty_database, delphin_file_path, add_single_user, add_two_m
     delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
 
     yield
+
+
+@pytest.fixture()
+def add_results(db_one_project, tmpdir, test_folder):
+
+    temp_folder = tmpdir.mkdir('upload')
+    delphin_doc = delphin_entry.Delphin.objects().first()
+
+    # Upload results
+    result_zip = test_folder + '/raw_results/delphin_results.zip'
+    shutil.unpack_archive(result_zip, temp_folder)
+    os.rename(os.path.join(temp_folder, 'delphin_results'), os.path.join(temp_folder, str(delphin_doc.id)))
+    result_id = delphin_interactions.upload_results_to_database(os.path.join(temp_folder, str(delphin_doc.id)))
+
+    return result_id

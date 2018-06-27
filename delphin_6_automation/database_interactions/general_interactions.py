@@ -35,7 +35,7 @@ def download_raw_result(result_id: str, download_path: str) -> bool:
     """
 
     result_obj = result_db.Result.objects(id=result_id).first()
-    download_path = download_path + '/' + str(result_id)
+    download_path = os.path.join(download_path, str(result_id))
 
     if not os.path.exists(download_path):
         os.mkdir(download_path)

@@ -66,7 +66,7 @@ def material_file_to_dict(file_path):
             material_dict["INFO-FILE"] = file_path
 
         elif line[0] == "[":
-            main_key = re.sub('[\[\]\n]', '', line)
+            main_key = re.sub('[\[\]\n]', '', line.strip())
             name = ""
 
         elif line[0] == " " and line[3] != " " and "=" in line:
@@ -110,8 +110,7 @@ def material_file_to_dict(file_path):
 
             elif line[2] == " " and sub_key_func == "-MODEL-":
                 key = main_key + sub_key_func + line.split("=")[0].strip()
-                data  = line.split("=")[1].strip()
-                #print(data)
+                data = line.split("=")[1].strip()
 
                 if isfloat(data):
                     data = data.split(" ")
@@ -148,22 +147,22 @@ def dict_to_m6(material: dict, path: str) -> bool:
                     name = key.split("-")[1]
 
                     if name == 'MODEL':
-                        file.write("\n\n  " + "[MODEL]")
+                        file.write("\r\n\r\n  " + "[MODEL]")
                         model_exist = True
                         break
                 try:
                     if key[3] == "[":
-                        file.write("\n  " + "[MODEL]")
+                        file.write("\r\n  " + "[MODEL]")
                 except IndexError:
                     pass
 
             if not model_exist:
-                file.write('\n')
+                file.write('\r\n')
 
         #elif group == 'IDENTIFICATION':
         #    file.write("\n\n" + "[" + group + "]")
         else:
-            file.write("\n\n" + "[" + group + "]")
+            file.write("\r\n\r\n" + "[" + group + "]")
 
         for key, value in material_dict.items():
             if key.split("-")[0] == group:
@@ -191,9 +190,9 @@ def dict_to_m6(material: dict, path: str) -> bool:
                             if not function_value_y.endswith('  '):
                                 function_value_y += ' '
 
-                    value = key.split("-")[2] + "\n" + function_value_x + "\n" + function_value_y
+                    value = key.split("-")[2] + "\r\n" + function_value_x + "\r\n" + function_value_y
 
-                    file.write("\n" + "  " + name + " = ".ljust(16) + str(value))
+                    file.write("\r\n" + "  " + name + " = ".ljust(16) + str(value))
 
                 # Parameters under "MODEL"
                 elif name == "MODEL" and model:
@@ -203,27 +202,27 @@ def dict_to_m6(material: dict, path: str) -> bool:
                             value = '{:.0e}'.format(MyNumber(value[0]))
                         else:
                             value = "".join([str(element) for element in value])
-                    file.write("\n" + "    " + name.ljust(25) + "= " + str(value))
+                    file.write("\r\n" + "    " + name.ljust(25) + "= " + str(value))
 
                 elif name in unit_dict:  # parameters with units
                     value = str(value) + " " + unit_dict[name]
-                    file.write("\n" + "  " + name.ljust(25) + "= " + str(value))
+                    file.write("\r\n" + "  " + name.ljust(25) + "= " + str(value))
 
                 elif len(key.split("-")) <= 2:
                     if value == 'AIR_TIGHT':
                         value += ' '
-                    file.write("\n" + "  " + name.ljust(25) + "= " + str(value))
+                    file.write("\r\n" + "  " + name.ljust(25) + "= " + str(value))
 
         if group.endswith('PARAMETERS') or group.endswith('IDENTIFICATION'):
-            file.write("\n")
+            file.write("\r\n")
 
     # Create file
     material_data = material['material_data']
     file_name = os.path.split(material_data['INFO-FILE'])[1]
-    file = codecs.open(path + '/' + file_name, "w", "utf-8")
+    file = codecs.open(os.path.join(path, file_name), "w", "utf-8")
 
     # Write lines
-    file.write(material_data["INFO-MAGIC_HEADER"])
+    file.write(material_data["INFO-MAGIC_HEADER"].strip())
     write_material_content("IDENTIFICATION", material_data)
     write_material_content("STORAGE_BASE_PARAMETERS", material_data)
     write_material_content("TRANSPORT_BASE_PARAMETERS", material_data)
@@ -231,7 +230,7 @@ def dict_to_m6(material: dict, path: str) -> bool:
     write_material_content("MOISTURE_STORAGE", material_data, True)
     write_material_content("MOISTURE_TRANSPORT", material_data)
     write_material_content("MOISTURE_TRANSPORT", material_data, True)
-    file.write("\n")
+    file.write("\r\n")
 
     file.close()
 

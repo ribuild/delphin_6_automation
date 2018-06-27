@@ -2,7 +2,7 @@
 # Year [2020, 2021, 2022]
 # RIBuild - Hourly values, Atmospheric Horizontal Long wave Radiation [W/m2] (ILTH) 
 
-LWRAD  W/m2
+SKYEMISS  W/m2
 
      0  0:00:00  266.00
      0  1:00:00  265.00
@@ -26284,3 +26284,5 @@ LWRAD  W/m2
   1094 21:00:00  274.00
   1094 22:00:00  274.00
   1094 23:00:00  274.00
+  1095  0:00:00  274.00
+  1095  1:00:00  274.00

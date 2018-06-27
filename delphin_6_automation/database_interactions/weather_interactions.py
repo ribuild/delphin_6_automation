@@ -119,8 +119,9 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
                           for rh in weather_document_as_dict[weather_key]]
                 weather_dict[weather_key].extend(relhum)
 
-            elif weather_key in ['year', 'location_name', 'altitude']:
-                weather_dict[weather_key].append(weather_document_as_dict[weather_key])
+        weather_dict['year'].append(reloaded_delphin.weather[index].year)
+        weather_dict['location_name'].append(reloaded_delphin.weather[index].location_name)
+        weather_dict['altitude'].append(reloaded_delphin.weather[index].altitude)
 
     return weather_dict
 
@@ -189,7 +190,8 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
                                                                             latitude, 0, orientation)
 
     for weather_key in weather.keys():
-        weather[weather_key].extend(weather[weather_key][-2:])
+        if weather_key not in ['year', 'location_name', 'altitude']:
+            weather[weather_key].extend(weather[weather_key][-2:])
 
     weather_parser.dict_to_ccd(weather, folder)
     change_weather_file_location(delphin_document)
