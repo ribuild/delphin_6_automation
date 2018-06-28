@@ -82,7 +82,7 @@ def test_download_materials_1(tmpdir, db_one_project, test_folder):
         files = []
         for file in ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6', ]:
             file_path = os.path.join(path, file)
-            files.append(codecs.open(file_path, "r", "utf-8").readlines())
+            files.append(codecs.open(file_path, "r", "utf-8").read().splitlines())
         return files
 
     # Get files
