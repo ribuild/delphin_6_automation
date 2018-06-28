@@ -39,7 +39,7 @@ for material in material_entry.Material.objects():
     if material.material_data['IDENTIFICATION-CATEGORY'] == 'BRICK' and not material.material_id == 504 \
             and material.material_id not in not_hydrolic_computable_bricks:
         bricks.append(material.material_id)
-
+        print(f'{material.material_id} - {material.material_name}')
 
 def permutate_uploads(materials):
     print('Uploading')
