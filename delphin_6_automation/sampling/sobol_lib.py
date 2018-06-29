@@ -1,7 +1,10 @@
-import numpy as np
 
+# Create boiler plate
+import numpy as np
 from scipy import stats
 
+
+# create proper doc strings for the functions
 
 def i4_bit_hi1(n):
     # *****************************************************************************80
@@ -115,6 +118,7 @@ def i4_bit_lo0(n):
     #
     #    		Output, integer BIT, the position of the low 1 bit.
     #
+
     bit = 0
     i = np.floor(n)
     while (1):
@@ -228,6 +232,7 @@ def i4_sobol(dim_num, seed):
     #
     #		Output, real QUASI(DIM_NUM), the next quasirandom vector.
     #
+
     global atmost
     global dim_max
     global dim_num_save
