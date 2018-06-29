@@ -5,7 +5,6 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules:
-import json
 import os
 import os.path
 import shutil
@@ -19,7 +18,6 @@ from delphin_6_automation.database_interactions.db_templates import weather_entr
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
-from delphin_6_automation.file_parsing import weather_parser
 from delphin_6_automation.file_parsing import delphin_parser
 
 

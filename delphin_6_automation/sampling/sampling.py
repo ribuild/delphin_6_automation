@@ -18,6 +18,7 @@ from scipy.stats import randint
 from scipy.stats import uniform
 from delphin_6_automation.sampling import sobol_lib
 
+
 # TODO - Fix names
 def sobol(m, dim, sets=1):
     # m - ?
@@ -31,6 +32,7 @@ def sobol(m, dim, sets=1):
         design = np.vstack((design, d))
 
     return design
+
 
 # TODO - Fix names
 def main(scenario, dist, runs, sets, strat, path, seq=None):
