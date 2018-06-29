@@ -29,3 +29,6 @@ delphin_db = {'db_alias': 'local',
 
 user_db = {'db_alias': 'local',
            'collection': 'users'}
+
+sample_db = {'db_alias': 'local',
+             'collection': 'samples'}
