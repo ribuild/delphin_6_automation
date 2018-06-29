@@ -193,3 +193,13 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
             mass_loss.append(mass_loss[-1])
 
     return mass_loss[1:], alpha[1:]
+
+
+def mould_pj():
+    # TODO - Implement PJ Mould Model
+    pass
+
+
+def algae():
+    # TODO - Implement UNIVPM Algae Model
+    pass
