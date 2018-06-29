@@ -22,6 +22,8 @@ reached.
 
 import pandas as pd
 
+# TODO - Find a better way of specifying inputs
+
 # Interior climate model
 interior_climate_type = 'EN15026'  # Use 'EN15026' or 'EN13788'
 
@@ -93,7 +95,7 @@ from postproc_convergence import postprocess
 
 def main():
 
-    # Checks. If we are keeping this, then raise errors instead and log them
+    # TODO - Checks. If we are keeping this, then raise errors instead and log them
     if len(buildcomp) != 2 and buildcomp != None:
         print('ERROR: buildcomp has the wrong formatting, this should be [first column/row of building component, '
               'last column/row of building component]')
@@ -109,7 +111,7 @@ def main():
               'but the discretisation direction was not defined by dir_cr!')
         sys.exit()
 
-    # Needs to be changed for WP6. We have to hook this up with the database
+    # TODO - Needs to be changed for WP6. We have to hook this up with the database
     path = {}
     # read project file path
     path['project'] = os.path.dirname(__file__)
@@ -120,7 +122,7 @@ def main():
     new_samples_per_set = init_samples_per_set
     used_samples_per_set = 0
 
-    # Write-out convergence
+    # TODO - Write-out convergence
     conv = False
     # What is c?
     c = 0
@@ -130,7 +132,7 @@ def main():
         print('Run %i' % c)
         print('Generating samples and Delphin files')
 
-        # Upload sample file and files after looping
+        # TODO - Upload sample file and files after looping
         for r in range(seq):
             print('Sequence %i' % r)
 
@@ -141,7 +143,7 @@ def main():
             samples_new = samples_all[used_samples_per_set:]
 
             # Generate Delphin files
-            # Rewrite to fit WP6 implementation
+            # TODO - Rewrite to fit WP6 implementation
             if buildcomp != None:
                 autovar.main(path, samples_new,
                              buildcomp={'component': buildcomp, 'cell': buildcomp_elem, 'dir': dir_cr},
@@ -152,7 +154,7 @@ def main():
                              simulRain=simulate_wdrain,
                              seq=r, start_num=used_samples_per_set, feedback=False)
 
-        # Wait until simulations ends
+        # TODO - Function to wait until simulations ends
         # Run Delphin files
         run()
 
@@ -171,6 +173,7 @@ def main():
         # Cacluate mean, std and standard error
         print('Calculating standard error')
 
+        # TODO - Rename
         SE = pd.DataFrame(index=['mean', 'std'])
         SE_dict = dict()
 
@@ -196,11 +199,11 @@ def main():
             print('Maximum number of samples reached: simulated %i samples per set' % used_samples_per_set)
             break
 
-    # How do we monitor the progress in the simulation system?
+    # TODO - How do we monitor the progress in the simulation system?
     print('Done!')
 
 
-# Rename to remove camel case
+# TODO - Rename to remove camel case
 def standardError(x, param):
     # Isn't there an already existing function out there?
     # What is do?
@@ -215,7 +218,7 @@ def standardError(x, param):
         # se_d?
         se_d = m.sqrt(1 / (seq * (seq - 1)) * sum([(x - mean_q) ** 2 for x in q]))
 
-        # Isn't it better to check if mean_q is zero?
+        # TODO - Isn't it better to check if mean_q is zero?
         try:
             # What is se_rel_d?
             se_rel_d = se_d / mean_q

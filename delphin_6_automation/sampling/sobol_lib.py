@@ -1,10 +1,10 @@
 
-# Create boiler plate
+# TODO - Create boiler plate
 import numpy as np
 from scipy import stats
 
 
-# create proper doc strings for the functions
+# TODO - create proper doc strings for the functions
 
 def i4_bit_hi1(n):
     # *****************************************************************************80

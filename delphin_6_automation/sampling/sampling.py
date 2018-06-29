@@ -18,7 +18,7 @@ from scipy.stats import randint
 from scipy.stats import uniform
 from delphin_6_automation.sampling import sobol_lib
 
-
+# TODO - Fix names
 def sobol(m, dim, sets=1):
     # m - ?
     # dim - dimensions?
@@ -32,7 +32,7 @@ def sobol(m, dim, sets=1):
 
     return design
 
-
+# TODO - Fix names
 def main(scenario, dist, runs, sets, strat, path, seq=None):
     # scenario - Dataframe?
     # dist - distribution?
@@ -44,7 +44,7 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
     if not os.path.exists(path):
         os.mkdir(path)
 
-    # Could we make this into a function - until the try statement?
+    # TODO - Could we make this into a function - until the try statement?
     # Load an existing Matlab file?
     # Is that needed for WP6?
     if strat == 'load':
@@ -56,6 +56,7 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
             samples_raw = np.vstack((samples_raw, samples_mat[:, i].tolist()[0]))
 
     else:
+        # What is the difference between the two? Wouldn't WP6 always want sobol convergence?
         # create raw sampling scheme
         if strat == 'sobol':
             samples_raw = sobol(m=runs, dim=dist.shape[0], sets=sets)
@@ -72,6 +73,7 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
         else:
             print("Error: This sampling strategy is not supperted. Currently only 'sobol' and 'load' are implemented.")
 
+    # TODO - Fix try statement
     try:
         # What is the purpose?
         samples = samples
@@ -85,7 +87,7 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
             samples[p] = []
 
     # Add samples to dictionary
-    # Should we create a function?
+    # TODO - Should we create a function?
     for s in scenario['value']:
         # What is SDF?
         sdf = pd.DataFrame({})
@@ -142,7 +144,7 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
     else:
         name = 'samples_' + str(seq)
 
-    # Why save twice? Isn't it better to have a function, that can translate the pickle to a excel if needed?
+    # TODO - Why save twice? Isn't it better to have a function, that can translate the pickle to a excel if needed?
     samples.to_excel(os.path.join(path, name + '.xlsx'))
     samples.to_pickle(os.path.join(path, name))
 

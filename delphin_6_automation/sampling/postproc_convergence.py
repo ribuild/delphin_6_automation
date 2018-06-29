@@ -131,7 +131,7 @@ import numpy as np
 import multiprocessing
 
 
-# WP6 - post process and upload to database
+# TODO - WP6: post process and upload to database
 def postprocess(seq, ind_list=[]):
     # seq - sequence?
     # ind_list ?
@@ -168,7 +168,7 @@ def postprocess(seq, ind_list=[]):
     return output
 
 
-# WP6 Threshold function
+# TODO - WP6 Threshold function
 def processOutput(args):
     do, p, output_proc, output_raw = args
 
