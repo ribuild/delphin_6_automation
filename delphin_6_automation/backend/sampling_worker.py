@@ -41,9 +41,10 @@ def menu():
     print('')
     print('------------------- SAMPLING MENU ---------------------')
     print('')
-    print("Available actions:")
-    print("[a] Start sampling")
-    print("[b] View current samples")
+    print("Available Actions:")
+    print("[a] Start Sampling")
+    print("[b] Create Sampling Scheme")
+    print("[c] View Current Samples")
     print("[x] Exit")
 
     choice = input("> ").strip().lower()
@@ -57,6 +58,11 @@ def menu():
         sampling_worker(sampling_scheme_path)
 
     elif choice == 'b':
+        sampling_scheme_path = input("Define path to where the sampling scheme should be saved >")
+        sampling.create_sampling_scheme(sampling_scheme_path)
+        logger.info(f'Created sampling at: {sampling_scheme_path}')
+
+    elif choice == 'c':
         print('Not implemented')
         pass
 
