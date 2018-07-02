@@ -1,153 +1,84 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Nov 22 16:14:23 2017
+__author__ = "Christian Kongsgaard"
+__license__ = 'MIT'
 
-@author: Astrid
-"""
+# -------------------------------------------------------------------------------------------------------------------- #
+# IMPORTS
 
-# Create boiler plate
-# Reference Astrid in a better way
+# Modules
 
-import os
-import scipy.io as sio
-import numpy as np
-import pandas as pd
-import sys
-from scipy.stats import norm
-from scipy.stats import randint
-from scipy.stats import uniform
-from delphin_6_automation.sampling import sobol_lib
+# RiBuild Modules
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger(__name__)
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# RIBuild
 
 
-# TODO - Fix names
-def sobol(m, dim, sets=1):
-    # m - ?
-    # dim - dimensions?
-    # sets of what?
+def load_scheme(path):
+    # TODO - Load sampling scheme
+    # The sampling scheme file could be a json
 
-    design = np.empty([0, dim])
-
-    for i in range(sets):
-        d = sobol_lib.scrambled_sobol_generate(k=dim, N=m, skip=2, leap=0)
-        design = np.vstack((design, d))
-
-    return design
+    return None
 
 
-# TODO - Fix names
-def main(scenario, dist, runs, sets, strat, path, seq=None):
-    # scenario - Dataframe?
-    # dist - distribution?
-    # runs - number of runs
-    # sets - sets of samplings?
-    # strat - strategy?
-    # path - path to sampling scheme?
+def load_existing_samples():
+    # TODO - Load existing samples from database
+    # Look up the existing sample entries in the database
+    # If there is not previous samples in database return empty dict or dataframe
+    # Download them
+    # Combine them into one
+    # Return the samples as a dict or dataframe
 
-    if not os.path.exists(path):
-        os.mkdir(path)
+    return None
 
-    # TODO - Could we make this into a function - until the try statement?
-    # Load an existing Matlab file?
-    # Is that needed for WP6?
-    if strat == 'load':
-        # load file
-        file = os.path.join(path, 'samples_raw.mat')
-        samples_mat = sio.loadmat(file)['design']
-        samples_raw = np.empty((0, dist.shape[0]))
-        for i in range(samples_mat.shape[1]):
-            samples_raw = np.vstack((samples_raw, samples_mat[:, i].tolist()[0]))
 
-    else:
-        # What is the difference between the two? Wouldn't WP6 always want sobol convergence?
-        # create raw sampling scheme
-        if strat == 'sobol':
-            samples_raw = sobol(m=runs, dim=dist.shape[0], sets=sets)
+def create_samples(sampling_scheme, previous_samples):
+    # TODO - Create new samples based on the old ones and the sampling scheme
+    # Call Sobol to create new samples based on scheme and previous samples
+    # If previous samples are an empty dict/dataframe, create samples purely based on sampling scheme
 
-        elif strat == 'sobol convergence':
-            try:
-                samples_raw = np.load(os.path.join(path, 'samples_raw_' + str(seq) + '.npy'))
-                samples = pd.read_pickle(os.path.join(path, 'samples_' + str(seq)))
-            except FileNotFoundError:
-                samples_raw = sobol(m=2 ** 12, dim=dist.shape[0], sets=1)
-                np.save(os.path.join(path, 'samples_raw_' + str(seq)), samples_raw)
+    return None
 
-            samples_raw = samples_raw[sets:sets + runs, :]
-        else:
-            print("Error: This sampling strategy is not supperted. Currently only 'sobol' and 'load' are implemented.")
 
-    # TODO - Fix try statement
-    try:
-        # What is the purpose?
-        samples = samples
+def create_delphin_projects(sampling_scheme, samples):
+    # TODO - Create new delphin files based on the samples
+    # The paths for the base delphin files should be found in the sampling scheme
+    # Permutate the base files according to the samples
+    # Upload the new delphin files
+    # Return the database ids for the delphin files
 
-    except NameError:
-        # We are moving data from one dict to another?
-        samples = pd.DataFrame({})
-        samples[scenario['parameter']] = []
+    return None
 
-        for p in dist['parameter']:
-            samples[p] = []
 
-    # Add samples to dictionary
-    # TODO - Should we create a function?
-    for s in scenario['value']:
-        # What is SDF?
-        sdf = pd.DataFrame({})
-        sdf[scenario['parameter']] = [s] * samples_raw.shape[0]
+def upload_samples(new_samples):
+    # TODO - Upload the samples to the database
+    # Return the entry id
 
-        for i in range(dist.shape[0]):
-            dist_type = dist.at[i, 'type']
-            x = samples_raw[:, i]
+    return None
 
-            if dist_type == 'discrete':
-                # pl?
-                p1 = dist.at[i, 'value']
 
-                if isinstance(p1, int):
-                    high = p1 + 1
-                    values = randint.ppf(x, low=1, high=high).tolist()
-                    # Isn't tolist redundant?
+def add_delphin_to_sampling(sampling_document, delphin_ids):
+    # TODO - Add the delphin ids to the sampling database entry
 
-                else:
-                    high = len(p1)
-                    values = randint.ppf(x, low=0, high=high).tolist()
-                    # Isn't tolist redundant?
-                    # What is the point of this loop? Data copying?
-                    values = [p1[int(x)] for x in values]
+    return None
 
-                sdf[dist.at[i, 'parameter']] = values
 
-            elif dist_type == 'uniform':
-                p1 = dist.at[i, 'value'][0]
-                p2 = dist.at[i, 'value'][1]
-                values = uniform.ppf(x, loc=p1, scale=p2 - p1).tolist()
-                # Isn't tolist redundant?
-                sdf[dist.at[i, 'parameter']] = values
+def calculate_error(delphin_ids):
+    # TODO - Calculated the standard error on the results from the given delphin simulations
+    # Return the error
+    return None
 
-            elif dist_type == 'normal':
-                p1 = dist.at[i, 'value'][0]
-                p2 = dist.at[i, 'value'][1]
-                values = norm.ppf(x, loc=p1, scale=p2).tolist()
-                # Isn't tolist redundant?
-                sdf[dist.at[i, 'parameter']] = values
 
-            else:
-                # Raise error instead
-                # Create log
-                print('ERROR: distribution type not supported')
-                sys.exit()
+def upload_standard_error(sampling_document, current_error):
+    # TODO - Upload the standard error to the sampling entry
 
-        samples = samples.append(sdf, ignore_index=True)
+    return None
 
-    # Save samples
-    # Didn't we already load the file? Why are we checking if the name exists?
-    if seq == None:
-        name = 'samples'
-    else:
-        name = 'samples_' + str(seq)
 
-    # TODO - Why save twice? Isn't it better to have a function, that can translate the pickle to a excel if needed?
-    samples.to_excel(os.path.join(path, name + '.xlsx'))
-    samples.to_pickle(os.path.join(path, name))
+def check_convergence(sampling_scheme, standard_error):
+    # TODO - Check if the standard error is lower than the threshold value in the sampling scheme
+    # If it is return True otherwise return False
 
-    return samples
+    return None

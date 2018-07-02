@@ -119,3 +119,10 @@ def set_simulation_time(sim_id: str, computation_time: datetime.timedelta):
     delphin_entry.update(set__simulation_time=computation_time.total_seconds())
 
     return sim_id
+
+
+def wait_until_simulated(delphin_ids):
+    # TODO - Wait until all the delphin files are simulated
+    # Create a loop that checks if they are simulated at a given time interval. Like every 2 minutes
+
+    return None
