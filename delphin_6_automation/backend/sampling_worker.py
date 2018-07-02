@@ -88,7 +88,7 @@ def sampling_worker(path):
         convergence = sampling.check_convergence(scheme, current_error)
         sample_iteration += 1
 
-    print(f'Convergence reached at interation #{sample_iteration}')
-    logger.info(f'Convergence reached at interation #{sample_iteration}')
+    print(f'Convergence reached at iteration #{sample_iteration}')
+    logger.info(f'Convergence reached at iteration #{sample_iteration}')
     print('Exits. Bye')
     sys.exit()
