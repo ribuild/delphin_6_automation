@@ -10,6 +10,7 @@ import os
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
+from delphin_6_automation.sampling import inputs
 
 # Logger
 
@@ -62,22 +63,22 @@ def create_sampling_scheme(path: str) -> dict:
                          {'type': 'uniform', 'value': [0, 360]},
 
                      'construction type':
-                         {'type': 'discrete', 'value': []},
+                         {'type': 'discrete', 'value': inputs.construction_types()},
 
                      'wall core width':
                          {'type': 'uniform', 'value': [0.1, 0.9]},
 
                      'wall core material':
-                         {'type': 'discrete', 'value': []},
+                         {'type': 'discrete', 'value': inputs.wall_core_materials()},
 
                      'plaster width':
                          {'type': 'uniform', 'value': [0.01, 0.02]},
 
                      'plaster material':
-                         {'type': 'discrete', 'value': []},
+                         {'type': 'discrete', 'value': inputs.plaster_materials()},
 
                      'insulation type':
-                         {'type': 'discrete', 'value': []},
+                         {'type': 'discrete', 'value': inputs.insulation_type()},
 
                      'insulation width':
                          {'type': 'uniform', 'value': [0.01, 0.3]},
