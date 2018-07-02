@@ -450,3 +450,9 @@ def check_delphin_file(delphin_dict: dict):
     # TODO - To be determined
 
     return error
+
+
+def upload_processed_results(folder):
+    # TODO - Process the results and upload them to the database
+
+    return None

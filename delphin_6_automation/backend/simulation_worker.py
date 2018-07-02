@@ -234,6 +234,7 @@ def hpc_worker(id_: str, thread_name: str):
     delta_time = datetime.datetime.now() - time_0
 
     delphin_interactions.upload_results_to_database(simulation_folder + '/' + id_)
+    delphin_interactions.upload_processed_results(simulation_folder + '/' + id_)
 
     simulation_interactions.set_simulated(id_)
     simulation_interactions.set_simulation_time(id_, delta_time)
