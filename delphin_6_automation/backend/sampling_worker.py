@@ -57,6 +57,7 @@ def menu():
         sampling_worker(sampling_scheme_path)
 
     elif choice == 'b':
+        print('Not implemented')
         pass
 
     elif choice == 'x':

@@ -5,25 +5,103 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
+import json
+import os
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+from delphin_6_automation.database_interactions import general_interactions
 
 # Logger
 logger = ribuild_logger(__name__)
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
 
-def load_scheme(path):
-    # TODO - Load sampling scheme
-    # The sampling scheme file could be a json
+def create_sampling_scheme(path):
+    scenario = {}
 
-    return None
+    distributions = {'exterior climate':
+                         {'type': 'discrete', 'value': list(general_interactions.list_weather_stations().keys())},
+
+                     'exterior heat transfer coefficient slope':
+                         {'type': 'uniform', 'value': [1, 4]},
+
+                     'exterior moisture transfer coefficient':
+                         {'type': 'uniform', 'value': [4 * 10 ** -9, 10 ** -9]},
+
+                     'solar absorption':
+                         {'type': 'uniform', 'value': [0.4, 0.8]},
+
+                     'rain scale factor':
+                         {'type': 'uniform', 'value': [0, 2]},
+
+                     'interior climate':
+                         {'type': 'discrete', 'value': ['a', 'b']},
+
+                     'interior heat transfer coefficient':
+                         {'type': 'uniform', 'value': [5, 10]},
+
+                     'interior moisture transfer coefficient':
+                         {'type': 'uniform', 'value': [4 * 10 ** -9, 10 ** -9]},
+
+                     'interior sd value':
+                         {'type': 'uniform', 'value': [0.0, 0.6]},
+
+                     'wall orientation':
+                         {'type': 'uniform', 'value': [0, 360]},
+
+                     'construction type':
+                         {'type': 'discrete', 'value': []},
+
+                     'wall core width':
+                         {'type': 'uniform', 'value': [0.1, 0.9]},
+
+                     'wall core material':
+                         {'type': 'discrete', 'value': []},
+
+                     'plaster width':
+                         {'type': 'uniform', 'value': [0.01, 0.02]},
+
+                     'plaster material':
+                         {'type': 'discrete', 'value': []},
+
+                     'insulation type':
+                         {'type': 'discrete', 'value': []},
+
+                     'insulation width':
+                         {'type': 'uniform', 'value': [0.01, 0.3]},
+
+                     'start year':
+                         {'type': 'discrete', 'value': 24},
+                     }
+
+    sampling_settings = {'initial samples per set': 1,
+                         'add samples per run': 1,
+                         'max samples': 500,
+                         'sequence': 10,
+                         'standard error threshold': 0.1}
+
+    combined_dict = {'scenario': scenario, 'distributions': distributions, 'settings': sampling_settings}
+
+    with open(os.path.join(path, 'sampling_scheme.json'), 'w') as file:
+        json.dump(combined_dict, file)
+
+    return combined_dict
+
+
+def load_scheme(path):
+
+    with open(os.path.join(path, 'sampling_scheme.json'), 'r') as file:
+        sampling_scheme = json.load(file)
+
+    return sampling_scheme
 
 
 def load_existing_samples():
+
     # TODO - Load existing samples from database
     # Look up the existing sample entries in the database
     # If there is not previous samples in database return empty dict or dataframe
