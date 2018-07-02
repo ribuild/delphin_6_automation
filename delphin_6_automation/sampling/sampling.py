@@ -9,18 +9,26 @@ import json
 import os
 
 # RiBuild Modules
-from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 from delphin_6_automation.database_interactions import general_interactions
 
 # Logger
-logger = ribuild_logger(__name__)
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
 
-def create_sampling_scheme(path):
+def create_sampling_scheme(path: str) -> dict:
+    """
+    Create a sampling scheme for WP6 Delphin Automation. The sampling scheme will be name 'sampling_scheme.json' and
+    be located at the given folder.
+
+    :param path: Folder, where the scheme will be saved.
+    :type path: str
+    :return: Created sampling scheme
+    :rtype: dict
+    """
+
     scenario = {}
 
     distributions = {'exterior climate':
@@ -92,7 +100,15 @@ def create_sampling_scheme(path):
     return combined_dict
 
 
-def load_scheme(path):
+def load_scheme(path: str) -> dict:
+    """
+    Load a sampling scheme from a JSON file.
+
+    :param path: Folder, where the sampling scheme is located
+    :type path: string
+    :return: Sampling scheme
+    :rtype: dict
+    """
 
     with open(os.path.join(path, 'sampling_scheme.json'), 'r') as file:
         sampling_scheme = json.load(file)
