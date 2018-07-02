@@ -21,8 +21,9 @@ class Sample(mongoengine.Document):
     added_date = mongoengine.DateTimeField(default=datetime.now)
 
     # References
-    # standard_error
-    # samples
-    # delphin ids
+    samples = mongoengine.DictField(required=True)
+    delphin_ids = mongoengine.ListField(field=mongoengine.StringField())
+    iteration = mongoengine.IntField(required=True)
+    standard_error = mongoengine.ListField(field=mongoengine.FloatField())
 
     meta = collections.sample_db
