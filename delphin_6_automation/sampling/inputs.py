@@ -15,6 +15,8 @@ import os
 
 
 def construction_types():
+
+    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
     return None
 
 
@@ -38,4 +40,6 @@ def plaster_materials():
 
 
 def insulation_type():
+
+    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
     return None

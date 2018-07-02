@@ -17,6 +17,7 @@ def test_wall_core_materials():
 
     materials = inputs.wall_core_materials()
 
+    assert materials
     assert isinstance(materials, list)
     assert all(isinstance(material_id, int)
                for material_id in materials)
@@ -26,6 +27,7 @@ def test_plaster_materials():
 
     materials = inputs.plaster_materials()
 
+    assert materials
     assert isinstance(materials, list)
     assert all(isinstance(material_id, int)
                for material_id in materials)
