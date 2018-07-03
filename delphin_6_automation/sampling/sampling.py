@@ -147,7 +147,7 @@ def create_delphin_projects(sampling_scheme, samples):
     return None
 
 
-def upload_samples(new_samples):
+def upload_samples(new_samples, sample_iteration):
     # TODO - Upload the samples to the database
     # Return the entry id
 
