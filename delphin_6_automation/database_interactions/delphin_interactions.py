@@ -481,4 +481,6 @@ def upload_processed_results(folder, delphin_doc, result_doc):
                                'heat_loss': '',
                                'algae': ''}
 
+    result_entry.save()
+
     return result_entry.id

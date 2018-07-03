@@ -200,6 +200,14 @@ def mould_pj():
     pass
 
 
-def algae():
+def algae(relative_humidity, temperature):
     # TODO - Implement UNIVPM Algae Model
     pass
+
+
+def u_value(heat_loss: np.array, exterior_temperature: np.array, interior_temperature: np.array, area=0.68) -> float:
+
+    delta_temperature = exterior_temperature - interior_temperature
+    u_value_ = np.mean(heat_loss / (delta_temperature * area))
+
+    return u_value_
