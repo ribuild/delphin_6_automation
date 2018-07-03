@@ -32,3 +32,7 @@ user_db = {'db_alias': 'local',
 
 sample_db = {'db_alias': 'local',
              'collection': 'samples'}
+
+
+scheme_db = {'db_alias': 'local',
+             'collection': 'sampling_scheme'}

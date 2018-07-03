@@ -27,3 +27,15 @@ class Sample(mongoengine.Document):
     standard_error = mongoengine.ListField(field=mongoengine.FloatField())
 
     meta = collections.sample_db
+
+
+class Scheme(mongoengine.Document):
+
+    # Meta Data
+    added_date = mongoengine.DateTimeField(default=datetime.now)
+    meta = collections.scheme_db
+
+    # References
+    samples = mongoengine.ListField(required=True, field=mongoengine.ReferenceField(document_type=Sample))
+    standard_error = mongoengine.ListField()
+    scheme = mongoengine.DictField(required=True)
