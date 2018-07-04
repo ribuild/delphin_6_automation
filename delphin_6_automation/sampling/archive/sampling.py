@@ -5,9 +5,6 @@ Created on Wed Nov 22 16:14:23 2017
 @author: Astrid
 """
 
-# TODO - Create boiler plate
-# TODO - Reference Astrid in a better way
-
 import os
 import scipy.io as sio
 import numpy as np
@@ -19,11 +16,10 @@ from scipy.stats import uniform
 from delphin_6_automation.sampling import sobol_lib
 
 
-# TODO - Fix names
 def sobol(m, dim, sets=1):
-    # m - ?
-    # dim - dimensions?
-    # sets of what?
+    # WP6 - What is m?
+    # WP6 - What is dim - dimensions?
+    # WP6 - sets of what?
 
     design = np.empty([0, dim])
 
@@ -34,21 +30,19 @@ def sobol(m, dim, sets=1):
     return design
 
 
-# TODO - Fix names
 def main(scenario, dist, runs, sets, strat, path, seq=None):
-    # scenario - Dataframe?
-    # dist - distribution?
-    # runs - number of runs
-    # sets - sets of samplings?
-    # strat - strategy?
-    # path - path to sampling scheme?
+    # WP6 - scenario - Is it a dataframe?
+    # WP6 - dist - distribution?
+    # WP6 - runs - number of runs
+    # WP6 - sets - sets of samplings?
+    # WP6 - strat - strategy?
+    # WP6 - path - path to sampling scheme?
 
     if not os.path.exists(path):
         os.mkdir(path)
 
-    # TODO - Could we make this into a function - until the try statement?
-    # Load an existing Matlab file?
-    # Is that needed for WP6?
+    # WP6 - Load an existing Matlab file?
+    # WP6 - Is that needed for WP6?
     if strat == 'load':
         # load file
         file = os.path.join(path, 'samples_raw.mat')
@@ -58,7 +52,7 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
             samples_raw = np.vstack((samples_raw, samples_mat[:, i].tolist()[0]))
 
     else:
-        # What is the difference between the two? Wouldn't WP6 always want sobol convergence?
+        # WP6 - What is the difference between the two? Wouldn't WP6 always want sobol convergence?
         # create raw sampling scheme
         if strat == 'sobol':
             samples_raw = sobol(m=runs, dim=dist.shape[0], sets=sets)
@@ -75,13 +69,12 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
         else:
             print("Error: This sampling strategy is not supperted. Currently only 'sobol' and 'load' are implemented.")
 
-    # TODO - Fix try statement
     try:
-        # What is the purpose?
+        # WP6 - What is the purpose?
         samples = samples
 
     except NameError:
-        # We are moving data from one dict to another?
+        # WP6 - We are moving data from one dict to another?
         samples = pd.DataFrame({})
         samples[scenario['parameter']] = []
 
@@ -89,9 +82,8 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
             samples[p] = []
 
     # Add samples to dictionary
-    # TODO - Should we create a function?
     for s in scenario['value']:
-        # What is SDF?
+        # WP6 - What is SDF?
         sdf = pd.DataFrame({})
         sdf[scenario['parameter']] = [s] * samples_raw.shape[0]
 
@@ -100,19 +92,17 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
             x = samples_raw[:, i]
 
             if dist_type == 'discrete':
-                # pl?
+                # WP6 - What is pl?
                 p1 = dist.at[i, 'value']
 
                 if isinstance(p1, int):
                     high = p1 + 1
                     values = randint.ppf(x, low=1, high=high).tolist()
-                    # Isn't tolist redundant?
 
                 else:
                     high = len(p1)
                     values = randint.ppf(x, low=0, high=high).tolist()
-                    # Isn't tolist redundant?
-                    # What is the point of this loop? Data copying?
+                    # WP6 - What is the point of this loop? Data copying?
                     values = [p1[int(x)] for x in values]
 
                 sdf[dist.at[i, 'parameter']] = values
@@ -121,32 +111,30 @@ def main(scenario, dist, runs, sets, strat, path, seq=None):
                 p1 = dist.at[i, 'value'][0]
                 p2 = dist.at[i, 'value'][1]
                 values = uniform.ppf(x, loc=p1, scale=p2 - p1).tolist()
-                # Isn't tolist redundant?
+
                 sdf[dist.at[i, 'parameter']] = values
 
             elif dist_type == 'normal':
                 p1 = dist.at[i, 'value'][0]
                 p2 = dist.at[i, 'value'][1]
                 values = norm.ppf(x, loc=p1, scale=p2).tolist()
-                # Isn't tolist redundant?
+
                 sdf[dist.at[i, 'parameter']] = values
 
             else:
-                # Raise error instead
-                # Create log
                 print('ERROR: distribution type not supported')
                 sys.exit()
 
         samples = samples.append(sdf, ignore_index=True)
 
     # Save samples
-    # Didn't we already load the file? Why are we checking if the name exists?
+    # WP6 - Didn't we already load the file? Why are we checking if the name exists?
     if seq == None:
         name = 'samples'
     else:
         name = 'samples_' + str(seq)
 
-    # TODO - Why save twice? Isn't it better to have a function, that can translate the pickle to a excel if needed?
+    # WP6 - Why save it twice?
     samples.to_excel(os.path.join(path, name + '.xlsx'))
     samples.to_pickle(os.path.join(path, name))
 
