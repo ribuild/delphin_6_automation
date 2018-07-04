@@ -121,8 +121,26 @@ def set_simulation_time(sim_id: str, computation_time: datetime.timedelta):
     return sim_id
 
 
-def wait_until_simulated(delphin_ids):
-    # TODO - Wait until all the delphin files are simulated
-    # Create a loop that checks if they are simulated at a given time interval. Like every 2 minutes
+def wait_until_simulated(delphin_ids: list) -> bool:
+    """
+    Wait until all simulations in the given list is simulated.
 
-    return None
+    :param delphin_ids: List with Delphin database ids
+    :type delphin_ids: list
+    :return: True
+    :rtype: bool
+    """
+
+    simulated = [False] * len(delphin_ids)
+
+    while not all(simulated):
+        for index, id_ in enumerate(delphin_ids):
+            entry = delphin_db.Delphin.objects(id=id_).first()
+
+            if entry.simulated:
+                simulated[index] = True
+
+            else:
+                time.sleep(180)
+
+    return True
