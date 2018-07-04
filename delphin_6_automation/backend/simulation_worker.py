@@ -108,7 +108,14 @@ def github_updates():
 
 
 def get_average_computation_time(sim_id: str) -> int:
-    # TODO - Get the average time for this type of construction (2D or 1D)
+    """
+    Get the average time for this type of construction (2D or 1D)
+
+    :param sim_id: Delphin entry id from database
+    :type sim_id: ObjectID
+    :return: Average simulation time in minutes
+    :rtype: int
+    """
 
     sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
     dimension = sim_obj.dimensions
@@ -160,7 +167,18 @@ def create_submit_file(sim_id, simulation_folder, restart=False):
 
 
 def submit_job(submit_file, sim_id):
-    # TODO - SSH to HPC, call bsub < submit_file, get job_id from HPC
+    """
+    SSH to HPC.
+    Call bsub < submit_file.
+    Get job_id from HPC
+
+    :param submit_file:
+    :type submit_file:
+    :param sim_id:
+    :type sim_id:
+    :return:
+    :rtype:
+    """
 
     terminal_call = f"cd ~/ribuild/{sim_id}\n", f"bsub < {submit_file}\n"
 
@@ -189,8 +207,19 @@ def submit_job(submit_file, sim_id):
 
 
 def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
-    # TODO - Look for summary file. If it is created, continue. If it is not created and the estimated time runs out.
-    # Then submit a new job continuing the simulation from where it ended.
+    """
+    Look for summary file. If it is created, continue. If it is not created and the estimated time runs out.
+    Then submit a new job continuing the simulation from where it ended.
+
+    :param sim_id:
+    :type sim_id:
+    :param estimated_run_time:
+    :type estimated_run_time:
+    :param simulation_folder:
+    :type simulation_folder:
+    :return:
+    :rtype:
+    """
 
     finished = False
     start_time = None
