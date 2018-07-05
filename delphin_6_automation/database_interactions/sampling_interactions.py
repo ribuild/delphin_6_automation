@@ -5,6 +5,7 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
+import mongoengine
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import sample_entry
@@ -13,10 +14,10 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 # RIBuild
 
 
-def upload_sampling_scheme(sampling_scheme: dict):
+def upload_sampling_scheme(sampling_scheme: dict) -> mongoengine.Document.id:
 
     entry = sample_entry.Scheme()
-    scheme = sampling_scheme
+    entry.scheme = sampling_scheme
     entry.save()
 
     return entry.id
