@@ -23,10 +23,19 @@ def upload_sampling_scheme(sampling_scheme: dict) -> mongoengine.Document.id:
     return entry.id
 
 
-def download_sampling_scheme(scheme_id):
-    # TODO - Download sampling scheme
+def download_sampling_scheme(scheme_id: str) -> dict:
+    """
+    Downloads the sampling scheme with the given database ID
 
-    return None
+    :param scheme_id: Sampling scheme database ID
+    :type scheme_id: str
+    :return: Sampling Scheme
+    :rtype: dict
+    """
+
+    scheme = sample_entry.Scheme.objects(id=scheme_id).first()
+
+    return scheme.scheme
 
 
 def upload_samples(new_samples, sample_iteration):
