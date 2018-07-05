@@ -196,6 +196,7 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
 
 
 def mould_pj():
+    limits = {'rev'}
     # TODO - Implement PJ Mould Model
     pass
 

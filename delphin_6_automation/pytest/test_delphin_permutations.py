@@ -11,7 +11,6 @@ import pytest
 # RiBuild Modules:
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
-
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
 
