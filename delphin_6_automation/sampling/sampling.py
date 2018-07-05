@@ -148,22 +148,9 @@ def create_delphin_projects(sampling_scheme, samples):
     return None
 
 
-def add_delphin_to_sampling(sampling_document, delphin_ids):
-    # TODO - Add the delphin ids to the sampling database entry
-    # Test Simon
-
-    return None
-
-
 def calculate_error(delphin_ids):
     # TODO - Calculated the standard error on the results from the given delphin simulations
     # Return the error
-    return None
-
-
-def upload_standard_error(sampling_document, current_error):
-    # TODO - Upload the standard error to the sampling entry
-
     return None
 
 

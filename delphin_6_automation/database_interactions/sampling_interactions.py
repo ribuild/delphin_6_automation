@@ -46,3 +46,16 @@ def upload_samples(new_samples, sample_iteration):
     sample.save()
 
     return sample.id
+
+
+def add_delphin_to_sampling(sampling_document, delphin_ids):
+    # TODO - Add the delphin ids to the sampling database entry
+    # Test Simon
+
+    return None
+
+
+def upload_standard_error(sampling_document, current_error):
+    # TODO - Upload the standard error to the sampling entry
+
+    return None
