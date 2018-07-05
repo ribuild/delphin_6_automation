@@ -36,6 +36,6 @@ class Scheme(mongoengine.Document):
     meta = collections.scheme_db
 
     # References
-    samples = mongoengine.ListField(required=True, field=mongoengine.ReferenceField(document_type=Sample))
+    samples = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=Sample))
     standard_error = mongoengine.ListField()
     scheme = mongoengine.DictField(required=True)

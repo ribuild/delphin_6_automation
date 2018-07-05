@@ -30,6 +30,7 @@ def create_sampling_scheme(path: str) -> dict:
     :rtype: dict
     """
 
+    # TODO - Create scenarios
     scenario = {}
 
     distributions = {'exterior climate':
@@ -149,6 +150,7 @@ def create_delphin_projects(sampling_scheme, samples):
 
 def upload_samples(new_samples, sample_iteration):
     # TODO - Upload the samples to the database
+    # Add samples to sampling scheme
     # Return the entry id
 
     return None
