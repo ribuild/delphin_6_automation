@@ -31,6 +31,7 @@ def create_sampling_scheme(path: str) -> dict:
     :rtype: dict
     """
 
+    # TODO - Create scenarios
     scenario = {}
 
     distributions = {'exterior climate':
