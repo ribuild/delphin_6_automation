@@ -170,6 +170,7 @@ def upload_samples(new_samples, sample_iteration):
 
 def add_delphin_to_sampling(sampling_document, delphin_ids):
     # TODO - Add the delphin ids to the sampling database entry
+    # Test Simon
 
     return None
 
