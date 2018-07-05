@@ -14,7 +14,15 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 # RIBuild
 
 
-def upload_sampling_scheme(sampling_scheme: dict) -> mongoengine.Document.id:
+def upload_sampling_scheme(sampling_scheme: dict) -> str:
+    """
+    Upload as given sampling scheme to the database
+
+    :param sampling_scheme: Sampling scheme
+    :type sampling_scheme: dict
+    :return: Sampling scheme database ID
+    :rtype: str
+    """
 
     entry = sample_entry.Scheme()
     entry.scheme = sampling_scheme
