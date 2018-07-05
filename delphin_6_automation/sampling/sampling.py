@@ -11,7 +11,6 @@ import os
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.sampling import inputs
-from delphin_6_automation.database_interactions.db_templates import sample_entry
 
 # Logger
 
@@ -147,26 +146,6 @@ def create_delphin_projects(sampling_scheme, samples):
     # Return the database ids for the delphin files
 
     return None
-
-
-def upload_samples(new_samples, sample_iteration):
-    """
-    Uploads samples to database and returns the sample id
-
-    :param new_samples: Samples
-    :type new_samples: dict
-    :param sample_iteration: Number of sample iteration
-    :type sample_iteration: int
-    :return: Sample Database id
-    :rtype: mongoengine.ObjectID
-    """
-
-    sample = sample_entry.Sample()
-    sample.samples = new_samples
-    sample.iteration = sample_iteration
-    sample.save()
-
-    return sample.id
 
 
 def add_delphin_to_sampling(sampling_document, delphin_ids):
