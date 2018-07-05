@@ -12,8 +12,6 @@ import os
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.sampling import inputs
 
-# Logger
-
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -118,7 +116,7 @@ def load_scheme(path: str) -> dict:
     return sampling_scheme
 
 
-def load_existing_samples():
+def load_existing_samples(sampling_scheme):
 
     # TODO - Load existing samples from database
     # Look up the existing sample entries in the database
@@ -126,6 +124,8 @@ def load_existing_samples():
     # Download them
     # Combine them into one
     # Return the samples as a dict or dataframe
+
+
 
     return None
 
