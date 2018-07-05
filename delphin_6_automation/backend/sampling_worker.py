@@ -78,7 +78,6 @@ def menu():
 def sampling_worker(scheme_id):
     scheme = sampling_interactions.download_sampling_scheme(scheme_id)
     sample_iteration = 0
-    current_error = 0
     convergence = False
 
     while not convergence:
