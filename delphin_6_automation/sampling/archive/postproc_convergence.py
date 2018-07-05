@@ -14,7 +14,6 @@ def exclude_files():
     """ Define which output files are not necessary for postprocessing """
     return ['cap_press']
 
-# What is X? Needs renaming
 def calc_heatloss(X):
 
     """ Calculate heatloss through building component """
@@ -32,8 +31,6 @@ def calc_heatloss(X):
 
     return dQ
 
-# What is X? Needs renaming
-# Not needed for WP6
 def calc_frost(X):
 
     """ Calculate moist freeze-thaw cycles """
@@ -131,10 +128,9 @@ import numpy as np
 import multiprocessing
 
 
-# TODO - WP6: post process and upload to database
 def postprocess(seq, ind_list=[]):
-    # seq - sequence?
-    # ind_list ?
+    # WP6 - What is seq - sequence?
+    # WP6 - What is ind_list ?
 
     # Read output files
     exclude = exclude_files() + ind_list
@@ -168,7 +164,6 @@ def postprocess(seq, ind_list=[]):
     return output
 
 
-# TODO - WP6 Threshold function
 def processOutput(args):
     do, p, output_proc, output_raw = args
 

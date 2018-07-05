@@ -22,7 +22,6 @@ reached.
 
 import pandas as pd
 
-# TODO - Find a better way of specifying inputs
 
 # Interior climate model
 interior_climate_type = 'EN15026'  # Use 'EN15026' or 'EN13788'
@@ -33,7 +32,7 @@ scenario = {'parameter': 'brick material',
 
 # Uncertainty layer - Parameter distributions
 
-# Why are we using Pandas and not just a dict?
+# WP6 - Why are we using Pandas and not just a dict?
 distributions = pd.DataFrame([{'parameter': 'solar absorption', 'type': 'uniform', 'value': [0.4, 0.8]},
                               {'parameter': 'ext climate', 'type': 'discrete',
                                'value': ['Oostende', 'Gent', 'StHubert', 'Gaasbeek']},
@@ -65,11 +64,9 @@ number_of_years = 7
 
 # If wind driven rain is incluced in the simulations, use True.
 # If wind driven rain is excluced in the simulations, use False (not recommended).
-# Why would WP6 need this option?
 simulate_wdrain = True
 
 # Sampling details
-# Where can I find info on what to use for WP6?
 init_samples_per_set = 1  # Initial number of samples per replication
 add_samples_per_run = 1  # Number of samples added if accuracy is not reached
 max_samples = 500  # Maximum number of samples per replication
@@ -95,7 +92,7 @@ from postproc_convergence import postprocess
 
 def main():
 
-    # TODO - Checks. If we are keeping this, then raise errors instead and log them
+    # WP6 - This is purely a Shark thing for generating the Delphin files right?
     if len(buildcomp) != 2 and buildcomp != None:
         print('ERROR: buildcomp has the wrong formatting, this should be [first column/row of building component, '
               'last column/row of building component]')
@@ -111,7 +108,6 @@ def main():
               'but the discretisation direction was not defined by dir_cr!')
         sys.exit()
 
-    # TODO - Needs to be changed for WP6. We have to hook this up with the database
     path = {}
     # read project file path
     path['project'] = os.path.dirname(__file__)
@@ -122,9 +118,8 @@ def main():
     new_samples_per_set = init_samples_per_set
     used_samples_per_set = 0
 
-    # TODO - Write-out convergence
     conv = False
-    # What is c?
+    # WP6 - What is c?
     c = 0
     output = []
 
@@ -132,7 +127,6 @@ def main():
         print('Run %i' % c)
         print('Generating samples and Delphin files')
 
-        # TODO - Upload sample file and files after looping
         for r in range(seq):
             print('Sequence %i' % r)
 
@@ -143,7 +137,6 @@ def main():
             samples_new = samples_all[used_samples_per_set:]
 
             # Generate Delphin files
-            # TODO - Rewrite to fit WP6 implementation
             if buildcomp != None:
                 autovar.main(path, samples_new,
                              buildcomp={'component': buildcomp, 'cell': buildcomp_elem, 'dir': dir_cr},
@@ -154,7 +147,6 @@ def main():
                              simulRain=simulate_wdrain,
                              seq=r, start_num=used_samples_per_set, feedback=False)
 
-        # TODO - Function to wait until simulations ends
         # Run Delphin files
         run()
 
@@ -170,10 +162,8 @@ def main():
         output = pd.concat(output_dict.values(), axis=1, keys=output_dict.keys())
         output = output.swaplevel(axis=1)
 
-        # Cacluate mean, std and standard error
         print('Calculating standard error')
 
-        # TODO - Rename
         SE = pd.DataFrame(index=['mean', 'std'])
         SE_dict = dict()
 
@@ -199,28 +189,26 @@ def main():
             print('Maximum number of samples reached: simulated %i samples per set' % used_samples_per_set)
             break
 
-    # TODO - How do we monitor the progress in the simulation system?
     print('Done!')
 
 
-# TODO - Rename to remove camel case
 def standardError(x, param):
-    # Isn't there an already existing function out there?
-    # What is do?
+    # WP6 - Isn't there an already existing function out there? Like: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.sem.html
+    # WP6 - What is do?
     do = x.index.levels[0].tolist()
-    # What is se_rel?
+    # WP6 - What is se_rel?
     se_rel = pd.DataFrame(index=do)
 
     for d in do:
-        # q?
+        # WP6 - What is q?
         q = x.loc[(d, param), :]
         mean_q = np.mean(q)
-        # se_d?
+        # WP6 - What is se_d?
         se_d = m.sqrt(1 / (seq * (seq - 1)) * sum([(x - mean_q) ** 2 for x in q]))
 
         # TODO - Isn't it better to check if mean_q is zero?
         try:
-            # What is se_rel_d?
+            # WP6 - What is se_rel_d?
             se_rel_d = se_d / mean_q
         except ZeroDivisionError:
             se_rel_d = se_d
@@ -230,7 +218,6 @@ def standardError(x, param):
     return se_rel
 
 
-# Not interesting for WP6
 def run():
     files = []
     for r in range(seq):
