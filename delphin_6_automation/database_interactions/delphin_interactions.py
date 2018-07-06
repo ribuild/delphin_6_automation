@@ -456,8 +456,13 @@ def check_delphin_file(delphin_dict: dict):
 
 
 def upload_processed_results(folder, delphin_doc, result_doc):
-    # TODO - Process the results and upload them to the database
-
+    """
+    Process results and upload.
+    :param folder:
+    :param delphin_doc:
+    :param result_doc:
+    :return:
+    """
     # Paths
     temperature_mould = delphin_parser.d6o_to_dict(folder, 'temperature_mould.d6o')
     relative_humidity_mould = delphin_parser.d6o_to_dict(folder, 'relative_humidity_mould.d6o')
@@ -473,13 +478,20 @@ def upload_processed_results(folder, delphin_doc, result_doc):
     result_entry = result_processed_entry.ProcessedResult()
     result_entry.delphin = delphin_doc
     result_entry.results_raw = result_doc
-    result_entry.mould = damage_models.mould_index(relative_humidity_mould, temperature_mould,)
+    result_entry.mould = {'a': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='a'),
+                          'b': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='b'),
+                          'c': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='c'),
+                          'd': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='d'),
+                          'e': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='e')}
     result_entry.heat_loss = heat_loss
     result_entry.algae = damage_models.algae(relative_humidity_algae, temperature_algae)
     result_entry.u_value = damage_models.u_value(heat_loss, exterior_temperature, interior_temperature)
-    result_entry.thresholds = {'mould': '',
-                               'heat_loss': '',
-                               'algae': ''}
+    result_entry.thresholds = {'mould': [damage_models.mould_pj(relative_humidity_mould,
+                                                                temperature_mould, aed_group='a')[0].max(),
+                                         damage_models.mould_pj(relative_humidity_mould,
+                                                                temperature_mould, aed_group='a')[1].max()].max(),
+                               'heat_loss': heat_loss.sum(),
+                               'algae': damage_models.algae(relative_humidity_algae, temperature_algae).max()}
 
     result_entry.save()
 
