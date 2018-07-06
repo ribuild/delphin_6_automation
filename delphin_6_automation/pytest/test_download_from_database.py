@@ -14,7 +14,9 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
+from delphin_6_automation.database_interactions.db_templates import sample_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
@@ -100,3 +102,18 @@ def test_download_project_1(db_one_project, tmpdir):
     delphin_interactions.download_delphin_entry(delphin_doc, folder)
 
     assert os.path.isfile(os.path.join(folder,  f'{delphin_doc.id}.d6p'))
+
+
+def test_download_sampling_scheme(add_sampling_scheme):
+
+    scheme_id = sample_entry.Scheme.objects().first().id
+
+    test_scheme = sampling_interactions.download_sampling_scheme(scheme_id)
+
+    assert test_scheme
+    assert isinstance(test_scheme, dict)
+    assert all(element in list(test_scheme.keys())
+               for element in ['scenario', 'distributions', 'settings'])
+    #assert test_scheme['scenario']
+    assert test_scheme['distributions']
+    assert test_scheme['settings']

@@ -18,7 +18,9 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
+from delphin_6_automation.sampling import sampling
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -120,3 +122,11 @@ def add_results(db_one_project, tmpdir, test_folder):
     result_id = delphin_interactions.upload_results_to_database(os.path.join(temp_folder, str(delphin_doc.id)))
 
     return result_id
+
+
+@pytest.fixture()
+def add_sampling_scheme(empty_database, tmpdir):
+
+    test_dir = tmpdir.mkdir('test')
+    scheme = sampling.create_sampling_scheme(test_dir)
+    sampling_interactions.upload_sampling_scheme(scheme)
