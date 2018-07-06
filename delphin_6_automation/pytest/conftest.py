@@ -125,7 +125,7 @@ def add_results(db_one_project, tmpdir, test_folder):
 
 
 @pytest.fixture()
-def add_sampling_scheme(empty_database, tmpdir):
+def add_sampling_scheme(setup_database, tmpdir):
 
     test_dir = tmpdir.mkdir('test')
     scheme = sampling.create_sampling_scheme(test_dir)
