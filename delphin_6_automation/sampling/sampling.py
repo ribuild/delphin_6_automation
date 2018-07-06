@@ -13,8 +13,6 @@ from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 
-# Logger
-
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -31,61 +29,63 @@ def create_sampling_scheme(path: str) -> dict:
     :rtype: dict
     """
 
+    # TODO - Create scenarios
     scenario = {}
 
     distributions = {'exterior climate':
-                         {'type': 'discrete', 'value': list(general_interactions.list_weather_stations().keys())},
+                         {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys()),
+                          'sample_values': []},
 
                      'exterior heat transfer coefficient slope':
-                         {'type': 'uniform', 'value': [1, 4]},
+                         {'type': 'uniform', 'range': [1, 4], 'sample_values': []},
 
                      'exterior moisture transfer coefficient':
-                         {'type': 'uniform', 'value': [4 * 10 ** -9, 10 ** -9]},
+                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -9], 'sample_values': []},
 
                      'solar absorption':
-                         {'type': 'uniform', 'value': [0.4, 0.8]},
+                         {'type': 'uniform', 'range': [0.4, 0.8], 'sample_values': []},
 
                      'rain scale factor':
-                         {'type': 'uniform', 'value': [0, 2]},
+                         {'type': 'uniform', 'range': [0, 2], 'sample_values': []},
 
                      'interior climate':
-                         {'type': 'discrete', 'value': ['a', 'b']},
+                         {'type': 'discrete', 'range': ['a', 'b'], 'sample_values': []},
 
                      'interior heat transfer coefficient':
-                         {'type': 'uniform', 'value': [5, 10]},
+                         {'type': 'uniform', 'range': [5, 10], 'sample_values': []},
 
                      'interior moisture transfer coefficient':
-                         {'type': 'uniform', 'value': [4 * 10 ** -9, 10 ** -9]},
+                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -9], 'sample_values': []},
 
                      'interior sd value':
-                         {'type': 'uniform', 'value': [0.0, 0.6]},
+                         {'type': 'uniform', 'range': [0.0, 0.6], 'sample_values': []},
 
                      'wall orientation':
-                         {'type': 'uniform', 'value': [0, 360]},
+                         {'type': 'uniform', 'range': [0, 360], 'sample_values': []},
 
                      'construction type':
-                         {'type': 'discrete', 'value': inputs.construction_types()},
+                         {'type': 'discrete', 'range': inputs.construction_types(), 'sample_values': []},
 
                      'wall core width':
-                         {'type': 'uniform', 'value': [0.1, 0.9]},
+                         {'type': 'uniform', 'range': [0.1, 0.9], 'sample_values': []},
 
                      'wall core material':
-                         {'type': 'discrete', 'value': inputs.wall_core_materials()},
+                         {'type': 'discrete', 'range': inputs.wall_core_materials(), 'sample_values': []},
 
                      'plaster width':
-                         {'type': 'uniform', 'value': [0.01, 0.02]},
+                         {'type': 'uniform', 'range': [0.01, 0.02], 'sample_values': []},
 
                      'plaster material':
-                         {'type': 'discrete', 'value': inputs.plaster_materials()},
+                         {'type': 'discrete', 'range': inputs.plaster_materials(), 'sample_values': []},
 
                      'insulation type':
-                         {'type': 'discrete', 'value': inputs.insulation_type()},
+                         {'type': 'discrete', 'range': inputs.insulation_type(), 'sample_values': []},
 
                      'insulation width':
-                         {'type': 'uniform', 'value': [0.01, 0.3]},
+                         {'type': 'uniform', 'range': [0.01, 0.3], 'sample_values': []},
 
                      'start year':
-                         {'type': 'discrete', 'value': 24},
+                         {'type': 'discrete', 'range': 24, 'sample_values': []},
                      }
 
     sampling_settings = {'initial samples per set': 1,
@@ -118,16 +118,53 @@ def load_scheme(path: str) -> dict:
     return sampling_scheme
 
 
-def load_existing_samples():
+def load_existing_samples(sampling_scheme_id):
+    """
+    Look up the existing sample entries in the database connected to the scheme
+    If there is not previous samples in database return empty dict
 
-    # TODO - Load existing samples from database
-    # Look up the existing sample entries in the database
-    # If there is not previous samples in database return empty dict or dataframe
-    # Download them
-    # Combine them into one
-    # Return the samples as a dict or dataframe
+    :param sampling_scheme_id: Sampling scheme id
+    :type sampling_scheme_id: str
+    :return: Return the samples as a dict
+    :rtype: dict
+    """
 
-    return None
+    scheme = sample_entry.Scheme.objects(id=sampling_scheme_id).first()
+
+    if scheme.samples:
+        samples_list = scheme.samples
+        samples = samples_list[0].samples
+
+        for sample in samples_list[1:]:
+
+            for parameter in sample.keys():
+                samples[parameter]['sample_values'].append(sample[parameter]['sample_values'])
+
+        return samples
+
+    else:
+        return {}
+
+
+def load_latest_sample(sampling_scheme_id: str) -> dict:
+    """
+    Look up the last existing sample entries in the database connected to the scheme
+    If there is not previous samples in database return empty dict
+
+    :param sampling_scheme_id: Sampling scheme id
+    :type sampling_scheme_id: str
+    :return: Return the samples as a dict
+    :rtype: dict
+    """
+
+    scheme = sample_entry.Scheme.objects(id=sampling_scheme_id).first()
+
+    if scheme.samples:
+        samples_list = scheme.samples
+        return samples_list[-1].samples
+
+    else:
+        return {}
 
 
 def create_samples(sampling_scheme, previous_samples):
@@ -146,7 +183,6 @@ def create_delphin_projects(sampling_scheme, samples):
     # Return the database ids for the delphin files
 
     return None
-
 
 def upload_samples(new_samples, sample_iteration):
     """
@@ -181,16 +217,9 @@ def add_delphin_to_sampling(sampling_document, delphin_docs):
 
     return None
 
-
 def calculate_error(delphin_ids):
     # TODO - Calculated the standard error on the results from the given delphin simulations
     # Return the error
-    return None
-
-
-def upload_standard_error(sampling_document, current_error):
-    # TODO - Upload the standard error to the sampling entry
-
     return None
 
 

@@ -9,16 +9,20 @@ import os
 import os.path
 import shutil
 import bson.json_util
+import datetime
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import material_entry
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry
 from delphin_6_automation.database_interactions.db_templates import weather_entry
+from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
+from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.file_parsing import delphin_parser
+from delphin_6_automation.sampling import sampling
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -142,3 +146,23 @@ def test_cvode_stats(test_folder, tmpdir):
                                                                       'delphin_results/log'))
 
     assert isinstance(integrator_dict, dict)
+
+
+def test_upload_sampling_scheme(empty_database, tmpdir):
+
+    test_dir = tmpdir.mkdir('test')
+    scheme = sampling.create_sampling_scheme(test_dir)
+    scheme_id = sampling_interactions.upload_sampling_scheme(scheme)
+
+    scheme_doc = sample_entry.Scheme.objects().first()
+
+    assert isinstance(scheme_doc.added_date, datetime.datetime)
+    assert not scheme_doc.samples
+    assert not scheme_doc.standard_error
+    assert scheme_doc.scheme
+    assert isinstance(scheme_doc.scheme, dict)
+    assert all(element in list(scheme_doc.scheme.keys())
+               for element in ['scenario', 'distributions', 'settings'])
+    #assert scheme_doc.scheme['scenario']
+    assert scheme_doc.scheme['distributions']
+    assert scheme_doc.scheme['settings']
