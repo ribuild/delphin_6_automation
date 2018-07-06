@@ -195,9 +195,30 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
     return mass_loss[1:], alpha[1:]
 
 
-def mould_pj():
-    # TODO - Implement PJ Mould Model
-    pass
+def mould_pj(relative_humidity_list,
+             temperature_list,
+             aed_group='b') -> tuple:
+    '''
+    Outputs RH difference between measured and critical RH for each time step and two limits.
+    Possitive values imply how much RH exceed the critial RH. A low and upper critial RH are applied.
+
+    Litterature:
+    '''
+    betas = {'a': 0.043, 'b': 0.036, 'c': 0.028, 'd': 0.021, 'e': 0.014}
+    temperature_list = np.array(temperature_list)
+    relative_humidity_list = np.array(relative_humidity_list)
+
+    def relative_humidity_crit_low(temperature):
+        return 105 + betas[aed_group] * (temperature ** 2 - 54 * temperature)
+
+    def relative_humidity_crit_up(temperature):
+        return 105 + (betas[aed_group] - 0.007) * (temperature ** 2 - 54 * temperature)
+
+    difference_crit_low = relative_humidity_list - relative_humidity_crit_low(temperature_list)
+
+    difference_crit_up = relative_humidity_list - relative_humidity_crit_up(temperature_list)
+
+    return difference_crit_low, difference_crit_up
 
 
 def algae():
