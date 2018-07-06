@@ -220,9 +220,6 @@ def mould_pj(relative_humidity_list,
 
     return difference_crit_low, difference_crit_up
 
-    # TODO - Implement PJ Mould Model
-    pass
-
 
 def algae():
     # TODO - Implement UNIVPM Algae Model
