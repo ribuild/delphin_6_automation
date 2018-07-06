@@ -1,3 +1,5 @@
+import delphin_6_automation.database_interactions.sampling_interactions
+
 __author__ = "Christian Kongsgaard"
 __license__ = 'MIT'
 
@@ -6,11 +8,13 @@ __license__ = 'MIT'
 
 # Modules
 import sys
+import os
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 from delphin_6_automation.sampling import sampling
 from delphin_6_automation.database_interactions import simulation_interactions
+from delphin_6_automation.database_interactions import sampling_interactions
 
 # Logger
 logger = ribuild_logger(__name__)
@@ -51,16 +55,17 @@ def menu():
 
     if choice == 'a':
         logger.info('starting sampling')
-        sampling_scheme_path = input("Define path to sampling scheme >")
-        logger.info(sampling_scheme_path)
+        sampling_scheme_id = input("Define sampling scheme ID >")
+        logger.info(sampling_scheme_id)
 
         print('Starting sampling\n')
-        sampling_worker(sampling_scheme_path)
+        sampling_worker(sampling_scheme_id)
 
     elif choice == 'b':
-        sampling_scheme_path = input("Define path to where the sampling scheme should be saved >")
-        sampling.create_sampling_scheme(sampling_scheme_path)
-        logger.info(f'Created sampling at: {sampling_scheme_path}')
+        scheme = sampling.create_sampling_scheme(os.path.dirname(__file__))
+        scheme_id = sampling_interactions.upload_sampling_scheme(scheme)
+        print(f'Created sampling and uploaded it with ID: {scheme_id}')
+        logger.info(f'Created sampling and uploaded it with ID: {scheme_id}')
 
     elif choice == 'c':
         print('Not implemented')
@@ -70,24 +75,23 @@ def menu():
         print("Goodbye")
 
 
-def sampling_worker(path):
-    scheme = sampling.load_scheme(path)
+def sampling_worker(scheme_id):
+    scheme = sampling_interactions.download_sampling_scheme(scheme_id)
     sample_iteration = 0
-    current_error = 0
     convergence = False
 
     while not convergence:
         print(f'Running sampling iteration #{sample_iteration}')
         logger.info(f'Running sampling iteration #{sample_iteration}')
 
-        samples = sampling.load_existing_samples()
+        samples = sampling.load_existing_samples(scheme_id)
         new_samples = sampling.create_samples(scheme, samples)
-        sampling_document = sampling.upload_samples(new_samples, sample_iteration)
+        sampling_document = sampling_interactions.upload_samples(new_samples, sample_iteration)
         delphin_ids = sampling.create_delphin_projects(scheme, new_samples)
-        sampling.add_delphin_to_sampling(sampling_document, delphin_ids)
+        sampling_interactions.add_delphin_to_sampling(sampling_document, delphin_ids)
         simulation_interactions.wait_until_simulated(delphin_ids)
         current_error = sampling.calculate_error(delphin_ids)
-        sampling.upload_standard_error(sampling_document, current_error)
+        sampling_interactions.upload_standard_error(sampling_document, current_error)
 
         print(f'Standard Error at iteration {sample_iteration} is: {current_error}')
         logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}')
