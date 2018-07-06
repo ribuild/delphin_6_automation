@@ -7,6 +7,10 @@ __license__ = 'MIT'
 # Modules
 import json
 import os
+import pandas as pd
+from scipy.stats import norm
+from scipy.stats import randint
+from scipy.stats import uniform
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
@@ -184,6 +188,7 @@ def create_delphin_projects(sampling_scheme, samples):
 
     return None
 
+
 def upload_samples(new_samples, sample_iteration):
     """
     Uploads samples to database and returns the sample id
@@ -217,6 +222,7 @@ def add_delphin_to_sampling(sampling_document, delphin_docs):
 
     return None
 
+
 def calculate_error(delphin_ids):
     # TODO - Calculated the standard error on the results from the given delphin simulations
     # Return the error
@@ -228,3 +234,44 @@ def check_convergence(sampling_scheme, standard_error):
     # If it is return True otherwise return False
 
     return None
+
+
+def compute_sampling_distributions(sampling_scheme, samples_raw):
+
+    scenarios = sampling_scheme['scenario'].keys()
+    sample_parameters = sampling_scheme['distributions'].keys()
+    distributions = dict()
+
+    for scenario in scenarios.keys():
+
+        for index, sample_param in enumerate(sample_parameters):
+            sample_column = samples_raw[:, index]
+
+            if sampling_scheme['distributions'][sample_param]['type'] == 'discrete':
+
+                range_ = sampling_scheme['distributions'][sample_param]['range']
+                if isinstance(range_, int):
+                    high_bound = range_ + 1
+                    values = randint.ppf(sample_column, low=1, high=high_bound).tolist()
+
+                else:
+                    high_bound = len(range_)
+                    values = randint.ppf(sample_column, low=0, high=high_bound).tolist()
+
+            elif sampling_scheme['distributions'][sample_param]['type'] == 'uniform':
+
+                range_ = sampling_scheme['distributions'][sample_param]['range']
+                values = uniform.ppf(sample_column, loc=range_[0], scale=range_[1] - range_[0]).tolist()
+
+            elif sampling_scheme['distributions'][sample_param]['type'] == 'normal':
+
+                range_ = sampling_scheme['distributions'][sample_param]['range']
+                values = norm.ppf(sample_column, loc=range_[0], scale=range_[1]).tolist()
+
+            else:
+                raise KeyError(f'Unknown distribution for: {sample_param}. Distribution given was: '
+                               f'{sampling_scheme["distributions"][sample_param]["type"]}')
+
+            distributions[scenario][sample_param] = values
+
+    return distributions
