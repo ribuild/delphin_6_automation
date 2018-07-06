@@ -6,9 +6,12 @@ __license__ = 'MIT'
 
 # Modules
 import os
+import pytest
 
 # RiBuild Modules
 from delphin_6_automation.sampling import sampling
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
+from delphin_6_automation.database_interactions.db_templates import sample_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -36,8 +39,12 @@ def test_load_scheme(tmpdir):
     assert source_scheme == test_scheme
 
 
-def test_add_delphin_to_sampling(samples, docs):
+@pytest.mark.skip()
+def test_add_delphin_to_sampling(db_one_project, add_sampling):
 
-    sampling_doc = sampling.add_delphin_to_sampling(samples, docs)
+    delphin_doc = delphin_entry.Delphin.objects().first()
+    sample = sample_entry.Sample.objects().first()
+
+    sampling_doc = sampling.add_delphin_to_sampling(sample, [delphin_doc, ])
 
     assert sampling_doc.delphin_ids
