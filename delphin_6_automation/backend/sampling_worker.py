@@ -86,12 +86,12 @@ def sampling_worker(scheme_id):
 
         samples = sampling.load_existing_samples(scheme_id)
         new_samples = sampling.create_samples(scheme, samples)
-        sampling_document = sampling_interactions.upload_samples(new_samples, sample_iteration)
-        delphin_ids = sampling.create_delphin_projects(scheme, new_samples)
-        sampling_interactions.add_delphin_to_sampling(sampling_document, delphin_ids)
-        simulation_interactions.wait_until_simulated(delphin_ids)
-        current_error = sampling.calculate_error(delphin_ids)
-        sampling_interactions.upload_standard_error(sampling_document, current_error)
+        sampling_document = sampling.upload_samples(new_samples, sample_iteration)
+        delphin_docs = sampling.create_delphin_projects(scheme, new_samples)
+        sampling.add_delphin_to_sampling(sampling_document, delphin_docs)
+        simulation_interactions.wait_until_simulated(delphin_docs)
+        current_error = sampling.calculate_error(delphin_docs)
+        sampling.upload_standard_error(sampling_document, current_error)
 
         print(f'Standard Error at iteration {sample_iteration} is: {current_error}')
         logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}')
