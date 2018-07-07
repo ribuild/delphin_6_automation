@@ -16,10 +16,13 @@ import bson
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
+from delphin_6_automation.database_interactions.db_templates import result_processed_entry
+from delphin_6_automation.delphin_setup import damage_models
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 import delphin_6_automation.delphin_setup.delphin_permutations as permutations
 from delphin_6_automation.file_parsing import delphin_parser
+from delphin_6_automation.file_parsing import weather_parser
 from delphin_6_automation.logging import ribuild_logger
 
 # Logger
@@ -452,7 +455,44 @@ def check_delphin_file(delphin_dict: dict):
     return error
 
 
-def upload_processed_results(folder):
-    # TODO - Process the results and upload them to the database
+def upload_processed_results(folder, delphin_doc, result_doc):
+    """
+    Process results and upload.
+    :param folder:
+    :param delphin_doc:
+    :param result_doc:
+    :return:
+    """
+    # Paths
+    temperature_mould = delphin_parser.d6o_to_dict(folder, 'temperature_mould.d6o')
+    relative_humidity_mould = delphin_parser.d6o_to_dict(folder, 'relative_humidity_mould.d6o')
+    temperature_algae = delphin_parser.d6o_to_dict(folder, 'temperature_algae.d6o')
+    relative_humidity_algae = delphin_parser.d6o_to_dict(folder, 'relative_humidity_algae.d6o')
+    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat_loss.d6o')
 
-    return None
+    weather_path = os.path.join(os.path.dirname(os.path.dirname(folder)), 'weather')
+    exterior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'exterior_temperature.ccd'))
+    interior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'indoor_temperature.cdd'))
+
+    # Upload
+    result_entry = result_processed_entry.ProcessedResult()
+    result_entry.delphin = delphin_doc
+    result_entry.results_raw = result_doc
+    result_entry.mould = {'a': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='a'),
+                          'b': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='b'),
+                          'c': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='c'),
+                          'd': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='d'),
+                          'e': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='e')}
+    result_entry.heat_loss = heat_loss
+    result_entry.algae = damage_models.algae(relative_humidity_algae, temperature_algae)
+    result_entry.u_value = damage_models.u_value(heat_loss, exterior_temperature, interior_temperature)
+    result_entry.thresholds = {'mould': [damage_models.mould_pj(relative_humidity_mould,
+                                                                temperature_mould, aed_group='a')[0].max(),
+                                         damage_models.mould_pj(relative_humidity_mould,
+                                                                temperature_mould, aed_group='a')[1].max()].max(),
+                               'heat_loss': heat_loss.sum(),
+                               'algae': damage_models.algae(relative_humidity_algae, temperature_algae).max()}
+
+    result_entry.save()
+
+    return result_entry.id

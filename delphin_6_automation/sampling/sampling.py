@@ -230,10 +230,16 @@ def upload_samples(new_samples, sample_iteration):
     return sample.id
 
 
-def add_delphin_to_sampling(sampling_document, delphin_ids):
-    # TODO - Add the delphin ids to the sampling database entry
-    # GET - sample.id above and create_delphin_projects aboveX2
-    delphin_document.update(set__dp6_file=delphin_dict)
+def add_delphin_to_sampling(sampling_document, delphin_docs):
+    """
+    Append the DELPHIN documents id to the mongoengine object from upload
+
+    :param sampling_document:
+    :param delphin_docs:
+    :return:
+    """
+
+    sampling_document.update(push__delphin_ids=delphin_docs)
 
     return None
 
