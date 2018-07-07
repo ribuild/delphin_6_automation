@@ -29,6 +29,18 @@ class Sample(mongoengine.Document):
     meta = collections.sample_db
 
 
+class SampleRaw(mongoengine.Document):
+
+    # Meta Data
+    added_date = mongoengine.DateTimeField(default=datetime.now)
+
+    # References
+    samples_raw = mongoengine.DictField(required=True)
+    sequence_number = mongoengine.IntField(required=True)
+
+    meta = collections.sample_raw_db
+
+
 class Scheme(mongoengine.Document):
 
     # Meta Data
@@ -37,5 +49,6 @@ class Scheme(mongoengine.Document):
 
     # References
     samples = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=Sample))
+    samples_raw = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=SampleRaw))
     standard_error = mongoengine.ListField()
     scheme = mongoengine.DictField(required=True)

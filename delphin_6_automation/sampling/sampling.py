@@ -11,11 +11,14 @@ import pandas as pd
 from scipy.stats import norm
 from scipy.stats import randint
 from scipy.stats import uniform
+import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
+from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
+from delphin_6_automation.sampling import sobol_lib
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -171,12 +174,30 @@ def load_latest_sample(sampling_scheme_id: str) -> dict:
         return {}
 
 
-def create_samples(sampling_scheme, previous_samples):
+def get_raw_samples(sampling_scheme: sample_entry.Scheme, step: int) -> np.array:
+
+    sampling_scheme.reload()
+
+    # Check if the scheme has a raw sampling with the same sequence number as step
+    for raw_sample in sampling_scheme.samples_raw:
+        if raw_sample.sequence_number == step:
+            return np.array(raw_sample.samples_raw)
+
+    # If not create a new raw sampling
+    distribution_dimension = len(sampling_scheme.scheme['distributions'].keys())
+    samples_raw = sobol(m=2 ** 12, dimension=distribution_dimension, sets=1)
+    samples_raw_id = sampling_interactions.upload_raw_samples(samples_raw, step)
+    sampling_interactions.add_raw_samples_to_scheme(sampling_scheme, samples_raw_id)
+
+    return samples_raw
+
+
+def create_samples(sampling_scheme: sample_entry.Scheme) -> dict:
     # TODO - Create new samples based on the old ones and the sampling scheme
     # Call Sobol to create new samples based on scheme and previous samples
     # If previous samples are an empty dict/dataframe, create samples purely based on sampling scheme
 
-    return None
+    return samples
 
 
 def create_delphin_projects(sampling_scheme, samples):
@@ -269,3 +290,14 @@ def compute_sampling_distributions(sampling_scheme, samples_raw):
             distributions[scenario][sample_param] = values
 
     return distributions
+
+
+def sobol(m, dimension, sets=1):
+
+    design = np.empty([0, dimension])
+
+    for i in range(sets):
+        d = sobol_lib.scrambled_sobol_generate(k=dimension, N=m, skip=2, leap=0)
+        design = np.vstack((design, d))
+
+    return design

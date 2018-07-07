@@ -76,7 +76,7 @@ def menu():
 
 
 def sampling_worker(scheme_id):
-    scheme = sampling_interactions.download_sampling_scheme(scheme_id)
+    scheme_doc = sampling_interactions.get_sampling_scheme(scheme_id)
     sample_iteration = 0
     convergence = False
 
@@ -84,10 +84,10 @@ def sampling_worker(scheme_id):
         print(f'Running sampling iteration #{sample_iteration}')
         logger.info(f'Running sampling iteration #{sample_iteration}')
 
-        samples = sampling.load_existing_samples(scheme_id)
-        new_samples = sampling.create_samples(scheme, samples)
+        #samples = sampling.load_existing_samples(scheme_id)
+        new_samples = sampling.create_samples(scheme_doc)
         sampling_document = sampling_interactions.upload_samples(new_samples, sample_iteration)
-        delphin_ids = sampling.create_delphin_projects(scheme, new_samples)
+        delphin_ids = sampling.create_delphin_projects(scheme_doc.scheme, new_samples)
         sampling_interactions.add_delphin_to_sampling(sampling_document, delphin_ids)
         simulation_interactions.wait_until_simulated(delphin_ids)
         current_error = sampling.calculate_error(delphin_ids)
@@ -96,7 +96,7 @@ def sampling_worker(scheme_id):
         print(f'Standard Error at iteration {sample_iteration} is: {current_error}')
         logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}')
 
-        convergence = sampling.check_convergence(scheme, current_error)
+        convergence = sampling.check_convergence(scheme_doc.scheme, current_error)
         sample_iteration += 1
 
     print(f'Convergence reached at iteration #{sample_iteration}')

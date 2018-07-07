@@ -6,6 +6,7 @@ __license__ = 'MIT'
 
 # Modules
 import mongoengine
+import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import sample_entry
@@ -31,7 +32,7 @@ def upload_sampling_scheme(sampling_scheme: dict) -> str:
     return entry.id
 
 
-def download_sampling_scheme(scheme_id: str) -> dict:
+def get_sampling_scheme(scheme_id: str) -> sample_entry.Scheme:
     """
     Downloads the sampling scheme with the given database ID
 
@@ -43,7 +44,7 @@ def download_sampling_scheme(scheme_id: str) -> dict:
 
     scheme = sample_entry.Scheme.objects(id=scheme_id).first()
 
-    return scheme.scheme
+    return scheme
 
 
 def upload_samples(new_samples, sample_iteration):
@@ -77,3 +78,21 @@ def upload_standard_error(sampling_document, current_error):
     # TODO - Upload the standard error to the sampling entry
 
     return None
+
+
+def upload_raw_samples(samples_raw: np.array, sequence_number: int) -> str:
+
+    entry = sample_entry.SampleRaw()
+    entry.samples_raw = samples_raw.tolist()
+    entry.sequence_number = sequence_number
+    entry.save()
+
+    return entry.id
+
+
+def add_raw_samples_to_scheme(sampling_scheme: sample_entry.Scheme, samples_raw_id: str):
+
+    raw_sample_doc = sample_entry.SampleRaw.objects(id=samples_raw_id).first()
+    sampling_scheme.update(push__samples_raw=raw_sample_doc)
+
+    return sampling_scheme.id
