@@ -18,6 +18,7 @@ from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.sampling import sobol_lib
 
 
@@ -194,8 +195,19 @@ def get_raw_samples(sampling_scheme: sample_entry.Scheme, step: int) -> np.array
 
 def create_samples(sampling_scheme: sample_entry.Scheme) -> dict:
     # TODO - Create new samples based on the old ones and the sampling scheme
+    # Loop through the sampling sequences and generate samples each time
     # Call Sobol to create new samples based on scheme and previous samples
-    # If previous samples are an empty dict/dataframe, create samples purely based on sampling scheme
+    samples = dict()
+
+    for step in range(sampling_scheme['settings']['sequence']):
+        # if sampling sequence iteration exists download that.
+        # if not create new sampling
+        # used the sampling to create the distributions
+        # return the raw samples and distributions
+        raw_samples = get_raw_samples(sampling_scheme, step)
+        samples_subset = compute_sampling_distributions(sampling_scheme, raw_samples)
+
+        samples[step] = samples_subset
 
     return samples
 
@@ -230,16 +242,11 @@ def upload_samples(new_samples, sample_iteration):
     return sample.id
 
 
-def add_delphin_to_sampling(sampling_document, delphin_docs):
-    """
-    Append the DELPHIN documents id to the mongoengine object from upload
+def add_delphin_to_sampling(sampling_document, delphin_ids):
 
-    :param sampling_document:
-    :param delphin_docs:
-    :return:
-    """
-
-    sampling_document.update(push__delphin_ids=delphin_docs)
+    for delphin_id in delphin_ids:
+        delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
+        sampling_document.update(push__delphin_ids=delphin_doc)
 
     return None
 
