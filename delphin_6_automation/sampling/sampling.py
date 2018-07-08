@@ -12,10 +12,14 @@ from scipy.stats import norm
 from scipy.stats import randint
 from scipy.stats import uniform
 import numpy as np
+import collections
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
+from delphin_6_automation.database_interactions import weather_interactions
+from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -176,7 +180,6 @@ def load_latest_sample(sampling_scheme_id: str) -> dict:
 
 
 def get_raw_samples(sampling_scheme: sample_entry.Scheme, step: int) -> np.array:
-
     sampling_scheme.reload()
 
     # Check if the scheme has a raw sampling with the same sequence number as step
@@ -212,12 +215,77 @@ def create_samples(sampling_scheme: sample_entry.Scheme) -> dict:
     return samples
 
 
-def create_delphin_projects(sampling_scheme, samples):
+def create_delphin_projects(sampling_scheme: dict, samples: dict):
     # TODO - Create new delphin files based on the samples
     # The paths for the base delphin files should be found in the sampling scheme
     # Permutate the base files according to the samples
     # Upload the new delphin files
     # Return the database ids for the delphin files
+
+    delphin_ids = []
+    # Create all delphin projects and load them as dicts
+    delphin_dicts = []
+    for index, delphin in enumerate(delphin_dicts):
+        for parameter in samples.keys():
+            if parameter == 'exterior heat transfer coefficient slope':
+                # TODO - Figure out how to calculate the exchange slope
+                delphin_permutations.change_boundary_coefficient(delphin, )
+
+            elif parameter == 'exterior moisture transfer coefficient':
+                outdoor_moisture_transfer = samples[parameter][index] * outdoor_heat_transfer
+                delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorVaporDiffusion',
+                                                                 'ExchangeCoefficient', outdoor_moisture_transfer)
+
+            elif parameter == 'solar absorption':
+                delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorShortWaveRadiation',
+                                                                 'SurfaceAbsorptionCoefficient',
+                                                                 samples[parameter][index])
+
+            elif parameter == 'rain scale factor':
+                delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorWindDrivenRain',
+                                                                 'ExposureCoefficient',
+                                                                 samples[parameter][index])
+
+            elif parameter == 'interior heat transfer coefficient':
+                delphin_permutations.change_boundary_coefficient(delphin, 'IndoorHeatConduction',
+                                                                 'ExchangeCoefficient',
+                                                                 samples[parameter][index])
+
+            elif parameter == 'interior moisture transfer coefficient':
+                indoor_heat_transfer = samples['interior heat transfer coefficient'][index]
+                indoor_moisture_transfer = samples[parameter][index] * indoor_heat_transfer
+                delphin_permutations.change_boundary_coefficient(delphin, 'IndoorVaporDiffusion',
+                                                                 'ExchangeCoefficient',
+                                                                 indoor_moisture_transfer)
+
+            elif parameter == 'interior sd value':
+                delphin_permutations.change_boundary_coefficient(delphin, 'IndoorVaporDiffusion',
+                                                                 'SDValue',
+                                                                 samples[parameter][index])
+
+            elif parameter == 'wall orientation':
+                delphin_permutations.change_orientation(delphin, samples[parameter][index])
+
+            elif parameter == 'wall core width':
+                delphin_permutations.change_layer_width(delphin, 'Old Building Brick Dresden ZP [504]',
+                                                        samples[parameter][index])
+
+            elif parameter == 'wall core material':
+                # TODO - Fix new material
+                new_material = collections.OrderedDict()
+                delphin_permutations.change_layer_material(delphin, 'Old Building Brick Dresden ZP [504]',
+                                                           new_material)
+
+    # upload delphin
+
+    start_years = samples['start year']
+    years = []
+
+    for index in range(len(delphin_ids)):
+        weather_interactions.assign_weather_by_name_and_years(delphin_ids[index],
+                                                              samples['exterior climate'][index], years[index])
+        weather_interactions.assign_indoor_climate_to_project(delphin_ids[index],
+                                                              samples['interior climate'][index])
 
     return None
 
@@ -243,7 +311,6 @@ def upload_samples(new_samples, sample_iteration):
 
 
 def add_delphin_to_sampling(sampling_document, delphin_ids):
-
     for delphin_id in delphin_ids:
         delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
         sampling_document.update(push__delphin_ids=delphin_doc)
@@ -265,7 +332,6 @@ def check_convergence(sampling_scheme, standard_error):
 
 
 def compute_sampling_distributions(sampling_scheme, samples_raw):
-
     scenarios = sampling_scheme['scenario'].keys()
     sample_parameters = sampling_scheme['distributions'].keys()
     distributions = dict()
@@ -306,7 +372,6 @@ def compute_sampling_distributions(sampling_scheme, samples_raw):
 
 
 def sobol(m, dimension, sets=1):
-
     design = np.empty([0, dimension])
 
     for i in range(sets):
