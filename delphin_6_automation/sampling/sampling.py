@@ -13,6 +13,7 @@ from scipy.stats import randint
 from scipy.stats import uniform
 import numpy as np
 import collections
+import typing
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
@@ -215,7 +216,7 @@ def create_samples(sampling_scheme: sample_entry.Scheme) -> dict:
     return samples
 
 
-def create_delphin_projects(sampling_scheme: dict, samples: dict):
+def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List[str]:
     # TODO - Create new delphin files based on the samples
     # The paths for the base delphin files should be found in the sampling scheme
     # Permutate the base files according to the samples
@@ -223,7 +224,7 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict):
     # Return the database ids for the delphin files
 
     delphin_ids = []
-    # Create all delphin projects and load them as dicts
+    # TODO - Create all delphin projects and load them as dicts
     delphin_dicts = []
     for index, delphin in enumerate(delphin_dicts):
         for parameter in samples.keys():
@@ -276,6 +277,18 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict):
                 delphin_permutations.change_layer_material(delphin, 'Old Building Brick Dresden ZP [504]',
                                                            new_material)
 
+            elif parameter == 'plaster width':
+                delphin_permutations.change_layer_width(delphin, 'Lime cement mortar [717]',
+                                                        samples[parameter][index])
+
+            elif parameter == 'plaster material':
+                # TODO - Fix new material
+                new_material = collections.OrderedDict()
+                delphin_permutations.change_layer_material(delphin, 'Lime cement mortar [717]',
+                                                           new_material)
+
+        delphin_ids.append(delphin_interactions.upload_delphin_dict_to_database(delphin, 1))
+
     # upload delphin
 
     start_years = samples['start year']
@@ -287,7 +300,7 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict):
         weather_interactions.assign_indoor_climate_to_project(delphin_ids[index],
                                                               samples['interior climate'][index])
 
-    return None
+    return delphin_ids
 
 
 def upload_samples(new_samples, sample_iteration):
