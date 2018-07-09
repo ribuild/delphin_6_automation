@@ -113,9 +113,10 @@ def test_download_sampling_scheme(add_sampling_scheme):
     test_scheme = sampling_interactions.get_sampling_scheme(scheme_id)
 
     assert test_scheme
-    assert isinstance(test_scheme, dict)
-    assert all(element in list(test_scheme.keys())
+    assert isinstance(test_scheme, sample_entry.Scheme)
+    assert isinstance(test_scheme.scheme, dict)
+    assert all(element in list(test_scheme.scheme.keys())
                for element in ['scenario', 'distributions', 'settings'])
     #assert test_scheme['scenario']
-    assert test_scheme['distributions']
-    assert test_scheme['settings']
+    assert test_scheme.scheme['distributions']
+    assert test_scheme.scheme['settings']
