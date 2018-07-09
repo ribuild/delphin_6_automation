@@ -46,8 +46,8 @@ def create_sampling_scheme(path: str) -> dict:
     scenario = {}
 
     distributions = {'exterior climate':
-                         {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys()),
-                          'sample_values': []},
+                     {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys()),
+                              'sample_values': []},
 
                      'exterior heat transfer coefficient slope':
                          {'type': 'uniform', 'range': [1, 4], 'sample_values': []},
@@ -304,6 +304,7 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
                                                            new_material)
                 sample_dict[parameter] = samples[parameter][index]
 
+        # Upload project
         delphin_id = delphin_interactions.upload_delphin_dict_to_database(delphin, 1)
 
         start_year = samples['start year'][index]
@@ -319,28 +320,7 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
 
         delphin_ids.append(delphin_id)
 
-
     return delphin_ids
-
-
-def upload_samples(new_samples, sample_iteration):
-    """
-    Uploads samples to database and returns the sample id
-
-    :param new_samples: Samples
-    :type new_samples: dict
-    :param sample_iteration: Number of sample iteration
-    :type sample_iteration: int
-    :return: Sample Database id
-    :rtype: mongoengine.ObjectID
-    """
-
-    sample = sample_entry.Sample()
-    sample.samples = new_samples
-    sample.iteration = sample_iteration
-    sample.save()
-
-    return sample.id
 
 
 def add_delphin_to_sampling(sampling_document, delphin_ids):
