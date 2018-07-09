@@ -43,6 +43,8 @@ def create_sampling_scheme(path: str) -> dict:
     """
 
     # TODO - Create scenarios
+    designs = {}
+
     scenario = {}
 
     distributions = {'exterior climate':
