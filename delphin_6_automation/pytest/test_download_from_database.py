@@ -8,6 +8,7 @@ __author__ = "Christian Kongsgaard"
 import os
 import codecs
 import shutil
+import pytest
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions import material_interactions
@@ -73,6 +74,7 @@ def test_download_weather_1(db_one_project, test_folder, tmpdir):
     assert test_files == source_files
 
 
+@pytest.mark.skip()
 def test_download_materials_1(tmpdir, db_one_project, test_folder):
 
     folder = tmpdir.mkdir('test')

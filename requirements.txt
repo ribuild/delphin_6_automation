@@ -10,3 +10,4 @@ notifiers
 pygithub
 scikit-learn
 sshtunnel
+xlrd
