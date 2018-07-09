@@ -290,18 +290,18 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
                 delphin_permutations.change_layer_material(delphin, 'Lime cement mortar [717]',
                                                            new_material)
 
-        delphin_ids.append(delphin_interactions.upload_delphin_dict_to_database(delphin, 1))
+        delphin_id = delphin_interactions.upload_delphin_dict_to_database(delphin, 1)
 
-    # upload delphin
-
-    start_years = samples['start year']
-    years = []
-
-    for index in range(len(delphin_ids)):
-        weather_interactions.assign_weather_by_name_and_years(delphin_ids[index],
-                                                              samples['exterior climate'][index], years[index])
+        start_year = samples['start year'][index]
+        years = [start_year, ] + [year for year in range(start_year, start_year + 5)]
+        weather_interactions.assign_weather_by_name_and_years(delphin_id,
+                                                              samples['exterior climate'][index], years)
         weather_interactions.assign_indoor_climate_to_project(delphin_ids[index],
                                                               samples['interior climate'][index])
+        delphin_ids.append(delphin_id)
+
+
+
 
     return delphin_ids
 
