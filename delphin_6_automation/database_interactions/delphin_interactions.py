@@ -496,3 +496,11 @@ def upload_processed_results(folder, delphin_doc, result_doc):
     result_entry.save()
 
     return result_entry.id
+
+
+def add_sampling_dict(delphin_id, sample_dict):
+
+    entry = delphin_db.Delphin.objects(id=delphin_id).first()
+    entry.update(set__sample_data=sample_dict)
+
+    return entry.id

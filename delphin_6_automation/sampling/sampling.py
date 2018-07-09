@@ -227,10 +227,13 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
     # TODO - Create all delphin projects and load them as dicts
     delphin_dicts = []
     for index, delphin in enumerate(delphin_dicts):
+        sample_dict = dict()
+
         for parameter in samples.keys():
             if parameter == 'exterior heat transfer coefficient slope':
                 delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorHeatConduction',
                                                                  'ExchangeSlope', samples[parameter][index])
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'exterior moisture transfer coefficient':
                 outdoor_moisture_transfer = \
@@ -239,21 +242,25 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
 
                 delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorVaporDiffusion',
                                                                  'ExchangeSlope', outdoor_moisture_transfer)
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'solar absorption':
                 delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorShortWaveRadiation',
                                                                  'SurfaceAbsorptionCoefficient',
                                                                  samples[parameter][index])
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'rain scale factor':
                 delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorWindDrivenRain',
                                                                  'ExposureCoefficient',
                                                                  samples[parameter][index])
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'interior heat transfer coefficient':
                 delphin_permutations.change_boundary_coefficient(delphin, 'IndoorHeatConduction',
                                                                  'ExchangeCoefficient',
                                                                  samples[parameter][index])
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'interior moisture transfer coefficient':
                 indoor_heat_transfer = samples['interior heat transfer coefficient'][index]
@@ -261,34 +268,41 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
                 delphin_permutations.change_boundary_coefficient(delphin, 'IndoorVaporDiffusion',
                                                                  'ExchangeCoefficient',
                                                                  indoor_moisture_transfer)
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'interior sd value':
                 delphin_permutations.change_boundary_coefficient(delphin, 'IndoorVaporDiffusion',
                                                                  'SDValue',
                                                                  samples[parameter][index])
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'wall orientation':
                 delphin_permutations.change_orientation(delphin, samples[parameter][index])
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'wall core width':
                 delphin_permutations.change_layer_width(delphin, 'Old Building Brick Dresden ZP [504]',
                                                         samples[parameter][index])
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'wall core material':
                 # TODO - Fix new material
                 new_material = collections.OrderedDict()
                 delphin_permutations.change_layer_material(delphin, 'Old Building Brick Dresden ZP [504]',
                                                            new_material)
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'plaster width':
                 delphin_permutations.change_layer_width(delphin, 'Lime cement mortar [717]',
                                                         samples[parameter][index])
+                sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'plaster material':
                 # TODO - Fix new material
                 new_material = collections.OrderedDict()
                 delphin_permutations.change_layer_material(delphin, 'Lime cement mortar [717]',
                                                            new_material)
+                sample_dict[parameter] = samples[parameter][index]
 
         delphin_id = delphin_interactions.upload_delphin_dict_to_database(delphin, 1)
 
@@ -298,9 +312,12 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
                                                               samples['exterior climate'][index], years)
         weather_interactions.assign_indoor_climate_to_project(delphin_ids[index],
                                                               samples['interior climate'][index])
+        sample_dict['start year'] = samples['start year'][index]
+        sample_dict['exterior climate'] = samples['exterior climate'][index]
+        sample_dict['interior climate'] = samples['interior climate'][index]
+        delphin_interactions.add_sampling_dict(delphin_id, sample_dict)
+
         delphin_ids.append(delphin_id)
-
-
 
 
     return delphin_ids
