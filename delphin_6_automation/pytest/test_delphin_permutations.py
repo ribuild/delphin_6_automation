@@ -74,7 +74,7 @@ def test_change_weather(test_folder, delphin_file_path):
 
 
 @pytest.mark.parametrize('orientation',
-                         [0, 15, 30, 45, 90, 180, 220, 300, 360])
+                         [0, 15, 30, 45, 90, 180, 220, 300, 360, 0.3, 23.56])
 def test_change_orientation(delphin_file_path, orientation):
 
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
@@ -86,7 +86,7 @@ def test_change_orientation(delphin_file_path, orientation):
 
 
 @pytest.mark.parametrize('orientation',
-                         [-10, 430, 0.3])
+                         [-10, 430])
 @pytest.mark.xfail()
 def test_change_orientation_fail(delphin_file_path, orientation):
 

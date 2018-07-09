@@ -221,7 +221,6 @@ def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
     """
 
     assert 0 <= new_orientation <= 360
-    assert isinstance(new_orientation, int)
 
     # Find current orientation
     interfaces = delphin_dict['DelphinProject']['Conditions']['Interfaces']['Interface']
