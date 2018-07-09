@@ -369,3 +369,9 @@ def get_simulation_length(delphin_dict: dict) -> tuple:
     simulation_properties = delphin_dict['DelphinProject']['Init']['SimulationParameter']['Interval']['IBK:Parameter']
 
     return SimulationLength(float(simulation_properties['#text']), simulation_properties['@unit'])
+
+
+def compute_vapour_diffusion_slope(heat_slope, vapour_exchange):
+
+    heat_exchange = 4
+    return heat_slope * vapour_exchange + heat_exchange * vapour_exchange

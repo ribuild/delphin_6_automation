@@ -53,7 +53,7 @@ def create_sampling_scheme(path: str) -> dict:
                          {'type': 'uniform', 'range': [1, 4], 'sample_values': []},
 
                      'exterior moisture transfer coefficient':
-                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -9], 'sample_values': []},
+                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], 'sample_values': []},
 
                      'solar absorption':
                          {'type': 'uniform', 'range': [0.4, 0.8], 'sample_values': []},
@@ -68,7 +68,7 @@ def create_sampling_scheme(path: str) -> dict:
                          {'type': 'uniform', 'range': [5, 10], 'sample_values': []},
 
                      'interior moisture transfer coefficient':
-                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -9], 'sample_values': []},
+                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], 'sample_values': []},
 
                      'interior sd value':
                          {'type': 'uniform', 'range': [0.0, 0.6], 'sample_values': []},
@@ -229,13 +229,16 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
     for index, delphin in enumerate(delphin_dicts):
         for parameter in samples.keys():
             if parameter == 'exterior heat transfer coefficient slope':
-                # TODO - Figure out how to calculate the exchange slope
-                delphin_permutations.change_boundary_coefficient(delphin, )
+                delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorHeatConduction',
+                                                                 'ExchangeSlope', samples[parameter][index])
 
             elif parameter == 'exterior moisture transfer coefficient':
-                outdoor_moisture_transfer = samples[parameter][index] * outdoor_heat_transfer
+                outdoor_moisture_transfer = \
+                    delphin_permutations.compute_vapour_diffusion_slope(
+                        samples['exterior heat transfer coefficient slope'][index], samples[parameter][index])
+
                 delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorVaporDiffusion',
-                                                                 'ExchangeCoefficient', outdoor_moisture_transfer)
+                                                                 'ExchangeSlope', outdoor_moisture_transfer)
 
             elif parameter == 'solar absorption':
                 delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorShortWaveRadiation',
