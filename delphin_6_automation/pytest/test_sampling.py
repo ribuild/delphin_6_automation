@@ -1,5 +1,3 @@
-import delphin_6_automation.database_interactions.sampling_interactions
-
 __author__ = "Christian Kongsgaard"
 __license__ = 'MIT'
 
@@ -12,6 +10,7 @@ import pytest
 
 # RiBuild Modules
 from delphin_6_automation.sampling import sampling
+import delphin_6_automation.database_interactions.sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 
