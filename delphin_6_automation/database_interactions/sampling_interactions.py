@@ -9,7 +9,8 @@ import mongoengine
 import numpy as np
 
 # RiBuild Modules
-from delphin_6_automation.database_interactions.db_templates import sample_entry
+from delphin_6_automation.database_interactions.db_templates import sample_entry, delphin_entry
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -47,7 +48,7 @@ def get_sampling_scheme(scheme_id: str) -> sample_entry.Scheme:
     return scheme
 
 
-def upload_samples(new_samples, sample_iteration):
+def upload_samples(new_samples: dict, sample_iteration: int) -> str:
     """
     Uploads samples to database and returns the sample id
 
@@ -65,13 +66,6 @@ def upload_samples(new_samples, sample_iteration):
     sample.save()
 
     return sample.id
-
-
-def add_delphin_to_sampling(sampling_document, delphin_ids):
-    # TODO - Add the delphin ids to the sampling database entry
-    # Test Simon
-
-    return None
 
 
 def upload_standard_error(sampling_document, current_error):
@@ -96,3 +90,10 @@ def add_raw_samples_to_scheme(sampling_scheme: sample_entry.Scheme, samples_raw_
     sampling_scheme.update(push__samples_raw=raw_sample_doc)
 
     return sampling_scheme.id
+
+
+def add_delphin_to_sampling(sampling_document: sample_entry.Sample, delphin_ids: list):
+
+    for delphin_id in delphin_ids:
+        delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
+        sampling_document.update(push__delphin_ids=delphin_doc)

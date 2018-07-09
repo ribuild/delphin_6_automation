@@ -22,7 +22,6 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
-from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.sampling import sobol_lib
 
 
@@ -322,14 +321,6 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
         delphin_ids.append(delphin_id)
 
     return delphin_ids
-
-
-def add_delphin_to_sampling(sampling_document, delphin_ids):
-    for delphin_id in delphin_ids:
-        delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
-        sampling_document.update(push__delphin_ids=delphin_doc)
-
-    return None
 
 
 def calculate_error(delphin_ids):

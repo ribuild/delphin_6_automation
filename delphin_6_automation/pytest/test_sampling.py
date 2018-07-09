@@ -1,3 +1,5 @@
+import delphin_6_automation.database_interactions.sampling_interactions
+
 __author__ = "Christian Kongsgaard"
 __license__ = 'MIT'
 
@@ -45,6 +47,6 @@ def test_add_delphin_to_sampling(db_one_project, add_sampling):
     delphin_doc = delphin_entry.Delphin.objects().first()
     sample = sample_entry.Sample.objects().first()
 
-    sampling_doc = sampling.add_delphin_to_sampling(sample, [delphin_doc, ])
+    sampling_doc = delphin_6_automation.database_interactions.sampling_interactions.add_delphin_to_sampling(sample, [delphin_doc, ])
 
     assert sampling_doc.delphin_ids
