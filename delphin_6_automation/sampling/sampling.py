@@ -7,7 +7,6 @@ __license__ = 'MIT'
 # Modules
 import json
 import os
-import pandas as pd
 from scipy.stats import norm
 from scipy.stats import randint
 from scipy.stats import uniform
