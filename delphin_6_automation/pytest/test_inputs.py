@@ -5,6 +5,7 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
+import pytest
 
 # RiBuild Modules
 from delphin_6_automation.sampling import inputs
@@ -23,6 +24,7 @@ def test_wall_core_materials():
                for material_id in materials)
 
 
+@pytest.mark.skip('Not yet implemented')
 def test_plaster_materials():
 
     materials = inputs.plaster_materials()

@@ -74,7 +74,7 @@ def test_download_weather_1(db_one_project, test_folder, tmpdir):
     assert test_files == source_files
 
 
-@pytest.mark.skip()
+@pytest.mark.skip('Weird error on Travis')
 def test_download_materials_1(tmpdir, db_one_project, test_folder):
 
     folder = tmpdir.mkdir('test')
@@ -110,7 +110,7 @@ def test_download_sampling_scheme(add_sampling_scheme):
 
     scheme_id = sample_entry.Scheme.objects().first().id
 
-    test_scheme = sampling_interactions.download_sampling_scheme(scheme_id)
+    test_scheme = sampling_interactions.get_sampling_scheme(scheme_id)
 
     assert test_scheme
     assert isinstance(test_scheme, dict)
