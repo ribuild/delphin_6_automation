@@ -7,6 +7,7 @@ __license__ = 'MIT'
 # Modules
 import os
 import pytest
+import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.sampling import sampling
@@ -49,3 +50,15 @@ def test_add_delphin_to_sampling(db_one_project, add_sampling):
     sampling_doc = delphin_6_automation.database_interactions.sampling_interactions.add_delphin_to_sampling(sample, [delphin_doc, ])
 
     assert sampling_doc.delphin_ids
+
+
+@pytest.mark.parametrize('second_dimension',
+                         [1, 2, 3, 5, 6, 9])
+def test_sobol(second_dimension):
+
+    first_dimension = 2**12
+    sobol_sampling = sampling.sobol(m=first_dimension, dimension=second_dimension)
+
+    assert isinstance(sobol_sampling, np.ndarray)
+    assert sobol_sampling.shape == (first_dimension, second_dimension)
+    assert np.all(sobol_sampling[(sobol_sampling < 1.0) & (sobol_sampling > 0.0)])

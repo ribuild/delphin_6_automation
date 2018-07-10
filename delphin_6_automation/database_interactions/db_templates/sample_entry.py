@@ -36,7 +36,7 @@ class SampleRaw(mongoengine.Document):
     added_date = mongoengine.DateTimeField(default=datetime.now)
 
     # References
-    samples_raw = mongoengine.DictField(required=True)
+    samples_raw = mongoengine.ListField(required=True)
     sequence_number = mongoengine.IntField(required=True)
 
     meta = collections.sample_raw_db

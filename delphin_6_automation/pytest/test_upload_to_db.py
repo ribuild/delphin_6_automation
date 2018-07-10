@@ -166,3 +166,25 @@ def test_upload_sampling_scheme(empty_database, tmpdir):
     #assert scheme_doc.scheme['scenario']
     assert scheme_doc.scheme['distributions']
     assert scheme_doc.scheme['settings']
+
+
+def test_upload_raw_samples(empty_database):
+
+    raw_id = sampling_interactions.upload_raw_samples(sampling.sobol(m=2**12, dimension=3), 1)
+    raw_entry = sample_entry.SampleRaw.objects(id=raw_id).first()
+
+    assert raw_entry
+    assert isinstance(raw_entry.samples_raw, list)
+    assert raw_entry.sequence_number == 1
+
+
+def test_add_raw_samples_to_scheme(add_sampling_scheme, add_raw_sample):
+
+    raw_entry = sample_entry.SampleRaw.objects().first()
+    scheme_entry = sample_entry.Scheme.objects().first()
+
+    sampling_interactions.add_raw_samples_to_scheme(scheme_entry, raw_entry.id)
+    scheme_entry.reload()
+
+    assert isinstance(scheme_entry.samples_raw, list)
+    assert scheme_entry.samples_raw[0] == raw_entry

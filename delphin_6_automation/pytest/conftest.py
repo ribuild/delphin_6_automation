@@ -130,3 +130,9 @@ def add_sampling_scheme(setup_database, tmpdir):
     test_dir = tmpdir.mkdir('test')
     scheme = sampling.create_sampling_scheme(test_dir)
     sampling_interactions.upload_sampling_scheme(scheme)
+
+
+@pytest.fixture()
+def add_raw_sample(setup_database):
+
+    sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 12, dimension=3), 1)

@@ -82,7 +82,7 @@ def upload_standard_error(sampling_id: str, current_error):
     sampling_document.update(push__standard_error=current_error)
 
 
-def upload_raw_samples(samples_raw: np.array, sequence_number: int) -> str:
+def upload_raw_samples(samples_raw: np.ndarray, sequence_number: int) -> str:
 
     entry = sample_entry.SampleRaw()
     entry.samples_raw = samples_raw.tolist()
