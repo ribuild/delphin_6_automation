@@ -11,7 +11,7 @@ import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.sampling import sampling
-import delphin_6_automation.database_interactions.sampling_interactions
+from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 
@@ -41,13 +41,13 @@ def test_load_scheme(tmpdir):
     assert source_scheme == test_scheme
 
 
-@pytest.mark.skip()
+@pytest.mark.skip('not yet implemented')
 def test_add_delphin_to_sampling(db_one_project, add_sampling):
 
     delphin_doc = delphin_entry.Delphin.objects().first()
     sample = sample_entry.Sample.objects().first()
 
-    sampling_doc = delphin_6_automation.database_interactions.sampling_interactions.add_delphin_to_sampling(sample, [delphin_doc, ])
+    sampling_doc = sampling_interactions.add_delphin_to_sampling(sample, [delphin_doc, ])
 
     assert sampling_doc.delphin_ids
 
