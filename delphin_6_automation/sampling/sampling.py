@@ -50,55 +50,55 @@ def create_sampling_scheme(path: str) -> dict:
                               'sample_values': []},
 
                      'exterior heat transfer coefficient slope':
-                         {'type': 'uniform', 'range': [1, 4], 'sample_values': []},
+                         {'type': 'uniform', 'range': [1, 4],},
 
                      'exterior moisture transfer coefficient':
-                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], 'sample_values': []},
+                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], },
 
                      'solar absorption':
-                         {'type': 'uniform', 'range': [0.4, 0.8], 'sample_values': []},
+                         {'type': 'uniform', 'range': [0.4, 0.8], },
 
                      'rain scale factor':
-                         {'type': 'uniform', 'range': [0, 2], 'sample_values': []},
+                         {'type': 'uniform', 'range': [0, 2], },
 
                      'interior climate':
-                         {'type': 'discrete', 'range': ['a', 'b'], 'sample_values': []},
+                         {'type': 'discrete', 'range': ['a', 'b'], },
 
                      'interior heat transfer coefficient':
-                         {'type': 'uniform', 'range': [5, 10], 'sample_values': []},
+                         {'type': 'uniform', 'range': [5, 10], },
 
                      'interior moisture transfer coefficient':
-                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], 'sample_values': []},
+                         {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], },
 
                      'interior sd value':
-                         {'type': 'uniform', 'range': [0.0, 0.6], 'sample_values': []},
+                         {'type': 'uniform', 'range': [0.0, 0.6], },
 
                      'wall orientation':
-                         {'type': 'uniform', 'range': [0, 360], 'sample_values': []},
+                         {'type': 'uniform', 'range': [0, 360], },
 
                      'construction type':
-                         {'type': 'discrete', 'range': inputs.construction_types(), 'sample_values': []},
+                         {'type': 'discrete', 'range': inputs.construction_types(), },
 
                      'wall core width':
-                         {'type': 'uniform', 'range': [0.1, 0.9], 'sample_values': []},
+                         {'type': 'uniform', 'range': [0.1, 0.9], },
 
                      'wall core material':
-                         {'type': 'discrete', 'range': inputs.wall_core_materials(), 'sample_values': []},
+                         {'type': 'discrete', 'range': inputs.wall_core_materials(), },
 
                      'plaster width':
-                         {'type': 'uniform', 'range': [0.01, 0.02], 'sample_values': []},
+                         {'type': 'uniform', 'range': [0.01, 0.02], },
 
                      'plaster material':
-                         {'type': 'discrete', 'range': inputs.plaster_materials(), 'sample_values': []},
+                         {'type': 'discrete', 'range': inputs.plaster_materials(), },
 
                      'insulation type':
-                         {'type': 'discrete', 'range': inputs.insulation_type(), 'sample_values': []},
+                         {'type': 'discrete', 'range': inputs.insulation_type(), },
 
                      'insulation width':
-                         {'type': 'uniform', 'range': [0.01, 0.3], 'sample_values': []},
+                         {'type': 'uniform', 'range': [0.01, 0.3], },
 
                      'start year':
-                         {'type': 'discrete', 'range': 24, 'sample_values': []},
+                         {'type': 'discrete', 'range': 24, },
                      }
 
     sampling_settings = {'initial samples per set': 1,
@@ -241,7 +241,9 @@ def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List
                         samples['exterior heat transfer coefficient slope'][index], samples[parameter][index])
 
                 delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorVaporDiffusion',
-                                                                 'ExchangeSlope', outdoor_moisture_transfer)
+                                                                 'ExchangeSlope', outdoor_moisture_transfer[0])
+                delphin_permutations.change_boundary_coefficient(delphin, 'OutdoorVaporDiffusion',
+                                                                 'ExchangeCoefficient', outdoor_moisture_transfer[1])
                 sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'solar absorption':
