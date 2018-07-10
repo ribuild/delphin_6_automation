@@ -68,10 +68,18 @@ def upload_samples(new_samples: dict, sample_iteration: int) -> str:
     return sample.id
 
 
-def upload_standard_error(sampling_document, current_error):
-    # TODO - Upload the standard error to the sampling entry
+def upload_standard_error(sampling_id: str, current_error):
+    """
+    Upload the standard error to the sampling entry
 
-    return None
+    :param sampling_id: ID of sampling entry to add the standard error to.
+    :type sampling_id: str
+    :param current_error: Current standard error
+    :type current_error: dict
+    """
+
+    sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
+    sampling_document.update(push__standard_error=current_error)
 
 
 def upload_raw_samples(samples_raw: np.array, sequence_number: int) -> str:
@@ -92,7 +100,9 @@ def add_raw_samples_to_scheme(sampling_scheme: sample_entry.Scheme, samples_raw_
     return sampling_scheme.id
 
 
-def add_delphin_to_sampling(sampling_document: sample_entry.Sample, delphin_ids: list):
+def add_delphin_to_sampling(sampling_id: str, delphin_ids: list):
+
+    sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
 
     for delphin_id in delphin_ids:
         delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
