@@ -8,6 +8,8 @@ __license__ = 'MIT'
 import numpy as np
 import os
 import pickle
+import typing
+
 
 # RiBuild Modules:
 
@@ -16,7 +18,6 @@ import pickle
 
 
 def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculation_method='en15026') -> tuple:
-
     def en13788(indoor_class_: str, daily_temperature_average_: np.array) -> tuple:
         """
         Only the continental class is implemented.
@@ -113,7 +114,7 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
 
     # Create daily temperature average
     temperature = np.array(temperature).flatten()
-    total_days = int(len(temperature)/24)
+    total_days = int(len(temperature) / 24)
     temperature_matrix = np.reshape(temperature, (total_days, 24))
     daily_temperature_average = np.sum(temperature_matrix, 1) / 24
 
@@ -128,7 +129,12 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
                          f'Method given was: {calculation_method}')
 
 
-def driving_rain(precipitation, wind_direction, wind_speed, wall_location, orientation, inclination=90, ):
+def driving_rain(precipitation: list, wind_direction: list, wind_speed: list, wall_location: dict,
+                 orientation: typing.Union[int, float], inclination=90, catch_ratio=None) -> list:
+    # Convert to NumPy
+    precipitation = np.array(precipitation)
+    wind_direction = np.array(wind_direction)
+    wind_speed = np.array(wind_speed)
 
     # Load catch ratio and catch ratio parameters
     catch_ratio_model = pickle.load(open(os.path.join(os.path.dirname(__file__), 'k_nearest_3_model.sav'), 'rb'))
@@ -136,32 +142,32 @@ def driving_rain(precipitation, wind_direction, wind_speed, wall_location, orien
     # Convert deg to rad
     orientation = np.deg2rad(orientation)
     inclination = np.deg2rad(inclination)
-    wind_direction = np.array([np.deg2rad(direction)
-                               for direction in wind_direction])
+    wind_direction = np.deg2rad(wind_direction)
 
     # Calculate rain load on facade, for each time step
-    wind_driven_rain = []
+    wind_driven_rain = np.zeros(len(precipitation))
 
-    for time_index in range(0, len(precipitation)):
-        local_wind = wind_speed[time_index] * np.cos(wind_direction[time_index] - orientation)
+    local_wind = wind_speed * np.cos(wind_direction - orientation)
+    rain_hit = precipitation * local_wind > 0
 
-        # Check if wind driven rain falls on facade
-        if precipitation[time_index] * local_wind > 0:
-            horizontal_rain = catch_ratio_model.predict([[local_wind, precipitation[time_index],
-                                                        wall_location['height'], wall_location['width']]])
-            wind_driven_rain.append(float(horizontal_rain * np.sin(inclination) +
-                                    precipitation[time_index] * np.cos(inclination)))
+    if not catch_ratio:
+        horizontal_rain = catch_ratio_model.predict([local_wind[rain_hit], precipitation[rain_hit],
+                                                     np.ones(len(local_wind[rain_hit])) * wall_location['height'],
+                                                     np.ones(len(local_wind[rain_hit])) * wall_location['width']])
+        wind_driven_rain[rain_hit] = horizontal_rain * np.sin(inclination) + precipitation[rain_hit] * np.cos(
+            inclination)
+    else:
+        wind_driven_rain[rain_hit] = catch_ratio * precipitation[rain_hit] * np.sin(inclination) + \
+                                     precipitation[rain_hit] * np.cos(inclination)
 
-        else:
-            wind_driven_rain.append(precipitation[time_index] * np.cos(inclination))
+    wind_driven_rain[~rain_hit] = precipitation[~rain_hit] * np.cos(inclination)
 
-    return list(wind_driven_rain)
+    return wind_driven_rain.tolist()
 
 
 def short_wave_radiation(radiation: np.array, longitude: float, latitude: float,
                          inclination: float, orientation: float) -> np.array:
-
-    hour_of_the_year = np.array([int(i) for i in range(8760)] * int(len(radiation)/8760))
+    hour_of_the_year = np.array([int(i) for i in range(8760)] * int(len(radiation) / 8760))
 
     def sin_deg(x):
         return np.sin(np.radians(x))
@@ -192,7 +198,8 @@ def short_wave_radiation(radiation: np.array, longitude: float, latitude: float,
 
         b = (day_of_year_ - 1) * 360 / 365
 
-        return 229.2 * (0.000075 + 0.001868 * cos_deg(b) - 0.032077 * sin_deg(b) - 0.014615 * cos_deg(2 * b) - 0.04089 * sin_deg(2 * b))
+        return 229.2 * (0.000075 + 0.001868 * cos_deg(b) - 0.032077 * sin_deg(b) - 0.014615 * cos_deg(
+            2 * b) - 0.04089 * sin_deg(2 * b))
 
     def true_solar_time(hour_of_day_: np.array, local_time_constant_: float, time_ecvation_: np.array) -> np.array:
         """True solar time in hours - DK: Sand soltid"""
@@ -205,11 +212,9 @@ def short_wave_radiation(radiation: np.array, longitude: float, latitude: float,
         return 23.45 * sin_deg(((284 + day_of_year_) * 360) / 365)
 
     def latitude_deg(latitude_: float) -> float:
-
         return latitude_ / abs(latitude_) * (int(latitude_) + abs(latitude_) % 1 * 100 / 60)
 
     def time_angle(true_solar_time_: np.array) -> np.array:
-
         return 15 * (true_solar_time_ - 12)
 
     def incident_angle(declination_: np.array, latitude_deg_: float, surface_angle: float, surface_azimuth: float,
@@ -217,18 +222,22 @@ def short_wave_radiation(radiation: np.array, longitude: float, latitude: float,
         """... DK: Indfaldsvinklen"""
 
         incident_angle_ = arccos_deg(
-            sin_deg(declination_) * (sin_deg(latitude_deg_) * cos_deg(surface_angle) - cos_deg(latitude_deg_) * sin_deg(surface_angle) * cos_deg(
-                surface_azimuth)) + cos_deg(declination_) * (cos_deg(latitude_deg_) * cos_deg(surface_angle) * cos_deg(time_angle_)
-                                                         + sin_deg(latitude_deg_) * sin_deg(surface_angle) * cos_deg(
-                        surface_azimuth) * cos_deg(time_angle_)
-                                                         + sin_deg(surface_angle) * sin_deg(surface_azimuth) * sin_deg(time_angle_))
+            sin_deg(declination_) * (sin_deg(latitude_deg_) * cos_deg(surface_angle) - cos_deg(latitude_deg_) * sin_deg(
+                surface_angle) * cos_deg(
+                surface_azimuth)) + cos_deg(declination_) * (
+                        cos_deg(latitude_deg_) * cos_deg(surface_angle) * cos_deg(time_angle_)
+                        + sin_deg(latitude_deg_) * sin_deg(surface_angle) * cos_deg(
+                    surface_azimuth) * cos_deg(time_angle_)
+                        + sin_deg(surface_angle) * sin_deg(surface_azimuth) * sin_deg(time_angle_))
         )
         return incident_angle_
 
     def zenith_angle(declination_: np.array, latitude_deg_: float, time_angle_: float) -> np.array:
         """... DK: Zenitvinkelen"""
 
-        return arccos_deg(sin_deg(declination_) * sin_deg(latitude_deg_) + cos_deg(declination_) * cos_deg(latitude_deg_) * cos_deg(time_angle_))
+        return arccos_deg(
+            sin_deg(declination_) * sin_deg(latitude_deg_) + cos_deg(declination_) * cos_deg(latitude_deg_) * cos_deg(
+                time_angle_))
 
     def radiation_ratio(incident_angle_: np.array, zenith_angle_: np.array) -> np.array:
         """... DK: Bestrålingsstyrkeforholdet"""

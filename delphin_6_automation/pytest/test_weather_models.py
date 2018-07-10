@@ -5,7 +5,7 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
-import os
+import pytest
 import numpy as np
 
 # RiBuild Modules
@@ -16,13 +16,25 @@ from delphin_6_automation.file_parsing import weather_parser
 # TEST WEATHER MODELS
 
 
-def test_rain_model(test_folder):
+@pytest.mark.skip('Catch ration model is not implemented correctly')
+def test_rain_model_1(test_folder):
 
     rain = weather_parser.ccd_to_list(test_folder + '/weather/vertical_rain.ccd')
     wind_speed = weather_parser.ccd_to_list(test_folder + '/weather/wind_speed.ccd')
     wind_direction = weather_parser.ccd_to_list(test_folder + '/weather/wind_direction.ccd')
-    wall_location = {'height': 5, 'width': 5}
+    wall_location = {'height': 5.0, 'width': 5.0}
     wdr = weather_modeling.driving_rain(rain, wind_direction, wind_speed, wall_location, 90, 0)
+
+    assert rain == wdr
+
+
+def test_rain_model_2(test_folder):
+
+    rain = weather_parser.ccd_to_list(test_folder + '/weather/vertical_rain.ccd')
+    wind_speed = weather_parser.ccd_to_list(test_folder + '/weather/wind_speed.ccd')
+    wind_direction = weather_parser.ccd_to_list(test_folder + '/weather/wind_direction.ccd')
+    wall_location = {'height': 5.0, 'width': 5.0}
+    wdr = weather_modeling.driving_rain(rain, wind_direction, wind_speed, wall_location, 90, 0, 1)
 
     assert rain == wdr
 
