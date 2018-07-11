@@ -87,7 +87,7 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
 
         return result_dict_, meta_dict_
 
-    file_obj = open(path + '/' + filename, 'r')
+    file_obj = open(os.path.join(path, filename), 'r')
     lines = file_obj.readlines()
     file_obj.close()
 

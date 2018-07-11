@@ -182,7 +182,7 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
     wall_location = {'height': 5, 'width': 5}
     weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],
                                                                 weather['wind_speed'], wall_location, orientation,
-                                                                catch_ratio=1)
+                                                                inclination=90, catch_ratio=1)
 
     delphin_document.reload()
     latitude = delphin_document.weather[0].location[0]

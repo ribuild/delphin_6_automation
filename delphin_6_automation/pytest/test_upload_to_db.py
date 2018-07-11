@@ -188,3 +188,18 @@ def test_add_raw_samples_to_scheme(add_sampling_scheme, add_raw_sample):
 
     assert isinstance(scheme_entry.samples_raw, list)
     assert scheme_entry.samples_raw[0] == raw_entry
+
+
+def test_upload_processed_results(add_results, tmpdir, test_folder):
+
+    folder = tmpdir.mkdir('test')
+    weather_folder = folder.mkdir('weather')
+    result_zip = test_folder + '/raw_results/delphin_results1.zip'
+    shutil.unpack_archive(result_zip, folder)
+    shutil.copy(f'{test_folder}/weather/temperature.ccd', f'{weather_folder}/temperature.ccd')
+    shutil.copy(f'{test_folder}/weather/indoor_temperature.ccd', f'{weather_folder}/indoor_temperature.ccd')
+    result_doc = result_raw_entry.Result.objects().first()
+    delphin_doc = delphin_entry.Delphin.objects().first()
+
+    result_folder = os.path.join(folder, 'delphin_id/results')
+    result_id = delphin_interactions.upload_processed_results(result_folder, delphin_doc, result_doc)

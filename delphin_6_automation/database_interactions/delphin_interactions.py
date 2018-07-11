@@ -1,7 +1,6 @@
 __author__ = ""
 __license__ = "MIT"
 
-
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
@@ -11,6 +10,7 @@ import shutil
 import xmltodict
 from collections import OrderedDict
 import bson
+import numpy as np
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
@@ -28,11 +28,12 @@ from delphin_6_automation.logging import ribuild_logger
 # Logger
 logger = ribuild_logger.ribuild_logger(__name__)
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES
 
 
-def upload_delphin_to_database(delphin_file: str,  queue_priority: int) -> delphin_db.Delphin.id:
+def upload_delphin_to_database(delphin_file: str, queue_priority: int) -> delphin_db.Delphin.id:
     """
     Uploads a Delphin file to a database.rst.
 
@@ -68,7 +69,6 @@ def upload_delphin_dict_to_database(delphin_dict: dict, queue_priority: int) -> 
 
 
 def get_delphin_project_dimension(delphin_dict: dict):
-
     try:
         if len(delphin_dict['DelphinProject']['Discretization']) > 2:
             return 3
@@ -96,7 +96,7 @@ def download_delphin_entry(delphin_document: delphin_db.Delphin, path: str) -> b
     return True
 
 
-def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
+def upload_results_to_database(path_: str, delete_files: bool = True) -> str:
     """
     Uploads the results from a Delphin simulation.
 
@@ -125,8 +125,8 @@ def upload_results_to_database(path_: str, delete_files: bool =True) -> str:
     entry.delphin = delphin_entry
     log_dict = dict()
     log_dict['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
-    #log_dict['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
-    #log_dict['progress'] = delphin_parser.progress_to_dict(log_path)
+    # log_dict['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
+    # log_dict['progress'] = delphin_parser.progress_to_dict(log_path)
     entry.log.put(bson.BSON.encode(log_dict))
 
     entry.geometry_file = geometry_dict
@@ -172,7 +172,6 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
 
 
 def permutate_entry_layer_width(original_id, layer_material, widths, queue_priority):
-
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     modified_ids = []
@@ -185,7 +184,6 @@ def permutate_entry_layer_width(original_id, layer_material, widths, queue_prior
 
 
 def permutate_entry_layer_material(original_id, original_material, new_materials, queue_priority):
-
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     modified_ids = []
@@ -222,7 +220,6 @@ def permutate_entry_layer_material(original_id, original_material, new_materials
 
 
 def permutate_entry_orientation(original_id, orientation_list, queue_priority):
-
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     modified_ids = []
@@ -254,7 +251,6 @@ def permutate_entry_weather(original_id, weather_stations, queue_priority):
 
 def permutate_entry_boundary_coefficient(original_id, boundary_condition, coefficient_name,
                                          coefficient_list, queue_priority):
-
     delphin_document = delphin_db.Delphin.objects(id=original_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     modified_ids = []
@@ -281,7 +277,6 @@ def permutate_entry_simulation_length(original_id, length_list, unit_list, queue
 
 
 def change_entry_simulation_length(sim_id, length, unit):
-
     delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     permutations.change_simulation_length(delphin_dict, length, unit)
@@ -346,7 +341,8 @@ def check_delphin_file(delphin_dict: dict):
             if interface['@name'].lower() == 'indoor surface' or interface['@name'].lower() == 'interior surface':
 
                 if interface['@type'] != 'Detailed':
-                    logger.error(f'Interior interface should be: Detailed. Interface type given was: {interface["@type"]}')
+                    logger.error(
+                        f'Interior interface should be: Detailed. Interface type given was: {interface["@type"]}')
                     interface_error = True
 
                 interior_boundaries = ['IndoorHeatConduction', 'IndoorVaporDiffusion']
@@ -362,7 +358,8 @@ def check_delphin_file(delphin_dict: dict):
             elif interface['@name'].lower() == 'outdoor surface' or interface['@name'].lower() == 'exterior surface':
 
                 if interface['@type'] != 'Detailed':
-                    logger.error(f'Exterior interface should be: Detailed. Interface type given was: {interface["@type"]}')
+                    logger.error(
+                        f'Exterior interface should be: Detailed. Interface type given was: {interface["@type"]}')
                     interface_error = True
 
                 exterior_boundaries = ['OutdoorHeatConduction', 'OutdoorVaporDiffusion', 'OutdoorShortWaveRadiation',
@@ -458,48 +455,58 @@ def check_delphin_file(delphin_dict: dict):
 def upload_processed_results(folder, delphin_doc, result_doc):
     """
     Process results and upload.
+
     :param folder:
     :param delphin_doc:
     :param result_doc:
     :return:
     """
+
     # Paths
-    temperature_mould = delphin_parser.d6o_to_dict(folder, 'temperature_mould.d6o')
-    relative_humidity_mould = delphin_parser.d6o_to_dict(folder, 'relative_humidity_mould.d6o')
-    temperature_algae = delphin_parser.d6o_to_dict(folder, 'temperature_algae.d6o')
-    relative_humidity_algae = delphin_parser.d6o_to_dict(folder, 'relative_humidity_algae.d6o')
-    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat_loss.d6o')
+    temperature_mould = list(delphin_parser.d6o_to_dict(folder, 'temperature mould.d6o')[0]['result'].values())[0]
+    relative_humidity_mould = \
+        list(delphin_parser.d6o_to_dict(folder, 'relative humidity mould.d6o')[0]['result'].values())[0]
+    temperature_algae = list(delphin_parser.d6o_to_dict(folder, 'temperature algae.d6o')[0]['result'].values())[0]
+    relative_humidity_algae = \
+        list(delphin_parser.d6o_to_dict(folder, 'relative humidity algae.d6o')[0]['result'].values())[0]
+    heat_loss = list(delphin_parser.d6o_to_dict(folder, 'heat loss.d6o')[0]['result'].values())[0]
 
     weather_path = os.path.join(os.path.dirname(os.path.dirname(folder)), 'weather')
-    exterior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'exterior_temperature.ccd'))
-    interior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'indoor_temperature.cdd'))
+    exterior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'temperature.ccd'))
+    interior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'indoor_temperature.ccd'))
 
     # Upload
     result_entry = result_processed_entry.ProcessedResult()
     result_entry.delphin = delphin_doc
     result_entry.results_raw = result_doc
-    result_entry.mould = {'a': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='a'),
-                          'b': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='b'),
-                          'c': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='c'),
-                          'd': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='d'),
-                          'e': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='e')}
-    result_entry.heat_loss = heat_loss
-    result_entry.algae = damage_models.algae(relative_humidity_algae, temperature_algae)
+    mould = {'a': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='a'),
+             'b': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='b'),
+             'c': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='c'),
+             'd': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='d'),
+             'e': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='e')}
+    result_entry.mould.put(bson.BSON.encode(mould))
+    result_entry.heat_loss.put(np.array(heat_loss).tobytes())
+    result_entry.algae.put(np.array(damage_models.algae(relative_humidity_algae, temperature_algae)).tobytes())
     result_entry.u_value = damage_models.u_value(heat_loss, exterior_temperature, interior_temperature)
-    result_entry.thresholds = {'mould': [damage_models.mould_pj(relative_humidity_mould,
-                                                                temperature_mould, aed_group='a')[0].max(),
-                                         damage_models.mould_pj(relative_humidity_mould,
-                                                                temperature_mould, aed_group='a')[1].max()].max(),
-                               'heat_loss': heat_loss.sum(),
-                               'algae': damage_models.algae(relative_humidity_algae, temperature_algae).max()}
+    result_entry.thresholds = {'mould': max(max(damage_models.mould_pj(relative_humidity_mould,
+                                                                       temperature_mould, aed_group='a')[0]),
+                                            max(damage_models.mould_pj(relative_humidity_mould,
+                                                                       temperature_mould, aed_group='a')[1])),
+                               'heat_loss': sum(heat_loss),
+                               'algae': max(damage_models.algae(relative_humidity_algae, temperature_algae))}
 
     result_entry.save()
+
+    # Cross reference
+    delphin_doc.reload()
+    delphin_doc.update(set__result_processed=result_entry)
+    result_doc.reload()
+    result_doc.update(set__result_processed=result_entry)
 
     return result_entry.id
 
 
 def add_sampling_dict(delphin_id, sample_dict):
-
     entry = delphin_db.Delphin.objects(id=delphin_id).first()
     entry.update(set__sample_data=sample_dict)
 

@@ -22,7 +22,7 @@ class Result(mongoengine.Document):
 
     added_date = mongoengine.DateTimeField(default=datetime.now)
     delphin = mongoengine.GenericReferenceField(required=True)
-    results_processed = mongoengine.GenericReferenceField()
+    result_processed = mongoengine.GenericReferenceField()
 
     log = mongoengine.FileField(required=True, db_alias=meta['db_alias'], collection_name=meta['collection'])
     results = mongoengine.FileField(required=True, db_alias=meta['db_alias'], collection_name=meta['collection'])

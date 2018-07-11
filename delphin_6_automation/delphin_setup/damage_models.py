@@ -218,17 +218,25 @@ def mould_pj(relative_humidity_list,
 
     difference_crit_up = relative_humidity_list - relative_humidity_crit_up(temperature_list)
 
-    return difference_crit_low, difference_crit_up
+    return difference_crit_low.tolist(), difference_crit_up.tolist()
 
 
 def algae(relative_humidity, temperature):
     # TODO - Implement UNIVPM Algae Model
-    pass
+    return [1,]
 
 
-def u_value(heat_loss: np.array, exterior_temperature: np.array, interior_temperature: np.array, area=0.68) -> float:
+def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typing.Union[np.ndarray, list],
+            interior_temperature: typing.Union[np.ndarray, list], area=0.68) -> float:
+
+    if isinstance(heat_loss, list):
+        heat_loss = np.array(heat_loss)
+    if isinstance(exterior_temperature, list):
+        exterior_temperature = np.array(exterior_temperature)
+    if isinstance(interior_temperature, list):
+        interior_temperature = np.array(interior_temperature)
 
     delta_temperature = exterior_temperature - interior_temperature
-    u_value_ = np.mean(heat_loss / (delta_temperature * area))
+    u_value_ = np.mean(heat_loss / (delta_temperature[:-2] * area))
 
     return u_value_
