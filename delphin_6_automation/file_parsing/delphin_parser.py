@@ -406,7 +406,7 @@ def write_log_files(result_obj: result_db.Result, download_path: str) -> bool:
     :return: True
     """
 
-    log_dict = bson.BSON.decode(result_obj.log.read())
+    log_dict: dict = bson.BSON.decode(result_obj.log.read())
 
     log_path = download_path + '/log'
 
