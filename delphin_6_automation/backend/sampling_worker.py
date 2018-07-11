@@ -58,7 +58,7 @@ def menu():
         sampling_scheme_id = input("Define sampling scheme ID >")
         logger.info(sampling_scheme_id)
 
-        print('Starting sampling\n')
+        print('\nStarting sampling\n')
         sampling_worker(sampling_scheme_id)
 
     elif choice == 'b':
@@ -101,5 +101,5 @@ def sampling_worker(scheme_id):
 
     print(f'Convergence reached at iteration #{sample_iteration}')
     logger.info(f'Convergence reached at iteration #{sample_iteration}')
-    print('Exits. Bye')
+    print('\nExits. Bye')
     sys.exit()
