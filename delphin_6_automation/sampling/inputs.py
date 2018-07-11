@@ -16,8 +16,9 @@ import os
 
 def construction_types():
 
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
-    return None
+    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files/delphin'
+
+    return os.listdir(folder)
 
 
 def wall_core_materials():
