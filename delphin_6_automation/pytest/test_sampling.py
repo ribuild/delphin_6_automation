@@ -101,3 +101,16 @@ def test_compute_sampling_distributions(strategy_with_raw_samples, used_samples_
         for scenario in distribution_dict[design]:
             for param in distribution_dict[design][scenario]:
                 assert len(distribution_dict[design][scenario][param]) == 1
+
+
+@pytest.mark.parametrize('used_samples_per_set',
+                         [0, 1, 2])
+def test_create_samples(strategy_with_raw_samples, used_samples_per_set):
+
+    strategy = sample_entry.Strategy.objects().first()
+
+    samples = sampling.create_samples(strategy, used_samples_per_set)
+
+    assert samples
+    assert isinstance(samples, dict)
+    assert len(samples.keys()) == strategy.strategy['settings']['sequence']

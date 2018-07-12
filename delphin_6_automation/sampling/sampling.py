@@ -196,13 +196,13 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
     # Call Sobol to create new samples based on strategy and previous samples
     samples = dict()
 
-    for step in range(sampling_strategy['settings']['sequence']):
+    for step in range(sampling_strategy.strategy['settings']['sequence']):
         # if sampling sequence iteration exists download that.
         # if not create new sampling
         # used the sampling to create the distributions
         # return the raw samples and distributions
         raw_samples = get_raw_samples(sampling_strategy, step)
-        samples_subset = compute_sampling_distributions(sampling_strategy, raw_samples,
+        samples_subset = compute_sampling_distributions(sampling_strategy.strategy, raw_samples,
                                                         used_samples_per_set)
 
         samples[step] = samples_subset
@@ -331,7 +331,7 @@ def check_convergence(sampling_strategy, standard_error):
     return None
 
 
-def compute_sampling_distributions(sampling_strategy, samples_raw, used_samples_per_set):
+def compute_sampling_distributions(sampling_strategy: dict, samples_raw: np.ndarray, used_samples_per_set: int) -> dict:
     designs = [design_option
                for design_ in sampling_strategy['design'].keys()
                for design_option in sampling_strategy['design'][design_]]
