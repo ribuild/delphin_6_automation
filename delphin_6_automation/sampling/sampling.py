@@ -40,13 +40,14 @@ def create_sampling_strategy(path: str) -> dict:
     :rtype: dict
     """
 
-    # TODO - Create scenarios
-    designs = {}
+    design = {'construction type':
+                   {'type': 'discrete',
+                    'range': inputs.construction_types()}}
 
     scenario = {}
 
     distributions = {'exterior climate':
-                     {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys())},
+                         {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys())},
 
                      'exterior heat transfer coefficient slope':
                          {'type': 'uniform', 'range': [1, 4], },
@@ -74,9 +75,6 @@ def create_sampling_strategy(path: str) -> dict:
 
                      'wall orientation':
                          {'type': 'uniform', 'range': [0, 360], },
-
-                     'construction type':
-                         {'type': 'discrete', 'range': inputs.construction_types(), },
 
                      'wall core width':
                          {'type': 'uniform', 'range': [0.1, 0.9], },
@@ -106,7 +104,8 @@ def create_sampling_strategy(path: str) -> dict:
                          'sequence': 10,
                          'standard error threshold': 0.1}
 
-    combined_dict = {'scenario': scenario, 'distributions': distributions, 'settings': sampling_settings}
+    combined_dict = {'design': design, 'scenario': scenario,
+                     'distributions': distributions, 'settings': sampling_settings}
 
     with open(os.path.join(path, 'sampling_strategy.json'), 'w') as file:
         json.dump(combined_dict, file)
@@ -299,7 +298,6 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
                 sample_dict[parameter] = samples[parameter][index]
 
             elif parameter == 'plaster material':
-                # TODO - Fix new material
                 new_material = collections.OrderedDict()
                 delphin_permutations.change_layer_material(delphin, 'Lime cement mortar [717]',
                                                            new_material)

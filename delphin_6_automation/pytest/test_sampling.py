@@ -19,14 +19,15 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 # RIBuild
 
 
-def test_create_sampling_strategy(tmpdir):
+def test_create_sampling_strategy(tmpdir, add_three_years_weather):
 
     folder = tmpdir.mkdir('test')
     test_strategy = sampling.create_sampling_strategy(folder)
 
     assert os.path.isfile(os.path.join(folder, 'sampling_strategy.json'))
     assert all(element in list(test_strategy.keys())
-               for element in ['scenario', 'distributions', 'settings'])
+               for element in ['design', 'scenario', 'distributions', 'settings'])
+    assert test_strategy['design']
     #assert test_strategy['scenario']
     assert test_strategy['distributions']
     assert test_strategy['settings']
@@ -62,3 +63,24 @@ def test_sobol(second_dimension):
     assert isinstance(sobol_sampling, np.ndarray)
     assert sobol_sampling.shape == (first_dimension, second_dimension)
     assert np.all(sobol_sampling[(sobol_sampling < 1.0) & (sobol_sampling > 0.0)])
+
+
+@pytest.mark.parametrize('step_counter',
+                         [0, 2, ])
+def test_get_raw_samples(strategy_with_raw_samples, step_counter):
+
+    strategy = sample_entry.Strategy.objects().first()
+    samples_before = len(strategy.samples_raw)
+
+    raw_samples = sampling.get_raw_samples(strategy, step_counter)
+    strategy.reload()
+
+    assert isinstance(raw_samples, np.ndarray)
+    assert raw_samples.shape == (2 ** 12, len(strategy.strategy['distributions'].keys()))
+    assert strategy.samples_raw[-1].sequence_number == step_counter
+    assert strategy.samples_raw[-1].samples_raw == raw_samples.tolist()
+
+    if step_counter > 1:
+        assert samples_before < len(strategy.samples_raw)
+    else:
+        assert samples_before == len(strategy.samples_raw)

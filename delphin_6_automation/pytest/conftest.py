@@ -20,6 +20,7 @@ from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
+from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.sampling import sampling
 
 
@@ -135,4 +136,16 @@ def add_sampling_strategy(setup_database, tmpdir):
 @pytest.fixture()
 def add_raw_sample(setup_database):
 
-    sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 12, dimension=3), 1)
+    sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 12, dimension=3), 0)
+
+
+@pytest.fixture()
+def strategy_with_raw_samples(add_sampling_strategy):
+
+    strategy_entry = sample_entry.Strategy.objects().first()
+    raw_id = sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 12,
+                                                                     dimension=len(strategy_entry.strategy[
+                                                                                       'distributions'].keys())),
+                                                      0)
+
+    sampling_interactions.add_raw_samples_to_strategy(strategy_entry, raw_id)
