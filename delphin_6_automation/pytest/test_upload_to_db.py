@@ -148,24 +148,24 @@ def test_cvode_stats(test_folder, tmpdir):
     assert isinstance(integrator_dict, dict)
 
 
-def test_upload_sampling_scheme(empty_database, tmpdir):
+def test_upload_sampling_strategy(empty_database, tmpdir):
 
     test_dir = tmpdir.mkdir('test')
-    scheme = sampling.create_sampling_scheme(test_dir)
-    scheme_id = sampling_interactions.upload_sampling_scheme(scheme)
+    strategy = sampling.create_sampling_strategy(test_dir)
+    strategy_id = sampling_interactions.upload_sampling_strategy(strategy)
 
-    scheme_doc = sample_entry.Scheme.objects().first()
+    strategy_doc = sample_entry.Strategy.objects().first()
 
-    assert isinstance(scheme_doc.added_date, datetime.datetime)
-    assert not scheme_doc.samples
-    assert not scheme_doc.standard_error
-    assert scheme_doc.scheme
-    assert isinstance(scheme_doc.scheme, dict)
-    assert all(element in list(scheme_doc.scheme.keys())
+    assert isinstance(strategy_doc.added_date, datetime.datetime)
+    assert not strategy_doc.samples
+    assert not strategy_doc.standard_error
+    assert strategy_doc.strategy
+    assert isinstance(strategy_doc.strategy, dict)
+    assert all(element in list(strategy_doc.strategy.keys())
                for element in ['scenario', 'distributions', 'settings'])
-    #assert scheme_doc.scheme['scenario']
-    assert scheme_doc.scheme['distributions']
-    assert scheme_doc.scheme['settings']
+    #assert strategy_doc.strategy['scenario']
+    assert strategy_doc.strategy['distributions']
+    assert strategy_doc.strategy['settings']
 
 
 def test_upload_raw_samples(empty_database):
@@ -178,16 +178,16 @@ def test_upload_raw_samples(empty_database):
     assert raw_entry.sequence_number == 1
 
 
-def test_add_raw_samples_to_scheme(add_sampling_scheme, add_raw_sample):
+def test_add_raw_samples_to_strategy(add_sampling_strategy, add_raw_sample):
 
     raw_entry = sample_entry.SampleRaw.objects().first()
-    scheme_entry = sample_entry.Scheme.objects().first()
+    strategy_entry = sample_entry.Strategy.objects().first()
 
-    sampling_interactions.add_raw_samples_to_scheme(scheme_entry, raw_entry.id)
-    scheme_entry.reload()
+    sampling_interactions.add_raw_samples_to_strategy(strategy_entry, raw_entry.id)
+    strategy_entry.reload()
 
-    assert isinstance(scheme_entry.samples_raw, list)
-    assert scheme_entry.samples_raw[0] == raw_entry
+    assert isinstance(strategy_entry.samples_raw, list)
+    assert strategy_entry.samples_raw[0] == raw_entry
 
 
 def test_upload_processed_results(add_results, tmpdir, test_folder):

@@ -42,14 +42,14 @@ class SampleRaw(mongoengine.Document):
     meta = collections.sample_raw_db
 
 
-class Scheme(mongoengine.Document):
+class Strategy(mongoengine.Document):
 
     # Meta Data
     added_date = mongoengine.DateTimeField(default=datetime.now)
-    meta = collections.scheme_db
+    meta = collections.strategy_db
 
     # References
     samples = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=Sample))
     samples_raw = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=SampleRaw))
     standard_error = mongoengine.ListField()
-    scheme = mongoengine.DictField(required=True)
+    strategy = mongoengine.DictField(required=True)

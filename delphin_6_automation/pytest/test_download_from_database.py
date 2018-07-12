@@ -108,17 +108,17 @@ def test_download_project_1(db_one_project, tmpdir):
     assert os.path.isfile(os.path.join(folder,  f'{delphin_doc.id}.d6p'))
 
 
-def test_download_sampling_scheme(add_sampling_scheme):
+def test_download_sampling_strategy(add_sampling_strategy):
 
-    scheme_id = sample_entry.Scheme.objects().first().id
+    strategy_id = sample_entry.Strategy.objects().first().id
 
-    test_scheme = sampling_interactions.get_sampling_scheme(scheme_id)
+    test_strategy = sampling_interactions.get_sampling_strategy(strategy_id)
 
-    assert test_scheme
-    assert isinstance(test_scheme, sample_entry.Scheme)
-    assert isinstance(test_scheme.scheme, dict)
-    assert all(element in list(test_scheme.scheme.keys())
+    assert test_strategy
+    assert isinstance(test_strategy, sample_entry.Strategy)
+    assert isinstance(test_strategy.strategy, dict)
+    assert all(element in list(test_strategy.strategy.keys())
                for element in ['scenario', 'distributions', 'settings'])
-    #assert test_scheme['scenario']
-    assert test_scheme.scheme['distributions']
-    assert test_scheme.scheme['settings']
+    #assert test_strategy['scenario']
+    assert test_strategy.strategy['distributions']
+    assert test_strategy.strategy['settings']

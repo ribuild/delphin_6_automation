@@ -29,14 +29,14 @@ from delphin_6_automation.sampling import sobol_lib
 # RIBuild
 
 
-def create_sampling_scheme(path: str) -> dict:
+def create_sampling_strategy(path: str) -> dict:
     """
-    Create a sampling scheme for WP6 Delphin Automation. The sampling scheme will be name 'sampling_scheme.json' and
+    Create a sampling strategy for WP6 Delphin Automation. The sampling strategy will be name 'sampling_strategy.json' and
     be located at the given folder.
 
-    :param path: Folder, where the scheme will be saved.
+    :param path: Folder, where the strategy will be saved.
     :type path: str
-    :return: Created sampling scheme
+    :return: Created sampling strategy
     :rtype: dict
     """
 
@@ -46,11 +46,10 @@ def create_sampling_scheme(path: str) -> dict:
     scenario = {}
 
     distributions = {'exterior climate':
-                     {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys()),
-                              'sample_values': []},
+                     {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys())},
 
                      'exterior heat transfer coefficient slope':
-                         {'type': 'uniform', 'range': [1, 4],},
+                         {'type': 'uniform', 'range': [1, 4], },
 
                      'exterior moisture transfer coefficient':
                          {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], },
@@ -109,43 +108,43 @@ def create_sampling_scheme(path: str) -> dict:
 
     combined_dict = {'scenario': scenario, 'distributions': distributions, 'settings': sampling_settings}
 
-    with open(os.path.join(path, 'sampling_scheme.json'), 'w') as file:
+    with open(os.path.join(path, 'sampling_strategy.json'), 'w') as file:
         json.dump(combined_dict, file)
 
     return combined_dict
 
 
-def load_scheme(path: str) -> dict:
+def load_strategy(path: str) -> dict:
     """
-    Load a sampling scheme from a JSON file.
+    Load a sampling strategy from a JSON file.
 
-    :param path: Folder, where the sampling scheme is located
+    :param path: Folder, where the sampling strategy is located
     :type path: string
-    :return: Sampling scheme
+    :return: Sampling strategy
     :rtype: dict
     """
 
-    with open(os.path.join(path, 'sampling_scheme.json'), 'r') as file:
-        sampling_scheme = json.load(file)
+    with open(os.path.join(path, 'sampling_strategy.json'), 'r') as file:
+        sampling_strategy = json.load(file)
 
-    return sampling_scheme
+    return sampling_strategy
 
 
-def load_existing_samples(sampling_scheme_id):
+def load_existing_samples(sampling_strategy_id):
     """
-    Look up the existing sample entries in the database connected to the scheme
+    Look up the existing sample entries in the database connected to the strategy
     If there is not previous samples in database return empty dict
 
-    :param sampling_scheme_id: Sampling scheme id
-    :type sampling_scheme_id: str
+    :param sampling_strategy_id: Sampling strategy id
+    :type sampling_strategy_id: str
     :return: Return the samples as a dict
     :rtype: dict
     """
 
-    scheme = sample_entry.Scheme.objects(id=sampling_scheme_id).first()
+    strategy = sample_entry.Strategy.objects(id=sampling_strategy_id).first()
 
-    if scheme.samples:
-        samples_list = scheme.samples
+    if strategy.samples:
+        samples_list = strategy.samples
         samples = samples_list[0].samples
 
         for sample in samples_list[1:]:
@@ -159,66 +158,66 @@ def load_existing_samples(sampling_scheme_id):
         return {}
 
 
-def load_latest_sample(sampling_scheme_id: str) -> dict:
+def load_latest_sample(sampling_strategy_id: str) -> dict:
     """
-    Look up the last existing sample entries in the database connected to the scheme
+    Look up the last existing sample entries in the database connected to the strategy
     If there is not previous samples in database return empty dict
 
-    :param sampling_scheme_id: Sampling scheme id
-    :type sampling_scheme_id: str
+    :param sampling_strategy_id: Sampling strategy id
+    :type sampling_strategy_id: str
     :return: Return the samples as a dict
     :rtype: dict
     """
 
-    scheme = sample_entry.Scheme.objects(id=sampling_scheme_id).first()
+    strategy = sample_entry.Strategy.objects(id=sampling_strategy_id).first()
 
-    if scheme.samples:
-        samples_list = scheme.samples
+    if strategy.samples:
+        samples_list = strategy.samples
         return samples_list[-1].samples
 
     else:
         return {}
 
 
-def get_raw_samples(sampling_scheme: sample_entry.Scheme, step: int) -> np.array:
-    sampling_scheme.reload()
+def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.array:
+    sampling_strategy.reload()
 
-    # Check if the scheme has a raw sampling with the same sequence number as step
-    for raw_sample in sampling_scheme.samples_raw:
+    # Check if the strategy has a raw sampling with the same sequence number as step
+    for raw_sample in sampling_strategy.samples_raw:
         if raw_sample.sequence_number == step:
             return np.array(raw_sample.samples_raw)
 
     # If not create a new raw sampling
-    distribution_dimension = len(sampling_scheme.scheme['distributions'].keys())
+    distribution_dimension = len(sampling_strategy.strategy['distributions'].keys())
     samples_raw = sobol(m=2 ** 12, dimension=distribution_dimension, sets=1)
     samples_raw_id = sampling_interactions.upload_raw_samples(samples_raw, step)
-    sampling_interactions.add_raw_samples_to_scheme(sampling_scheme, samples_raw_id)
+    sampling_interactions.add_raw_samples_to_strategy(sampling_strategy, samples_raw_id)
 
     return samples_raw
 
 
-def create_samples(sampling_scheme: sample_entry.Scheme) -> dict:
-    # TODO - Create new samples based on the old ones and the sampling scheme
+def create_samples(sampling_strategy: sample_entry.Strategy) -> dict:
+    # TODO - Create new samples based on the old ones and the sampling strategy
     # Loop through the sampling sequences and generate samples each time
-    # Call Sobol to create new samples based on scheme and previous samples
+    # Call Sobol to create new samples based on strategy and previous samples
     samples = dict()
 
-    for step in range(sampling_scheme['settings']['sequence']):
+    for step in range(sampling_strategy['settings']['sequence']):
         # if sampling sequence iteration exists download that.
         # if not create new sampling
         # used the sampling to create the distributions
         # return the raw samples and distributions
-        raw_samples = get_raw_samples(sampling_scheme, step)
-        samples_subset = compute_sampling_distributions(sampling_scheme, raw_samples)
+        raw_samples = get_raw_samples(sampling_strategy, step)
+        samples_subset = compute_sampling_distributions(sampling_strategy, raw_samples)
 
         samples[step] = samples_subset
 
     return samples
 
 
-def create_delphin_projects(sampling_scheme: dict, samples: dict) -> typing.List[str]:
+def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.List[str]:
     # TODO - Create new delphin files based on the samples
-    # The paths for the base delphin files should be found in the sampling scheme
+    # The paths for the base delphin files should be found in the sampling strategy
     # Permutate the base files according to the samples
     # Upload the new delphin files
     # Return the database ids for the delphin files
@@ -331,16 +330,16 @@ def calculate_error(delphin_ids):
     return None
 
 
-def check_convergence(sampling_scheme, standard_error):
-    # TODO - Check if the standard error is lower than the threshold value in the sampling scheme
+def check_convergence(sampling_strategy, standard_error):
+    # TODO - Check if the standard error is lower than the threshold value in the sampling strategy
     # If it is return True otherwise return False
 
     return None
 
 
-def compute_sampling_distributions(sampling_scheme, samples_raw):
-    scenarios = sampling_scheme['scenario'].keys()
-    sample_parameters = sampling_scheme['distributions'].keys()
+def compute_sampling_distributions(sampling_strategy, samples_raw):
+    scenarios = sampling_strategy['scenario'].keys()
+    sample_parameters = sampling_strategy['distributions'].keys()
     distributions = dict()
 
     for scenario in scenarios.keys():
@@ -348,9 +347,9 @@ def compute_sampling_distributions(sampling_scheme, samples_raw):
         for index, sample_param in enumerate(sample_parameters):
             sample_column = samples_raw[:, index]
 
-            if sampling_scheme['distributions'][sample_param]['type'] == 'discrete':
+            if sampling_strategy['distributions'][sample_param]['type'] == 'discrete':
 
-                range_ = sampling_scheme['distributions'][sample_param]['range']
+                range_ = sampling_strategy['distributions'][sample_param]['range']
                 if isinstance(range_, int):
                     high_bound = range_ + 1
                     values = randint.ppf(sample_column, low=1, high=high_bound).tolist()
@@ -359,19 +358,19 @@ def compute_sampling_distributions(sampling_scheme, samples_raw):
                     high_bound = len(range_)
                     values = randint.ppf(sample_column, low=0, high=high_bound).tolist()
 
-            elif sampling_scheme['distributions'][sample_param]['type'] == 'uniform':
+            elif sampling_strategy['distributions'][sample_param]['type'] == 'uniform':
 
-                range_ = sampling_scheme['distributions'][sample_param]['range']
+                range_ = sampling_strategy['distributions'][sample_param]['range']
                 values = uniform.ppf(sample_column, loc=range_[0], scale=range_[1] - range_[0]).tolist()
 
-            elif sampling_scheme['distributions'][sample_param]['type'] == 'normal':
+            elif sampling_strategy['distributions'][sample_param]['type'] == 'normal':
 
-                range_ = sampling_scheme['distributions'][sample_param]['range']
+                range_ = sampling_strategy['distributions'][sample_param]['range']
                 values = norm.ppf(sample_column, loc=range_[0], scale=range_[1]).tolist()
 
             else:
                 raise KeyError(f'Unknown distribution for: {sample_param}. Distribution given was: '
-                               f'{sampling_scheme["distributions"][sample_param]["type"]}')
+                               f'{sampling_strategy["distributions"][sample_param]["type"]}')
 
             distributions[scenario][sample_param] = values
 

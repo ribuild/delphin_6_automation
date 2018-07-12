@@ -16,36 +16,36 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 # RIBuild
 
 
-def upload_sampling_scheme(sampling_scheme: dict) -> str:
+def upload_sampling_strategy(sampling_strategy: dict) -> str:
     """
-    Upload as given sampling scheme to the database
+    Upload as given sampling strategy to the database
 
-    :param sampling_scheme: Sampling scheme
-    :type sampling_scheme: dict
-    :return: Sampling scheme database ID
+    :param sampling_strategy: Sampling strategy
+    :type sampling_strategy: dict
+    :return: Sampling strategy database ID
     :rtype: str
     """
 
-    entry = sample_entry.Scheme()
-    entry.scheme = sampling_scheme
+    entry = sample_entry.Strategy()
+    entry.strategy = sampling_strategy
     entry.save()
 
     return entry.id
 
 
-def get_sampling_scheme(scheme_id: str) -> sample_entry.Scheme:
+def get_sampling_strategy(strategy_id: str) -> sample_entry.Strategy:
     """
-    Downloads the sampling scheme with the given database ID
+    Downloads the sampling strategy with the given database ID
 
-    :param scheme_id: Sampling scheme database ID
-    :type scheme_id: str
-    :return: Sampling Scheme
+    :param strategy_id: Sampling strategy database ID
+    :type strategy_id: str
+    :return: Sampling Strategy
     :rtype: dict
     """
 
-    scheme = sample_entry.Scheme.objects(id=scheme_id).first()
+    strategy = sample_entry.Strategy.objects(id=strategy_id).first()
 
-    return scheme
+    return strategy
 
 
 def upload_samples(new_samples: dict, sample_iteration: int) -> str:
@@ -92,12 +92,12 @@ def upload_raw_samples(samples_raw: np.ndarray, sequence_number: int) -> str:
     return entry.id
 
 
-def add_raw_samples_to_scheme(sampling_scheme: sample_entry.Scheme, samples_raw_id: str):
+def add_raw_samples_to_strategy(sampling_strategy: sample_entry.Strategy, samples_raw_id: str):
 
     raw_sample_doc = sample_entry.SampleRaw.objects(id=samples_raw_id).first()
-    sampling_scheme.update(push__samples_raw=raw_sample_doc)
+    sampling_strategy.update(push__samples_raw=raw_sample_doc)
 
-    return sampling_scheme.id
+    return sampling_strategy.id
 
 
 def add_delphin_to_sampling(sampling_id: str, delphin_ids: list):

@@ -19,26 +19,26 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 # RIBuild
 
 
-def test_create_sampling_scheme(tmpdir):
+def test_create_sampling_strategy(tmpdir):
 
     folder = tmpdir.mkdir('test')
-    test_scheme = sampling.create_sampling_scheme(folder)
+    test_strategy = sampling.create_sampling_strategy(folder)
 
-    assert os.path.isfile(os.path.join(folder, 'sampling_scheme.json'))
-    assert all(element in list(test_scheme.keys())
+    assert os.path.isfile(os.path.join(folder, 'sampling_strategy.json'))
+    assert all(element in list(test_strategy.keys())
                for element in ['scenario', 'distributions', 'settings'])
-    #assert test_scheme['scenario']
-    assert test_scheme['distributions']
-    assert test_scheme['settings']
+    #assert test_strategy['scenario']
+    assert test_strategy['distributions']
+    assert test_strategy['settings']
 
 
-def test_load_scheme(tmpdir):
+def test_load_strategy(tmpdir):
 
     folder = tmpdir.mkdir('test')
-    source_scheme = sampling.create_sampling_scheme(folder)
-    test_scheme = sampling.load_scheme(folder)
+    source_strategy = sampling.create_sampling_strategy(folder)
+    test_strategy = sampling.load_strategy(folder)
 
-    assert source_scheme == test_scheme
+    assert source_strategy == test_strategy
 
 
 @pytest.mark.skip('not yet implemented')

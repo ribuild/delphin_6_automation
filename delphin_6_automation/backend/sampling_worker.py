@@ -47,7 +47,7 @@ def menu():
     print('')
     print("Available Actions:")
     print("[a] Start Sampling")
-    print("[b] Create Sampling Scheme")
+    print("[b] Create Sampling Strategy")
     print("[c] View Current Samples")
     print("[x] Exit")
 
@@ -55,17 +55,17 @@ def menu():
 
     if choice == 'a':
         logger.info('starting sampling')
-        sampling_scheme_id = input("Define sampling scheme ID >")
-        logger.info(sampling_scheme_id)
+        sampling_strategy_id = input("Define sampling strategy ID >")
+        logger.info(sampling_strategy_id)
 
         print('\nStarting sampling\n')
-        sampling_worker(sampling_scheme_id)
+        sampling_worker(sampling_strategy_id)
 
     elif choice == 'b':
-        scheme = sampling.create_sampling_scheme(os.path.dirname(__file__))
-        scheme_id = sampling_interactions.upload_sampling_scheme(scheme)
-        print(f'Created sampling and uploaded it with ID: {scheme_id}')
-        logger.info(f'Created sampling and uploaded it with ID: {scheme_id}')
+        strategy = sampling.create_sampling_strategy(os.path.dirname(__file__))
+        strategy_id = sampling_interactions.upload_sampling_strategy(strategy)
+        print(f'Created sampling and uploaded it with ID: {strategy_id}')
+        logger.info(f'Created sampling and uploaded it with ID: {strategy_id}')
 
     elif choice == 'c':
         print('Not implemented')
@@ -75,8 +75,8 @@ def menu():
         print("Goodbye")
 
 
-def sampling_worker(scheme_id):
-    scheme_doc = sampling_interactions.get_sampling_scheme(scheme_id)
+def sampling_worker(strategy_id):
+    strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
     sample_iteration = 0
     convergence = False
 
@@ -84,10 +84,10 @@ def sampling_worker(scheme_id):
         print(f'Running sampling iteration #{sample_iteration}')
         logger.info(f'Running sampling iteration #{sample_iteration}')
 
-        #samples = sampling.load_existing_samples(scheme_id)
-        new_samples = sampling.create_samples(scheme_doc)
+        #samples = sampling.load_existing_samples(strategy_id)
+        new_samples = sampling.create_samples(strategy_doc)
         sampling_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
-        delphin_ids = sampling.create_delphin_projects(scheme_doc.scheme, new_samples)
+        delphin_ids = sampling.create_delphin_projects(strategy_doc.strategy, new_samples)
         sampling_interactions.add_delphin_to_sampling(sampling_id, delphin_ids)
         simulation_interactions.wait_until_simulated(delphin_ids)
         current_error = sampling.calculate_error(delphin_ids)
@@ -96,7 +96,7 @@ def sampling_worker(scheme_id):
         print(f'Standard Error at iteration {sample_iteration} is: {current_error}')
         logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}')
 
-        convergence = sampling.check_convergence(scheme_doc.scheme, current_error)
+        convergence = sampling.check_convergence(strategy_doc.strategy, current_error)
         sample_iteration += 1
 
     print(f'Convergence reached at iteration #{sample_iteration}')
