@@ -40,11 +40,9 @@ def create_sampling_strategy(path: str) -> dict:
     :rtype: dict
     """
 
-    design = {'construction type':
-                   {'type': 'discrete',
-                    'range': inputs.construction_types()}}
+    design = {'construction type': inputs.construction_types()}
 
-    scenario = {}
+    scenario = {'generic scenario': None}
 
     distributions = {'exterior climate':
                          {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys())},
@@ -87,9 +85,6 @@ def create_sampling_strategy(path: str) -> dict:
 
                      'plaster material':
                          {'type': 'discrete', 'range': inputs.plaster_materials(), },
-
-                     'insulation type':
-                         {'type': 'discrete', 'range': inputs.insulation_type(), },
 
                      'insulation width':
                          {'type': 'uniform', 'range': [0.01, 0.3], },
@@ -195,7 +190,7 @@ def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.a
     return samples_raw
 
 
-def create_samples(sampling_strategy: sample_entry.Strategy) -> dict:
+def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_set: int) -> dict:
     # TODO - Create new samples based on the old ones and the sampling strategy
     # Loop through the sampling sequences and generate samples each time
     # Call Sobol to create new samples based on strategy and previous samples
@@ -207,7 +202,8 @@ def create_samples(sampling_strategy: sample_entry.Strategy) -> dict:
         # used the sampling to create the distributions
         # return the raw samples and distributions
         raw_samples = get_raw_samples(sampling_strategy, step)
-        samples_subset = compute_sampling_distributions(sampling_strategy, raw_samples)
+        samples_subset = compute_sampling_distributions(sampling_strategy, raw_samples,
+                                                        used_samples_per_set)
 
         samples[step] = samples_subset
 
@@ -335,42 +331,53 @@ def check_convergence(sampling_strategy, standard_error):
     return None
 
 
-def compute_sampling_distributions(sampling_strategy, samples_raw):
+def compute_sampling_distributions(sampling_strategy, samples_raw, used_samples_per_set):
+    designs = [design_option
+               for design_ in sampling_strategy['design'].keys()
+               for design_option in sampling_strategy['design'][design_]]
+
     scenarios = sampling_strategy['scenario'].keys()
     sample_parameters = sampling_strategy['distributions'].keys()
     distributions = dict()
+    new_samples_per_set = sampling_strategy['settings']['initial samples per set']
+    samples_raw = samples_raw[used_samples_per_set:used_samples_per_set + new_samples_per_set, :]
 
-    for scenario in scenarios.keys():
+    for design in designs:
+        distributions[design] = dict()
 
-        for index, sample_param in enumerate(sample_parameters):
-            sample_column = samples_raw[:, index]
+        for scenario in scenarios:
+            distributions[design][scenario] = dict()
 
-            if sampling_strategy['distributions'][sample_param]['type'] == 'discrete':
+            for index, sample_param in enumerate(sample_parameters):
+                sample_column = samples_raw[:, index]
 
-                range_ = sampling_strategy['distributions'][sample_param]['range']
-                if isinstance(range_, int):
-                    high_bound = range_ + 1
-                    values = randint.ppf(sample_column, low=1, high=high_bound).tolist()
+                if sampling_strategy['distributions'][sample_param]['type'] == 'discrete':
+
+                    range_ = sampling_strategy['distributions'][sample_param]['range']
+                    if isinstance(range_, int):
+                        high_bound = range_ + 1
+                        values = randint.ppf(sample_column, low=1, high=high_bound).tolist()
+
+                    else:
+                        high_bound = len(range_)
+                        values = randint.ppf(sample_column, low=0, high=high_bound).astype('int64').tolist()
+                        values = [range_[x] for x in values]
+
+                elif sampling_strategy['distributions'][sample_param]['type'] == 'uniform':
+
+                    range_ = sampling_strategy['distributions'][sample_param]['range']
+                    values = uniform.ppf(sample_column, loc=range_[0], scale=range_[1] - range_[0]).tolist()
+
+                elif sampling_strategy['distributions'][sample_param]['type'] == 'normal':
+
+                    range_ = sampling_strategy['distributions'][sample_param]['range']
+                    values = norm.ppf(sample_column, loc=range_[0], scale=range_[1]).tolist()
 
                 else:
-                    high_bound = len(range_)
-                    values = randint.ppf(sample_column, low=0, high=high_bound).tolist()
+                    raise KeyError(f'Unknown distribution for: {sample_param}. Distribution given was: '
+                                   f'{sampling_strategy["distributions"][sample_param]["type"]}')
 
-            elif sampling_strategy['distributions'][sample_param]['type'] == 'uniform':
-
-                range_ = sampling_strategy['distributions'][sample_param]['range']
-                values = uniform.ppf(sample_column, loc=range_[0], scale=range_[1] - range_[0]).tolist()
-
-            elif sampling_strategy['distributions'][sample_param]['type'] == 'normal':
-
-                range_ = sampling_strategy['distributions'][sample_param]['range']
-                values = norm.ppf(sample_column, loc=range_[0], scale=range_[1]).tolist()
-
-            else:
-                raise KeyError(f'Unknown distribution for: {sample_param}. Distribution given was: '
-                               f'{sampling_strategy["distributions"][sample_param]["type"]}')
-
-            distributions[scenario][sample_param] = values
+                distributions[design][scenario][sample_param] = values
 
     return distributions
 

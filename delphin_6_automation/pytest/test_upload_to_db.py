@@ -148,7 +148,7 @@ def test_cvode_stats(test_folder, tmpdir):
     assert isinstance(integrator_dict, dict)
 
 
-def test_upload_sampling_strategy(empty_database, tmpdir):
+def test_upload_sampling_strategy(add_three_years_weather, tmpdir):
 
     test_dir = tmpdir.mkdir('test')
     strategy = sampling.create_sampling_strategy(test_dir)
@@ -161,11 +161,26 @@ def test_upload_sampling_strategy(empty_database, tmpdir):
     assert not strategy_doc.standard_error
     assert strategy_doc.strategy
     assert isinstance(strategy_doc.strategy, dict)
+
     assert all(element in list(strategy_doc.strategy.keys())
-               for element in ['scenario', 'distributions', 'settings'])
-    #assert strategy_doc.strategy['scenario']
+               for element in ['design', 'scenario', 'distributions', 'settings'])
+    assert strategy_doc.strategy['scenario']
+    assert isinstance(strategy_doc.strategy['scenario'], dict)
     assert strategy_doc.strategy['distributions']
+    assert isinstance(strategy_doc.strategy['distributions'], dict)
+    for distribution in strategy_doc.strategy['distributions'].keys():
+        assert all(element in list(strategy_doc.strategy['distributions'][distribution].keys())
+                   for element in ['type', 'range'])
+        assert strategy_doc.strategy['distributions'][distribution]['type']
+        assert strategy_doc.strategy['distributions'][distribution]['range']
     assert strategy_doc.strategy['settings']
+    setting_elements = ['initial samples per set', 'add samples per run',
+                        'max samples', 'sequence', 'standard error threshold']
+    assert all(element in list(strategy_doc.strategy['settings'].keys())
+               for element in setting_elements)
+    for setting in strategy_doc.strategy['settings'].keys():
+        assert strategy_doc.strategy['settings'][setting]
+
 
 
 def test_upload_raw_samples(empty_database):

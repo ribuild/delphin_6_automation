@@ -126,7 +126,7 @@ def add_results(db_one_project, tmpdir, test_folder):
 
 
 @pytest.fixture()
-def add_sampling_strategy(setup_database, tmpdir):
+def add_sampling_strategy(add_three_years_weather, tmpdir):
 
     test_dir = tmpdir.mkdir('test')
     strategy = sampling.create_sampling_strategy(test_dir)

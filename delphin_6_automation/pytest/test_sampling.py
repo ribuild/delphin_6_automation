@@ -28,7 +28,7 @@ def test_create_sampling_strategy(tmpdir, add_three_years_weather):
     assert all(element in list(test_strategy.keys())
                for element in ['design', 'scenario', 'distributions', 'settings'])
     assert test_strategy['design']
-    #assert test_strategy['scenario']
+    assert test_strategy['scenario']
     assert test_strategy['distributions']
     assert test_strategy['settings']
 
@@ -84,3 +84,20 @@ def test_get_raw_samples(strategy_with_raw_samples, step_counter):
         assert samples_before < len(strategy.samples_raw)
     else:
         assert samples_before == len(strategy.samples_raw)
+
+
+@pytest.mark.parametrize('used_samples_per_set',
+                         [0, 1, 2])
+def test_compute_sampling_distributions(strategy_with_raw_samples, used_samples_per_set):
+
+    strategy = sample_entry.Strategy.objects().first()
+    raw_samples = np.array(strategy.samples_raw[0].samples_raw)
+
+    distribution_dict = sampling.compute_sampling_distributions(strategy.strategy, raw_samples, used_samples_per_set)
+
+    assert distribution_dict
+    assert isinstance(distribution_dict, dict)
+    for design in distribution_dict:
+        for scenario in distribution_dict[design]:
+            for param in distribution_dict[design][scenario]:
+                assert len(distribution_dict[design][scenario][param]) == 1

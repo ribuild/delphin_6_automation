@@ -37,4 +37,4 @@ sample_raw_db = {'db_alias': 'local',
                  'collection': 'samples_raw'}
 
 strategy_db = {'db_alias': 'local',
-               'collection': 'sampling_scheme'}
+               'collection': 'sampling_strategy'}
