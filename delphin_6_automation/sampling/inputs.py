@@ -43,4 +43,6 @@ def plaster_materials():
 def insulation_type():
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
-    return None
+    insulations = pd.read_excel(folder + '/Insulation.xlsx')['Material ID'].tolist()
+
+    return insulations
