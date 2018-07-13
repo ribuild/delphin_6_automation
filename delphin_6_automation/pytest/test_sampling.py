@@ -114,3 +114,4 @@ def test_create_samples(strategy_with_raw_samples, used_samples_per_set):
     assert samples
     assert isinstance(samples, dict)
     assert len(samples.keys()) == strategy.strategy['settings']['sequence']
+    assert all([isinstance(key, str) for key in samples.keys()])

@@ -149,3 +149,8 @@ def strategy_with_raw_samples(add_sampling_strategy):
                                                       0)
 
     sampling_interactions.add_raw_samples_to_strategy(strategy_entry, raw_id)
+
+@pytest.fixture()
+def dummy_sample():
+
+    return {str(i): {} for i in range(10)}

@@ -10,6 +10,7 @@ import os.path
 import shutil
 import bson.json_util
 import datetime
+import pytest
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -52,7 +53,6 @@ def test_upload_weather_1(test_folder, empty_database):
 
 
 def test_upload_materials_1(test_folder, empty_database):
-
     # Local Files
     material_file = 'AltbauziegelDresdenZP_504.m6'
 
@@ -107,7 +107,6 @@ def test_upload_project_2(delphin_file_path, empty_database, add_two_materials, 
 
 
 def test_upload_results_1(db_one_project, test_folder, tmpdir):
-
     temp_folder = tmpdir.mkdir('test')
     delphin_doc = delphin_entry.Delphin.objects().first()
 
@@ -138,7 +137,6 @@ def test_delphin_file_checker_1(delphin_file_path):
 
 
 def test_cvode_stats(test_folder, tmpdir):
-
     temp_folder = tmpdir.mkdir('test')
     result_zip = test_folder + '/raw_results/delphin_results.zip'
     shutil.unpack_archive(result_zip, temp_folder)
@@ -149,23 +147,28 @@ def test_cvode_stats(test_folder, tmpdir):
 
 
 def test_upload_sampling_strategy(add_three_years_weather, tmpdir):
-
     test_dir = tmpdir.mkdir('test')
     strategy = sampling.create_sampling_strategy(test_dir)
     strategy_id = sampling_interactions.upload_sampling_strategy(strategy)
 
     strategy_doc = sample_entry.Strategy.objects().first()
 
+    # Checks
     assert isinstance(strategy_doc.added_date, datetime.datetime)
     assert not strategy_doc.samples
     assert not strategy_doc.standard_error
     assert strategy_doc.strategy
-    assert isinstance(strategy_doc.strategy, dict)
 
+    # Strategy Check
+    assert isinstance(strategy_doc.strategy, dict)
     assert all(element in list(strategy_doc.strategy.keys())
                for element in ['design', 'scenario', 'distributions', 'settings'])
+
+    # Strategy Scenario Check
     assert strategy_doc.strategy['scenario']
     assert isinstance(strategy_doc.strategy['scenario'], dict)
+
+    # Strategy Distributions Check
     assert strategy_doc.strategy['distributions']
     assert isinstance(strategy_doc.strategy['distributions'], dict)
     for distribution in strategy_doc.strategy['distributions'].keys():
@@ -173,6 +176,8 @@ def test_upload_sampling_strategy(add_three_years_weather, tmpdir):
                    for element in ['type', 'range'])
         assert strategy_doc.strategy['distributions'][distribution]['type']
         assert strategy_doc.strategy['distributions'][distribution]['range']
+
+    # Strategy Settings Check
     assert strategy_doc.strategy['settings']
     setting_elements = ['initial samples per set', 'add samples per run',
                         'max samples', 'sequence', 'standard error threshold']
@@ -182,19 +187,17 @@ def test_upload_sampling_strategy(add_three_years_weather, tmpdir):
         assert strategy_doc.strategy['settings'][setting]
 
 
-
 def test_upload_raw_samples(empty_database):
-
-    raw_id = sampling_interactions.upload_raw_samples(sampling.sobol(m=2**12, dimension=3), 1)
+    raw_id = sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 12, dimension=3), 1)
     raw_entry = sample_entry.SampleRaw.objects(id=raw_id).first()
 
     assert raw_entry
+    assert isinstance(raw_entry.added_date, datetime.datetime)
     assert isinstance(raw_entry.samples_raw, list)
     assert raw_entry.sequence_number == 1
 
 
 def test_add_raw_samples_to_strategy(add_sampling_strategy, add_raw_sample):
-
     raw_entry = sample_entry.SampleRaw.objects().first()
     strategy_entry = sample_entry.Strategy.objects().first()
 
@@ -206,7 +209,6 @@ def test_add_raw_samples_to_strategy(add_sampling_strategy, add_raw_sample):
 
 
 def test_upload_processed_results(add_results, tmpdir, test_folder):
-
     folder = tmpdir.mkdir('test')
     weather_folder = folder.mkdir('weather')
     result_zip = test_folder + '/raw_results/delphin_results1.zip'
@@ -218,3 +220,20 @@ def test_upload_processed_results(add_results, tmpdir, test_folder):
 
     result_folder = os.path.join(folder, 'delphin_id/results')
     result_id = delphin_interactions.upload_processed_results(result_folder, delphin_doc, result_doc)
+
+
+@pytest.mark.parametrize('iteration',
+                         [0, 1, 2])
+def test_upload_samples(setup_database, dummy_sample, iteration):
+
+    sample_id = sampling_interactions.upload_samples(dummy_sample, iteration)
+    sample_doc = sample_entry.Sample.objects(id=sample_id).first()
+
+    assert sample_doc
+    assert isinstance(sample_doc.added_date, datetime.datetime)
+
+    assert sample_doc.samples
+    assert isinstance(sample_doc.samples, dict)
+    assert sample_doc.iteration == iteration
+    assert not sample_doc.delphin_ids
+    assert not sample_doc.standard_error

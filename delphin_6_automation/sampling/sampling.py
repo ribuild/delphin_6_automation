@@ -205,7 +205,7 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
         samples_subset = compute_sampling_distributions(sampling_strategy.strategy, raw_samples,
                                                         used_samples_per_set)
 
-        samples[step] = samples_subset
+        samples[str(step)] = samples_subset
 
     return samples
 
