@@ -67,15 +67,10 @@ def test_sobol(second_dimension):
 
 @pytest.mark.parametrize('step_counter',
                          [0, 2, ])
-def test_get_raw_samples(strategy_with_raw_dummy_samples, step_counter, monkeypatch):
+def test_get_raw_samples(strategy_with_raw_dummy_samples, step_counter, mock_sobol):
 
     strategy = sample_entry.Strategy.objects().first()
     samples_before = len(strategy.samples_raw)
-
-    def mockreturn(m, dimension, sets):
-        return np.random.rand(2 ** 12, len(strategy.strategy['distributions'].keys()))
-
-    monkeypatch.setattr(sampling, 'sobol', mockreturn)
 
     raw_samples = sampling.get_raw_samples(strategy, step_counter)
     strategy.reload()
@@ -110,13 +105,8 @@ def test_compute_sampling_distributions(strategy_with_raw_dummy_samples, used_sa
 
 @pytest.mark.parametrize('used_samples_per_set',
                          [0, 1, 2])
-def test_create_samples(add_sampling_strategy, used_samples_per_set, monkeypatch):
+def test_create_samples(add_sampling_strategy, used_samples_per_set, mock_sobol):
     strategy = sample_entry.Strategy.objects().first()
-
-    def mockreturn(m, dimension, sets):
-        return np.random.rand(2 ** 12, len(strategy.strategy['distributions'].keys()))
-
-    monkeypatch.setattr(sampling, 'sobol', mockreturn)
 
     samples = sampling.create_samples(strategy, used_samples_per_set)
 

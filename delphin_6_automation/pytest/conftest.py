@@ -152,3 +152,13 @@ def strategy_with_raw_dummy_samples(add_sampling_strategy):
 @pytest.fixture()
 def dummy_sample():
     return {str(i): {} for i in range(10)}
+
+
+@pytest.fixture()
+def mock_sobol(monkeypatch):
+    strategy = sample_entry.Strategy.objects().first()
+
+    def mockreturn(m, dimension, sets):
+        return np.random.rand(2 ** 12, len(strategy.strategy['distributions'].keys()))
+
+    monkeypatch.setattr(sampling, 'sobol', mockreturn)
