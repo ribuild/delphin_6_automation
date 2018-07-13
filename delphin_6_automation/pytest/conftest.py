@@ -10,6 +10,7 @@ from mongoengine.connection import get_connection
 import os
 import shutil
 import sys
+import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -143,7 +144,7 @@ def add_raw_sample(setup_database):
 def strategy_with_raw_samples(add_sampling_strategy):
 
     strategy_entry = sample_entry.Strategy.objects().first()
-    raw_id = sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 3,
+    raw_id = sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 12,
                                                                      dimension=len(strategy_entry.strategy[
                                                                                        'distributions'].keys())),
                                                       0)

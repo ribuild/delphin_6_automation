@@ -105,9 +105,13 @@ def test_compute_sampling_distributions(strategy_with_raw_samples, used_samples_
 
 @pytest.mark.parametrize('used_samples_per_set',
                          [0, 1, 2])
-def test_create_samples(strategy_with_raw_samples, used_samples_per_set):
-
+def test_create_samples(add_sampling_strategy, used_samples_per_set, monkeypatch):
     strategy = sample_entry.Strategy.objects().first()
+
+    def mockreturn(m, dimension, sets):
+        return np.random.rand(2 ** 12, len(strategy.strategy['distributions'].keys()))
+
+    monkeypatch.setattr(sampling, 'sobol', mockreturn)
 
     samples = sampling.create_samples(strategy, used_samples_per_set)
 
