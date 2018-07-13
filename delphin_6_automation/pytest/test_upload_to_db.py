@@ -235,5 +235,5 @@ def test_upload_samples(setup_database, dummy_sample, iteration):
     assert sample_doc.samples
     assert isinstance(sample_doc.samples, dict)
     assert sample_doc.iteration == iteration
-    assert not sample_doc.delphin_ids
+    assert not sample_doc.delphin_docs
     assert not sample_doc.standard_error
