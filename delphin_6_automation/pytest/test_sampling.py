@@ -76,7 +76,7 @@ def test_get_raw_samples(strategy_with_raw_samples, step_counter):
     strategy.reload()
 
     assert isinstance(raw_samples, np.ndarray)
-    assert raw_samples.shape == (2 ** 12, len(strategy.strategy['distributions'].keys()))
+    assert raw_samples.shape == (2 ** 3, len(strategy.strategy['distributions'].keys()))
     assert strategy.samples_raw[-1].sequence_number == step_counter
     assert strategy.samples_raw[-1].samples_raw == raw_samples.tolist()
 
