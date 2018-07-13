@@ -127,8 +127,7 @@ def add_results(db_one_project, tmpdir, test_folder):
 
 
 @pytest.fixture()
-def add_sampling_strategy(add_three_years_weather, tmpdir):
-
+def add_sampling_strategy(empty_database, add_three_years_weather, tmpdir):
     test_dir = tmpdir.mkdir('test')
     strategy = sampling.create_sampling_strategy(test_dir)
     sampling_interactions.upload_sampling_strategy(strategy)
@@ -136,22 +135,20 @@ def add_sampling_strategy(add_three_years_weather, tmpdir):
 
 @pytest.fixture()
 def add_raw_sample(setup_database):
-
     sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 12, dimension=3), 0)
 
 
 @pytest.fixture()
-def strategy_with_raw_samples(add_sampling_strategy):
-
+def strategy_with_raw_dummy_samples(add_sampling_strategy):
     strategy_entry = sample_entry.Strategy.objects().first()
-    raw_id = sampling_interactions.upload_raw_samples(sampling.sobol(m=2 ** 12,
-                                                                     dimension=len(strategy_entry.strategy[
-                                                                                       'distributions'].keys())),
+    raw_id = sampling_interactions.upload_raw_samples(np.random.rand(2 ** 12,
+                                                                     len(strategy_entry.strategy[
+                                                                             'distributions'].keys())),
                                                       0)
 
     sampling_interactions.add_raw_samples_to_strategy(strategy_entry, raw_id)
 
+
 @pytest.fixture()
 def dummy_sample():
-
     return {str(i): {} for i in range(10)}

@@ -54,7 +54,7 @@ def test_add_delphin_to_sampling(db_one_project, add_sampling):
 
 
 @pytest.mark.parametrize('second_dimension',
-                         [1, 2, 3, 5, 6, 9])
+                         [1, 2, 3, 6, 9])
 def test_sobol(second_dimension):
 
     first_dimension = 2**12
@@ -67,16 +67,21 @@ def test_sobol(second_dimension):
 
 @pytest.mark.parametrize('step_counter',
                          [0, 2, ])
-def test_get_raw_samples(strategy_with_raw_samples, step_counter):
+def test_get_raw_samples(strategy_with_raw_dummy_samples, step_counter, monkeypatch):
 
     strategy = sample_entry.Strategy.objects().first()
     samples_before = len(strategy.samples_raw)
+
+    def mockreturn(m, dimension, sets):
+        return np.random.rand(2 ** 12, len(strategy.strategy['distributions'].keys()))
+
+    monkeypatch.setattr(sampling, 'sobol', mockreturn)
 
     raw_samples = sampling.get_raw_samples(strategy, step_counter)
     strategy.reload()
 
     assert isinstance(raw_samples, np.ndarray)
-    assert raw_samples.shape == (2 ** 3, len(strategy.strategy['distributions'].keys()))
+    assert raw_samples.shape == (2 ** 12, len(strategy.strategy['distributions'].keys()))
     assert strategy.samples_raw[-1].sequence_number == step_counter
     assert strategy.samples_raw[-1].samples_raw == raw_samples.tolist()
 
@@ -88,7 +93,7 @@ def test_get_raw_samples(strategy_with_raw_samples, step_counter):
 
 @pytest.mark.parametrize('used_samples_per_set',
                          [0, 1, 2])
-def test_compute_sampling_distributions(strategy_with_raw_samples, used_samples_per_set):
+def test_compute_sampling_distributions(strategy_with_raw_dummy_samples, used_samples_per_set):
 
     strategy = sample_entry.Strategy.objects().first()
     raw_samples = np.array(strategy.samples_raw[0].samples_raw)
