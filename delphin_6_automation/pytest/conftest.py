@@ -162,3 +162,10 @@ def mock_sobol(monkeypatch):
         return np.random.rand(2 ** 12, len(strategy.strategy['distributions'].keys()))
 
     monkeypatch.setattr(sampling, 'sobol', mockreturn)
+
+
+@pytest.fixture()
+def add_dummy_sample(setup_database, dummy_sample):
+
+    sample_id = sampling_interactions.upload_samples(dummy_sample, 0)
+    sample_doc = sample_entry.Sample.objects(id=sample_id).first()

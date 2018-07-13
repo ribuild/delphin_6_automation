@@ -106,4 +106,4 @@ def add_delphin_to_sampling(sampling_id: str, delphin_ids: list):
 
     for delphin_id in delphin_ids:
         delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
-        sampling_document.update(push__delphin_ids=delphin_doc)
+        sampling_document.update(push__delphin_docs=delphin_doc)

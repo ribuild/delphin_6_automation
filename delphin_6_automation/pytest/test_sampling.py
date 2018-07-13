@@ -42,15 +42,18 @@ def test_load_strategy(tmpdir):
     assert source_strategy == test_strategy
 
 
-@pytest.mark.skip('not yet implemented')
-def test_add_delphin_to_sampling(db_one_project, add_sampling):
+def test_add_delphin_to_sampling(db_one_project, add_dummy_sample):
 
     delphin_doc = delphin_entry.Delphin.objects().first()
     sample = sample_entry.Sample.objects().first()
 
-    sampling_doc = sampling_interactions.add_delphin_to_sampling(sample, [delphin_doc, ])
+    sampling_interactions.add_delphin_to_sampling(sample.id, [delphin_doc.id, ])
 
-    assert sampling_doc.delphin_ids
+    assert not sample.delphin_docs
+    sample.reload()
+    assert sample.delphin_docs
+    assert isinstance(sample.delphin_docs, list)
+    assert sample.delphin_docs[0] == delphin_doc
 
 
 @pytest.mark.parametrize('second_dimension',

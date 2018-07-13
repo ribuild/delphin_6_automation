@@ -23,7 +23,7 @@ class Sample(mongoengine.Document):
 
     # References
     samples = mongoengine.DictField(required=True)
-    delphin_ids = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=delphin_entry.Delphin))
+    delphin_docs = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=delphin_entry.Delphin))
     iteration = mongoengine.IntField(required=True)
     standard_error = mongoengine.ListField(field=mongoengine.FloatField())
 
