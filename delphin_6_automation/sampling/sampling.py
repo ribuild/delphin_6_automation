@@ -20,6 +20,7 @@ from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.delphin_setup import delphin_permutations
+from delphin_6_automation.file_parsing import delphin_parser
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.sampling import sobol_lib
@@ -40,7 +41,7 @@ def create_sampling_strategy(path: str) -> dict:
     :rtype: dict
     """
 
-    design = {'construction type': inputs.construction_types()}
+    design = {'construction type': inputs.construct_design_options()}
 
     scenario = {'generic scenario': None}
 
@@ -210,6 +211,18 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
     return samples
 
 
+def load_design_options(designs: typing.Dict[typing.List[str]]) -> typing.List[dict]:
+
+    folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__name__))),
+                          'sampling\\input_files\\design')
+    delphin_projects = []
+
+    for design in designs['construction type']:
+        delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, design)))
+
+    return delphin_projects
+
+
 def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.List[str]:
     # TODO - Create new delphin files based on the samples
     # The paths for the base delphin files should be found in the sampling strategy
@@ -218,9 +231,9 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
     # Return the database ids for the delphin files
 
     delphin_ids = []
-    # TODO - Create all delphin projects and load them as dicts
-    delphin_dicts = []
-    for index, delphin in enumerate(delphin_dicts):
+    delphin_projects = load_design_options(sampling_strategy['design'])
+
+    for index, delphin in enumerate(delphin_projects):
         sample_dict = dict()
 
         for parameter in samples.keys():
@@ -306,7 +319,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
         years = [start_year, ] + [year for year in range(start_year, start_year + 5)]
         weather_interactions.assign_weather_by_name_and_years(delphin_id,
                                                               samples['exterior climate'][index], years)
-        weather_interactions.assign_indoor_climate_to_project(delphin_ids[index],
+        weather_interactions.assign_indoor_climate_to_project(delphin_id,
                                                               samples['interior climate'][index])
         sample_dict['start year'] = samples['start year'][index]
         sample_dict['exterior climate'] = samples['exterior climate'][index]

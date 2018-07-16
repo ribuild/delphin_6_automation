@@ -117,3 +117,22 @@ def test_create_samples(add_sampling_strategy, used_samples_per_set, mock_sobol)
     assert isinstance(samples, dict)
     assert len(samples.keys()) == strategy.strategy['settings']['sequence']
     assert all([isinstance(key, str) for key in samples.keys()])
+
+
+def test_load_design_options(add_three_years_weather, tmpdir):
+    test_dir = tmpdir.mkdir('test')
+
+    strategy = sampling.create_sampling_strategy(test_dir)
+    design_options = sampling.load_design_options(strategy['design'])
+
+    assert design_options
+    assert isinstance(design_options, list)
+    assert all(isinstance(project, dict)
+               for project in design_options)
+
+
+def test_create_delphin_projects(create_samples):
+    strategy = sample_entry.Strategy.objects().first()
+    delphin_ids = sampling.create_delphin_projects(strategy.strategy, create_samples)
+
+    assert delphin_ids

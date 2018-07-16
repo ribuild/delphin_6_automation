@@ -48,3 +48,6 @@ def insulation_type():
     return [[int(i) for i in sublist]
             for sublist in insulation.tolist()]
 
+
+def construct_design_options():
+    return construction_types()
