@@ -169,3 +169,22 @@ def add_dummy_sample(setup_database, dummy_sample):
 
     sample_id = sampling_interactions.upload_samples(dummy_sample, 0)
     sample_doc = sample_entry.Sample.objects(id=sample_id).first()
+
+
+@pytest.fixture()
+def create_samples(add_sampling_strategy, mock_sobol):
+    strategy = sample_entry.Strategy.objects().first()
+
+    samples = sampling.create_samples(strategy, 0)
+
+    return samples
+
+
+def sobol_test_function1(array):
+
+    return np.prod(1 + (array**2 - array - 1/6), axis=1)
+
+
+def sobol_test_function2(array):
+
+    return np.prod(1 + (array**6 - 3 * array**5 + 5/2 * array**4 - 1/2 * array**2 + 1/42), axis=1)
