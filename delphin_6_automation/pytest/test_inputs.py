@@ -34,7 +34,6 @@ def test_plaster_materials():
                for material_id in materials)
 
 
-@pytest.mark.skip('Not yet implemented')
 def test_insulation():
 
     materials = inputs.insulation_type()
@@ -42,7 +41,8 @@ def test_insulation():
     assert materials
     assert isinstance(materials, list)
     assert all(isinstance(material_id, int)
-               for material_id in materials)
+               for sublist in materials
+               for material_id in sublist)
 
 
 def test_construction_types():
