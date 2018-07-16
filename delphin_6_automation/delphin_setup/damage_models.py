@@ -221,9 +221,47 @@ def mould_pj(relative_humidity_list,
     return difference_crit_low.tolist(), difference_crit_up.tolist()
 
 
-def algae(relative_humidity, temperature):
-    # TODO - Implement UNIVPM Algae Model
-    return [1,]
+def algae(relative_humidity_list,
+          temperature_list,
+          material='dummy'):
+    '''
+    Implement UNIVPM Algae Model
+    '''
+
+    def area_ratio_calc(total_porosity, roughness):
+        1 - np.exp(-(2.48 * total_porosity + 0.126 * roughness) ** 4)
+
+    # time - the variable (time from simulation start e.g. 3 years? in hours?)
+    time = 1
+
+    # lacking functions depends: Temp, Porosity, Roughness, Total pore area.
+    tau_s = 1
+    tau_k = 1
+
+    # lacking functions depends: Porosity, Roughness, Total pore area.
+    rate_coefficient = 1
+    latency_time = 1
+
+    if material == 'dummy':
+        # [-], [my-meter], [m2/g]
+        total_porosity = 0.44
+        roughness = 6e-6
+        total_pore_area = 5   # not used in area_ratio_calc as indicated
+    else:
+        # split up or use parsing funktion to get values (if they excists?)
+        total_porosity, roughness, total_pore_area = material
+
+    # Growth condition
+    if relative_humidity_list > 0.98:
+        on_off = 1
+    elif relative_humidity_list <= 0.98:
+        on_off = 0
+
+    # Growth process
+    growth = on_off * tau_s * area_ratio_calc(total_porosity, roughness) \
+             * (1 - np.exp(-(tau_k * rate_coefficient) * (time - latency_time)
+
+    return growth
 
 
 def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typing.Union[np.ndarray, list],
