@@ -216,7 +216,7 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
 def load_design_options(designs: dict) -> typing.List[dict]:
 
     folder = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                          'input_files\\design')
+                          'input_files/design')
     delphin_projects = []
 
     for design in designs['construction type']:
