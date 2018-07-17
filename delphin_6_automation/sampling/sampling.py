@@ -20,6 +20,7 @@ from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
 from delphin_6_automation.sampling import inputs
@@ -310,8 +311,8 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
                     sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
 
                 elif parameter == 'wall core material':
-                    # TODO - Fix new material
-                    new_material = collections.OrderedDict()
+                    new_material = material_interactions.get_material_info(samples[sequence][design][
+                                                                               'generic scenario'][parameter][0])
                     delphin_permutations.change_layer_material(design_variation, 'Old Building Brick Dresden ZP [504]',
                                                                new_material)
                     sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
@@ -322,7 +323,8 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
                     sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
 
                 elif parameter == 'plaster material':
-                    new_material = collections.OrderedDict()
+                    new_material = material_interactions.get_material_info(samples[sequence][design][
+                                                                               'generic scenario'][parameter][0])
                     delphin_permutations.change_layer_material(design_variation, 'Lime cement mortar [717]',
                                                                new_material)
                     sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]

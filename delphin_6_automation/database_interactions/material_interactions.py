@@ -5,6 +5,7 @@ __author__ = "Christian Kongsgaard"
 
 # Modules:
 import os
+from collections import OrderedDict
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
@@ -130,3 +131,16 @@ def download_materials(delphin_object: delphin_db.Delphin, path: str) -> bool:
         material_parser.dict_to_m6(material, path)
 
     return True
+
+
+def get_material_info(material_id: int) -> dict:
+    material = material_db.Material.objects(material_id=material_id).first()
+
+    material_dict = OrderedDict((('@name', f'{material.material_name} [{material.material_id}]'),
+                                 ('@color', str(material.material_data['IDENTIFICATION-COLOUR'])),
+                                 ('@hatchCode', str(material.material_data['IDENTIFICATION-HATCHING'])),
+                                 ('#text', '${Material Database}/' +
+                                  str(material.material_data['INFO-FILE'].split('/')[-1]))
+                                 )
+                                )
+    return material_dict
