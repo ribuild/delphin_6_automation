@@ -131,8 +131,10 @@ def test_load_design_options(add_three_years_weather, tmpdir):
                for project in design_options)
 
 
-def test_create_delphin_projects(create_samples):
+def test_create_delphin_projects(create_samples, mock_material_info, add_five_materials):
     strategy = sample_entry.Strategy.objects().first()
     delphin_ids = sampling.create_delphin_projects(strategy.strategy, create_samples)
 
     assert delphin_ids
+    assert isinstance(delphin_ids, list)
+

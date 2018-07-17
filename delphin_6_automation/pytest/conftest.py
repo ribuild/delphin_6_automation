@@ -7,6 +7,7 @@ __license__ = 'MIT'
 # Modules
 import pytest
 from mongoengine.connection import get_connection
+from collections import OrderedDict
 import os
 import shutil
 import sys
@@ -91,6 +92,18 @@ def add_two_materials(test_folder, setup_database):
 
 
 @pytest.fixture()
+def add_five_materials(test_folder, setup_database):
+    material_files = ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6',
+                      'GlueMortarForClimateBoard_705.m6', 'CalsithermCalciumsilikatHamstad_571.m6',
+                      'KlimaputzMKKQuickmix_125.m6']
+
+    for file in material_files:
+        material_interactions.upload_material_file(test_folder + '/materials/' + file)
+
+    yield
+
+
+@pytest.fixture()
 def add_three_years_weather(setup_database, test_folder):
     weather_ids = weather_interactions.upload_weather_to_db(test_folder + '/weather/Aberdeen_3_years.WAC')
 
@@ -165,8 +178,20 @@ def mock_sobol(monkeypatch):
 
 
 @pytest.fixture()
-def add_dummy_sample(setup_database, dummy_sample):
+def mock_material_info(monkeypatch):
+    def mockreturn(material_id):
+        return OrderedDict((('@name', 'Test Material [000]'),
+                            ('@color', '#ff5020a0'),
+                            ('@hatchCode', str(13)),
+                            ('#text', '${Material Database}/TestMaterial_000.m6')
+                            )
+                           )
 
+    monkeypatch.setattr(material_interactions, 'get_material_info', mockreturn)
+
+
+@pytest.fixture()
+def add_dummy_sample(setup_database, dummy_sample):
     sample_id = sampling_interactions.upload_samples(dummy_sample, 0)
     sample_doc = sample_entry.Sample.objects(id=sample_id).first()
 
@@ -181,10 +206,8 @@ def create_samples(add_sampling_strategy, mock_sobol):
 
 
 def sobol_test_function1(array):
-
-    return np.prod(1 + (array**2 - array - 1/6), axis=1)
+    return np.prod(1 + (array ** 2 - array - 1 / 6), axis=1)
 
 
 def sobol_test_function2(array):
-
-    return np.prod(1 + (array**6 - 3 * array**5 + 5/2 * array**4 - 1/2 * array**2 + 1/42), axis=1)
+    return np.prod(1 + (array ** 6 - 3 * array ** 5 + 5 / 2 * array ** 4 - 1 / 2 * array ** 2 + 1 / 42), axis=1)

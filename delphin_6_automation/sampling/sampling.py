@@ -93,7 +93,7 @@ def create_sampling_strategy(path: str) -> dict:
                          {'type': 'uniform', 'range': [0.01, 0.3], },
 
                      'start year':
-                         {'type': 'discrete', 'range': 24, },
+                         {'type': 'discrete', 'range': [2020, 2045], },
                      }
 
     sampling_settings = {'initial samples per set': 1,
@@ -332,15 +332,19 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
             # Upload project
             delphin_id = delphin_interactions.upload_delphin_dict_to_database(design_variation, 1)
 
-            start_year = samples['start year'][0]
-            years = [start_year, ] + [year for year in range(start_year, start_year + 5)]
+            start_year = int(samples[sequence][design]['generic scenario']['start year'][0])
+            years = [start_year, ] + [year for year in range(start_year, start_year + 6)]
             weather_interactions.assign_weather_by_name_and_years(delphin_id,
-                                                                  samples['exterior climate'][0], years)
+                                                                  samples[sequence][design][
+                                                                      'generic scenario']['exterior climate'][0], years)
             weather_interactions.assign_indoor_climate_to_project(delphin_id,
-                                                                  samples['interior climate'][0])
-            sample_dict['start year'] = samples['start year'][0]
-            sample_dict['exterior climate'] = samples['exterior climate'][0]
-            sample_dict['interior climate'] = samples['interior climate'][0]
+                                                                  samples[sequence][design][
+                                                                      'generic scenario']['interior climate'][0])
+
+            sample_dict['start year'] = samples[sequence][design]['generic scenario']['start year'][0]
+            sample_dict['exterior climate'] = samples[sequence][design]['generic scenario']['exterior climate'][0]
+            sample_dict['interior climate'] = samples[sequence][design]['generic scenario']['interior climate'][0]
+
             delphin_interactions.add_sampling_dict(delphin_id, sample_dict)
 
             delphin_ids.append(delphin_id)
