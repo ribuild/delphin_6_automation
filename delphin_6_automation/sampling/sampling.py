@@ -215,8 +215,8 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
 
 def load_design_options(designs: dict) -> typing.List[dict]:
 
-    folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__name__))),
-                          'sampling\\input_files\\design')
+    folder = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                          'input_files\\design')
     delphin_projects = []
 
     for design in designs['construction type']:
@@ -226,7 +226,6 @@ def load_design_options(designs: dict) -> typing.List[dict]:
 
 
 def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.List[str]:
-    # TODO - Create new delphin files based on the samples
     # The paths for the base delphin files should be found in the sampling strategy
     # Permutate the base files according to the samples
     # Upload the new delphin files
