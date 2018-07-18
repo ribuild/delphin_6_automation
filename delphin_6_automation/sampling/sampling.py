@@ -369,9 +369,9 @@ def calculate_error(sample_strategy: dict) -> dict:
 
         # TODO - Speed up this with better query
         for project in projects_given_design:
-            mould.append(project['thresholds']['mould'])
-            algae.append(project['thresholds']['algae'])
-            heat_loss.append(project['thresholds']['heat_loss'])
+            mould.append(project.result_processed['thresholds']['mould'])
+            algae.append(project.result_processed['thresholds']['algae'])
+            heat_loss.append(project.result_processed['thresholds']['heat_loss'])
 
         design_standard_error = {'mould': relative_standard_error(mould, sequence),
                                  'algae': relative_standard_error(algae, sequence),

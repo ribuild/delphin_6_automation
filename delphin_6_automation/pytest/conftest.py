@@ -23,6 +23,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
+from delphin_6_automation.database_interactions.db_templates import result_raw_entry
 from delphin_6_automation.sampling import sampling
 
 
@@ -205,9 +206,44 @@ def create_samples(add_sampling_strategy, mock_sobol):
     return samples
 
 
-def sobol_test_function1(array):
+def sobol_test_function1(array: np.ndarray) -> np.ndarray:
     return np.prod(1 + (array ** 2 - array - 1 / 6), axis=1)
 
 
-def sobol_test_function2(array):
+def sobol_test_function2(array: np.ndarray) -> np.ndarray:
     return np.prod(1 + (array ** 6 - 3 * array ** 5 + 5 / 2 * array ** 4 - 1 / 2 * array ** 2 + 1 / 42), axis=1)
+
+
+@pytest.fixture()
+def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials, add_three_years_weather,
+                           add_results, test_folder, tmpdir):
+    priority = 'high'
+    climate_class = 'a'
+    location_name = 'Aberdeen'
+    years = [2020, 2021, 2022]
+    design_list = ['1d_interior_plaster.d6p', '1d_interior_plaster.d6p',
+                   '1d_exterior_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p']
+    result_doc = result_raw_entry.Result.objects().first()
+    folder = tmpdir.mkdir('test')
+    weather_folder = folder.mkdir('weather')
+    result_zip = test_folder + '/raw_results/delphin_results1.zip'
+    shutil.unpack_archive(result_zip, folder)
+    shutil.copy(f'{test_folder}/weather/temperature.ccd', f'{weather_folder}/temperature.ccd')
+    shutil.copy(f'{test_folder}/weather/indoor_temperature.ccd', f'{weather_folder}/indoor_temperature.ccd')
+    result_folder = os.path.join(folder, 'delphin_id/results')
+
+    for design in design_list:
+        sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
+        weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
+        weather_interactions.assign_weather_by_name_and_years(sim_id, location_name, years)
+        delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
+        delphin_interactions.add_sampling_dict(sim_id, {'design_option': design})
+        delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
+        delphin_interactions.upload_processed_results(result_folder, delphin_doc, result_doc)
+
+
+@pytest.fixture()
+def add_strategy_for_errors(setup_database, add_three_years_weather):
+    strategy = {'design': ['1d_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p'],
+                'settings': {'sequence': 10}}
+    sampling_interactions.upload_sampling_strategy(strategy)

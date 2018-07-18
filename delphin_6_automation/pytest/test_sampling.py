@@ -138,3 +138,15 @@ def test_create_delphin_projects(create_samples, mock_material_info, add_five_ma
     assert delphin_ids
     assert isinstance(delphin_ids, list)
 
+
+def test_calculate_error(add_delphin_for_errors, add_strategy_for_errors):
+
+    strategy = sample_entry.Strategy.objects().first()
+
+    standard_error = sampling.calculate_error(strategy.strategy)
+
+    assert standard_error
+    assert isinstance(standard_error, dict)
+    for design in standard_error.keys():
+        for damage_model in standard_error[design].keys():
+            assert isinstance(standard_error[design][damage_model], float)
