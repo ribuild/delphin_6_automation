@@ -389,11 +389,26 @@ def relative_standard_error(series: list, sequence: int) -> float:
     return standard_error / np.mean(series)
 
 
-def check_convergence(sampling_strategy, standard_error):
-    # TODO - Check if the standard error is lower than the threshold value in the sampling strategy
-    # If it is return True otherwise return False
+def check_convergence(strategy_document: sample_entry.Strategy) -> bool:
+    """
+    Check if the standard error is lower than the threshold value in the sampling strategy
+    If it is return True otherwise return False
 
-    return None
+    :param strategy_document:
+    :type strategy_document:
+    :return:
+    :rtype:
+    """
+
+    checks = [strategy_document.standard_error['mould'][-1],
+              strategy_document.standard_error['algae'][-1],
+              strategy_document.standard_error['heat_loss'][-1]]
+
+    if all(check <= strategy_document.strategy['settings']['standard error threshold']
+           for check in checks):
+        return True
+    else:
+        return False
 
 
 def compute_sampling_distributions(sampling_strategy: dict, samples_raw: np.ndarray, used_samples_per_set: int) -> dict:

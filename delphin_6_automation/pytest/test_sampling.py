@@ -184,3 +184,20 @@ def test_upload_standard_error(add_strategy_for_errors, add_dummy_sample, error)
     assert sample.standard_error['algae'] == error
     assert isinstance(sample.standard_error['heat_loss'], float)
     assert sample.standard_error['heat_loss'] == error
+
+
+@pytest.mark.parametrize('error',
+                         [0.3, 0.101, 0.1, 0.01])
+def test_check_convergence(add_strategy_for_errors, add_dummy_sample, error):
+
+    strategy = sample_entry.Strategy.objects().first()
+    sample = sample_entry.Sample.objects().first()
+    current_error = {'mould': error,
+                     'algae': error,
+                     'heat_loss': error}
+
+    sampling_interactions.upload_standard_error(strategy, sample.id, current_error)
+
+    strategy.reload()
+    threshold = strategy.strategy['settings']['standard error threshold']
+    assert (error <= threshold) == sampling.check_convergence(strategy)
