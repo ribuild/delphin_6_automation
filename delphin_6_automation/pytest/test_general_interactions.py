@@ -6,6 +6,7 @@ __license__ = 'MIT'
 
 # Modules
 import os
+import shutil
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
@@ -43,3 +44,31 @@ def test_download_full_project_from_database(db_one_project, tmpdir):
     assert os.path.exists(os.path.join(folder, 'materials'))
     assert all([material in os.listdir(os.path.join(folder, 'materials'))
                for material in materials])
+
+
+def test_download_results_1(add_results, tmpdir, test_folder):
+
+    folder = tmpdir.mkdir('test')
+    source_folder = tmpdir.mkdir('source')
+    general_interactions.download_raw_result(add_results, folder)
+    shutil.unpack_archive(test_folder + '/raw_results/delphin_results.zip', source_folder)
+
+    source_cvode = open(os.path.join(source_folder, 'delphin_results/log/integrator_cvode_stats.tsv'), 'r').readlines()
+    test_cvode = open(os.path.join(folder, f'{add_results}/log/integrator_cvode_stats.tsv'), 'r').readlines()
+    assert test_cvode == source_cvode
+
+    source_g6a = open(os.path.join(source_folder,
+                                   'delphin_results/results/5a5479095d9460327c6970f0_2823182570.g6a'), 'r').readlines()
+    test_g6a = open(os.path.join(folder,
+                                 f'{add_results}/results/5a5479095d9460327c6970f0_2823182570.g6a'), 'r').readlines()
+    assert test_g6a == source_g6a
+
+    source_d6o = open(os.path.join(source_folder,
+                                   'delphin_results/results/Surface relative humidity - left side, outdoor.d6o'),
+                      'r').readlines()
+    del source_d6o[3]
+    test_d6o = open(os.path.join(folder,
+                                 f'{add_results}/results/Surface relative humidity - left side, outdoor.d6o'),
+                    'r').readlines()
+    del test_d6o[3]
+    assert test_d6o == source_d6o

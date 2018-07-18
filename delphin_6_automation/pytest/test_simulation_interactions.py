@@ -12,17 +12,13 @@ __license__ = 'MIT'
 # RIBuild
 
 
-def test_create_submit_file():
+def test_set_simulated():
     assert True
 
 
-def test_submit_job():
+def test_set_simulation_time():
     assert True
 
 
-def test_wait_until_finished():
-    assert True
-
-
-def test_hpc_worker():
+def test_clean_simulation_folder():
     assert True
