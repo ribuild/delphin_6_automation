@@ -112,7 +112,7 @@ def dict_to_ccd(weather_dict: dict, folder: str) -> bool:
                            'long_wave_radiation',
                            'short_wave_radiation',
                            'indoor_temperature',
-                           'indoor_relative_humidity']:
+                           'indoor_relative_humidity', 'wind_speed']:
 
             info_dict = dict(parameter_dict[weather_key], **{'year': weather_dict['year']})
             info_dict.update({'location_name': weather_dict['location_name']})
