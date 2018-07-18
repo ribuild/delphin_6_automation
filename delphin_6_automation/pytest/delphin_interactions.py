@@ -13,6 +13,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry
+from delphin_6_automation.database_interactions.db_templates import result_processed_entry
 from delphin_6_automation.file_parsing import delphin_parser
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -99,7 +100,6 @@ def test_upload_project_2(delphin_file_path, empty_database, add_two_materials, 
 
 
 def test_upload_processed_results(add_results, tmpdir, test_folder):
-    # TODO - Create assertments!!!
 
     folder = tmpdir.mkdir('test')
     weather_folder = folder.mkdir('weather')
@@ -112,4 +112,17 @@ def test_upload_processed_results(add_results, tmpdir, test_folder):
 
     result_folder = os.path.join(folder, 'delphin_id/results')
     result_id = delphin_interactions.upload_processed_results(result_folder, delphin_doc, result_doc)
+
+    result_doc.reload()
+    delphin_doc.reload()
+
+    process_result_doc = result_processed_entry.ProcessedResult.objects(id=result_id).first()
+    assert process_result_doc
+    assert process_result_doc.heat_loss
+    assert process_result_doc.mould
+    assert process_result_doc.algae
+    assert process_result_doc.thresholds
+    assert process_result_doc.u_value
+    assert delphin_doc.result_processed == process_result_doc
+    assert result_doc.result_processed == process_result_doc
 

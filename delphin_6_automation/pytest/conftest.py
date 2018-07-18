@@ -244,6 +244,7 @@ def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials,
 
 @pytest.fixture()
 def add_strategy_for_errors(setup_database, add_three_years_weather):
+
     strategy = {'design': ['1d_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p'],
                 'settings': {'sequence': 10, 'standard error threshold': 0.1}}
     sampling_interactions.upload_sampling_strategy(strategy)
