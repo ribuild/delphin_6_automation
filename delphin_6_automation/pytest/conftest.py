@@ -247,3 +247,4 @@ def add_strategy_for_errors(setup_database, add_three_years_weather):
     strategy = {'design': ['1d_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p'],
                 'settings': {'sequence': 10}}
     sampling_interactions.upload_sampling_strategy(strategy)
+
