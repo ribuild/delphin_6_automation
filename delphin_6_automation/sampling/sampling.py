@@ -11,7 +11,6 @@ from scipy.stats import norm
 from scipy.stats import randint
 from scipy.stats import uniform
 import numpy as np
-import collections
 import typing
 import copy
 
@@ -25,6 +24,7 @@ from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.sampling import sobol_lib
 
 
@@ -43,7 +43,7 @@ def create_sampling_strategy(path: str) -> dict:
     :rtype: dict
     """
 
-    design = {'construction type': inputs.construct_design_options()}
+    design = inputs.construct_design_options()
 
     scenario = {'generic scenario': None}
 
@@ -213,13 +213,13 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
     return samples
 
 
-def load_design_options(designs: dict) -> typing.List[dict]:
+def load_design_options(designs: list) -> typing.List[dict]:
 
     folder = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                           'input_files/design')
     delphin_projects = []
 
-    for design in designs['construction type']:
+    for design in designs:
         delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, design)))
 
     return delphin_projects
@@ -237,7 +237,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
     for sequence in samples.keys():
         for design in samples[sequence].keys():
             sample_dict = dict()
-            design_index = sampling_strategy['design']['construction type'].index(design)
+            design_index = sampling_strategy['design'].index(design)
             design_variation = copy.deepcopy(delphin_projects[design_index])
 
             for parameter in samples[sequence][design]['generic scenario'].keys():
@@ -343,6 +343,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
             sample_dict['start year'] = samples[sequence][design]['generic scenario']['start year'][0]
             sample_dict['exterior climate'] = samples[sequence][design]['generic scenario']['exterior climate'][0]
             sample_dict['interior climate'] = samples[sequence][design]['generic scenario']['interior climate'][0]
+            sample_dict['design_option'] = design
 
             delphin_interactions.add_sampling_dict(delphin_id, sample_dict)
 
@@ -351,10 +352,41 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
     return delphin_ids
 
 
-def calculate_error(delphin_ids):
+def calculate_error(sample_strategy: dict) -> dict:
     # TODO - Calculated the standard error on the results from the given delphin simulations
+    # retrieve the processed data from all delphin simulations in the sampling scheme.
+    # calculate the standard error for all design options, sequences should be collapsed
+    # There should both a mean standard error and a standard deviation of the standard error
     # Return the error
-    return None
+
+    standard_error = dict()
+    sequence = sample_strategy['settings']['sequence']
+    for design in sample_strategy['design']:
+        projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design)
+        mould = []
+        algae = []
+        heat_loss = []
+
+        # TODO - Speed up this with better query
+        for project in projects_given_design:
+            mould.append(project['thresholds']['mould'])
+            algae.append(project['thresholds']['algae'])
+            heat_loss.append(project['thresholds']['heat_loss'])
+
+        design_standard_error = {'mould': relative_standard_error(mould, sequence),
+                                 'algae': relative_standard_error(algae, sequence),
+                                 'heat_loss': relative_standard_error(heat_loss, sequence)}
+
+        standard_error[design] = design_standard_error
+
+    return standard_error
+
+
+def relative_standard_error(series: list, sequence: int) -> float:
+
+    series = np.asarray(series)
+    standard_error = np.sqrt(1/(sequence * (sequence - 1)) * np.sum((series - np.mean(series)) ** 2))
+    return standard_error / np.mean(series)
 
 
 def check_convergence(sampling_strategy, standard_error):
@@ -365,9 +397,8 @@ def check_convergence(sampling_strategy, standard_error):
 
 
 def compute_sampling_distributions(sampling_strategy: dict, samples_raw: np.ndarray, used_samples_per_set: int) -> dict:
-    designs = [design_option
-               for design_ in sampling_strategy['design'].keys()
-               for design_option in sampling_strategy['design'][design_]]
+    designs = [design_
+               for design_ in sampling_strategy['design']]
 
     scenarios = sampling_strategy['scenario'].keys()
     sample_parameters = sampling_strategy['distributions'].keys()
