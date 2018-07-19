@@ -252,6 +252,9 @@ def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
 
     if not os.path.isdir(simulation_folder):
         os.mkdir(simulation_folder)
+    else:
+        simulation_interactions.clean_simulation_folder(simulation_folder)
+        os.mkdir(simulation_folder)
 
     # Download, solve, upload
     print(f'\n{thread_name} downloads project with ID: {id_}')

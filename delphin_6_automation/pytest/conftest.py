@@ -21,6 +21,7 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
@@ -265,6 +266,45 @@ def mock_submit_job(monkeypatch):
 def mock_sleep(monkeypatch):
 
     def mockreturn(secs):
+        return None
+
+    monkeypatch.setattr(time, 'sleep', mockreturn)
+
+
+@pytest.fixture()
+def mock_hpc_worker(monkeypatch):
+
+    def mockreturn(id_, thread_name, folder=None):
+        print('hpc called')
+        exit()
+        return None
+
+    monkeypatch.setattr(simulation_worker, 'hpc_worker', mockreturn)
+
+
+@pytest.fixture()
+def mock_find_next_sim_in_queue(monkeypatch):
+
+    def mockreturn():
+        return 'test_id'
+
+    monkeypatch.setattr(simulation_interactions, 'find_next_sim_in_queue', mockreturn)
+
+
+@pytest.fixture()
+def mock_hpc_worker_exception(monkeypatch):
+
+    def mockreturn(id_, thread_name, folder=None):
+        raise FileNotFoundError
+
+    monkeypatch.setattr(simulation_worker, 'hpc_worker', mockreturn)
+
+
+@pytest.fixture()
+def mock_sleep_exception(monkeypatch):
+
+    def mockreturn(secs):
+        exit()
         return None
 
     monkeypatch.setattr(time, 'sleep', mockreturn)
