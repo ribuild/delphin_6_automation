@@ -41,6 +41,7 @@ def test_rain_model_2(test_folder):
 
 def test_solar_radiation(test_folder):
 
+    # TODO - Create some assertments
     diff_rad = np.array(weather_parser.ccd_to_list(test_folder + '/weather/diffuse_radiation.ccd'))
     dir_rad = np.array(weather_parser.ccd_to_list(test_folder + '/weather/direct_radiation.ccd'))
     radiation = diff_rad + dir_rad

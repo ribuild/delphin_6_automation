@@ -25,7 +25,7 @@ class Sample(mongoengine.Document):
     samples = mongoengine.DictField(required=True)
     delphin_docs = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=delphin_entry.Delphin))
     iteration = mongoengine.IntField(required=True)
-    standard_error = mongoengine.ListField(field=mongoengine.FloatField())
+    standard_error = mongoengine.DictField()
 
     meta = collections.sample_db
 
@@ -51,5 +51,5 @@ class Strategy(mongoengine.Document):
     # References
     samples = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=Sample))
     samples_raw = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=SampleRaw))
-    standard_error = mongoengine.ListField()
+    standard_error = mongoengine.DictField()
     strategy = mongoengine.DictField(required=True)

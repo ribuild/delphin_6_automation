@@ -7,6 +7,7 @@ __license__ = 'MIT'
 # Modules
 import pytest
 from mongoengine.connection import get_connection
+from collections import OrderedDict
 import os
 import shutil
 import sys
@@ -22,6 +23,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
+from delphin_6_automation.database_interactions.db_templates import result_raw_entry
 from delphin_6_automation.sampling import sampling
 
 
@@ -83,6 +85,18 @@ def add_single_user(setup_database):
 @pytest.fixture()
 def add_two_materials(test_folder, setup_database):
     material_files = ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6', ]
+
+    for file in material_files:
+        material_interactions.upload_material_file(test_folder + '/materials/' + file)
+
+    yield
+
+
+@pytest.fixture()
+def add_five_materials(test_folder, setup_database):
+    material_files = ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6',
+                      'GlueMortarForClimateBoard_705.m6', 'CalsithermCalciumsilikatHamstad_571.m6',
+                      'KlimaputzMKKQuickmix_125.m6']
 
     for file in material_files:
         material_interactions.upload_material_file(test_folder + '/materials/' + file)
@@ -165,7 +179,73 @@ def mock_sobol(monkeypatch):
 
 
 @pytest.fixture()
-def add_dummy_sample(setup_database, dummy_sample):
+def mock_material_info(monkeypatch):
+    def mockreturn(material_id):
+        return OrderedDict((('@name', 'Test Material [000]'),
+                            ('@color', '#ff5020a0'),
+                            ('@hatchCode', str(13)),
+                            ('#text', '${Material Database}/TestMaterial_000.m6')
+                            )
+                           )
 
+    monkeypatch.setattr(material_interactions, 'get_material_info', mockreturn)
+
+
+@pytest.fixture()
+def add_dummy_sample(setup_database, dummy_sample):
     sample_id = sampling_interactions.upload_samples(dummy_sample, 0)
     sample_doc = sample_entry.Sample.objects(id=sample_id).first()
+
+
+@pytest.fixture()
+def create_samples(add_sampling_strategy, mock_sobol):
+    strategy = sample_entry.Strategy.objects().first()
+
+    samples = sampling.create_samples(strategy, 0)
+
+    return samples
+
+
+def sobol_test_function1(array: np.ndarray) -> np.ndarray:
+    return np.prod(1 + (array ** 2 - array - 1 / 6), axis=1)
+
+
+def sobol_test_function2(array: np.ndarray) -> np.ndarray:
+    return np.prod(1 + (array ** 6 - 3 * array ** 5 + 5 / 2 * array ** 4 - 1 / 2 * array ** 2 + 1 / 42), axis=1)
+
+
+@pytest.fixture()
+def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials, add_three_years_weather,
+                           add_results, test_folder, tmpdir):
+    priority = 'high'
+    climate_class = 'a'
+    location_name = 'Aberdeen'
+    years = [2020, 2021, 2022]
+    design_list = ['1d_interior_plaster.d6p', '1d_interior_plaster.d6p',
+                   '1d_exterior_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p']
+    result_doc = result_raw_entry.Result.objects().first()
+    folder = tmpdir.mkdir('test')
+    weather_folder = folder.mkdir('weather')
+    result_zip = test_folder + '/raw_results/delphin_results1.zip'
+    shutil.unpack_archive(result_zip, folder)
+    shutil.copy(f'{test_folder}/weather/temperature.ccd', f'{weather_folder}/temperature.ccd')
+    shutil.copy(f'{test_folder}/weather/indoor_temperature.ccd', f'{weather_folder}/indoor_temperature.ccd')
+    result_folder = os.path.join(folder, 'delphin_id/results')
+
+    for design in design_list:
+        sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
+        weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
+        weather_interactions.assign_weather_by_name_and_years(sim_id, location_name, years)
+        delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
+        delphin_interactions.add_sampling_dict(sim_id, {'design_option': design})
+        delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
+        delphin_interactions.upload_processed_results(result_folder, delphin_doc, result_doc)
+
+
+@pytest.fixture()
+def add_strategy_for_errors(setup_database, add_three_years_weather):
+
+    strategy = {'design': ['1d_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p'],
+                'settings': {'sequence': 10, 'standard error threshold': 0.1}}
+    sampling_interactions.upload_sampling_strategy(strategy)
+

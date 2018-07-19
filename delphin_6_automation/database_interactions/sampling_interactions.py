@@ -68,7 +68,7 @@ def upload_samples(new_samples: dict, sample_iteration: int) -> str:
     return sample.id
 
 
-def upload_standard_error(sampling_id: str, current_error):
+def upload_standard_error(strategy_document: sample_entry.Strategy, sampling_id: str, current_error):
     """
     Upload the standard error to the sampling entry
 
@@ -79,7 +79,11 @@ def upload_standard_error(sampling_id: str, current_error):
     """
 
     sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
-    sampling_document.update(push__standard_error=current_error)
+    sampling_document.update(set__standard_error=current_error)
+
+    strategy_document.update(push__standard_error__mould=current_error['mould'])
+    strategy_document.update(push__standard_error__algae=current_error['algae'])
+    strategy_document.update(push__standard_error__heat_loss=current_error['heat_loss'])
 
 
 def upload_raw_samples(samples_raw: np.ndarray, sequence_number: int) -> str:
