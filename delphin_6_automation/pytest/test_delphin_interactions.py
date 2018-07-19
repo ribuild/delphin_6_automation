@@ -67,7 +67,6 @@ def test_upload_results_1(db_one_project, test_folder, tmpdir):
     # Assert
     assert result_doc.delphin == delphin_doc
     assert delphin_doc.results_raw == result_doc
-    assert result_doc.log
     assert result_doc.results
     assert isinstance(result_doc.geometry_file, dict)
     assert result_doc.geometry_file_hash
@@ -110,8 +109,8 @@ def test_upload_processed_results(add_results, tmpdir, test_folder):
     result_doc = result_raw_entry.Result.objects().first()
     delphin_doc = delphin_entry.Delphin.objects().first()
 
-    result_folder = os.path.join(folder, 'delphin_id/results')
-    result_id = delphin_interactions.upload_processed_results(result_folder, delphin_doc, result_doc)
+    result_folder = os.path.join(folder, 'delphin_id')
+    result_id = delphin_interactions.upload_processed_results(result_folder, delphin_doc.id, result_doc.id)
 
     result_doc.reload()
     delphin_doc.reload()

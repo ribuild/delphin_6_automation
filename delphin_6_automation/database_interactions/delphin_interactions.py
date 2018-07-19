@@ -458,7 +458,7 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -
 
     :param folder:
     :param delphin_id:
-    :param result_id:
+    :param raw_result_id:
     :return:
     """
 

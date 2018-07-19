@@ -53,10 +53,6 @@ def test_download_results_1(add_results, tmpdir, test_folder):
     general_interactions.download_raw_result(add_results, folder)
     shutil.unpack_archive(test_folder + '/raw_results/delphin_results.zip', source_folder)
 
-    source_cvode = open(os.path.join(source_folder, 'delphin_results/log/integrator_cvode_stats.tsv'), 'r').readlines()
-    test_cvode = open(os.path.join(folder, f'{add_results}/log/integrator_cvode_stats.tsv'), 'r').readlines()
-    assert test_cvode == source_cvode
-
     source_g6a = open(os.path.join(source_folder,
                                    'delphin_results/results/5a5479095d9460327c6970f0_2823182570.g6a'), 'r').readlines()
     test_g6a = open(os.path.join(folder,

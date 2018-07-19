@@ -40,7 +40,7 @@ def download_raw_result(result_id: str, download_path: str) -> bool:
     if not os.path.exists(download_path):
         os.mkdir(download_path)
 
-    delphin_parser.write_log_files(result_obj, download_path)
+    # delphin_parser.write_log_files(result_obj, download_path)
     delphin_interact.download_result_files(result_obj, download_path)
 
     return True
