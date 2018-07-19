@@ -232,7 +232,7 @@ def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials,
     shutil.unpack_archive(result_zip, folder)
     shutil.copy(f'{test_folder}/weather/temperature.ccd', f'{weather_folder}/temperature.ccd')
     shutil.copy(f'{test_folder}/weather/indoor_temperature.ccd', f'{weather_folder}/indoor_temperature.ccd')
-    result_folder = os.path.join(folder, 'delphin_id/results')
+    result_folder = os.path.join(folder, 'delphin_id')
 
     for design in design_list:
         sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
@@ -241,7 +241,7 @@ def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials,
         delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
         delphin_interactions.add_sampling_dict(sim_id, {'design_option': design})
         delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
-        delphin_interactions.upload_processed_results(result_folder, delphin_doc, result_doc)
+        delphin_interactions.upload_processed_results(result_folder, delphin_doc.id, result_doc.id)
 
 
 @pytest.fixture()
