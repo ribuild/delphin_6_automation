@@ -7,6 +7,7 @@ __license__ = 'MIT'
 # Modules
 import pytest
 import datetime
+import os
 
 # RiBuild Modules
 from delphin_6_automation.backend import simulation_worker
@@ -17,9 +18,35 @@ from delphin_6_automation.database_interactions import simulation_interactions
 # RIBuild
 
 
-def test_create_submit_file(tmpdir):
+@pytest.mark.parametrize('restart',
+                         [False, True])
+def test_create_submit_file(tmpdir, db_one_project, restart):
 
-    assert True
+    folder = tmpdir.mkdir('test')
+    delphin_id = delphin_entry.Delphin.objects().first().id
+
+    expected_submit_file = ["#!/bin/bash\n", "#BSUB -J DelphinJob\n", "#BSUB -o DelphinJob_%J.out\n",
+                            "#BSUB -e DelphinJob_%J.err\n", "#BSUB -q hpc\n", "#BSUB -W 15\n",
+                            '#BSUB -R "rusage[mem=3MB] span[hosts=1]"\n', "#BSUB -n 24\n", "#BSUB -N\n",
+                            '\n', "export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n", '\n',
+                            f"~/Delphin-6.0/bin/DelphinSolver {delphin_id}.d6p\n", '\n']
+
+    expected_restart = f"~/Delphin-6.0/bin/DelphinSolver --restart {delphin_id}.d6p\n"
+    submit_file, _ = simulation_worker.create_submit_file(delphin_id, folder, restart)
+
+    assert submit_file
+    assert submit_file == f'submit_{delphin_id}.sh'
+    assert os.path.exists(os.path.join(folder, submit_file))
+
+    with open(os.path.join(folder, submit_file), 'r') as file:
+        submit_data = file.readlines()
+
+    if not restart:
+        assert submit_data == expected_submit_file
+
+    else:
+        expected_submit_file[-2] = expected_restart
+        assert submit_data == expected_submit_file
 
 
 def test_submit_job():
@@ -32,6 +59,7 @@ def test_wait_until_finished():
 
 def test_hpc_worker():
     assert True
+
 
 @pytest.mark.parametrize('sim_time',
                          [False, True])
