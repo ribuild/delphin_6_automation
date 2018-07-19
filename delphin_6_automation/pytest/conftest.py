@@ -12,6 +12,7 @@ import os
 import shutil
 import sys
 import numpy as np
+import time
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -25,6 +26,7 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry
 from delphin_6_automation.sampling import sampling
+from delphin_6_automation.backend import simulation_worker
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -248,4 +250,13 @@ def add_strategy_for_errors(setup_database, add_three_years_weather):
     strategy = {'design': ['1d_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p'],
                 'settings': {'sequence': 10, 'standard error threshold': 0.1}}
     sampling_interactions.upload_sampling_strategy(strategy)
+
+
+@pytest.fixture()
+def mock_submit_job(monkeypatch):
+
+    def mockreturn(submit_file, sim_id):
+        return None
+
+    monkeypatch.setattr(simulation_worker, 'submit_job', mockreturn)
 

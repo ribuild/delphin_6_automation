@@ -123,11 +123,11 @@ def upload_results_to_database(path_: str, delete_files: bool = True) -> str:
     entry = result_db.Result()
 
     entry.delphin = delphin_entry
-    log_dict = dict()
-    log_dict['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
+    # log_dict = dict()
+    # log_dict['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
     # log_dict['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
     # log_dict['progress'] = delphin_parser.progress_to_dict(log_path)
-    entry.log.put(bson.BSON.encode(log_dict))
+    # entry.log.put(bson.BSON.encode(log_dict))
 
     entry.geometry_file = geometry_dict
     entry.results.put(bson.BSON.encode(result_dict))
@@ -452,17 +452,18 @@ def check_delphin_file(delphin_dict: dict):
     return error
 
 
-def upload_processed_results(folder, delphin_doc, result_doc):
+def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -> result_db.Result.id:
     """
     Process results and upload.
 
     :param folder:
-    :param delphin_doc:
-    :param result_doc:
+    :param delphin_id:
+    :param result_id:
     :return:
     """
 
     # Paths
+    folder = os.path.join(folder, 'results')
     temperature_mould = list(delphin_parser.d6o_to_dict(folder, 'temperature mould.d6o')[0]['result'].values())[0]
     relative_humidity_mould = \
         list(delphin_parser.d6o_to_dict(folder, 'relative humidity mould.d6o')[0]['result'].values())[0]
@@ -477,8 +478,10 @@ def upload_processed_results(folder, delphin_doc, result_doc):
 
     # Upload
     result_entry = result_processed_entry.ProcessedResult()
+    raw_result_doc = result_db.Result.objects(id=raw_result_id).first()
+    delphin_doc = delphin_db.Delphin.objects(id=delphin_id).first()
     result_entry.delphin = delphin_doc
-    result_entry.results_raw = result_doc
+    result_entry.results_raw = raw_result_doc
     mould = {'a': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='a'),
              'b': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='b'),
              'c': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='c'),
@@ -498,10 +501,8 @@ def upload_processed_results(folder, delphin_doc, result_doc):
     result_entry.save()
 
     # Cross reference
-    delphin_doc.reload()
     delphin_doc.update(set__result_processed=result_entry)
-    result_doc.reload()
-    result_doc.update(set__result_processed=result_entry)
+    raw_result_doc.update(set__result_processed=result_entry)
 
     return result_entry.id
 

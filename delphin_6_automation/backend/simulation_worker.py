@@ -243,9 +243,9 @@ def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
             time.sleep(60)
 
 
-def hpc_worker(id_: str, thread_name: str):
+def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
 
-    simulation_folder = f'H:/ribuild/{id_}'
+    simulation_folder = os.path.join(folder, id_)
 
     if not os.path.isdir(simulation_folder):
         os.mkdir(simulation_folder)
@@ -262,8 +262,10 @@ def hpc_worker(id_: str, thread_name: str):
     wait_until_finished(id_, estimated_time, simulation_folder)
     delta_time = datetime.datetime.now() - time_0
 
-    delphin_interactions.upload_results_to_database(simulation_folder + '/' + id_)
-    delphin_interactions.upload_processed_results(simulation_folder + '/' + id_)
+    result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_),
+                                                                delete_files=False)
+    delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
+                                                  id_, result_id)
 
     simulation_interactions.set_simulated(id_)
     simulation_interactions.set_simulation_time(id_, delta_time)

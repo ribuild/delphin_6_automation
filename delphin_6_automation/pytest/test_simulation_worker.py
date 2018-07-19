@@ -8,6 +8,8 @@ __license__ = 'MIT'
 import pytest
 import datetime
 import os
+import time
+import shutil
 
 # RiBuild Modules
 from delphin_6_automation.backend import simulation_worker
@@ -57,8 +59,30 @@ def test_wait_until_finished():
     assert True
 
 
-def test_hpc_worker():
-    assert True
+def test_hpc_worker(tmpdir, db_one_project, mock_submit_job, monkeypatch, test_folder):
+    folder = tmpdir.mkdir('test')
+    delphin_doc = delphin_entry.Delphin.objects().first()
+
+    def mockreturn(sim_id, estimated_run_time, simulation_folder):
+        result_zip = test_folder + '/raw_results/delphin_results1.zip'
+        delphin_folder = os.path.join(folder, str(delphin_doc.id))
+        shutil.unpack_archive(result_zip, delphin_folder)
+        os.rename(os.path.join(delphin_folder, 'delphin_id'), os.path.join(delphin_folder, str(delphin_doc.id)))
+
+        time.sleep(2)
+        return None
+
+    monkeypatch.setattr(simulation_worker, 'wait_until_finished', mockreturn)
+
+    simulation_worker.hpc_worker(str(delphin_doc.id), 'Test_Thread', folder)
+
+    delphin_doc.reload()
+
+    assert not os.path.exists(os.path.join(folder, str(delphin_doc.id)))
+    assert delphin_doc.results_raw
+    assert delphin_doc.result_processed
+    assert delphin_doc.simulated
+    assert delphin_doc.simulation_time
 
 
 @pytest.mark.parametrize('sim_time',
