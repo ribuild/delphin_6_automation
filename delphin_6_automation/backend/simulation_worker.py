@@ -22,7 +22,10 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import general_interactions
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
-from delphin_6_automation.database_interactions.auth import hpc
+try:
+    from delphin_6_automation.database_interactions.auth import hpc
+except ModuleNotFoundError:
+    pass
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
