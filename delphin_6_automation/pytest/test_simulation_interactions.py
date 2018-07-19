@@ -62,3 +62,17 @@ def test_clean_simulation_folder(tmpdir):
     assert not os.path.exists(folder1)
     assert not os.path.exists(folder2)
     assert not os.path.exists(folder3)
+
+
+def test_find_next_sim_in_queue(db_one_project, mock_sleep, capsys):
+
+    simulation_interactions.find_next_sim_in_queue()
+
+    delphin_doc = delphin_entry.Delphin.objects().first()
+
+    assert delphin_doc.simulating
+
+    simulation_interactions.find_next_sim_in_queue()
+
+    out, err = capsys.readouterr()
+    assert out == 'All Delphin Projects in the queue are simulated!\n'

@@ -260,3 +260,11 @@ def mock_submit_job(monkeypatch):
 
     monkeypatch.setattr(simulation_worker, 'submit_job', mockreturn)
 
+
+@pytest.fixture()
+def mock_sleep(monkeypatch):
+
+    def mockreturn(secs):
+        return None
+
+    monkeypatch.setattr(time, 'sleep', mockreturn)

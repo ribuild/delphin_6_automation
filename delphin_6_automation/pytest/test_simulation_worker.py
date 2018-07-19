@@ -103,3 +103,7 @@ def test_get_average_computation_time(db_one_project, sim_time):
         assert computation_time == 3
     else:
         assert computation_time == 15
+
+
+def test_simulation_worker():
+    pass

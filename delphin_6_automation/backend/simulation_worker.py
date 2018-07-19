@@ -286,7 +286,14 @@ def simulation_worker(sim_location, thread_name=None):
                 if sim_location == 'local':
                     local_worker(str(id_))
                 elif sim_location == 'hpc':
-                    hpc_worker(str(id_), thread_name)
+                    try:
+                        hpc_worker(str(id_), thread_name)
+                    except Exception as err:
+                        simulation_interactions.set_simulating(str(id_), False)
+                        logger.exception(err)
+                        time.sleep(5)
+                        pass
+
             else:
                 pass
 
