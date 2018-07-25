@@ -51,5 +51,5 @@ class Strategy(mongoengine.Document):
     # References
     samples = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=Sample))
     samples_raw = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=SampleRaw))
-    standard_error = mongoengine.ListField(field=mongoengine.DictField())
+    standard_error = mongoengine.DictField(default={'mould': [], 'heat_loss': [], 'algae': []})
     strategy = mongoengine.DictField(required=True)

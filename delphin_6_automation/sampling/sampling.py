@@ -100,7 +100,8 @@ def create_sampling_strategy(path: str) -> dict:
                          'add samples per run': 1,
                          'max samples': 500,
                          'sequence': 10,
-                         'standard error threshold': 0.1}
+                         'standard error threshold': 0.1,
+                         'raw sample size': 2 ** 9}
 
     combined_dict = {'design': design, 'scenario': scenario,
                      'distributions': distributions, 'settings': sampling_settings}

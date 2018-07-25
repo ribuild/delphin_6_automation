@@ -139,6 +139,7 @@ def mock_check_convergence(monkeypatch):
     monkeypatch.setattr(sampling, 'check_convergence', mock_return)
 
 
+@pytest.mark.skip('Not ready yet')
 def test_sampling_worker(add_mock_strategy, mock_sampling_distribution, mock_create_delphin,
                          mock_wait_until_finished, mock_calculate_error, mock_upload_error, mock_check_convergence):
     sampling_worker.sampling_worker(add_mock_strategy)
