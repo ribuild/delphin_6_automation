@@ -107,7 +107,7 @@ def sampling_worker(strategy_id):
         simulation_interactions.wait_until_simulated(delphin_ids)
         current_error = sampling.calculate_error(strategy_doc.strategy)
         sampling_interactions.upload_standard_error(strategy_doc, sampling_id, current_error)
-        convergence = sampling.check_convergence(strategy_doc.strategy)
+        convergence = sampling.check_convergence(strategy_doc)
 
         print(f'Standard Error at iteration {sample_iteration} is: {current_error}')
         logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}')
@@ -118,7 +118,7 @@ def sampling_worker(strategy_id):
         previous_samples = used_samples_per_set * samples_per_set
         sample_iteration += 1
 
-        if used_samples_per_set >= strategy_doc.strategy['settings']['max_samples']:
+        if used_samples_per_set >= strategy_doc.strategy['settings']['max samples']:
             print(f'Maximum number of samples reached. Simulated {used_samples_per_set} samples per set')
             logger.info(f'Maximum number of samples reached. Simulated {used_samples_per_set} samples per set')
             print('\nExits. Bye')

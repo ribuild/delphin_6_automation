@@ -186,7 +186,8 @@ def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.a
 
     # If not create a new raw sampling
     distribution_dimension = len(sampling_strategy.strategy['distributions'].keys())
-    samples_raw = sobol(m=2 ** 12, dimension=distribution_dimension, sets=1)
+    samples_raw = sobol(m=sampling_strategy.strategy['settings']['raw sample size'],
+                        dimension=distribution_dimension, sets=1)
     samples_raw_id = sampling_interactions.upload_raw_samples(samples_raw, step)
     sampling_interactions.add_raw_samples_to_strategy(sampling_strategy, samples_raw_id)
 
@@ -367,7 +368,7 @@ def calculate_error(sample_strategy: dict) -> dict:
         algae = []
         heat_loss = []
 
-        # TODO - Speed up this with better query
+        # TODO - Speed up this with a better query
         for project in projects_given_design:
             mould.append(project.result_processed['thresholds']['mould'])
             algae.append(project.result_processed['thresholds']['algae'])

@@ -208,14 +208,6 @@ def create_samples(add_sampling_strategy, mock_sobol):
     return samples
 
 
-def sobol_test_function1(array: np.ndarray) -> np.ndarray:
-    return np.prod(1 + (array ** 2 - array - 1 / 6), axis=1)
-
-
-def sobol_test_function2(array: np.ndarray) -> np.ndarray:
-    return np.prod(1 + (array ** 6 - 3 * array ** 5 + 5 / 2 * array ** 4 - 1 / 2 * array ** 2 + 1 / 42), axis=1)
-
-
 @pytest.fixture()
 def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials, add_three_years_weather,
                            add_results, test_folder, tmpdir):
