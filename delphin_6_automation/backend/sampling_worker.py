@@ -103,10 +103,11 @@ def sampling_worker(strategy_id):
         sampling_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
         delphin_ids = sampling.create_delphin_projects(strategy_doc.strategy, new_samples)
         sampling_interactions.add_delphin_to_sampling(sampling_id, delphin_ids)
+        sampling_interactions.add_sample_to_strategy(strategy_id, sampling_id)
         simulation_interactions.wait_until_simulated(delphin_ids)
         current_error = sampling.calculate_error(strategy_doc.strategy)
         sampling_interactions.upload_standard_error(strategy_doc, sampling_id, current_error)
-        convergence = sampling.check_convergence(strategy_doc.strategy, current_error)
+        convergence = sampling.check_convergence(strategy_doc.strategy)
 
         print(f'Standard Error at iteration {sample_iteration} is: {current_error}')
         logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}')

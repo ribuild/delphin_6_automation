@@ -111,3 +111,14 @@ def test_upload_samples(setup_database, dummy_sample, iteration):
     assert sample_doc.iteration == iteration
     assert not sample_doc.delphin_docs
     assert not sample_doc.standard_error
+
+
+def test_add_sample_to_strategy(add_sampling_strategy, add_dummy_sample):
+    sample_doc = sample_entry.Sample.objects().first()
+    strategy_entry = sample_entry.Strategy.objects().first()
+
+    sampling_interactions.add_sample_to_strategy(strategy_entry.id, sample_doc.id)
+    strategy_entry.reload()
+
+    assert isinstance(strategy_entry.samples, list)
+    assert strategy_entry.samples[0] == sample_doc

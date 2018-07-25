@@ -197,7 +197,6 @@ def mock_material_info(monkeypatch):
 @pytest.fixture()
 def add_dummy_sample(setup_database, dummy_sample):
     sample_id = sampling_interactions.upload_samples(dummy_sample, 0)
-    sample_doc = sample_entry.Sample.objects(id=sample_id).first()
 
 
 @pytest.fixture()
