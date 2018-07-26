@@ -44,7 +44,7 @@ def test_upload_sampling_strategy(add_three_years_weather, tmpdir):
     # Checks
     assert isinstance(strategy_doc.added_date, datetime.datetime)
     assert not strategy_doc.samples
-    assert not strategy_doc.standard_error
+    assert strategy_doc.standard_error == {'mould': [], 'heat_loss': [], 'algae': []}
     assert strategy_doc.strategy
 
     # Strategy Check

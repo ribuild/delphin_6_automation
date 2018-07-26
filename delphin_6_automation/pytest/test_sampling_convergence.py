@@ -8,7 +8,7 @@ __license__ = 'MIT'
 import os
 import pytest
 import numpy as np
-from scipy import integrate
+from matplotlib import pyplot as plt
 
 # RiBuild Modules
 from delphin_6_automation.sampling import sampling
@@ -101,15 +101,15 @@ def mock_calculate_error(monkeypatch):
         delphin_docs = delphin_entry.Delphin.objects()
 
         for delphin in delphin_docs:
-            input_list.append(delphin.sample_data['input'])
+            #input_list.append(delphin.sample_data['input'])
             output_list.append(delphin.sample_data['output'])
 
-        input_list = np.asarray(input_list)
-        output_list = np.asarray(output_list)
-        output_list = np.tile(output_list, (input_list.shape[1], 1)).T
-        integrated_value = np.nansum(integrate.simps(output_list, input_list))
-
-        return np.abs(1.0 - integrated_value)
+        #input_list = np.asarray(input_list)
+        #output_list = np.asarray(output_list)
+        #output_list = np.tile(output_list, (input_list.shape[1], 1)).T
+        #integrated_value = np.nansum(integrate.simps(output_list, input_list))
+        #return np.abs(1.0 - integrated_value)
+        return 1 - sampling.relative_standard_error(output_list, sample_strategy['settings']['sequence'])
 
     monkeypatch.setattr(sampling, 'calculate_error', mock_return)
 
@@ -119,8 +119,8 @@ def mock_upload_error(monkeypatch):
 
     def mock_return(strategy_document: sample_entry.Strategy, sampling_id: str, current_error):
         sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
-        sampling_document.update(set__standard_error={'error': current_error})
-        strategy_document.update(push__standard_error={'error': current_error})
+        sampling_document.update(set__standard_error__mould=current_error)
+        strategy_document.update(push__standard_error__mould=current_error)
 
     monkeypatch.setattr(sampling_interactions, 'upload_standard_error', mock_return)
 
@@ -130,7 +130,7 @@ def mock_check_convergence(monkeypatch):
 
     def mock_return(strategy_document: sample_entry.Strategy):
         strategy_document.reload()
-        if strategy_document.standard_error[-1]['error'] <= strategy_document.strategy[
+        if strategy_document.standard_error['mould'][-1] <= strategy_document.strategy[
             'settings']['standard error threshold']:
             return True
         else:
@@ -142,5 +142,17 @@ def mock_check_convergence(monkeypatch):
 @pytest.mark.skip('Not ready yet')
 def test_sampling_worker(add_mock_strategy, mock_sampling_distribution, mock_create_delphin,
                          mock_wait_until_finished, mock_calculate_error, mock_upload_error, mock_check_convergence):
-    sampling_worker.sampling_worker(add_mock_strategy)
+    with pytest.raises(SystemExit) as exc_info:
+        sampling_worker.sampling_worker(add_mock_strategy)
+
+        strategy_doc = sample_entry.Strategy.objects(id=add_mock_strategy).first()
+        y = strategy_doc.standard_error['mould']
+        x = np.linspace(1, len(y), len(y))
+
+        plt.figure()
+        plt.plot(x, y)
+        plt.show()
+
+        assert True
+
 
