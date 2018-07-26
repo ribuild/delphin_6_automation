@@ -73,7 +73,6 @@ def set_simulating(id_: str, set_to: bool) -> str:
     :rtype: str
     """
 
-    # TODO - if fail then fix!
     simulation = delphin_db.Delphin.objects(id=id_).first()
     simulation.update(set__simulating=set_to)
 

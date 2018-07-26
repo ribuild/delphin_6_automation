@@ -24,7 +24,7 @@ class Result(mongoengine.Document):
     delphin = mongoengine.GenericReferenceField(required=True)
     result_processed = mongoengine.GenericReferenceField()
 
-    log = mongoengine.FileField(required=True, db_alias=meta['db_alias'], collection_name=meta['collection'])
+    log = mongoengine.FileField(db_alias=meta['db_alias'], collection_name=meta['collection'])
     results = mongoengine.FileField(required=True, db_alias=meta['db_alias'], collection_name=meta['collection'])
     geometry_file = mongoengine.DictField(required=True)
     geometry_file_hash = mongoengine.IntField(required=True)

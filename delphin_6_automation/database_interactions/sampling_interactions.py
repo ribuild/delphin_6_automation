@@ -111,3 +111,10 @@ def add_delphin_to_sampling(sampling_id: str, delphin_ids: list):
     for delphin_id in delphin_ids:
         delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
         sampling_document.update(push__delphin_docs=delphin_doc)
+
+
+def add_sample_to_strategy(strategy_id: str, sampling_id: str):
+
+    sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
+    strategy_document = sample_entry.Strategy.objects(id=strategy_id).first()
+    strategy_document.update(push__samples=sampling_document)

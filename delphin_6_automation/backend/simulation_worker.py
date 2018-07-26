@@ -22,7 +22,10 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import general_interactions
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
-from delphin_6_automation.database_interactions.auth import hpc
+try:
+    from delphin_6_automation.database_interactions.auth import hpc
+except ModuleNotFoundError:
+    pass
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -243,11 +246,14 @@ def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
             time.sleep(60)
 
 
-def hpc_worker(id_: str, thread_name: str):
+def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
 
-    simulation_folder = f'H:/ribuild/{id_}'
+    simulation_folder = os.path.join(folder, id_)
 
     if not os.path.isdir(simulation_folder):
+        os.mkdir(simulation_folder)
+    else:
+        simulation_interactions.clean_simulation_folder(simulation_folder)
         os.mkdir(simulation_folder)
 
     # Download, solve, upload
@@ -262,8 +268,10 @@ def hpc_worker(id_: str, thread_name: str):
     wait_until_finished(id_, estimated_time, simulation_folder)
     delta_time = datetime.datetime.now() - time_0
 
-    delphin_interactions.upload_results_to_database(simulation_folder + '/' + id_)
-    delphin_interactions.upload_processed_results(simulation_folder + '/' + id_)
+    result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_),
+                                                                delete_files=False)
+    delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
+                                                  id_, result_id)
 
     simulation_interactions.set_simulated(id_)
     simulation_interactions.set_simulation_time(id_, delta_time)
@@ -281,7 +289,14 @@ def simulation_worker(sim_location, thread_name=None):
                 if sim_location == 'local':
                     local_worker(str(id_))
                 elif sim_location == 'hpc':
-                    hpc_worker(str(id_), thread_name)
+                    try:
+                        hpc_worker(str(id_), thread_name)
+                    except Exception as err:
+                        simulation_interactions.set_simulating(str(id_), False)
+                        logger.exception(err)
+                        time.sleep(5)
+                        pass
+
             else:
                 pass
 

@@ -15,12 +15,12 @@ from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
 
 def test_create_sampling_strategy(tmpdir, add_three_years_weather):
-
     folder = tmpdir.mkdir('test')
     test_strategy = sampling.create_sampling_strategy(folder)
 
@@ -34,7 +34,6 @@ def test_create_sampling_strategy(tmpdir, add_three_years_weather):
 
 
 def test_load_strategy(tmpdir):
-
     folder = tmpdir.mkdir('test')
     source_strategy = sampling.create_sampling_strategy(folder)
     test_strategy = sampling.load_strategy(folder)
@@ -43,7 +42,6 @@ def test_load_strategy(tmpdir):
 
 
 def test_add_delphin_to_sampling(db_one_project, add_dummy_sample):
-
     delphin_doc = delphin_entry.Delphin.objects().first()
     sample = sample_entry.Sample.objects().first()
 
@@ -59,8 +57,7 @@ def test_add_delphin_to_sampling(db_one_project, add_dummy_sample):
 @pytest.mark.parametrize('second_dimension',
                          [1, 2, 3, 6, 9])
 def test_sobol(second_dimension):
-
-    first_dimension = 2**12
+    first_dimension = 2 ** 12
     sobol_sampling = sampling.sobol(m=first_dimension, dimension=second_dimension)
 
     assert isinstance(sobol_sampling, np.ndarray)
@@ -71,7 +68,6 @@ def test_sobol(second_dimension):
 @pytest.mark.parametrize('step_counter',
                          [0, 2, ])
 def test_get_raw_samples(strategy_with_raw_dummy_samples, step_counter, mock_sobol):
-
     strategy = sample_entry.Strategy.objects().first()
     samples_before = len(strategy.samples_raw)
 
@@ -92,7 +88,6 @@ def test_get_raw_samples(strategy_with_raw_dummy_samples, step_counter, mock_sob
 @pytest.mark.parametrize('used_samples_per_set',
                          [0, 1, 2])
 def test_compute_sampling_distributions(strategy_with_raw_dummy_samples, used_samples_per_set):
-
     strategy = sample_entry.Strategy.objects().first()
     raw_samples = np.array(strategy.samples_raw[0].samples_raw)
 
@@ -140,7 +135,6 @@ def test_create_delphin_projects(create_samples, mock_material_info, add_five_ma
 
 
 def test_calculate_error(add_delphin_for_errors, add_strategy_for_errors):
-
     strategy = sample_entry.Strategy.objects().first()
 
     standard_error = sampling.calculate_error(strategy.strategy)
@@ -155,12 +149,11 @@ def test_calculate_error(add_delphin_for_errors, add_strategy_for_errors):
 @pytest.mark.parametrize('error',
                          [1.0, 0.1, 0.01])
 def test_upload_standard_error(add_strategy_for_errors, add_dummy_sample, error):
-
     strategy = sample_entry.Strategy.objects().first()
     sample = sample_entry.Sample.objects().first()
     current_error = {'mould': error,
-             'algae': error,
-             'heat_loss': error}
+                     'algae': error,
+                     'heat_loss': error}
 
     sampling_interactions.upload_standard_error(strategy, sample.id, current_error)
 
@@ -189,7 +182,6 @@ def test_upload_standard_error(add_strategy_for_errors, add_dummy_sample, error)
 @pytest.mark.parametrize('error',
                          [0.3, 0.101, 0.1, 0.01])
 def test_check_convergence(add_strategy_for_errors, add_dummy_sample, error):
-
     strategy = sample_entry.Strategy.objects().first()
     sample = sample_entry.Sample.objects().first()
     current_error = {'mould': error,

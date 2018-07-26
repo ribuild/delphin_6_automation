@@ -12,6 +12,7 @@ import os
 import shutil
 import sys
 import numpy as np
+import time
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -20,11 +21,13 @@ from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry
 from delphin_6_automation.sampling import sampling
+from delphin_6_automation.backend import simulation_worker
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -194,7 +197,6 @@ def mock_material_info(monkeypatch):
 @pytest.fixture()
 def add_dummy_sample(setup_database, dummy_sample):
     sample_id = sampling_interactions.upload_samples(dummy_sample, 0)
-    sample_doc = sample_entry.Sample.objects(id=sample_id).first()
 
 
 @pytest.fixture()
@@ -204,14 +206,6 @@ def create_samples(add_sampling_strategy, mock_sobol):
     samples = sampling.create_samples(strategy, 0)
 
     return samples
-
-
-def sobol_test_function1(array: np.ndarray) -> np.ndarray:
-    return np.prod(1 + (array ** 2 - array - 1 / 6), axis=1)
-
-
-def sobol_test_function2(array: np.ndarray) -> np.ndarray:
-    return np.prod(1 + (array ** 6 - 3 * array ** 5 + 5 / 2 * array ** 4 - 1 / 2 * array ** 2 + 1 / 42), axis=1)
 
 
 @pytest.fixture()
@@ -230,7 +224,7 @@ def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials,
     shutil.unpack_archive(result_zip, folder)
     shutil.copy(f'{test_folder}/weather/temperature.ccd', f'{weather_folder}/temperature.ccd')
     shutil.copy(f'{test_folder}/weather/indoor_temperature.ccd', f'{weather_folder}/indoor_temperature.ccd')
-    result_folder = os.path.join(folder, 'delphin_id/results')
+    result_folder = os.path.join(folder, 'delphin_id')
 
     for design in design_list:
         sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
@@ -239,7 +233,7 @@ def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials,
         delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
         delphin_interactions.add_sampling_dict(sim_id, {'design_option': design})
         delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
-        delphin_interactions.upload_processed_results(result_folder, delphin_doc, result_doc)
+        delphin_interactions.upload_processed_results(result_folder, delphin_doc.id, result_doc.id)
 
 
 @pytest.fixture()
@@ -249,3 +243,59 @@ def add_strategy_for_errors(setup_database, add_three_years_weather):
                 'settings': {'sequence': 10, 'standard error threshold': 0.1}}
     sampling_interactions.upload_sampling_strategy(strategy)
 
+
+@pytest.fixture()
+def mock_submit_job(monkeypatch):
+
+    def mockreturn(submit_file, sim_id):
+        return None
+
+    monkeypatch.setattr(simulation_worker, 'submit_job', mockreturn)
+
+
+@pytest.fixture()
+def mock_sleep(monkeypatch):
+
+    def mockreturn(secs):
+        return None
+
+    monkeypatch.setattr(time, 'sleep', mockreturn)
+
+
+@pytest.fixture()
+def mock_hpc_worker(monkeypatch):
+
+    def mockreturn(id_, thread_name, folder=None):
+        print('hpc called')
+        exit()
+        return None
+
+    monkeypatch.setattr(simulation_worker, 'hpc_worker', mockreturn)
+
+
+@pytest.fixture()
+def mock_find_next_sim_in_queue(monkeypatch):
+
+    def mockreturn():
+        return 'test_id'
+
+    monkeypatch.setattr(simulation_interactions, 'find_next_sim_in_queue', mockreturn)
+
+
+@pytest.fixture()
+def mock_hpc_worker_exception(monkeypatch):
+
+    def mockreturn(id_, thread_name, folder=None):
+        raise FileNotFoundError
+
+    monkeypatch.setattr(simulation_worker, 'hpc_worker', mockreturn)
+
+
+@pytest.fixture()
+def mock_sleep_exception(monkeypatch):
+
+    def mockreturn(secs):
+        exit()
+        return None
+
+    monkeypatch.setattr(time, 'sleep', mockreturn)
