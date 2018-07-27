@@ -82,22 +82,15 @@ def sampling_worker(strategy_id):
     convergence = False
     new_samples_per_set = strategy_doc.strategy['settings']['initial samples per set']
     used_samples_per_set = 0
-    previous_samples = 0
-    samples_per_set = sum([len(strategy_doc.strategy['design'][design_])
-                          for design_ in strategy_doc.strategy['design'].keys()]) * \
-                      sum([len(strategy_doc.strategy['scenario'][scenario_])
-                          for scenario_ in strategy_doc.strategy['scenario'].keys()])
 
     # Run loop
     while not convergence:
         print(f'\nRunning sampling iteration #{sample_iteration}')
         print(f'New Samples per set: {new_samples_per_set}')
         print(f'Used samples per set: {used_samples_per_set}')
-        print(f'Previous samples: {previous_samples}')
         logger.info(f'Running sampling iteration #{sample_iteration}')
         logger.info(f'New Samples per set: {new_samples_per_set}')
         logger.info(f'Used samples per set: {used_samples_per_set}')
-        logger.info(f'Previous samples: {previous_samples}')
 
         new_samples = sampling.create_samples(strategy_doc, used_samples_per_set)
         sampling_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
@@ -105,7 +98,8 @@ def sampling_worker(strategy_id):
         sampling_interactions.add_delphin_to_sampling(sampling_id, delphin_ids)
         sampling_interactions.add_sample_to_strategy(strategy_id, sampling_id)
         simulation_interactions.wait_until_simulated(delphin_ids)
-        current_error = sampling.calculate_error(strategy_doc.strategy)
+        sampling.calculate_sample_output(strategy_doc.strategy, sampling_id)
+        current_error = sampling.calculate_error(strategy_doc)
         sampling_interactions.upload_standard_error(strategy_doc, sampling_id, current_error)
         convergence = sampling.check_convergence(strategy_doc)
 
@@ -114,8 +108,6 @@ def sampling_worker(strategy_id):
 
         # Update parameters for next iteration
         used_samples_per_set = used_samples_per_set + new_samples_per_set
-        # TODO - length of scenarios * designs?
-        previous_samples = used_samples_per_set * samples_per_set
         sample_iteration += 1
 
         if used_samples_per_set >= strategy_doc.strategy['settings']['max samples']:

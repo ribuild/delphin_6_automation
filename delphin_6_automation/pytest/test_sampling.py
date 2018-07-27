@@ -193,3 +193,26 @@ def test_check_convergence(add_strategy_for_errors, add_dummy_sample, error):
     strategy.reload()
     threshold = strategy.strategy['settings']['standard error threshold']
     assert (error <= threshold) == sampling.check_convergence(strategy)
+
+
+def test_calculate_sample_output(empty_database, add_strategy_for_errors, add_dummy_sample, add_delphin_for_errors):
+    strategy_doc = sample_entry.Strategy.objects().first()
+    sample_doc = sample_entry.Sample.objects().first()
+
+    sampling.calculate_sample_output(strategy_doc.strategy, sample_doc.id)
+
+    assert not sample_doc.mean
+    assert not sample_doc.standard_deviation
+    sample_doc.reload()
+
+    assert sample_doc.mean
+    assert isinstance(sample_doc.mean, dict)
+    for key in sample_doc.mean.keys():
+        assert isinstance(key, str)
+        assert isinstance(int(key), int)
+
+    assert sample_doc.standard_deviation
+    assert isinstance(sample_doc.standard_deviation, dict)
+    for key in sample_doc.standard_deviation.keys():
+        assert isinstance(key, str)
+        assert isinstance(int(key), int)

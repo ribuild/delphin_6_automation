@@ -215,8 +215,8 @@ def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials,
     climate_class = 'a'
     location_name = 'Aberdeen'
     years = [2020, 2021, 2022]
-    design_list = ['1d_interior_plaster.d6p', '1d_interior_plaster.d6p',
-                   '1d_exterior_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p']
+    design_list = ['1d_interior_plaster', '1d_interior_plaster',
+                   '1d_exterior_interior_plaster', '1d_exterior_interior_plaster']
     result_doc = result_raw_entry.Result.objects().first()
     folder = tmpdir.mkdir('test')
     weather_folder = folder.mkdir('weather')
@@ -226,20 +226,22 @@ def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials,
     shutil.copy(f'{test_folder}/weather/indoor_temperature.ccd', f'{weather_folder}/indoor_temperature.ccd')
     result_folder = os.path.join(folder, 'delphin_id')
 
-    for design in design_list:
-        sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
-        weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
-        weather_interactions.assign_weather_by_name_and_years(sim_id, location_name, years)
-        delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
-        delphin_interactions.add_sampling_dict(sim_id, {'design_option': design})
-        delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
-        delphin_interactions.upload_processed_results(result_folder, delphin_doc.id, result_doc.id)
+    for sequence_index in range(10):
+        for design in design_list:
+            sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
+            weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
+            weather_interactions.assign_weather_by_name_and_years(sim_id, location_name, years)
+            delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
+            delphin_interactions.add_sampling_dict(sim_id, {'design_option': design,
+                                                            'sequence': sequence_index})
+            delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
+            delphin_interactions.upload_processed_results(result_folder, delphin_doc.id, result_doc.id)
 
 
 @pytest.fixture()
 def add_strategy_for_errors(setup_database, add_three_years_weather):
 
-    strategy = {'design': ['1d_interior_plaster.d6p', '1d_exterior_interior_plaster.d6p'],
+    strategy = {'design': ['1d_interior_plaster', '1d_exterior_interior_plaster'],
                 'settings': {'sequence': 10, 'standard error threshold': 0.1}}
     sampling_interactions.upload_sampling_strategy(strategy)
 
