@@ -301,3 +301,16 @@ def mock_sleep_exception(monkeypatch):
         return None
 
     monkeypatch.setattr(time, 'sleep', mockreturn)
+
+
+@pytest.fixture()
+def add_sample_for_errors(add_strategy_for_errors, dummy_sample):
+
+    mean = {str(i): {'1d_interior_plaster': {'mould': 0.5,
+                                             'algae': 0.5,
+                                             'heat_loss': 0.5}} for i in range(10)}
+
+    strategy_doc = sample_entry.Strategy.objects().first()
+    sample_id = sampling_interactions.upload_samples(dummy_sample, 0)
+    sampling_interactions.upload_sample_mean(sample_id, mean)
+    sampling_interactions.add_sample_to_strategy(strategy_doc.id, sample_id)

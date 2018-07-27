@@ -68,7 +68,7 @@ def upload_samples(new_samples: dict, sample_iteration: int) -> str:
     return sample.id
 
 
-def upload_standard_error(strategy_document: sample_entry.Strategy, sampling_id: str, current_error):
+def upload_standard_error(strategy_document: sample_entry.Strategy, current_error):
     """
     Upload the standard error to the sampling entry
 
@@ -77,9 +77,6 @@ def upload_standard_error(strategy_document: sample_entry.Strategy, sampling_id:
     :param current_error: Current standard error
     :type current_error: dict
     """
-
-    sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
-    sampling_document.update(set__standard_error=current_error)
 
     strategy_document.update(push__standard_error__mould=current_error['mould'])
     strategy_document.update(push__standard_error__algae=current_error['algae'])

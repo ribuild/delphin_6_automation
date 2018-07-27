@@ -134,10 +134,10 @@ def test_create_delphin_projects(create_samples, mock_material_info, add_five_ma
     assert isinstance(delphin_ids, list)
 
 
-def test_calculate_error(add_delphin_for_errors, add_strategy_for_errors):
+def test_calculate_error(add_sample_for_errors):
     strategy = sample_entry.Strategy.objects().first()
 
-    standard_error = sampling.calculate_error(strategy.strategy)
+    standard_error = sampling.calculate_error(strategy)
 
     assert standard_error
     assert isinstance(standard_error, dict)
@@ -148,17 +148,15 @@ def test_calculate_error(add_delphin_for_errors, add_strategy_for_errors):
 
 @pytest.mark.parametrize('error',
                          [1.0, 0.1, 0.01])
-def test_upload_standard_error(add_strategy_for_errors, add_dummy_sample, error):
+def test_upload_standard_error(add_strategy_for_errors, error):
     strategy = sample_entry.Strategy.objects().first()
-    sample = sample_entry.Sample.objects().first()
     current_error = {'mould': error,
                      'algae': error,
                      'heat_loss': error}
 
-    sampling_interactions.upload_standard_error(strategy, sample.id, current_error)
+    sampling_interactions.upload_standard_error(strategy, current_error)
 
     strategy.reload()
-    sample.reload()
 
     assert strategy.standard_error
     assert isinstance(strategy.standard_error, dict)
@@ -168,15 +166,6 @@ def test_upload_standard_error(add_strategy_for_errors, add_dummy_sample, error)
     assert strategy.standard_error['algae'][-1] == error
     assert isinstance(strategy.standard_error['heat_loss'], list)
     assert strategy.standard_error['heat_loss'][-1] == error
-
-    assert sample.standard_error
-    assert isinstance(sample.standard_error, dict)
-    assert isinstance(sample.standard_error['mould'], float)
-    assert sample.standard_error['mould'] == error
-    assert isinstance(sample.standard_error['algae'], float)
-    assert sample.standard_error['algae'] == error
-    assert isinstance(sample.standard_error['heat_loss'], float)
-    assert sample.standard_error['heat_loss'] == error
 
 
 @pytest.mark.parametrize('error',
@@ -188,7 +177,7 @@ def test_check_convergence(add_strategy_for_errors, add_dummy_sample, error):
                      'algae': error,
                      'heat_loss': error}
 
-    sampling_interactions.upload_standard_error(strategy, sample.id, current_error)
+    sampling_interactions.upload_standard_error(strategy, current_error)
 
     strategy.reload()
     threshold = strategy.strategy['settings']['standard error threshold']

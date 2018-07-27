@@ -363,13 +363,16 @@ def calculate_error(sample_strategy: sample_entry.Strategy) -> dict:
     # Return the error
 
     standard_error = dict()
-    sequence_length = sample_strategy['settings']['sequence']
+    sequence_length = sample_strategy.strategy['settings']['sequence']
     sample = load_latest_sample(sample_strategy.id)
-    mould = dict()
-    algae = dict()
-    heat_loss = dict()
+    mould = {design: []
+             for sequence in sample.mean.keys()
+             for design in sample.mean[sequence].keys()}
+    algae = copy.deepcopy(mould)
+    heat_loss = copy.deepcopy(mould)
 
     for sequence in sample.mean.keys():
+
         for design in sample.mean[sequence].keys():
             mould[design].append(sample.mean[sequence][design]['mould'])
             algae[design].append(sample.mean[sequence][design]['algae'])
