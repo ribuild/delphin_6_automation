@@ -259,7 +259,7 @@ def algae(relative_humidity_list,
 
     # Growth process
     growth = on_off * tau_s * area_ratio_calc(total_porosity, roughness) \
-             * (1 - np.exp(-(tau_k * rate_coefficient) * (time - latency_time)
+             * (1 - np.exp(-(tau_k * rate_coefficient) * (time - latency_time)))
 
     return growth
 

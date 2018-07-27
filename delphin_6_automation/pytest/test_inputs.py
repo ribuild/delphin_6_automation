@@ -6,6 +6,7 @@ __license__ = 'MIT'
 
 # Modules
 import pytest
+import pandas as pd
 
 # RiBuild Modules
 from delphin_6_automation.sampling import inputs
@@ -53,3 +54,10 @@ def test_construction_types():
     assert isinstance(constructions, list)
     assert all([file.endswith('.d6p')
                for file in constructions])
+
+
+def test_construct_design_options(add_five_materials):
+
+    variations = inputs.construct_design_options()
+
+    assert isinstance(variations, pd.DataFrame)

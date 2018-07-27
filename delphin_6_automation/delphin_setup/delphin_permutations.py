@@ -63,7 +63,7 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
                 return layers[layer_]
     else:
         error_message = f'identifier should be int or str. Type given was: {type(identifier)}'
-        logger.ERROR(error_message)
+        logger.error(error_message)
         raise TypeError(error_message)
 
 
