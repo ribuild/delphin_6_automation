@@ -427,10 +427,10 @@ def check_convergence(strategy_document: sample_entry.Strategy) -> bool:
     :return:
     :rtype:
     """
-
-    checks = [strategy_document.standard_error['mould'][-1],
-              strategy_document.standard_error['algae'][-1],
-              strategy_document.standard_error['heat_loss'][-1]]
+    standard_error = strategy_document.standard_error
+    checks = [standard_error[design][damage_model][-1]
+              for design in standard_error.keys()
+              for damage_model in standard_error[design].keys()]
 
     if all(check <= strategy_document.strategy['settings']['standard error threshold']
            for check in checks):
@@ -510,7 +510,7 @@ def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
 
         for design in sample_strategy['design']:
             projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design,
-                                                                  sample_data__sequence=sequence_index)
+                                                                  sample_data__sequence=str(sequence_index))
             mould = []
             algae = []
             heat_loss = []

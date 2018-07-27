@@ -100,7 +100,7 @@ def sampling_worker(strategy_id):
         simulation_interactions.wait_until_simulated(delphin_ids)
         sampling.calculate_sample_output(strategy_doc.strategy, sampling_id)
         current_error = sampling.calculate_error(strategy_doc)
-        sampling_interactions.upload_standard_error(strategy_doc, sampling_id, current_error)
+        sampling_interactions.upload_standard_error(strategy_doc, current_error)
         convergence = sampling.check_convergence(strategy_doc)
 
         print(f'Standard Error at iteration {sample_iteration} is: {current_error}')

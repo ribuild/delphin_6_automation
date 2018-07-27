@@ -78,9 +78,21 @@ def upload_standard_error(strategy_document: sample_entry.Strategy, current_erro
     :type current_error: dict
     """
 
-    strategy_document.update(push__standard_error__mould=current_error['mould'])
-    strategy_document.update(push__standard_error__algae=current_error['algae'])
-    strategy_document.update(push__standard_error__heat_loss=current_error['heat_loss'])
+    standard_error = strategy_document.standard_error
+
+    if not standard_error:
+        for design in current_error.keys():
+            standard_error[design] = {}
+            standard_error[design]['mould'] = []
+            standard_error[design]['algae'] = []
+            standard_error[design]['heat_loss'] = []
+
+    for design in current_error.keys():
+        standard_error[design]['mould'].append(current_error[design]['mould'])
+        standard_error[design]['algae'].append(current_error[design]['algae'])
+        standard_error[design]['heat_loss'].append(current_error[design]['heat_loss'])
+
+    strategy_document.update(set__standard_error=standard_error)
 
 
 def upload_raw_samples(samples_raw: np.ndarray, sequence_number: int) -> str:
