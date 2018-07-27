@@ -13,12 +13,12 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.sampling import sampling
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
 
 def test_download_sampling_strategy(add_sampling_strategy):
-
     strategy_id = sample_entry.Strategy.objects().first().id
 
     test_strategy = sampling_interactions.get_sampling_strategy(strategy_id)
@@ -99,7 +99,6 @@ def test_add_raw_samples_to_strategy(add_sampling_strategy, add_raw_sample):
 @pytest.mark.parametrize('iteration',
                          [0, 1, 2])
 def test_upload_samples(setup_database, dummy_sample, iteration):
-
     sample_id = sampling_interactions.upload_samples(dummy_sample, iteration)
     sample_doc = sample_entry.Sample.objects(id=sample_id).first()
 
@@ -122,3 +121,35 @@ def test_add_sample_to_strategy(add_sampling_strategy, add_dummy_sample):
 
     assert isinstance(strategy_entry.samples, list)
     assert strategy_entry.samples[0] == sample_doc
+
+
+def test_upload_sample_mean(empty_database, add_dummy_sample):
+    sample_mean = {'0': {'design_0': [0.5, 0.5],
+                         'design_1': [0.5, 0.5]},
+                   '1': {'design_0': [0.5, 0.5],
+                         'design_1': [0.5, 0.5]}
+                   }
+
+    sampling_document = sample_entry.Sample.objects().first()
+    sampling_interactions.upload_sample_mean(sampling_document.id, sample_mean)
+
+    assert not sampling_document.mean
+    sampling_document.reload()
+    assert sampling_document.mean
+    assert isinstance(sampling_document.mean, dict)
+
+
+def test_upload_sample_std(add_dummy_sample):
+    sample_std = {'0': {'design_0': [0.5, 0.5],
+                        'design_1': [0.5, 0.5]},
+                  '1': {'design_0': [0.5, 0.5],
+                        'design_1': [0.5, 0.5]}
+                  }
+
+    sampling_document = sample_entry.Sample.objects().first()
+    sampling_interactions.upload_sample_std(sampling_document.id, sample_std)
+
+    assert not sampling_document.standard_deviation
+    sampling_document.reload()
+    assert sampling_document.standard_deviation
+    assert isinstance(sampling_document.standard_deviation, dict)

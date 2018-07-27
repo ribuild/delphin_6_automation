@@ -118,3 +118,17 @@ def add_sample_to_strategy(strategy_id: str, sampling_id: str):
     sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
     strategy_document = sample_entry.Strategy.objects(id=strategy_id).first()
     strategy_document.update(push__samples=sampling_document)
+
+
+def upload_sample_mean(sampling_id: str, sample_mean: dict) -> None:
+    sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
+    sampling_document.update(set__mean=sample_mean)
+
+    return None
+
+
+def upload_sample_std(sampling_id: str, sample_std: dict) -> None:
+    sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
+    sampling_document.update(set__standard_deviation=sample_std)
+
+    return None

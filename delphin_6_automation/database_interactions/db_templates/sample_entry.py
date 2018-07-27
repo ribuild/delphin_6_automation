@@ -25,7 +25,8 @@ class Sample(mongoengine.Document):
     samples = mongoengine.DictField(required=True)
     delphin_docs = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=delphin_entry.Delphin))
     iteration = mongoengine.IntField(required=True)
-    standard_error = mongoengine.DictField()
+    mean = mongoengine.DictField()
+    standard_deviation = mongoengine.DictField()
 
     meta = collections.sample_db
 
