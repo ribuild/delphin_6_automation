@@ -8,9 +8,7 @@ __license__ = 'MIT'
 import os
 import pytest
 import numpy as np
-from matplotlib import pyplot as plt
 import platform
-from scipy import stats
 
 # RiBuild Modules
 from delphin_6_automation.sampling import sampling
