@@ -47,6 +47,8 @@ class Strategy(mongoengine.Document):
 
     # Meta Data
     added_date = mongoengine.DateTimeField(default=datetime.now)
+    current_iteration = mongoengine.IntField(default=0)
+    used_samples_per_set = mongoengine.IntField(default=0)
     meta = collections.strategy_db
 
     # References

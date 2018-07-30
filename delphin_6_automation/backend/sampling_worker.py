@@ -78,10 +78,8 @@ def menu():
 def sampling_worker(strategy_id):
     # Initialize
     strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
-    sample_iteration = 0
-    convergence = False
-    new_samples_per_set = strategy_doc.strategy['settings']['initial samples per set']
-    used_samples_per_set = 0
+    (sample_iteration, convergence,
+     new_samples_per_set, used_samples_per_set) = sampling.initialize_sampling(strategy_doc)
 
     # Run loop
     while not convergence:
@@ -92,6 +90,7 @@ def sampling_worker(strategy_id):
         logger.info(f'New Samples per set: {new_samples_per_set}')
         logger.info(f'Used samples per set: {used_samples_per_set}')
 
+        strategy_doc.reload()
         new_samples = sampling.create_samples(strategy_doc, used_samples_per_set)
         sampling_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
         delphin_ids = sampling.create_delphin_projects(strategy_doc.strategy, new_samples)
@@ -109,6 +108,7 @@ def sampling_worker(strategy_id):
         # Update parameters for next iteration
         used_samples_per_set = used_samples_per_set + new_samples_per_set
         sample_iteration += 1
+        sampling_interactions.upload_sample_iteration_parameters(strategy_doc, sample_iteration, used_samples_per_set)
 
         if used_samples_per_set >= strategy_doc.strategy['settings']['max samples']:
             print(f'Maximum number of samples reached. Simulated {used_samples_per_set} samples per set')

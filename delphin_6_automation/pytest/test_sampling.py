@@ -212,3 +212,14 @@ def test_calculate_sample_output(empty_database, add_strategy_for_errors, add_du
     for key in sample_doc.standard_deviation.keys():
         assert isinstance(key, str)
         assert isinstance(int(key), int)
+
+
+def test_initialize_sampling(add_sampling_strategy):
+
+    strategy = sample_entry.Strategy.objects().first()
+    iteration, convergence, new_samples_per_set, used_samples_per_set = sampling.initialize_sampling(strategy)
+
+    assert iteration == 0
+    assert not convergence
+    assert new_samples_per_set == 1
+    assert used_samples_per_set == 0

@@ -532,3 +532,13 @@ def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
     sampling_interactions.upload_sample_std(sampling_id, sample_std)
 
     return None
+
+
+def initialize_sampling(strategy_doc: sample_entry.Strategy) -> tuple:
+
+    iteration = strategy_doc.current_iteration
+    convergence = False
+    new_samples_per_set = strategy_doc.strategy['settings']['initial samples per set']
+    used_samples_per_set = strategy_doc.used_samples_per_set
+
+    return iteration, convergence, new_samples_per_set, used_samples_per_set

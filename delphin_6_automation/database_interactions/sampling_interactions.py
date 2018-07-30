@@ -141,3 +141,11 @@ def upload_sample_std(sampling_id: str, sample_std: dict) -> None:
     sampling_document.update(set__standard_deviation=sample_std)
 
     return None
+
+
+def upload_sample_iteration_parameters(strategy_doc: sample_entry.Strategy, iteration: int, used_samples: int) -> None:
+
+    strategy_doc.update(set__current_iteration=iteration)
+    strategy_doc.update(set__used_samples_per_set=used_samples)
+
+    return None
