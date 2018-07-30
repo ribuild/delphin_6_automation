@@ -27,7 +27,12 @@ logger = ribuild_logger(__name__)
 
 def main():
     print_header()
-    menu()
+
+    try:
+        while True:
+            menu()
+    except KeyboardInterrupt:
+        sys.exit()
 
 
 def print_header():
