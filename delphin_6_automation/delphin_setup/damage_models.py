@@ -228,13 +228,13 @@ def algae(relative_humidity, temperature):
 
 
 def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typing.Union[np.ndarray, list],
-            interior_temperature: typing.Union[np.ndarray, list], area=0.68) -> float:
+            interior_temperature: typing.Union[np.ndarray, list], area=0.68) -> np.ndarray:
 
     heat_loss = np.asarray(heat_loss)
     exterior_temperature = np.asarray(exterior_temperature)
     interior_temperature = np.asarray(interior_temperature)
 
     delta_temperature = exterior_temperature - interior_temperature
-    u_value_ = np.mean(heat_loss / (delta_temperature[:-2] * area))
+    u_value_ = np.mean(heat_loss / (delta_temperature[:-1] * area))
 
     return u_value_
