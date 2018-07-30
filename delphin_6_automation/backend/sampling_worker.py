@@ -9,6 +9,9 @@ __license__ = 'MIT'
 # Modules
 import sys
 import os
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
@@ -48,7 +51,7 @@ def menu():
     print("Available Actions:")
     print("[a] Start Sampling")
     print("[b] Create Sampling Strategy")
-    print("[c] View Current Samples")
+    print("[c] View Current Progress")
     print("[x] Exit")
 
     choice = input("> ").strip().lower()
@@ -68,8 +71,8 @@ def menu():
         logger.info(f'Created sampling and uploaded it with ID: {strategy_id}')
 
     elif choice == 'c':
-        print('Not implemented')
-        pass
+        sampling_strategy_id = input("Define sampling strategy ID >")
+        sampling_overview(sampling_strategy_id)
 
     elif choice == 'x':
         print("Goodbye")
@@ -120,3 +123,31 @@ def sampling_worker(strategy_id):
     logger.info(f'Convergence reached at iteration #{sample_iteration}')
     print('\nExits. Bye')
     sys.exit()
+
+
+def sampling_overview(strategy_id):
+
+    strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
+
+    def animate(axis, damage_model):
+
+        axis.clear()
+
+        for design in strategy_doc.standard_error.keys():
+            data = strategy_doc.standard_error[design][damage_model]
+            x = np.arange(0, len(data))
+            axis.plot(x, data, label=design)
+
+    figure_mould = plt.figure()
+    axis_mould = figure_mould.add_subplot(1, 1, 1)
+    animate_mould = animation.FuncAnimation(figure_mould, animate, interval=30000, fargs=(axis_mould, 'mould'))
+
+    figure_algae = plt.figure()
+    axis_algae = figure_algae.add_subplot(1, 1, 1)
+    animate_algae = animation.FuncAnimation(figure_algae, animate, interval=30000, fargs=(axis_algae, 'algae'))
+
+    figure_heat = plt.figure()
+    axis_heat = figure_heat.add_subplot(1, 1, 1)
+    animate_heat = animation.FuncAnimation(figure_heat, animate, interval=30000, fargs=(axis_heat, 'heat_loss'))
+
+    plt.show()
