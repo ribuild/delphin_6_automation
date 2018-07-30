@@ -91,7 +91,8 @@ def download_delphin_entry(delphin_document: delphin_db.Delphin, path: str) -> b
     """
 
     delphin_dict = dict(delphin_document.dp6_file)
-    xmltodict.unparse(delphin_dict, output=open(os.path.join(path, f'{delphin_document.id}.d6p'), 'w'), pretty=True)
+    xmltodict.unparse(delphin_dict, output=open(os.path.join(path,
+                                                             f'{str(delphin_document.id)}.d6p'), 'w'), pretty=True)
 
     return True
 
