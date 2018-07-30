@@ -24,4 +24,8 @@ if __name__ == "__main__":
     # Setup connection
     mongo_setup.global_init(auth_dict)
 
-    main()
+    try:
+        main()
+    except Exception:
+        pass
+
