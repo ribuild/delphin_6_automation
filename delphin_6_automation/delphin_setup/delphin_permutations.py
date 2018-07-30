@@ -374,3 +374,10 @@ def compute_vapour_diffusion_slope(heat_slope, vapour_exchange):
 
     heat_exchange = 4
     return heat_slope * vapour_exchange, heat_exchange * vapour_exchange
+
+
+def update_output_locations(delphin: dict) -> dict:
+    # Make sure that outputs are where they should be
+    # Loop through assignments and check if they are at the right location
+
+    return True
