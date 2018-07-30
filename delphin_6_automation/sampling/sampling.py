@@ -222,7 +222,7 @@ def load_design_options(designs: list) -> typing.List[dict]:
     delphin_projects = []
 
     for design in designs:
-        delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, design)))
+        delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, f'{design}.d6p')))
 
     return delphin_projects
 
