@@ -341,6 +341,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
             weather_interactions.assign_indoor_climate_to_project(delphin_id,
                                                                   samples[sequence][design][
                                                                       'generic scenario']['interior climate'][0])
+            delphin_interactions.change_entry_simulation_length(delphin_id, len(years), 'a')
 
             sample_dict['start year'] = samples[sequence][design]['generic scenario']['start year'][0]
             sample_dict['exterior climate'] = samples[sequence][design]['generic scenario']['exterior climate'][0]
