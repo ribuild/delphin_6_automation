@@ -50,4 +50,8 @@ def insulation_type():
 
 
 def construct_design_options():
-    return construction_types()
+    lst = construction_types()
+    design = [file.split('.')[0]
+              for file in lst]
+
+    return design

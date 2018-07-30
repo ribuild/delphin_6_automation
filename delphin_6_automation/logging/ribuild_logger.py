@@ -31,7 +31,10 @@ def ribuild_logger(name):
 
     # create console handler and set level to debug
     if os.path.exists(f'{source_folder}/{name}.log'):
-        os.remove(f'{source_folder}/{name}.log')
+        try:
+            os.remove(f'{source_folder}/{name}.log')
+        except PermissionError:
+            pass
 
     fh = logging.FileHandler(f'{source_folder}/{name}.log')
     fh.setLevel(logging.DEBUG)
