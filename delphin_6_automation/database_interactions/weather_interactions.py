@@ -177,8 +177,8 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
     weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
         weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
                                                            delphin_document.indoor_climate)
-    orientation = delphin_document.dp6_file['DelphinProject']['Conditions']['Interfaces'][
-                          'Interface'][0]['IBK:Parameter']['#text']
+    orientation = float(delphin_document.dp6_file['DelphinProject']['Conditions']['Interfaces'][
+                          'Interface'][0]['IBK:Parameter']['#text'])
     wall_location = {'height': 5, 'width': 5}
     weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],
                                                                 weather['wind_speed'], wall_location, orientation,
