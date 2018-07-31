@@ -331,6 +331,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
                     sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
 
             # Upload project
+            delphin_permutations.update_output_locations(design_variation)
             delphin_id = delphin_interactions.upload_delphin_dict_to_database(design_variation, 1)
 
             start_year = int(samples[sequence][design]['generic scenario']['start year'][0])
