@@ -380,4 +380,34 @@ def update_output_locations(delphin: dict) -> dict:
     # Make sure that outputs are where they should be
     # Loop through assignments and check if they are at the right location
 
-    return True
+    x_steps = convert_discretization_to_list(delphin)
+    layers = get_layers(delphin)
+
+    for assignment in delphin['DelphinProject']['Assignments']['Assignment']:
+        if assignment['@type'] == 'Output':
+            if assignment['Reference'].endswith('algae'):
+                assignment['IBK:Point3D'] = '0.0005 0.034 0'
+
+            elif assignment['Reference'].endswith('frost'):
+                assignment['IBK:Point3D'] = '0.005 0.034 0'
+
+            elif assignment['Reference'] == 'heat loss':
+                assignment['Range'] = f'{len(x_steps)-1} 0 {len(x_steps)-1} 0'
+
+            elif assignment['Reference'].endswith('interior surface'):
+                assignment['IBK:Point3D'] = f'{sum(x_steps) - 0.0005} 0.034 0'
+
+            elif assignment['Reference'].endswith('mould'):
+                if len(layers) == 2:
+                    width = layers[0]["x_width"] - 0.0005
+                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+                elif len(layers) in [3, 5]:
+                    width = layers[0]["x_width"] + layers[1]["x_width"] - 0.0005
+                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+                elif len(layers) == 6:
+                    width = layers[0]["x_width"] + layers[1]["x_width"] + layers[2]["x_width"] - 0.0005
+                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+    return delphin
