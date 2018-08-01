@@ -126,7 +126,7 @@ def db_one_project(empty_database, delphin_file_path, add_single_user, add_two_m
     weather_interactions.assign_weather_by_name_and_years(sim_id, location_name, years)
     delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
 
-    yield
+    return sim_id
 
 
 @pytest.fixture()

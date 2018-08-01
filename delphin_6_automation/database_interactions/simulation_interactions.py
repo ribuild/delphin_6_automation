@@ -120,7 +120,7 @@ def set_simulation_time(sim_id: str, computation_time: datetime.timedelta):
 
     delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
     delphin_entry.update(set__simulation_time=computation_time.total_seconds())
-    logger.debug(f'For Delphin project with ID: {id_}, '
+    logger.debug(f'For Delphin project with ID: {sim_id}, '
                  f'simulation time was changed to: {computation_time.total_seconds()}')
 
     return sim_id

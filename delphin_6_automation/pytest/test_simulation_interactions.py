@@ -66,13 +66,13 @@ def test_clean_simulation_folder(tmpdir):
 
 def test_find_next_sim_in_queue(db_one_project, mock_sleep, capsys):
 
-    simulation_interactions.find_next_sim_in_queue()
+    found_id = simulation_interactions.find_next_sim_in_queue()
 
-    delphin_doc = delphin_entry.Delphin.objects().first()
+    delphin_doc = delphin_entry.Delphin.objects(id=db_one_project).first()
 
+    assert str(db_one_project) == found_id
     assert delphin_doc.simulating
 
-    simulation_interactions.find_next_sim_in_queue()
+    found_id = simulation_interactions.find_next_sim_in_queue()
 
-    out, err = capsys.readouterr()
-    assert out == 'All Delphin Projects in the queue are simulated!\n'
+    assert not found_id
