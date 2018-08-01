@@ -39,6 +39,8 @@ def change_layer_width(delphin_dict, original_material: str, new_width: float) -
     new_discretization = discretize_layer(new_width)
     update_range_of_assignments(delphin_dict, layer, new_discretization)
 
+    logger.debug(f'Changed layer {layer} to {new_width}m')
+
     return delphin_dict
 
 
@@ -57,6 +59,7 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
 
     if isinstance(identifier, int):
         return layers[identifier]
+
     elif isinstance(identifier, str):
         for layer_ in layers:
             if layers[layer_]['material'] == identifier:
@@ -82,6 +85,7 @@ def update_range_of_assignments(delphin_dict: dict, layer: dict, new_discretizat
     """
 
     # Update discretization
+    logger.debug('Updated range assignment for Delphin project')
     current_x_list = convert_discretization_to_list(delphin_dict)
     range_ = layer['x_index']
     new_x_list = current_x_list[:range_[0]] + new_discretization + current_x_list[range_[1]:]
@@ -180,6 +184,8 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
             # Replace with new material
             new_delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] = \
                 new_material['@name']
+
+    logger.debug(f'Changed material {original_material} to {new_material["@name"]}')
 
     return new_delphin_dict
 

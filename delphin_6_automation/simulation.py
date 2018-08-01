@@ -12,7 +12,6 @@ source_folder = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, source_folder)
 
 # RiBuild Modules
-from delphin_6_automation.logging.ribuild_logger import notifiers_logger
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_dict
@@ -25,13 +24,10 @@ from delphin_6_automation.backend.simulation_worker import main
 if __name__ == "__main__":
     # Setup connection
     mongo_setup.global_init(auth_dict)
-    notifier_logger = notifiers_logger(__name__)
-    local_logger = ribuild_logger(__name__)
+    logger = ribuild_logger(__name__)
 
     try:
         main()
 
     except Exception as err:
-        print('Exited with error!')
-        notifier_logger.exception(f'Error in main')
-        local_logger.exception('Error in main')
+        logger.exception('Error in main')

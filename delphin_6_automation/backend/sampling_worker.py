@@ -70,7 +70,6 @@ def menu():
     elif choice == 'b':
         strategy = sampling.create_sampling_strategy(os.path.dirname(__file__))
         strategy_id = sampling_interactions.upload_sampling_strategy(strategy)
-        print(f'Created sampling and uploaded it with ID: {strategy_id}')
         logger.info(f'Created sampling and uploaded it with ID: {strategy_id}')
 
     elif choice == 'c':
@@ -89,10 +88,7 @@ def sampling_worker(strategy_id):
 
     # Run loop
     while not convergence:
-        print(f'\nRunning sampling iteration #{sample_iteration}')
-        print(f'New Samples per set: {new_samples_per_set}')
-        print(f'Used samples per set: {used_samples_per_set}')
-        logger.info(f'Running sampling iteration #{sample_iteration}')
+        logger.info(f'\nRunning sampling iteration #{sample_iteration}')
         logger.info(f'New Samples per set: {new_samples_per_set}')
         logger.info(f'Used samples per set: {used_samples_per_set}')
 
@@ -108,7 +104,6 @@ def sampling_worker(strategy_id):
         sampling_interactions.upload_standard_error(strategy_doc, current_error)
         convergence = sampling.check_convergence(strategy_doc)
 
-        print(f'Standard Error at iteration {sample_iteration} is: {current_error}')
         logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}')
 
         # Update parameters for next iteration
@@ -117,14 +112,12 @@ def sampling_worker(strategy_id):
         sampling_interactions.upload_sample_iteration_parameters(strategy_doc, sample_iteration, used_samples_per_set)
 
         if used_samples_per_set >= strategy_doc.strategy['settings']['max samples']:
-            print(f'Maximum number of samples reached. Simulated {used_samples_per_set} samples per set')
             logger.info(f'Maximum number of samples reached. Simulated {used_samples_per_set} samples per set')
-            print('\nExits. Bye')
+            logger.info('\nExits. Bye')
             sys.exit()
 
-    print(f'Convergence reached at iteration #{sample_iteration}')
     logger.info(f'Convergence reached at iteration #{sample_iteration}')
-    print('\nExits. Bye')
+    logger.info('\nExits. Bye')
     sys.exit()
 
 
