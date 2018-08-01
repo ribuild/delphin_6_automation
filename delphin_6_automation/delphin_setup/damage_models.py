@@ -235,6 +235,6 @@ def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typ
     interior_temperature = np.asarray(interior_temperature)
 
     delta_temperature = exterior_temperature - interior_temperature
-    u_value_ = np.mean(heat_loss / (delta_temperature[:-1] * area))
+    u_value_ = np.nanmean(heat_loss / (delta_temperature[:-1] * area))
 
     return u_value_
