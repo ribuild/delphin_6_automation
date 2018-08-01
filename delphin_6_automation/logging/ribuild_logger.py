@@ -15,7 +15,7 @@ import platform
 try:
     from delphin_6_automation.database_interactions.auth import gmail
 except ModuleNotFoundError:
-    pass
+    gmail = {'mail': None, 'password': None}
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # LOGGERS
