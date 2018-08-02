@@ -219,6 +219,11 @@ def mould_pj(relative_humidity_list,
 
     difference_crit_up = relative_humidity_list - relative_humidity_crit_up(temperature_list)
 
+    logger.debug(f'Difference between relative humidity and lower critical value for {len(difference_crit_low)} values:'
+                 f' Mean: {np.mean(difference_crit_low)}, StD: {np.std(difference_crit_low)}')
+    logger.debug(f'Difference between relative humidity and upper critical value for {len(difference_crit_up)} values:'
+                 f' Mean: {np.mean(difference_crit_up)}, StD: {np.std(difference_crit_up)}')
+
     return difference_crit_low.tolist(), difference_crit_up.tolist()
 
 
@@ -236,5 +241,7 @@ def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typ
 
     delta_temperature = exterior_temperature - interior_temperature
     u_value_ = np.nanmean(heat_loss / (delta_temperature[:-1] * area))
+
+    logger.debug(f'Calculated U-value to: {u_value_}')
 
     return u_value_
