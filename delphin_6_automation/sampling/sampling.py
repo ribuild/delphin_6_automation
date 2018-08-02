@@ -552,6 +552,6 @@ def initialize_sampling(strategy_doc: sample_entry.Strategy) -> tuple:
     logger.info(f'Iteration: {iteration}')
     logger.info(f'Convergence: {convergence}')
     logger.info(f'New Samples per Set: {new_samples_per_set}')
-    logger.info(f'Used Samples per Set: {used_samples_per_set}')
+    logger.info(f'Used Samples per Set: {used_samples_per_set}\n')
 
     return iteration, convergence, new_samples_per_set, used_samples_per_set

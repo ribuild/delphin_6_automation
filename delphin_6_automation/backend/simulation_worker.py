@@ -60,7 +60,6 @@ def local_worker(id_):
     # Download, solve, upload
     time_0 = datetime.datetime.now()
 
-    print(f'\nDownloads project with ID: {id_}')
     logger.info(f'Downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(str(id_), delphin_path)
@@ -77,7 +76,6 @@ def local_worker(id_):
 
     if test_doc:
         simulation_interactions.clean_simulation_folder(delphin_path)
-        print(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
         logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}')
         return True
     else:
@@ -88,7 +86,6 @@ def local_worker(id_):
 def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1):
     """Solves a delphin file"""
 
-    print(f'Solves {file}')
     logger.info(f'Solves {file}')
 
     verbosity = "verbosity-level=" + str(verbosity_level)
@@ -200,9 +197,9 @@ def submit_job(submit_file, sim_id):
     time.sleep(0.5)
     channel_bytes = channel.recv(9999)
     channel_data += channel_bytes.decode("utf-8")
-    logger.info(channel_data)
 
-    print(f'Submitted job {sim_id}')
+    logger.debug(channel_data)
+
     logger.info(f'Submitted job {sim_id}')
 
     channel.close()
@@ -342,6 +339,7 @@ def menu():
 
         for n in range(n_threads):
             t_name = f"Worker_{n}"
+            logger.info(f'Created thread with name: {t_name}')
             thread = threading.Thread(target=simulation_worker, args=('hpc', t_name))
             thread.name = t_name
             thread.daemon = True
@@ -349,7 +347,6 @@ def menu():
             threads.append(thread)
 
             time.sleep(10)
-            logger.info(f'Created thread with name: {t_name}')
 
         for thread in threads:
             thread.join()
