@@ -60,11 +60,11 @@ def menu():
     choice = input("> ").strip().lower()
 
     if choice == 'a':
-        logger.info('starting sampling')
+        logger.debug('starting sampling')
         sampling_strategy_id = input("Define sampling strategy ID >")
-        logger.info(sampling_strategy_id)
+        logger.debug(sampling_strategy_id)
 
-        print('\nStarting sampling\n')
+        logger.info('\nStarting sampling\n')
         sampling_worker(sampling_strategy_id)
 
     elif choice == 'b':
@@ -77,7 +77,7 @@ def menu():
         sampling_overview(sampling_strategy_id)
 
     elif choice == 'x':
-        print("Goodbye")
+        logger.info("Goodbye")
 
 
 def sampling_worker(strategy_id):
