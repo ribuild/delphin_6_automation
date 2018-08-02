@@ -331,7 +331,7 @@ def change_simulation_length(delphin_dict: dict, simulation_length: int, length_
     return delphin_dict
 
 
-def get_simulation_length(delphin_dict: dict) -> typing.NamedTuple[float, str]:
+def get_simulation_length(delphin_dict: dict) -> typing.NamedTuple:
     """Get the simulation length of a Delphin file"""
 
     SimulationLength = namedtuple('SimulationLength', ['length', 'unit'])
