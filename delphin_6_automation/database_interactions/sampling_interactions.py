@@ -24,9 +24,7 @@ def upload_sampling_strategy(sampling_strategy: dict) -> str:
     Upload as given sampling strategy to the database
 
     :param sampling_strategy: Sampling strategy
-    :type sampling_strategy: dict
     :return: Sampling strategy database ID
-    :rtype: str
     """
 
     entry = sample_entry.Strategy()
@@ -43,12 +41,11 @@ def get_sampling_strategy(strategy_id: str) -> sample_entry.Strategy:
     Downloads the sampling strategy with the given database ID
 
     :param strategy_id: Sampling strategy database ID
-    :type strategy_id: str
     :return: Sampling Strategy
-    :rtype: dict
     """
 
     strategy = sample_entry.Strategy.objects(id=strategy_id).first()
+
     logger.debug(f'Downloaded sampling strategy with ID: {strategy_id}')
 
     return strategy
@@ -59,11 +56,8 @@ def upload_samples(new_samples: dict, sample_iteration: int) -> str:
     Uploads samples to database and returns the sample id
 
     :param new_samples: Samples
-    :type new_samples: dict
     :param sample_iteration: Number of sample iteration
-    :type sample_iteration: int
     :return: Sample Database id
-    :rtype: mongoengine.ObjectID
     """
 
     sample = sample_entry.Sample()
@@ -81,9 +75,7 @@ def upload_standard_error(strategy_document: sample_entry.Strategy, current_erro
     Upload the standard error to the sampling entry
 
     :param strategy_document: Sampling strategy to add the standard error to.
-    :type strategy_document: sample_entry.Strategy
     :param current_error: Current standard error
-    :type current_error: dict
     """
 
     standard_error = strategy_document.standard_error
@@ -101,12 +93,14 @@ def upload_standard_error(strategy_document: sample_entry.Strategy, current_erro
         standard_error[design]['heat_loss'].append(current_error[design]['heat_loss'])
 
     strategy_document.update(set__standard_error=standard_error)
+
     logger.info(f'Updated the standard error for sampling strategy with ID: {strategy_document.id}')
 
     return None
 
 
 def upload_raw_samples(samples_raw: np.ndarray, sequence_number: int) -> str:
+    """Upload raw sample to database"""
 
     entry = sample_entry.SampleRaw()
     entry.samples_raw = samples_raw.tolist()
@@ -119,6 +113,7 @@ def upload_raw_samples(samples_raw: np.ndarray, sequence_number: int) -> str:
 
 
 def add_raw_samples_to_strategy(sampling_strategy: sample_entry.Strategy, samples_raw_id: str) -> str:
+    """Connect a raw sample entry to a sample strategy entry"""
 
     raw_sample_doc = sample_entry.SampleRaw.objects(id=samples_raw_id).first()
     sampling_strategy.update(push__samples_raw=raw_sample_doc)
@@ -129,6 +124,7 @@ def add_raw_samples_to_strategy(sampling_strategy: sample_entry.Strategy, sample
 
 
 def add_delphin_to_sampling(sample_id: str, delphin_ids: list) -> None:
+    """Connect a Delphin project to a sample entry"""
 
     sample_document = sample_entry.Sample.objects(id=sample_id).first()
 
@@ -140,6 +136,7 @@ def add_delphin_to_sampling(sample_id: str, delphin_ids: list) -> None:
 
 
 def add_sample_to_strategy(strategy_id: str, sample_id: str) -> None:
+    """Connect a sample entry to a sample strategy entry"""
 
     sample_document = sample_entry.Sample.objects(id=sample_id).first()
     strategy_document = sample_entry.Strategy.objects(id=strategy_id).first()
@@ -149,14 +146,19 @@ def add_sample_to_strategy(strategy_id: str, sample_id: str) -> None:
 
 
 def upload_sample_mean(sample_id: str, sample_mean: dict) -> None:
+    """Upload the mean of the sample simulation result"""
+
     sampling_document = sample_entry.Sample.objects(id=sample_id).first()
     sampling_document.update(set__mean=sample_mean)
 
     logger.debug(f'Uploads sample mean to sample with ID: {sample_id}')
+
     return None
 
 
 def upload_sample_std(sample_id: str, sample_std: dict) -> None:
+    """Upload the standard deviation of the sample simulation result"""
+
     sampling_document = sample_entry.Sample.objects(id=sample_id).first()
     sampling_document.update(set__standard_deviation=sample_std)
 
@@ -166,6 +168,7 @@ def upload_sample_std(sample_id: str, sample_std: dict) -> None:
 
 
 def upload_sample_iteration_parameters(strategy_doc: sample_entry.Strategy, iteration: int, used_samples: int) -> None:
+    """Updates a sample strategy with the current sampling iteration and number of used samples"""
 
     strategy_doc.update(set__current_iteration=iteration)
     strategy_doc.update(set__used_samples_per_set=used_samples)
@@ -177,6 +180,7 @@ def upload_sample_iteration_parameters(strategy_doc: sample_entry.Strategy, iter
 
 
 def get_delphin_for_sample(sample: sample_entry.Sample) -> typing.List[str]:
+    """Gets Delphin projects related to a sample"""
 
     sample.reload()
 
