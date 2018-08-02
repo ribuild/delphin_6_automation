@@ -14,6 +14,7 @@ import numpy as np
 import time
 import threading
 import paramiko
+import typing
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -27,16 +28,17 @@ try:
 except ModuleNotFoundError:
     pass
 
+# Logger
+logger = ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION WORKER, DELPHIN SOLVER,
 
-logger = ribuild_logger(__name__)
 
-
-def local_worker(id_):
+def local_worker(id_: str) -> typing.Optional[bool]:
     """
     Simulation worker. Supposed to be used with main simulation loop.
+
     :param id_: Database entry ID from simulation queue
     :return: True on success otherwise False
     """
@@ -83,8 +85,9 @@ def local_worker(id_):
         raise FileNotFoundError('Could not find result entry')
 
 
-def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1):
-    """Solves a delphin file"""
+def solve_delphin(file: str, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe', verbosity_level=1) \
+        -> bool:
+    """Solves a delphin file locally"""
 
     logger.info(f'Solves {file}')
 
@@ -101,7 +104,7 @@ def solve_delphin(file, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/DelphinSo
 
 def github_updates():
     if general_interactions.get_github_version() != general_interactions.get_git_revision_hash():
-        print('New version of Delphin 6 Automation is available on Github!!')
+        logger.info('New version of Delphin 6 Automation is available on Github!!')
         return False
     else:
         return True
@@ -112,9 +115,7 @@ def get_average_computation_time(sim_id: str) -> int:
     Get the average time for this type of construction (2D or 1D)
 
     :param sim_id: Delphin entry id from database
-    :type sim_id: ObjectID
     :return: Average simulation time in minutes
-    :rtype: int
     """
 
     sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
@@ -125,16 +126,22 @@ def get_average_computation_time(sim_id: str) -> int:
                                                                       simulation_time__exists=True)]
 
     if sim_time:
-        return int(np.ceil(np.mean(sim_time)/60))
+        avg_time = int(np.ceil(np.mean(sim_time)/60))
+        logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
+        return avg_time
 
     elif dimension == 2:
+        logger.debug(f'No previous simulations found. Setting time to 60min for a 2D simulation')
         return 60
 
     else:
+        logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
         return 15
 
 
-def create_submit_file(sim_id, simulation_folder, restart=False):
+def create_submit_file(sim_id: str, simulation_folder: str, restart=False) -> typing.Tuple[str, int]:
+    """Create a submit file for the DTU HPC queue system."""
+
     delphin_path = '~/Delphin-6.0/bin/DelphinSolver'
     computation_time = get_average_computation_time(sim_id)
     cpus = 24
@@ -163,22 +170,13 @@ def create_submit_file(sim_id, simulation_folder, restart=False):
     file.write('\n')
     file.close()
 
+    logger.debug(f'Create a submit file for {sim_id} with restart = {restart}')
+
     return submit_file, computation_time
 
 
-def submit_job(submit_file, sim_id):
-    """
-    SSH to HPC.
-    Call bsub < submit_file.
-    Get job_id from HPC
-
-    :param submit_file:
-    :type submit_file:
-    :param sim_id:
-    :type sim_id:
-    :return:
-    :rtype:
-    """
+def submit_job(submit_file: str, sim_id: str) -> None:
+    """Submits a job (submit file) to the DTU HPC queue."""
 
     terminal_call = f"cd ~/ribuild/{sim_id}\n", f"bsub < {submit_file}\n"
 
@@ -206,19 +204,10 @@ def submit_job(submit_file, sim_id):
     client.close()
 
 
-def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
+def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder: str):
     """
     Look for summary file. If it is created, continue. If it is not created and the estimated time runs out.
     Then submit a new job continuing the simulation from where it ended.
-
-    :param sim_id:
-    :type sim_id:
-    :param estimated_run_time:
-    :type estimated_run_time:
-    :param simulation_folder:
-    :type simulation_folder:
-    :return:
-    :rtype:
     """
 
     finished = False
@@ -244,6 +233,7 @@ def wait_until_finished(sim_id, estimated_run_time, simulation_folder):
 
 
 def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
+    """Solves a Delphin project through DTU HPC"""
 
     simulation_folder = os.path.join(folder, id_)
 
@@ -276,7 +266,9 @@ def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
     logger.info(f'{thread_name} finished solving {id_}. Simulation duration: {delta_time}')
 
 
-def simulation_worker(sim_location, thread_name=None):
+def simulation_worker(sim_location: str, thread_name=None) -> None:
+    """Solves Delphin projects in the database until interrupted"""
+
     try:
         while True:
             id_ = simulation_interactions.find_next_sim_in_queue()

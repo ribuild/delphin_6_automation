@@ -40,6 +40,7 @@ def list_project_weather(sim_id: str) -> list:
 
 
 def assign_weather_by_name_and_years(delphin_id: str, weather_station_name: str, years: list) -> str:
+    """Assigns weather and years to a Delphin project in the database"""
 
     weather_documents = []
     for year in years:
@@ -57,11 +58,8 @@ def assign_weather_to_project(delphin_id: str, weather_documents: list) -> str:
     Assign weather to a Delphin entry
 
     :param delphin_id: Delphin document database.rst ID
-    :type delphin_id: str
     :param weather_documents: List with weather entries
-    :type weather_documents: list
     :return: Database ID
-    :rtype: str
     """
 
     # Save climate class to delphin document
@@ -105,6 +103,7 @@ def assign_indoor_climate_to_project(delphin_id: str, climate_class: str) -> str
 
 
 def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
+    """Concatenate weather documents together from a Delphin project in the database"""
 
     weather_dict = {'temperature': [], 'relative_humidity': [],
                     'vertical_rain': [], 'wind_direction': [],
@@ -140,6 +139,7 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
 
 
 def change_weather_file_location(delphin_document: delphin_db.Delphin):
+    """Change the file location for the weather files in a Delphin project"""
 
     folder = '${Project Directory}/weather'
     delphin_dict = dict(delphin_document.dp6_file)
@@ -187,6 +187,7 @@ def change_weather_file_location(delphin_document: delphin_db.Delphin):
 
 
 def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
+    """Download the weather associated with a Delphin project in the database"""
 
     weather = concatenate_weather(delphin_document)
     weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
@@ -251,6 +252,8 @@ def update_short_wave_condition(delphin_dict):
 
 
 def upload_weather_to_db(file_path: str) -> list:
+    """Upload a WAC weather file to the database"""
+
     weather_dict = weather_parser.wac_to_dict(file_path)
 
     # Split years

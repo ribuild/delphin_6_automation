@@ -117,11 +117,7 @@ def is_simulation_finished(sim_id: str) -> bool:
 
 
 def list_finished_simulations() -> list:
-    """
-    Returns a list with Delphin entry ID's for simulated entries.
-
-    :return: List
-    """
+    """Returns a list with Delphin entry ID's for simulated entries."""
 
     finished_list = [document.id
                      for document in delphin_db.Delphin.objects()
@@ -151,6 +147,7 @@ def download_full_project_from_database(document_id: str, folder: str) -> bool:
 
 
 def list_weather_stations() -> dict:
+    """List the weather stations currently in database"""
 
     weather_stations = dict()
 
@@ -174,6 +171,8 @@ def print_weather_stations_dict(weather_station_dict):
 
 
 def list_materials():
+    """List materials currently in the database"""
+
     materials = dict()
     for document in material_db.Material.objects():
         materials[str(document.material_name)] = dict()

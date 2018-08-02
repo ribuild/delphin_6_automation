@@ -307,7 +307,6 @@ def check_delphin_file(delphin_dict: dict):
     Checks if a Delphin project file is valid for simulation.
 
     :return:
-    :rtype:
     """
 
     error = False
