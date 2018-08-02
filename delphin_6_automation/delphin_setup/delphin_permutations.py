@@ -19,28 +19,24 @@ logger = ribuild_logger(__name__)
 # DELPHIN PERMUTATION FUNCTIONS
 
 
-def change_layer_width(delphin_dict, original_material: str, new_width: float) -> dict:
+def change_layer_width(delphin: dict, original_material: str, new_width: float) -> dict:
     """
     Changes the width of a single layer, while keeping number of elements in the project.
 
-    :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
+    :param delphin: Delphin dict to change.
     :param original_material: Name of material to change the width of.
-    :type original_material: str
     :param new_width: New width in m
-    :type new_width: float
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
-    layers = get_layers(delphin_dict)
+    layers = get_layers(delphin)
     layer = identify_layer(layers, original_material)
     new_discretization = discretize_layer(new_width)
-    update_range_of_assignments(delphin_dict, layer, new_discretization)
+    update_range_of_assignments(delphin, layer, new_discretization)
 
-    logger.debug(f'Changed layer {layer} to {new_width}m')
+    logger.debug(f'Changed layer {layer["material"]} to {new_width} m')
 
-    return delphin_dict
+    return delphin
 
 
 def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
@@ -236,6 +232,7 @@ def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
         except KeyError:
             pass
 
+    logger.debug(f'Changed orientation to {new_orientation} degrees from North')
     return delphin_dict
 
 
@@ -266,6 +263,8 @@ def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coe
             else:
                 if boundary_conditions[index]['IBK:Parameter']['@name'] == coefficient:
                     boundary_conditions[index]['IBK:Parameter']['#text'] = str(new_value)
+
+    logger.debug(f'Changed the {coefficient} of {boundary_condition} to: {new_value}')
 
     return delphin_dict
 
@@ -382,8 +381,6 @@ def compute_vapour_diffusion_slope(heat_slope, vapour_exchange):
 
 
 def update_output_locations(delphin: dict) -> dict:
-    # Make sure that outputs are where they should be
-    # Loop through assignments and check if they are at the right location
 
     x_steps = convert_discretization_to_list(delphin)
     layers = get_layers(delphin)

@@ -72,7 +72,7 @@ def assign_weather_to_project(delphin_id: str, weather_documents: list) -> str:
 
     [delphin_document.update(push__weather=weather) for weather in weather_documents]
 
-    logger.debug(f'Weather documents with IDs: {[weather.id for weather in weather_documents]} '
+    logger.debug(f'Weather documents with IDs: {[weather for weather in weather_documents]} '
                  f'assigned to Delphin project with ID: {delphin_id}')
 
     return delphin_document.id
