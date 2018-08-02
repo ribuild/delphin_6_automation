@@ -72,6 +72,9 @@ def assign_weather_to_project(delphin_id: str, weather_documents: list) -> str:
 
     [delphin_document.update(push__weather=weather) for weather in weather_documents]
 
+    logger.debug(f'Weather documents with IDs: {[weather.id for weather in weather_documents]} '
+                 f'assigned to Delphin project with ID: {delphin_id}')
+
     return delphin_document.id
 
 
@@ -95,6 +98,7 @@ def assign_indoor_climate_to_project(delphin_id: str, climate_class: str) -> str
     # Save climate class to delphin document
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_document.update(set__indoor_climate=climate_class.lower())
+
     logger.debug(f'Added indoor climate class {climate_class} to Delphin project with ID: {delphin_id}')
 
     return delphin_document.id
@@ -131,6 +135,7 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
         weather_dict['altitude'].append(reloaded_delphin.weather[index].altitude)
 
     logger.debug(f'Concatenated weather for Delphin project with ID: {sim_id}')
+
     return weather_dict
 
 
@@ -175,6 +180,7 @@ def change_weather_file_location(delphin_document: delphin_db.Delphin):
                 climate_conditions[index]['Filename'] = folder + '/long_wave_radiation.ccd'
 
     delphin_document.update(set__dp6_file=delphin_dict)
+
     logger.debug(f'Changed weather directory to {folder} for Delphin project with ID: {delphin_document.id}')
 
     return delphin_document.id
@@ -206,6 +212,8 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
 
     weather_parser.dict_to_ccd(weather, folder)
     change_weather_file_location(delphin_document)
+
+    logger.debug(f'Downloaded weather for Delphin project with ID: {delphin_document.id} to {folder}')
 
     return True
 
@@ -326,5 +334,10 @@ def upload_weather_to_db(file_path: str) -> list:
         yearly_weather_entry.weather_data.put(bson.BSON.encode(weather))
         yearly_weather_entry.save()
         entry_ids.append(yearly_weather_entry.id)
+
+        yearly_weather_entry.reload()
+
+        logger.debug(f'Uploaded weather files from {yearly_weather_entry.location_name} '
+                     f'for year {yearly_weather_entry.year}')
 
     return entry_ids
