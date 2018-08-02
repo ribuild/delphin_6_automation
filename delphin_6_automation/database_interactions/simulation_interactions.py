@@ -9,6 +9,7 @@ import os
 import datetime
 import time
 import shutil
+import typing
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
@@ -22,7 +23,16 @@ logger = ribuild_logger(__name__)
 # RIBUILD SIMULATION FUNCTIONS AND CLASSES
 
 
-def download_simulation_result(sim_id, download_path, raw_or_processed='raw'):
+def download_simulation_result(sim_id: str, download_path: str, raw_or_processed='raw') -> None:
+    """
+    Downloads Delphin simulation results from the database.
+
+    :param sim_id: Delphin project ID
+    :param download_path: Path to download to
+    :param raw_or_processed: Whether to download the raw results or the processed ones
+    :return: None
+    """
+
     object_ = delphin_db.Delphin.objects(id=sim_id).first()
 
     download_extended_path = download_path + '/' + str(sim_id)
@@ -40,15 +50,14 @@ def download_simulation_result(sim_id, download_path, raw_or_processed='raw'):
     else:
         raise ValueError('raw_or_processed has to be raw or processed. Value given was: ' + str(raw_or_processed))
 
-    return True
+    return None
 
 
-def find_next_sim_in_queue():
+def find_next_sim_in_queue() -> typing.Optional[str]:
     """
     Finds the next entry in the simulation queue, which is not yet simulated and has the highest queue priority.
 
     :return: If a entry is found the id will be returned otherwise None.
-    :rtype: str or None
     """
 
     try:
@@ -68,11 +77,8 @@ def set_simulating(id_: str, set_to: bool) -> str:
     Set the simulating flag of an entry.
 
     :param id_: ID of the entry
-    :type id_: str
     :param set_to: What to set simulating to. Should be either True or False.
-    :type set_to: bool
     :return: ID of the entry
-    :rtype: str
     """
 
     simulation = delphin_db.Delphin.objects(id=id_).first()
@@ -82,14 +88,12 @@ def set_simulating(id_: str, set_to: bool) -> str:
     return simulation.id
 
 
-def set_simulated(id_: str):
+def set_simulated(id_: str) -> str:
     """
     Flags an entry for finishing the simulation.
 
     :param id_: ID of the entry
-    :type id_: str
     :return: ID of the entry
-    :rtype: str
     """
 
     simulation = delphin_db.Delphin.objects(id=id_).first()
@@ -105,9 +109,7 @@ def clean_simulation_folder(path: str) -> bool:
     Cleans the simulation folder for content
 
     :param path: Path to the simulation folder
-    :type path: str
     :return: True on success
-    :rtype: bool
     """
 
     shutil.rmtree(path)
@@ -116,7 +118,8 @@ def clean_simulation_folder(path: str) -> bool:
     return True
 
 
-def set_simulation_time(sim_id: str, computation_time: datetime.timedelta):
+def set_simulation_time(sim_id: str, computation_time: datetime.timedelta) -> str:
+    """Sets the time it took to simulate Delphin project"""
 
     delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
     delphin_entry.update(set__simulation_time=computation_time.total_seconds())
@@ -131,9 +134,7 @@ def wait_until_simulated(delphin_ids: list) -> bool:
     Wait until all simulations in the given list is simulated.
 
     :param delphin_ids: List with Delphin database ids
-    :type delphin_ids: list
     :return: True
-    :rtype: bool
     """
 
     simulated = [False] * len(delphin_ids)
