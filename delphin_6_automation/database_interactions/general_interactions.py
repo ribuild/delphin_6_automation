@@ -14,12 +14,13 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry as result_db
 from delphin_6_automation.database_interactions.db_templates import weather_entry as weather_db
 from delphin_6_automation.database_interactions.db_templates import material_entry as material_db
-from delphin_6_automation.file_parsing import delphin_parser
-
-from delphin_6_automation.database_interactions import delphin_interactions as delphin_interact
+from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
-from delphin_6_automation.database_interactions.db_templates import user_entry
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL INTERACTIONS
@@ -41,7 +42,7 @@ def download_raw_result(result_id: str, download_path: str) -> bool:
         os.mkdir(download_path)
 
     # delphin_parser.write_log_files(result_obj, download_path)
-    delphin_interact.download_result_files(result_obj, download_path)
+    delphin_interactions.download_result_files(result_obj, download_path)
 
     return True
 
@@ -90,7 +91,9 @@ def add_to_simulation_queue(delphin_file: str, priority: str)-> str:
     """
 
     priority_number = queue_priorities(priority)
-    simulation_id = delphin_interact.upload_delphin_to_database(delphin_file, priority_number)
+    simulation_id = delphin_interactions.upload_delphin_to_database(delphin_file, priority_number)
+
+    logger.debug(f'Added Delphin project with ID: {simulation_id} to queue with priority: {priority}')
 
     return simulation_id
 
@@ -106,8 +109,10 @@ def is_simulation_finished(sim_id: str) -> bool:
     object_ = delphin_db.Delphin.objects(id=sim_id).first()
 
     if object_.simulated:
+        logger.debug(f'Delphin project with ID: {sim_id} is finished simulating')
         return True
     else:
+        logger.debug(f'Delphin project with ID: {sim_id} is not finished simulating')
         return False
 
 
@@ -138,7 +143,9 @@ def download_full_project_from_database(document_id: str, folder: str) -> bool:
 
     material_interactions.download_materials(delphin_document, folder + '/materials')
     weather_interactions.download_weather(delphin_document, folder + '/weather')
-    delphin_interact.download_delphin_entry(delphin_document, folder)
+    delphin_interactions.download_delphin_entry(delphin_document, folder)
+
+    logger.debug(f'Download Delphin project with ID: {document_id} from database with weather and materials.')
 
     return True
 
