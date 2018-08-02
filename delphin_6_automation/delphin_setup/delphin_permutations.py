@@ -22,7 +22,6 @@ logger = ribuild_logger(__name__)
 def change_layer_width(delphin: dict, original_material: str, new_width: float) -> dict:
     """
     Changes the width of a single layer, while keeping number of elements in the project.
-
     :param delphin: Delphin dict to change.
     :param original_material: Name of material to change the width of.
     :param new_width: New width in m
@@ -45,11 +44,8 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
     material.
 
     :param layers: Layers to look in
-    :type layers: dict
     :param identifier: Identifier to identify layer by
-    :type identifier: str or int
     :return: The found layer
-    :rtype: dict
     """
 
     if isinstance(identifier, int):
@@ -70,13 +66,9 @@ def update_range_of_assignments(delphin_dict: dict, layer: dict, new_discretizat
     Update the ranges of all assignments in a Delphin dict, given a layer and a new discretization of that layer
 
     :param delphin_dict: Delphin dict to update
-    :type delphin_dict: dict
     :param layer: Layer to update
-    :type layer: dict
     :param new_discretization: New discretization
-    :type new_discretization: list
     :return: Updated Delphin dict
-    :rtype: dict
     """
 
     # Update discretization
@@ -108,11 +100,8 @@ def update_assignment_range(assignment: dict, delta_range: int, range_to_update_
     Updates the range of a single assignment.
 
     :param assignment: Assignment to change
-    :type assignment: dict
     :param delta_range: Change in range
-    :type delta_range: int
     :param range_to_update_after: After which the ranges should be updated
-    :type range_to_update_after: int
     """
 
     range_list = [int(r)
@@ -134,13 +123,9 @@ def change_layer_widths(delphin_dict: dict, layer_material: str, widths: list) -
     Creates a new Delphin dict with the width of each value in widths.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param layer_material: Name of material to change the width of.
-    :type layer_material: str
     :param widths: New widths in m
-    :type widths: list
     :return: List with modified Delphin dicts
-    :rtype: list
     """
 
     permutated_dicts = []
@@ -156,13 +141,9 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
     Changes the material of a layer.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param original_material: Name of material that should be changed.
-    :type original_material: str
     :param new_material: New material given as a dict. Dict should have the following keys: @name, @color, @hatchCode and #text.
-    :type new_material: dict
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
     new_delphin_dict = copy.deepcopy(delphin_dict)
@@ -191,13 +172,9 @@ def change_weather(delphin_dict: dict, original_weather: str, new_weather: str) 
     from a file.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param original_weather: Name of the original weather
-    :type original_weather: str
     :param new_weather: New weather file path
-    :type new_weather: str
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
     # Find original weather
@@ -214,11 +191,8 @@ def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
     Changes the orientation of the Delphin project.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param new_orientation: New orientation. Value between 0 and 360
-    :type new_orientation: int
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
     assert 0 <= new_orientation <= 360
@@ -236,20 +210,16 @@ def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
     return delphin_dict
 
 
-def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coefficient: str, new_value: float) -> dict:
+def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coefficient: str, new_value: float) \
+        -> dict:
     """
     Changes a boundary coefficient of a boundary condition instance.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param boundary_condition: Name of the boundary condition
-    :type boundary_condition: str
     :param coefficient: Name of the coefficient to change
-    :type coefficient: str
     :param new_value: New value of the coefficient
-    :type new_value: float
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
     boundary_conditions = delphin_dict['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition']
@@ -274,9 +244,7 @@ def get_layers(delphin_dict: dict) -> dict:
     Get the layers of a Delphin dict.
 
     :param delphin_dict: Delphin dict to get layers from.
-    :type delphin_dict: dict
     :return: Dict of dicts. Each nested dict has the keys: material, x_width, x_index
-    :rtype: dict
     """
 
     x_list = convert_discretization_to_list(delphin_dict)
@@ -302,9 +270,7 @@ def convert_discretization_to_list(delphin_dict: dict) -> list:
     Get the discretized elements of a project.
 
     :param delphin_dict: Delphin dict to look in.
-    :type delphin_dict: dict
     :return: A list with the discretizated values.
-    :rtype: list
     """
 
     x_list = [float(x)
@@ -318,13 +284,10 @@ def discretize_layer(width: float, stretch_factor: float = 1.3,  minimum_divisio
     Creates a subdivision of the material to be used for the discretization.
 
     :param width: Width of the material to be subdivided
-    :type width: float
     :param minimum_division: Width of the smallest division
-    :type minimum_division: float
     :param stretch_factor: Increase in subdivisions
-    :type stretch_factor: float
+    :param maximum_division: Maximum size of a cell
     :return: List containing width of subdivisions
-    :rtype: list
     """
 
     processed_width = 0
