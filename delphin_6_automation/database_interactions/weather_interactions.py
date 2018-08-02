@@ -70,7 +70,7 @@ def assign_weather_to_project(delphin_id: str, weather_documents: list) -> str:
 
     [delphin_document.update(push__weather=weather) for weather in weather_documents]
 
-    logger.debug(f'Weather documents with IDs: {[weather for weather in weather_documents]} '
+    logger.debug(f'Weather documents with IDs: {[weather_ for weather_ in weather_documents]} '
                  f'assigned to Delphin project with ID: {delphin_id}')
 
     return delphin_document.id
@@ -81,11 +81,8 @@ def assign_indoor_climate_to_project(delphin_id: str, climate_class: str) -> str
     Assign indoor climate class to a Delphin entry
 
     :param delphin_id: Database ID
-    :type delphin_id: str
     :param climate_class: Climate class can be either a or b
-    :type climate_class: str
     :return: Database ID
-    :rtype: str
     """
 
     # Make check
