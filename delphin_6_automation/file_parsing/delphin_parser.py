@@ -482,10 +482,11 @@ def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
 
     file_obj.write('\n')
     file_obj.close()
+
     return True
 
 
-def dict_to_d6o(result_dict: dict, result_name: str, result_path: str, simulation_start: datetime,
+def dict_to_d6o(result_dict: dict, result_name: str, result_path: str, simulation_start: datetime.datetime,
                 geometry_file_name: str, geometry_file_hash: int) -> bool:
     """
     Turns a dictionary into a delphin result file.
@@ -493,6 +494,9 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str, simulatio
     :param result_dict: Dictionary representation of the database entry
     :param result_name: Name of the result file
     :param result_path: Path to were the result file should be written
+    :param simulation_start: Start time for the simulation
+    :param geometry_file_name: Name of the geometry file
+    :param geometry_file_hash: Hash of the geometry file
     :return: True
     """
 
