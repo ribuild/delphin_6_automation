@@ -61,7 +61,7 @@ def menu():
 
     if choice == 'a':
         logger.debug('starting sampling')
-        sampling_strategy_id = input("Define sampling strategy ID >")
+        sampling_strategy_id = input("Define sampling strategy ID > ")
         logger.debug(sampling_strategy_id)
 
         logger.info('\nStarting sampling\n')
@@ -73,7 +73,7 @@ def menu():
         logger.info(f'Created sampling and uploaded it with ID: {strategy_id}')
 
     elif choice == 'c':
-        sampling_strategy_id = input("Define sampling strategy ID >")
+        sampling_strategy_id = input("Define sampling strategy ID > ")
         sampling_overview(sampling_strategy_id)
 
     elif choice == 'x':
@@ -81,7 +81,6 @@ def menu():
 
 
 def sampling_worker(strategy_id):
-    # Initialize
     strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
     (sample_iteration, convergence,
      new_samples_per_set, used_samples_per_set) = sampling.initialize_sampling(strategy_doc)
