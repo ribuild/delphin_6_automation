@@ -19,16 +19,25 @@ from delphin_6_automation.database_interactions.material_interactions import get
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
-def construction_types():
+def construction_types() -> list:
+    """Gets available template strings.
+
+    :return: list of file name strings
+    """
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files/delphin'
 
     return os.listdir(folder)
 
 
-def wall_core_materials():
+def wall_core_materials() -> list:
+    """All included material IDs relevant for a wall's core.
+
+    :return: list of IDs
+    """
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
+
     bricks = pd.read_excel(folder + '/Brick.xlsx')
     natural_stones = pd.read_excel(folder + '/Natural Stone.xlsx')
 
@@ -37,21 +46,31 @@ def wall_core_materials():
     return material_list
 
 
-def plaster_materials():
+def plaster_materials() -> list:
+    """All included material IDs relevant for plastering of a wall.
+
+    :return: list of IDs
+    """
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
+
     plasters = pd.read_excel(folder + '/Plaster.xlsx')['Material ID'].tolist()
 
     return plasters
 
 
-def insulation_type():
+def insulation_type() -> list:
+    """All included material IDs in insulation systems as such.
+
+    :return:
+    """
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
     insulation = pd.read_excel(folder + '/InsulationSystems.xlsx')['Material ID'].str.split(', ')
 
     return [[int(i) for i in sublist]
             for sublist in insulation.tolist()]
+
 
 def insulation_systems() -> pd.DataFrame:
     """Reformat insulation DataFrame to different design options DataFrame
@@ -158,7 +177,17 @@ def construct_design_options():
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
 
-    # each insulation system
+    # each reference wall with number for title
+    for i, file in enumerate(delphin_templates()[0]):
+        design = dp6_to_dict(folder + '/delphin/' + file)
+
+        xmltodict.unparse(design,
+                          output=open(os.path.join(folder,
+                                                   'design',
+                                                   'reference_' + str(i).zfill(2) + '_insulation_00.d6p'),
+                                      'w'), pretty=True)
+
+    # one system at a time, each with many possible variations
     for system_number in systems.index.levels[0]:
         system = systems.loc[system_number]
 
@@ -167,29 +196,42 @@ def construct_design_options():
         # three/two layers
         if any('detail' in string for string in system.index):
 
-            # each file
+            # three layers - two models = two loops
             for file in delphin_templates()[3]:
-                design = dp6_to_dict(folder + '/delphin/' + file)
+                delphin = dp6_to_dict(folder + '/delphin/' + file)
 
-                # each layer, #01 insulation
+                # in current model each layer type, #01 insulation
                 for layer, material in material_names.items():
+
+                    # material dict
                     db_material = get_material_info(system.loc[layer + '_00', 'ID'])
 
-                    variant = delphin_permutations.change_layer_material(design,
+                    # step 1 new delphin dict - input dict, str, dict
+                    delphin = delphin_permutations.change_layer_material(delphin,
                                                                          material,
                                                                          db_material
                                                                          )
 
-                    variant = delphin_permutations.change_layer_width(variant,
-                                                                      db_material['@name'],
-                                                                      system.loc[layer + '_00', 'Dimension'].astype(float)
-                                                                      )
+                    # step 2 new delphin dict - input dict, str (original added above), float
+                    if layer != 'insulation':
+                        delphin = delphin_permutations.change_layer_width(delphin,
+                                                                          db_material['@name'],
+                                                                          system.loc[layer + '_00', 'Dimension'].astype(float)
+                                                                          )
+                    else:
+                        delphin = delphin_permutations.change_layer_width(delphin,
+                                                                          db_material['@name'],
+                                                                          system.loc[layer + '_00', 'Dimension'].astype(
+                                                                              float)
+                                                                          )
+            # one delphin dict completed now variated
+
 
 
                 # write to new directory write the same twice?
                 for idx, variation in system.loc[insulation_select].iterrows():
                     if idx == 0:
-                        xmltodict.unparse(variant,
+                        xmltodict.unparse(delphin,
                                           output=open(os.path.join(folder,
                                                                    'design',
                                                                    'system_' + str(system_number).zfill(2) + '_insulation_00.d6p'),
@@ -199,10 +241,10 @@ def construct_design_options():
                     else:
                         db_material = get_material_info(variation['ID'])
 
-                        variant = delphin_permutations.change_layer_width(variant,
+                        delphin = delphin_permutations.change_layer_width(delphin,
                                                                           db_material['@name'],
                                                                           variation['Dimension'].astype(float))
-                        xmltodict.unparse(variant,
+                        xmltodict.unparse(delphin,
                                           output=open(os.path.join(folder,
                                                                    'design',
                                                                    'system_' + str(system_number).zfill(
