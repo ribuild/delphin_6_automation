@@ -22,6 +22,7 @@ logger = ribuild_logger(__name__)
 def change_layer_width(delphin: dict, original_material: str, new_width: float) -> dict:
     """
     Changes the width of a single layer, while keeping number of elements in the project.
+
     :param delphin: Delphin dict to change.
     :param original_material: Name of material to change the width of.
     :param new_width: New width in m
@@ -118,7 +119,7 @@ def update_assignment_range(assignment: dict, delta_range: int, range_to_update_
     return None
 
 
-def change_layer_widths(delphin_dict: dict, layer_material: str, widths: list) -> list:
+def change_layer_widths(delphin_dict: dict, layer_material: str, widths: list) -> typing.List[dict]:
     """
     Creates a new Delphin dict with the width of each value in widths.
 
@@ -265,7 +266,7 @@ def get_layers(delphin_dict: dict) -> dict:
     return layers_dict
 
 
-def convert_discretization_to_list(delphin_dict: dict) -> list:
+def convert_discretization_to_list(delphin_dict: dict) -> typing.List[float]:
     """
     Get the discretized elements of a project.
 
@@ -279,7 +280,8 @@ def convert_discretization_to_list(delphin_dict: dict) -> list:
     return x_list
 
 
-def discretize_layer(width: float, stretch_factor: float = 1.3,  minimum_division=0.001, maximum_division=0.2) -> list:
+def discretize_layer(width: float, stretch_factor: float = 1.3,  minimum_division=0.001, maximum_division=0.2) \
+        -> typing.List[float]:
     """
     Creates a subdivision of the material to be used for the discretization.
 
@@ -320,6 +322,7 @@ def discretize_layer(width: float, stretch_factor: float = 1.3,  minimum_divisio
 
 
 def change_simulation_length(delphin_dict: dict, simulation_length: int, length_unit: str) -> dict:
+    """Change the simulation length of a Delphin file"""
 
     simulation_properties = delphin_dict['DelphinProject']['Init']['SimulationParameter']['Interval']['IBK:Parameter']
     simulation_properties['#text'] = str(simulation_length)
@@ -328,7 +331,8 @@ def change_simulation_length(delphin_dict: dict, simulation_length: int, length_
     return delphin_dict
 
 
-def get_simulation_length(delphin_dict: dict) -> tuple:
+def get_simulation_length(delphin_dict: dict) -> typing.NamedTuple[float, str]:
+    """Get the simulation length of a Delphin file"""
 
     SimulationLength = namedtuple('SimulationLength', ['length', 'unit'])
 
@@ -337,13 +341,16 @@ def get_simulation_length(delphin_dict: dict) -> tuple:
     return SimulationLength(float(simulation_properties['#text']), simulation_properties['@unit'])
 
 
-def compute_vapour_diffusion_slope(heat_slope, vapour_exchange):
+def compute_vapour_diffusion_slope(heat_slope: float, vapour_exchange: float) -> typing.Tuple[float, float]:
+    """Computes the vapour diffusion slope and the vapour diffusion exchange coefficient"""
 
     heat_exchange = 4
+
     return heat_slope * vapour_exchange, heat_exchange * vapour_exchange
 
 
 def update_output_locations(delphin: dict) -> dict:
+    """Update the output locations in a Delphin file, so they are located correctly"""
 
     x_steps = convert_discretization_to_list(delphin)
     layers = get_layers(delphin)
