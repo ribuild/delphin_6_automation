@@ -109,9 +109,10 @@ def test_simulation_worker(mock_hpc_worker, mock_find_next_sim_in_queue, capsys)
 
     with pytest.raises(SystemExit) as exc_info:
         simulation_worker.simulation_worker('hpc', 'Test_Thread')
-        out, err = capsys.readouterr()
-        assert out == 'hpc called\n'
-        assert 'None' in str(exc_info.value)
+
+    out, err = capsys.readouterr()
+    assert out.split('\n')[0] == 'hpc called'
+    assert 'None' in str(exc_info.value)
 
 
 def test_simulation_worker_exception(db_one_project, mock_hpc_worker_exception, mock_sleep_exception, ):
@@ -119,6 +120,6 @@ def test_simulation_worker_exception(db_one_project, mock_hpc_worker_exception, 
     with pytest.raises(SystemExit) as exc_info:
         simulation_worker.simulation_worker('hpc', 'Test_Thread')
 
-        delphin_doc = delphin_entry.Delphin.objects().first()
-        assert 'None' in str(exc_info.value)
-        assert not delphin_doc.simulating
+    delphin_doc = delphin_entry.Delphin.objects().first()
+    assert 'None' in str(exc_info.value)
+    assert not delphin_doc.simulating

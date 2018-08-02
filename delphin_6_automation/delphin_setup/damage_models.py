@@ -198,12 +198,13 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
 def mould_pj(relative_humidity_list,
              temperature_list,
              aed_group='b') -> tuple:
-    '''
+    """
     Outputs RH difference between measured and critical RH for each time step and two limits.
     Possitive values imply how much RH exceed the critial RH. A low and upper critial RH are applied.
 
-    Litterature:
-    '''
+    Literature:
+    """
+
     betas = {'a': 0.043, 'b': 0.036, 'c': 0.028, 'd': 0.021, 'e': 0.014}
     temperature_list = np.array(temperature_list)
     relative_humidity_list = np.array(relative_humidity_list)
@@ -265,16 +266,13 @@ def algae(relative_humidity_list,
 
 
 def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typing.Union[np.ndarray, list],
-            interior_temperature: typing.Union[np.ndarray, list], area=0.68) -> float:
+            interior_temperature: typing.Union[np.ndarray, list], area=0.68) -> np.ndarray:
 
-    if isinstance(heat_loss, list):
-        heat_loss = np.array(heat_loss)
-    if isinstance(exterior_temperature, list):
-        exterior_temperature = np.array(exterior_temperature)
-    if isinstance(interior_temperature, list):
-        interior_temperature = np.array(interior_temperature)
+    heat_loss = np.asarray(heat_loss)
+    exterior_temperature = np.asarray(exterior_temperature)
+    interior_temperature = np.asarray(interior_temperature)
 
     delta_temperature = exterior_temperature - interior_temperature
-    u_value_ = np.mean(heat_loss / (delta_temperature[:-2] * area))
+    u_value_ = np.nanmean(heat_loss / (delta_temperature[:-1] * area))
 
     return u_value_

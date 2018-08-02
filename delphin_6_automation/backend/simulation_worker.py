@@ -257,7 +257,6 @@ def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
         os.mkdir(simulation_folder)
 
     # Download, solve, upload
-    print(f'\n{thread_name} downloads project with ID: {id_}')
     logger.info(f'{thread_name} downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(id_, simulation_folder)
@@ -277,7 +276,6 @@ def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
     simulation_interactions.set_simulation_time(id_, delta_time)
     simulation_interactions.clean_simulation_folder(simulation_folder)
 
-    print(f'{thread_name} finished solving {id_}. Simulation duration: {delta_time}\n')
     logger.info(f'{thread_name} finished solving {id_}. Simulation duration: {delta_time}')
 
 
@@ -293,7 +291,7 @@ def simulation_worker(sim_location, thread_name=None):
                         hpc_worker(str(id_), thread_name)
                     except Exception as err:
                         simulation_interactions.set_simulating(str(id_), False)
-                        logger.exception(err)
+                        logger.error(err)
                         time.sleep(5)
                         pass
 
@@ -334,11 +332,11 @@ def menu():
     choice = input("> ").strip().lower()
 
     if choice == 'a':
-        print('Local Simulation Chosen\n')
+        logger.info('Local Simulation Chosen\n')
         simulation_worker('local')
 
     elif choice == 'b':
-        print('Simulation on DTU HPC Chosen\n')
+        logger.info('Simulation on DTU HPC Chosen\n')
         n_threads = 8
         threads = []
 
@@ -351,7 +349,6 @@ def menu():
             threads.append(thread)
 
             time.sleep(10)
-            print(f'Created thread with name: {t_name}')
             logger.info(f'Created thread with name: {t_name}')
 
         for thread in threads:

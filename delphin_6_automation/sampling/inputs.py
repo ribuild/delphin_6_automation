@@ -18,6 +18,7 @@ from delphin_6_automation.database_interactions.material_interactions import get
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
+
 def construction_types():
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files/delphin'

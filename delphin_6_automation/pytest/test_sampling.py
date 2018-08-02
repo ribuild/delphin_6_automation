@@ -133,11 +133,18 @@ def test_create_delphin_projects(create_samples, mock_material_info, add_five_ma
     assert delphin_ids
     assert isinstance(delphin_ids, list)
 
+    for delphin_id in delphin_ids:
+        delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
+        assert delphin_doc.sample_data
+        assert isinstance(delphin_doc.sample_data, dict)
+        assert delphin_doc.sample_data['design_option']
+        assert delphin_doc.sample_data['sequence']
 
-def test_calculate_error(add_delphin_for_errors, add_strategy_for_errors):
+
+def test_calculate_error(add_sample_for_errors):
     strategy = sample_entry.Strategy.objects().first()
 
-    standard_error = sampling.calculate_error(strategy.strategy)
+    standard_error = sampling.calculate_error(strategy)
 
     assert standard_error
     assert isinstance(standard_error, dict)
@@ -148,35 +155,24 @@ def test_calculate_error(add_delphin_for_errors, add_strategy_for_errors):
 
 @pytest.mark.parametrize('error',
                          [1.0, 0.1, 0.01])
-def test_upload_standard_error(add_strategy_for_errors, add_dummy_sample, error):
+def test_upload_standard_error(add_strategy_for_errors, error):
     strategy = sample_entry.Strategy.objects().first()
-    sample = sample_entry.Sample.objects().first()
-    current_error = {'mould': error,
-                     'algae': error,
-                     'heat_loss': error}
+    current_error = {'Test Design': {'mould': error,
+                                     'algae': error,
+                                     'heat_loss': error}}
 
-    sampling_interactions.upload_standard_error(strategy, sample.id, current_error)
+    sampling_interactions.upload_standard_error(strategy, current_error)
 
     strategy.reload()
-    sample.reload()
 
     assert strategy.standard_error
     assert isinstance(strategy.standard_error, dict)
-    assert isinstance(strategy.standard_error['mould'], list)
-    assert strategy.standard_error['mould'][-1] == error
-    assert isinstance(strategy.standard_error['algae'], list)
-    assert strategy.standard_error['algae'][-1] == error
-    assert isinstance(strategy.standard_error['heat_loss'], list)
-    assert strategy.standard_error['heat_loss'][-1] == error
-
-    assert sample.standard_error
-    assert isinstance(sample.standard_error, dict)
-    assert isinstance(sample.standard_error['mould'], float)
-    assert sample.standard_error['mould'] == error
-    assert isinstance(sample.standard_error['algae'], float)
-    assert sample.standard_error['algae'] == error
-    assert isinstance(sample.standard_error['heat_loss'], float)
-    assert sample.standard_error['heat_loss'] == error
+    assert isinstance(strategy.standard_error['Test Design']['mould'], list)
+    assert strategy.standard_error['Test Design']['mould'][-1] == error
+    assert isinstance(strategy.standard_error['Test Design']['algae'], list)
+    assert strategy.standard_error['Test Design']['algae'][-1] == error
+    assert isinstance(strategy.standard_error['Test Design']['heat_loss'], list)
+    assert strategy.standard_error['Test Design']['heat_loss'][-1] == error
 
 
 @pytest.mark.parametrize('error',
@@ -184,12 +180,46 @@ def test_upload_standard_error(add_strategy_for_errors, add_dummy_sample, error)
 def test_check_convergence(add_strategy_for_errors, add_dummy_sample, error):
     strategy = sample_entry.Strategy.objects().first()
     sample = sample_entry.Sample.objects().first()
-    current_error = {'mould': error,
-                     'algae': error,
-                     'heat_loss': error}
+    current_error = {'Test Design': {'mould': error,
+                                     'algae': error,
+                                     'heat_loss': error}}
 
-    sampling_interactions.upload_standard_error(strategy, sample.id, current_error)
+    sampling_interactions.upload_standard_error(strategy, current_error)
 
     strategy.reload()
     threshold = strategy.strategy['settings']['standard error threshold']
     assert (error <= threshold) == sampling.check_convergence(strategy)
+
+
+def test_calculate_sample_output(empty_database, add_strategy_for_errors, add_dummy_sample, add_delphin_for_errors):
+    strategy_doc = sample_entry.Strategy.objects().first()
+    sample_doc = sample_entry.Sample.objects().first()
+
+    sampling.calculate_sample_output(strategy_doc.strategy, sample_doc.id)
+
+    assert not sample_doc.mean
+    assert not sample_doc.standard_deviation
+    sample_doc.reload()
+
+    assert sample_doc.mean
+    assert isinstance(sample_doc.mean, dict)
+    for key in sample_doc.mean.keys():
+        assert isinstance(key, str)
+        assert isinstance(int(key), int)
+
+    assert sample_doc.standard_deviation
+    assert isinstance(sample_doc.standard_deviation, dict)
+    for key in sample_doc.standard_deviation.keys():
+        assert isinstance(key, str)
+        assert isinstance(int(key), int)
+
+
+def test_initialize_sampling(add_sampling_strategy):
+
+    strategy = sample_entry.Strategy.objects().first()
+    iteration, convergence, new_samples_per_set, used_samples_per_set = sampling.initialize_sampling(strategy)
+
+    assert iteration == 0
+    assert not convergence
+    assert new_samples_per_set == 1
+    assert used_samples_per_set == 0

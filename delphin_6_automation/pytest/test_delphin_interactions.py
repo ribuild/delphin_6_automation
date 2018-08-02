@@ -7,6 +7,7 @@ __license__ = 'MIT'
 # Modules
 import os
 import shutil
+import pytest
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import delphin_interactions
@@ -72,6 +73,7 @@ def test_upload_results_1(db_one_project, test_folder, tmpdir):
     assert result_doc.geometry_file_hash
 
 
+@pytest.mark.skip('Not needed')
 def test_delphin_file_checker_1(delphin_file_path):
 
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)

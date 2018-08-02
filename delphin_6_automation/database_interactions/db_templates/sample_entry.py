@@ -25,7 +25,8 @@ class Sample(mongoengine.Document):
     samples = mongoengine.DictField(required=True)
     delphin_docs = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=delphin_entry.Delphin))
     iteration = mongoengine.IntField(required=True)
-    standard_error = mongoengine.DictField()
+    mean = mongoengine.DictField()
+    standard_deviation = mongoengine.DictField()
 
     meta = collections.sample_db
 
@@ -46,10 +47,12 @@ class Strategy(mongoengine.Document):
 
     # Meta Data
     added_date = mongoengine.DateTimeField(default=datetime.now)
+    current_iteration = mongoengine.IntField(default=0)
+    used_samples_per_set = mongoengine.IntField(default=0)
     meta = collections.strategy_db
 
     # References
     samples = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=Sample))
     samples_raw = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=SampleRaw))
-    standard_error = mongoengine.DictField(default={'mould': [], 'heat_loss': [], 'algae': []})
+    standard_error = mongoengine.DictField()
     strategy = mongoengine.DictField(required=True)

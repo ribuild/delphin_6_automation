@@ -14,6 +14,10 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 from delphin_6_automation.file_parsing import weather_parser
 from delphin_6_automation.delphin_setup import weather_modeling
 import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # WEATHER INTERACTIONS
@@ -42,6 +46,8 @@ def assign_weather_by_name_and_years(delphin_id: str, weather_station_name: str,
         weather_documents.append(weather_db.Weather.objects(location_name=weather_station_name, year=year).first())
 
     delphin_id = assign_weather_to_project(delphin_id, weather_documents)
+    logger.debug(f'Assigned weather from {weather_station_name} '
+                 f'for years: {years} to Delphin project with ID: {delphin_id}')
 
     return delphin_id
 
@@ -89,6 +95,7 @@ def assign_indoor_climate_to_project(delphin_id: str, climate_class: str) -> str
     # Save climate class to delphin document
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_document.update(set__indoor_climate=climate_class.lower())
+    logger.debug(f'Added indoor climate class {climate_class} to Delphin project with ID: {delphin_id}')
 
     return delphin_document.id
 
@@ -123,6 +130,7 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
         weather_dict['location_name'].append(reloaded_delphin.weather[index].location_name)
         weather_dict['altitude'].append(reloaded_delphin.weather[index].altitude)
 
+    logger.debug(f'Concatenated weather for Delphin project with ID: {sim_id}')
     return weather_dict
 
 
@@ -167,6 +175,7 @@ def change_weather_file_location(delphin_document: delphin_db.Delphin):
                 climate_conditions[index]['Filename'] = folder + '/long_wave_radiation.ccd'
 
     delphin_document.update(set__dp6_file=delphin_dict)
+    logger.debug(f'Changed weather directory to {folder} for Delphin project with ID: {delphin_document.id}')
 
     return delphin_document.id
 
@@ -177,7 +186,7 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
     weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
         weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
                                                            delphin_document.indoor_climate)
-    orientation = int(delphin_document.dp6_file['DelphinProject']['Conditions']['Interfaces'][
+    orientation = float(delphin_document.dp6_file['DelphinProject']['Conditions']['Interfaces'][
                           'Interface'][0]['IBK:Parameter']['#text'])
     wall_location = {'height': 5, 'width': 5}
     weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],

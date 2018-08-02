@@ -39,6 +39,8 @@ def change_layer_width(delphin_dict, original_material: str, new_width: float) -
     new_discretization = discretize_layer(new_width)
     update_range_of_assignments(delphin_dict, layer, new_discretization)
 
+    logger.debug(f'Changed layer {layer} to {new_width}m')
+
     return delphin_dict
 
 
@@ -57,6 +59,7 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
 
     if isinstance(identifier, int):
         return layers[identifier]
+
     elif isinstance(identifier, str):
         for layer_ in layers:
             if layers[layer_]['material'] == identifier:
@@ -82,6 +85,7 @@ def update_range_of_assignments(delphin_dict: dict, layer: dict, new_discretizat
     """
 
     # Update discretization
+    logger.debug('Updated range assignment for Delphin project')
     current_x_list = convert_discretization_to_list(delphin_dict)
     range_ = layer['x_index']
     new_x_list = current_x_list[:range_[0]] + new_discretization + current_x_list[range_[1]:]
@@ -180,6 +184,8 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
             # Replace with new material
             new_delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] = \
                 new_material['@name']
+
+    logger.debug(f'Changed material {original_material} to {new_material["@name"]}')
 
     return new_delphin_dict
 
@@ -374,3 +380,40 @@ def compute_vapour_diffusion_slope(heat_slope, vapour_exchange):
 
     heat_exchange = 4
     return heat_slope * vapour_exchange, heat_exchange * vapour_exchange
+
+
+def update_output_locations(delphin: dict) -> dict:
+    # Make sure that outputs are where they should be
+    # Loop through assignments and check if they are at the right location
+
+    x_steps = convert_discretization_to_list(delphin)
+    layers = get_layers(delphin)
+
+    for assignment in delphin['DelphinProject']['Assignments']['Assignment']:
+        if assignment['@type'] == 'Output':
+            if assignment['Reference'].endswith('algae'):
+                assignment['IBK:Point3D'] = '0.0005 0.034 0'
+
+            elif assignment['Reference'].endswith('frost'):
+                assignment['IBK:Point3D'] = '0.005 0.034 0'
+
+            elif assignment['Reference'] == 'heat loss':
+                assignment['Range'] = f'{len(x_steps)-1} 0 {len(x_steps)-1} 0'
+
+            elif assignment['Reference'].endswith('interior surface'):
+                assignment['IBK:Point3D'] = f'{sum(x_steps) - 0.0005} 0.034 0'
+
+            elif assignment['Reference'].endswith('mould'):
+                if len(layers) == 2:
+                    width = layers[0]["x_width"] - 0.0005
+                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+                elif len(layers) in [3, 5]:
+                    width = layers[0]["x_width"] + layers[1]["x_width"] - 0.0005
+                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+                elif len(layers) == 6:
+                    width = layers[0]["x_width"] + layers[1]["x_width"] + layers[2]["x_width"] - 0.0005
+                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+    return delphin

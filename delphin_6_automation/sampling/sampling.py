@@ -156,7 +156,7 @@ def load_existing_samples(sampling_strategy_id):
         return {}
 
 
-def load_latest_sample(sampling_strategy_id: str) -> dict:
+def load_latest_sample(sampling_strategy_id: str) -> typing.Optional[sample_entry.Sample]:
     """
     Look up the last existing sample entries in the database connected to the strategy
     If there is not previous samples in database return empty dict
@@ -171,10 +171,10 @@ def load_latest_sample(sampling_strategy_id: str) -> dict:
 
     if strategy.samples:
         samples_list = strategy.samples
-        return samples_list[-1].samples
+        return samples_list[-1]
 
     else:
-        return {}
+        return None
 
 
 def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.array:
@@ -222,7 +222,7 @@ def load_design_options(designs: list) -> typing.List[dict]:
     delphin_projects = []
 
     for design in designs:
-        delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, design)))
+        delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, f'{design}.d6p')))
 
     return delphin_projects
 
@@ -331,6 +331,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
                     sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
 
             # Upload project
+            delphin_permutations.update_output_locations(design_variation)
             delphin_id = delphin_interactions.upload_delphin_dict_to_database(design_variation, 1)
 
             start_year = int(samples[sequence][design]['generic scenario']['start year'][0])
@@ -341,11 +342,13 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
             weather_interactions.assign_indoor_climate_to_project(delphin_id,
                                                                   samples[sequence][design][
                                                                       'generic scenario']['interior climate'][0])
+            delphin_interactions.change_entry_simulation_length(delphin_id, len(years), 'a')
 
             sample_dict['start year'] = samples[sequence][design]['generic scenario']['start year'][0]
             sample_dict['exterior climate'] = samples[sequence][design]['generic scenario']['exterior climate'][0]
             sample_dict['interior climate'] = samples[sequence][design]['generic scenario']['interior climate'][0]
             sample_dict['design_option'] = design
+            sample_dict['sequence'] = sequence
 
             delphin_interactions.add_sampling_dict(delphin_id, sample_dict)
 
@@ -354,7 +357,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
     return delphin_ids
 
 
-def calculate_error(sample_strategy: dict) -> dict:
+def calculate_error(sample_strategy: sample_entry.Strategy) -> dict:
     # TODO - Calculated the standard error on the results from the given delphin simulations
     # retrieve the processed data from all delphin simulations in the sampling scheme.
     # calculate the standard error for all design options, sequences should be collapsed
@@ -362,7 +365,30 @@ def calculate_error(sample_strategy: dict) -> dict:
     # Return the error
 
     standard_error = dict()
-    sequence = sample_strategy['settings']['sequence']
+    sequence_length = sample_strategy.strategy['settings']['sequence']
+    sample = load_latest_sample(sample_strategy.id)
+    mould = {design: []
+             for sequence in sample.mean.keys()
+             for design in sample.mean[sequence].keys()}
+    algae = copy.deepcopy(mould)
+    heat_loss = copy.deepcopy(mould)
+
+    for sequence in sample.mean.keys():
+
+        for design in sample.mean[sequence].keys():
+            mould[design].append(sample.mean[sequence][design]['mould'])
+            algae[design].append(sample.mean[sequence][design]['algae'])
+            heat_loss[design].append(sample.mean[sequence][design]['heat_loss'])
+
+    for design in mould.keys():
+
+        design_standard_error = {'mould': relative_standard_error(mould[design], sequence_length),
+                                 'algae': relative_standard_error(algae[design], sequence_length),
+                                 'heat_loss': relative_standard_error(heat_loss[design], sequence_length)}
+
+        standard_error[design] = design_standard_error
+
+    """
     for design in sample_strategy['design']:
         projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design)
         mould = []
@@ -380,6 +406,7 @@ def calculate_error(sample_strategy: dict) -> dict:
                                  'heat_loss': relative_standard_error(heat_loss, sequence)}
 
         standard_error[design] = design_standard_error
+    """
 
     return standard_error
 
@@ -388,6 +415,7 @@ def relative_standard_error(series: list, sequence: int) -> float:
 
     series = np.asarray(series)
     standard_error = np.sqrt(1/(sequence * (sequence - 1)) * np.sum((series - np.mean(series)) ** 2))
+
     return standard_error / np.mean(series)
 
 
@@ -401,10 +429,10 @@ def check_convergence(strategy_document: sample_entry.Strategy) -> bool:
     :return:
     :rtype:
     """
-
-    checks = [strategy_document.standard_error['mould'][-1],
-              strategy_document.standard_error['algae'][-1],
-              strategy_document.standard_error['heat_loss'][-1]]
+    standard_error = strategy_document.standard_error
+    checks = [standard_error[design][damage_model][-1]
+              for design in standard_error.keys()
+              for damage_model in standard_error[design].keys()]
 
     if all(check <= strategy_document.strategy['settings']['standard error threshold']
            for check in checks):
@@ -463,7 +491,7 @@ def compute_sampling_distributions(sampling_strategy: dict, samples_raw: np.ndar
     return distributions
 
 
-def sobol(m, dimension, sets=1):
+def sobol(m: int, dimension: int, sets: int=1) -> np.ndarray:
     design = np.empty([0, dimension])
 
     for i in range(sets):
@@ -471,3 +499,48 @@ def sobol(m, dimension, sets=1):
         design = np.vstack((design, d))
 
     return design
+
+
+def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
+
+    sample_mean = dict()
+    sample_std = dict()
+    sequence = sample_strategy['settings']['sequence']
+    for sequence_index in range(sequence):
+        sample_mean[str(sequence_index)] = dict()
+        sample_std[str(sequence_index)] = dict()
+
+        for design in sample_strategy['design']:
+            projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design,
+                                                                  sample_data__sequence=str(sequence_index))
+            mould = []
+            algae = []
+            heat_loss = []
+
+            # TODO - Speed up this with a better query
+            for project in projects_given_design:
+                mould.append(project.result_processed['thresholds']['mould'])
+                algae.append(project.result_processed['thresholds']['algae'])
+                heat_loss.append(project.result_processed['thresholds']['heat_loss'])
+
+            sample_mean[str(sequence_index)][design] = {'mould': np.mean(mould),
+                                                        'algae': np.mean(algae),
+                                                        'heat_loss': np.mean(heat_loss)}
+            sample_std[str(sequence_index)][design] = {'mould': np.std(mould),
+                                                       'algae': np.std(algae),
+                                                       'heat_loss': np.std(heat_loss)}
+
+    sampling_interactions.upload_sample_mean(sampling_id, sample_mean)
+    sampling_interactions.upload_sample_std(sampling_id, sample_std)
+
+    return None
+
+
+def initialize_sampling(strategy_doc: sample_entry.Strategy) -> tuple:
+
+    iteration = strategy_doc.current_iteration
+    convergence = False
+    new_samples_per_set = strategy_doc.strategy['settings']['initial samples per set']
+    used_samples_per_set = strategy_doc.used_samples_per_set
+
+    return iteration, convergence, new_samples_per_set, used_samples_per_set

@@ -11,6 +11,7 @@ import pytest
 # RiBuild Modules:
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
 
@@ -148,3 +149,33 @@ def test_change_simulation_length(delphin_file_path, length, value):
     modified_dict = delphin_permutations.change_simulation_length(delphin_dict, length, value)
 
     assert delphin_permutations.get_simulation_length(modified_dict) == (length, value)
+
+
+@pytest.mark.parametrize('width', [0.1, 0.3, 0.5])
+def test_update_output_locations(delphin_file_path, width):
+
+    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+    delphin_permutations.change_layer_width(delphin_dict,
+                                            'Old Building Brick Dresden ZP [504]',
+                                            width)
+    delphin_permutations.update_output_locations(delphin_dict)
+
+    x_steps = delphin_permutations.convert_discretization_to_list(delphin_dict)
+    for assignment in delphin_dict['DelphinProject']['Assignments']['Assignment']:
+        if assignment['@type'] == 'Output':
+            if assignment['Reference'].endswith('algae'):
+                assert assignment['IBK:Point3D'] == '0.0005 0.034 0'
+
+            elif assignment['Reference'].endswith('frost'):
+                assert assignment['IBK:Point3D'] == '0.005 0.034 0'
+
+            elif assignment['Reference'] == 'heat loss':
+                assert assignment['Range'] == f'{len(x_steps)-1} 0 {len(x_steps)-1} 0'
+
+            elif assignment['Reference'].endswith('interior surface'):
+                correct_width = width + 0.0245
+                assert pytest.approx(assignment['IBK:Point3D'] == f'{correct_width} 0.034 0')
+
+            elif assignment['Reference'].endswith('mould'):
+                correct_width = width + 0.0125
+                assert pytest.approx(assignment['IBK:Point3D'] == f'{correct_width} 0.034 0')

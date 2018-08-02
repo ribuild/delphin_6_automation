@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <DelphinProject xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de DelphinProject.xsd" fileVersion="6.5">
-	<ProjectInfo created="fr mar 23 12:09:02 2018" lastEdited="ma maj 14 09:24:28 2018">
+	<ProjectInfo created="fr mar 23 12:09:02 2018" lastEdited="ti jul 10 12:10:14 2018">
 		<Comment>&#x0A;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1D Validation model&lt;/p&gt;</Comment>
 	</ProjectInfo>
 
@@ -23,7 +23,6 @@
 			<IBK:Parameter name="Longitude" unit="Deg">13.4</IBK:Parameter>
 			<IBK:Parameter name="Latitude" unit="Deg">51.3</IBK:Parameter>
 			<TimeZone>1</TimeZone>
-			<DefaultInitialCondition name="DefaultRelativeHumidity" unit="%">80</DefaultInitialCondition>
 		</SimulationParameter>
 	</Init>
 
@@ -66,28 +65,28 @@
 		<ClimateConditions>
 
 			<ClimateCondition name="exterior temperature" type="Temperature" kind="TabulatedData">
-				<Filename>${Project Directory}/../Weather/temperature.ccd</Filename>
+				<Filename>${Project Directory}/../PycharmProjects/delphin_6_automation/delphin_6_automation/pytest/test_files/Weather/temperature.ccd</Filename>
 				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
 				<IBK:Flag name="ExtendData">false</IBK:Flag>
 				<IBK:Flag name="Cyclic">false</IBK:Flag>
 			</ClimateCondition>
 
 			<ClimateCondition name="exterior relative humidity" type="RelativeHumidity" kind="TabulatedData">
-				<Filename>${Project Directory}/../Weather/relative_humidity.ccd</Filename>
+				<Filename>${Project Directory}/../PycharmProjects/delphin_6_automation/delphin_6_automation/pytest/test_files/Weather/relative_humidity.ccd</Filename>
 				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
 				<IBK:Flag name="ExtendData">false</IBK:Flag>
 				<IBK:Flag name="Cyclic">false</IBK:Flag>
 			</ClimateCondition>
 
 			<ClimateCondition name="wind driven rain" type="RainFluxNormal" kind="TabulatedData">
-				<Filename>${Project Directory}/../Weather/wind_driven_rain.ccd</Filename>
+				<Filename>${Project Directory}/../PycharmProjects/delphin_6_automation/delphin_6_automation/pytest/test_files/Weather/wind_driven_rain.ccd</Filename>
 				<IBK:Parameter name="ShiftValue" unit="l/m2s">0</IBK:Parameter>
 				<IBK:Flag name="ExtendData">false</IBK:Flag>
 				<IBK:Flag name="Cyclic">false</IBK:Flag>
 			</ClimateCondition>
 
 			<ClimateCondition name="longwave radiation" type="LWRadiationSkyEmission" kind="TabulatedData">
-				<Filename>${Project Directory}/../Weather/long_wave_radiation.ccd</Filename>
+				<Filename>${Project Directory}/../PycharmProjects/delphin_6_automation/delphin_6_automation/pytest/test_files/Weather/long_wave_radiation.ccd</Filename>
 				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
 				<IBK:Flag name="ExtendData">false</IBK:Flag>
 				<IBK:Flag name="Cyclic">false</IBK:Flag>
@@ -113,20 +112,33 @@
 				<IBK:Flag name="ExtendData">false</IBK:Flag>
 				<IBK:Flag name="Cyclic">false</IBK:Flag>
 			</ClimateCondition>
+
+			<ClimateCondition name="wind speed" type="WindVelocity" kind="TabulatedData">
+				<Filename>C:/Users/ocni/PycharmProjects/delphin_6_automation/delphin_6_automation/pytest/test_files/weather/wind_speed.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="m/s">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
 		</ClimateConditions>
 
 		<BoundaryConditions>
 
-			<BoundaryCondition name="OutdoorHeatConduction" type="HeatConduction" kind="Exchange">
-				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">18</IBK:Parameter>
+			<BoundaryCondition name="OutdoorHeatConduction" type="HeatConduction" kind="ExchangeVelocity">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">4</IBK:Parameter>
+				<IBK:Parameter name="ExchangeSlope" unit="J/m3K">1</IBK:Parameter>
+				<IBK:Parameter name="ExchangeExponent" unit="---">1</IBK:Parameter>
 				<CCReference type="Temperature">exterior temperature</CCReference>
+				<CCReference type="WindVelocity">wind speed</CCReference>
 			</BoundaryCondition>
 
-			<BoundaryCondition name="OutdoorVaporDiffusion" type="VaporDiffusion" kind="Exchange">
+			<BoundaryCondition name="OutdoorVaporDiffusion" type="VaporDiffusion" kind="ExchangeVelocity">
 				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">2e-07</IBK:Parameter>
+				<IBK:Parameter name="ExchangeSlope" unit="s2/m2">4</IBK:Parameter>
+				<IBK:Parameter name="ExchangeExponent" unit="---">1</IBK:Parameter>
 				<IBK:Parameter name="SDValue" unit="m">0</IBK:Parameter>
 				<CCReference type="Temperature">exterior temperature</CCReference>
 				<CCReference type="RelativeHumidity">exterior relative humidity</CCReference>
+				<CCReference type="WindVelocity">wind speed</CCReference>
 			</BoundaryCondition>
 
 			<BoundaryCondition name="OutdoorWindDrivenRain" type="WindDrivenRain" kind="ImposedFlux">
@@ -184,121 +196,49 @@
 		</OutputGrids>
 		<!--List of all Output files-->
 		<OutputFiles>
-			<OutputFile name="moisture integral">
-				<Quantity unit="kg">MoistureMassDensity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Integral</SpaceType>
-				<OutputGrid>Scalars</OutputGrid>
-			</OutputFile>
 			<OutputFile name="heat loss">
 				<Quantity unit="W/m2">TotalFluxHeat</Quantity>
 				<TimeType>None</TimeType>
 				<SpaceType>Single</SpaceType>
 				<OutputGrid>Fields and Profiles</OutputGrid>
 			</OutputFile>
-			<OutputFile name="temperature 0">
+			<OutputFile name="temperature algae">
 				<Quantity unit="C">Temperature</Quantity>
 				<TimeType>None</TimeType>
 				<SpaceType>Single</SpaceType>
 				<OutputGrid>Fields and Profiles</OutputGrid>
 			</OutputFile>
-			<OutputFile name="temperature 1">
+			<OutputFile name="temperature mould">
 				<Quantity unit="C">Temperature</Quantity>
 				<TimeType>None</TimeType>
 				<SpaceType>Single</SpaceType>
 				<OutputGrid>Fields and Profiles</OutputGrid>
 			</OutputFile>
-			<OutputFile name="temperature 2">
+			<OutputFile name="temperature interior surface">
 				<Quantity unit="C">Temperature</Quantity>
 				<TimeType>None</TimeType>
 				<SpaceType>Single</SpaceType>
 				<OutputGrid>Fields and Profiles</OutputGrid>
 			</OutputFile>
-			<OutputFile name="temperature 3">
-				<Quantity unit="C">Temperature</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="temperature 4">
-				<Quantity unit="C">Temperature</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="temperature 5">
-				<Quantity unit="C">Temperature</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="relative humidity 0">
+			<OutputFile name="relative humidity algae">
 				<Quantity unit="%">RelativeHumidity</Quantity>
 				<TimeType>None</TimeType>
 				<SpaceType>Single</SpaceType>
 				<OutputGrid>Fields and Profiles</OutputGrid>
 			</OutputFile>
-			<OutputFile name="relative humidity 1">
+			<OutputFile name="relative humidity mould">
 				<Quantity unit="%">RelativeHumidity</Quantity>
 				<TimeType>None</TimeType>
 				<SpaceType>Single</SpaceType>
 				<OutputGrid>Fields and Profiles</OutputGrid>
 			</OutputFile>
-			<OutputFile name="relative humidity 2">
+			<OutputFile name="relative humidity interior surface">
 				<Quantity unit="%">RelativeHumidity</Quantity>
 				<TimeType>None</TimeType>
 				<SpaceType>Single</SpaceType>
 				<OutputGrid>Fields and Profiles</OutputGrid>
 			</OutputFile>
-			<OutputFile name="relative humidity 3">
-				<Quantity unit="%">RelativeHumidity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="relative humidity 4">
-				<Quantity unit="%">RelativeHumidity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="relative humidity 5">
-				<Quantity unit="%">RelativeHumidity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="moisture content 0">
-				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="moisture content 1">
-				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="moisture content 2">
-				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="moisture content 3">
-				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="moisture content 4">
-				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
-				<TimeType>None</TimeType>
-				<SpaceType>Single</SpaceType>
-				<OutputGrid>Fields and Profiles</OutputGrid>
-			</OutputFile>
-			<OutputFile name="moisture content 5">
+			<OutputFile name="moisture content algae">
 				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
 				<TimeType>None</TimeType>
 				<SpaceType>Single</SpaceType>
@@ -337,104 +277,44 @@
 			<Range>46 0 46 0</Range>
 		</Assignment>
 
-		<Assignment type="Output" location="Element">
-			<Reference>moisture integral</Reference>
-			<Range>0 0 46 0</Range>
-		</Assignment>
-
 		<Assignment type="Output" location="Right">
 			<Reference>heat loss</Reference>
 			<Range>46 0 46 0</Range>
 		</Assignment>
 
 		<Assignment type="Output" location="Coordinate">
-			<Reference>temperature 0</Reference>
+			<Reference>temperature algae</Reference>
 			<IBK:Point3D>0.0005 0.034 0</IBK:Point3D>
 		</Assignment>
 
 		<Assignment type="Output" location="Coordinate">
-			<Reference>temperature 1</Reference>
-			<IBK:Point3D>0.0125 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>temperature 2</Reference>
-			<IBK:Point3D>0.186 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>temperature 3</Reference>
-			<IBK:Point3D>0.247231 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>temperature 4</Reference>
+			<Reference>temperature mould</Reference>
 			<IBK:Point3D>0.3595 0.034 0</IBK:Point3D>
 		</Assignment>
 
 		<Assignment type="Output" location="Coordinate">
-			<Reference>temperature 5</Reference>
+			<Reference>temperature interior surface</Reference>
 			<IBK:Point3D>0.3715 0.034 0</IBK:Point3D>
 		</Assignment>
 
 		<Assignment type="Output" location="Coordinate">
-			<Reference>relative humidity 0</Reference>
+			<Reference>relative humidity algae</Reference>
 			<IBK:Point3D>0.0005 0.034 0</IBK:Point3D>
 		</Assignment>
 
 		<Assignment type="Output" location="Coordinate">
-			<Reference>relative humidity 1</Reference>
-			<IBK:Point3D>0.0125 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>relative humidity 2</Reference>
-			<IBK:Point3D>0.186 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>relative humidity 3</Reference>
-			<IBK:Point3D>0.247231 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>relative humidity 4</Reference>
+			<Reference>relative humidity mould</Reference>
 			<IBK:Point3D>0.3595 0.034 0</IBK:Point3D>
 		</Assignment>
 
 		<Assignment type="Output" location="Coordinate">
-			<Reference>relative humidity 5</Reference>
+			<Reference>relative humidity interior surface</Reference>
 			<IBK:Point3D>0.3715 0.034 0</IBK:Point3D>
 		</Assignment>
 
 		<Assignment type="Output" location="Coordinate">
-			<Reference>moisture content 0</Reference>
+			<Reference>moisture content algae</Reference>
 			<IBK:Point3D>0.0005 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>moisture content 1</Reference>
-			<IBK:Point3D>0.0125 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>moisture content 2</Reference>
-			<IBK:Point3D>0.186 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>moisture content 3</Reference>
-			<IBK:Point3D>0.247231 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>moisture content 4</Reference>
-			<IBK:Point3D>0.3595 0.034 0</IBK:Point3D>
-		</Assignment>
-
-		<Assignment type="Output" location="Coordinate">
-			<Reference>moisture content 5</Reference>
-			<IBK:Point3D>0.3715 0.034 0</IBK:Point3D>
 		</Assignment>
 	</Assignments>
 
