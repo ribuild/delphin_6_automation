@@ -61,3 +61,15 @@ def test_construct_design_options(add_five_materials):
     variations = inputs.construct_design_options()
 
     assert isinstance(variations, pd.DataFrame)
+
+def test_insulation_systems():
+
+    systems = inputs.insulation_systems()
+
+    assert isinstance(systems, pd.DataFrame)
+
+def test_delphin_templates():
+
+    to_copy = inputs.delphin_templates()
+
+    assert isinstance(to_copy, dict)
