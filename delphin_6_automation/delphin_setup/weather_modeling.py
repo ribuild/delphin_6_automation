@@ -10,107 +10,22 @@ import os
 import pickle
 import typing
 
-
 # RiBuild Modules:
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # WEATHER MODELS
 
 
-def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculation_method='en15026') -> tuple:
-    def en13788(indoor_class_: str, daily_temperature_average_: np.array) -> tuple:
-        """
-        Only the continental class is implemented.
-
-        :param indoor_class_: Either a or b
-        :type indoor_class_: str
-        :param daily_temperature_average_: daily average of air temperature
-        :type daily_temperature_average_: numpy array
-        :return: Indoor temperature and relative humidity
-        :rtype: tuple
-        """
-
-        if not isinstance(indoor_class, str):
-            raise TypeError(f"Wrong indoor class. Type has to be a string. "
-                            f"Value given was: >{indoor_class}< with type: {type(indoor_class)}")
-        elif indoor_class_.lower() == 'a':
-            delta_rh = 0
-        elif indoor_class_.lower() == 'b':
-            delta_rh = 0.05
-        else:
-            raise ValueError(f"Wrong indoor class. It has to be either a or b. Value given was: {indoor_class}")
-
-        indoor_temperature_ = []
-        indoor_relative_humidity_ = []
-
-        # Create indoor temperature
-        for t in daily_temperature_average_:
-            if t <= 10:
-                indoor_temperature_.append([20, ] * 24)
-            elif t >= 20:
-                indoor_temperature_.append([25, ] * 24)
-            else:
-                indoor_temperature_.append([0.5 * t + 15, ] * 24)
-
-        # Create indoor relative humidity
-        for rh in daily_temperature_average_:
-            if rh <= -10:
-                indoor_relative_humidity_.append([35 + delta_rh, ] * 24)
-            elif rh >= 20:
-                indoor_relative_humidity_.append([65 + delta_rh, ] * 24)
-            else:
-                indoor_relative_humidity_.append([rh + 45 + delta_rh, ] * 24)
-
-        return list(np.ravel(indoor_temperature_)), list(np.ravel(indoor_relative_humidity_))
-
-    def en15026(indoor_class_: str, daily_temperature_average_: np.array) -> tuple:
-        """
-        Only the continental class is implemented.
-
-        :param indoor_class_: Either a or b
-        :type indoor_class_: str
-        :param daily_temperature_average_: daily average of air temperature
-        :type daily_temperature_average_: numpy array
-        :return: Indoor temperature and relative humidity
-        :rtype: tuple
-        """
-
-        if not isinstance(indoor_class, str):
-            raise TypeError(f"Wrong indoor class. Type has to be a string. "
-                            f"Value given was: < {indoor_class} > with type: {type(indoor_class)}")
-        elif indoor_class_.lower() == 'a':
-            humidity_load = {'a': 30,
-                             'b': 60,
-                             'c': 40}
-        elif indoor_class_.lower() == 'b':
-            humidity_load = {'a': 40,
-                             'b': 70,
-                             'c': 50}
-        else:
-            raise ValueError(f"Wrong indoor class. It has to be either a or b. Value given was: {indoor_class}")
-
-        indoor_temperature_ = []
-        indoor_relative_humidity_ = []
-
-        # Indoor temperature
-        for i in range(len(daily_temperature_average_)):
-            if daily_temperature_average_[i] < 10:
-                indoor_temperature_.append([20, ] * 24)
-            elif daily_temperature_average_[i] > 20:
-                indoor_temperature_.append([25, ] * 24)
-            else:
-                indoor_temperature_.append([0.5 * daily_temperature_average_[i] + 15] * 24)
-
-        # Indoor relative humidity
-        for i in range(len(daily_temperature_average_)):
-            if daily_temperature_average_[i] < -10:
-                indoor_relative_humidity_.append([humidity_load['a'], ] * 24)
-            elif daily_temperature_average_[i] > 20:
-                indoor_relative_humidity_.append([humidity_load['b'], ] * 24)
-            else:
-                indoor_relative_humidity_.append([daily_temperature_average_[i] + humidity_load['c'], ] * 24)
-
-        return list(np.ravel(indoor_temperature_)), list(np.ravel(indoor_relative_humidity_))
+def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculation_method='en15026') \
+        -> typing.Tuple[typing.Iterable, typing.Iterable]:
+    """
+    Calculates the indoor climate based on the outdoor temperature and the indoor class.
+    Can either be calculated as EN13788 or EN15026
+    """
 
     # Create daily temperature average
     temperature = np.array(temperature).flatten()
@@ -119,9 +34,11 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
     daily_temperature_average = np.sum(temperature_matrix, 1) / 24
 
     if calculation_method == 'en15026':
+        logger.debug(f'Calculates indoor climate after EN15026')
         return en15026(indoor_class, daily_temperature_average)
 
     elif calculation_method == 'en13788':
+        logger.debug(f'Calculates indoor climate after EN13788')
         return en13788(indoor_class, daily_temperature_average)
 
     else:
@@ -129,12 +46,115 @@ def convert_weather_to_indoor_climate(temperature: list, indoor_class, calculati
                          f'Method given was: {calculation_method}')
 
 
+def en15026(indoor_class: str, daily_temperature_average_: np.ndarray) \
+        -> typing.Tuple[typing.Iterable, typing.Iterable]:
+    """
+    Calculates the indoor climate after EN15026.
+    Only the continental class is implemented.
+
+    :param indoor_class: Either a or b
+    :param daily_temperature_average_: daily average of air temperature
+    :return: Indoor temperature and relative humidity
+    """
+
+    if not isinstance(indoor_class, str):
+        raise TypeError(f"Wrong indoor class. Type has to be a string. "
+                        f"Value given was: < {indoor_class} > with type: {type(indoor_class)}")
+    elif indoor_class.lower() == 'a':
+        humidity_load = {'a': 30,
+                         'b': 60,
+                         'c': 40}
+    elif indoor_class.lower() == 'b':
+        humidity_load = {'a': 40,
+                         'b': 70,
+                         'c': 50}
+    else:
+        raise ValueError(f"Wrong indoor class. It has to be either a or b. Value given was: {indoor_class}")
+
+    indoor_temperature_ = []
+    indoor_relative_humidity_ = []
+
+    # Indoor temperature
+    for i in range(len(daily_temperature_average_)):
+        if daily_temperature_average_[i] < 10:
+            indoor_temperature_.append([20, ] * 24)
+        elif daily_temperature_average_[i] > 20:
+            indoor_temperature_.append([25, ] * 24)
+        else:
+            indoor_temperature_.append([0.5 * daily_temperature_average_[i] + 15] * 24)
+
+    # Indoor relative humidity
+    for i in range(len(daily_temperature_average_)):
+        if daily_temperature_average_[i] < -10:
+            indoor_relative_humidity_.append([humidity_load['a'], ] * 24)
+        elif daily_temperature_average_[i] > 20:
+            indoor_relative_humidity_.append([humidity_load['b'], ] * 24)
+        else:
+            indoor_relative_humidity_.append([daily_temperature_average_[i] + humidity_load['c'], ] * 24)
+
+    return np.ravel(indoor_temperature_).tolist(), np.ravel(indoor_relative_humidity_).tolist()
+
+
+def en13788(indoor_class: str, daily_temperature_average_: np.array) -> typing.Tuple[typing.Iterable, typing.Iterable]:
+    """
+    Calculates the indoor climate after EN13788.
+    Only the continental class is implemented.
+
+    :param indoor_class: Either a or b
+    :param daily_temperature_average_: daily average of air temperature
+    :return: Indoor temperature and relative humidity
+    """
+
+    if not isinstance(indoor_class, str):
+        raise TypeError(f"Wrong indoor class. Type has to be a string. "
+                        f"Value given was: >{indoor_class}< with type: {type(indoor_class)}")
+    elif indoor_class.lower() == 'a':
+        delta_rh = 0
+    elif indoor_class.lower() == 'b':
+        delta_rh = 0.05
+    else:
+        raise ValueError(f"Wrong indoor class. It has to be either a or b. Value given was: {indoor_class}")
+
+    indoor_temperature_ = []
+    indoor_relative_humidity_ = []
+
+    # Create indoor temperature
+    for t in daily_temperature_average_:
+        if t <= 10:
+            indoor_temperature_.append([20, ] * 24)
+        elif t >= 20:
+            indoor_temperature_.append([25, ] * 24)
+        else:
+            indoor_temperature_.append([0.5 * t + 15, ] * 24)
+
+    # Create indoor relative humidity
+    for rh in daily_temperature_average_:
+        if rh <= -10:
+            indoor_relative_humidity_.append([35 + delta_rh, ] * 24)
+        elif rh >= 20:
+            indoor_relative_humidity_.append([65 + delta_rh, ] * 24)
+        else:
+            indoor_relative_humidity_.append([rh + 45 + delta_rh, ] * 24)
+
+    return np.ravel(indoor_temperature_).tolist(), np.ravel(indoor_relative_humidity_).tolist()
+
+
 def driving_rain(precipitation: list, wind_direction: list, wind_speed: list, wall_location: dict,
-                 orientation: typing.Union[int, float], inclination=90, catch_ratio=None) -> list:
+                 orientation: typing.Union[int, float], inclination=90, catch_ratio=None) -> typing.Iterable:
+    """
+    Calculates the driving rain load on a wall.
+
+    Source:
+    Blocken, B, and J Carmeliet. 2002.
+    “Spatial and Temporal Distribution of Driving Rain on a Low-Rise Building.”
+    Wind and Structures 5 (5).
+    TECHNO-PRESS: 441–62.
+    """
+
     # Convert to NumPy
-    precipitation = np.array(precipitation)
-    wind_direction = np.array(wind_direction)
-    wind_speed = np.array(wind_speed)
+    precipitation = np.asarray(precipitation)
+    wind_direction = np.asarray(wind_direction)
+    wind_speed = np.asarray(wind_speed)
 
     # Load catch ratio and catch ratio parameters
     catch_ratio_model = pickle.load(open(os.path.join(os.path.dirname(__file__), 'k_nearest_3_model.sav'), 'rb'))
@@ -166,7 +186,16 @@ def driving_rain(precipitation: list, wind_direction: list, wind_speed: list, wa
 
 
 def short_wave_radiation(radiation: np.array, longitude: float, latitude: float,
-                         inclination: float, orientation: float) -> np.array:
+                         inclination: float, orientation: float) -> list:
+    """
+    Calculates the short wave radiation on a wall.
+
+    Source:
+    Svendsen, S.Å., Danmarks tekniske højskole, DTH, and LfV.
+    1984.
+    Solstråling. Laboratoriet for Varmeisolering,
+    """
+
     hour_of_the_year = np.array([int(i) for i in range(8760)] * int(len(radiation) / 8760))
 
     def sin_deg(x):
@@ -262,4 +291,4 @@ def short_wave_radiation(radiation: np.array, longitude: float, latitude: float,
     zenith_angle = zenith_angle(declination, latitude_deg, inclination)
     radiation_ratio = radiation_ratio(incident_angle, zenith_angle)
 
-    return list(radiation_strength(radiation_ratio, radiation))
+    return radiation_strength(radiation_ratio, radiation).tolist()
