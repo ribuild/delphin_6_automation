@@ -6,6 +6,7 @@ __license__ = 'MIT'
 
 # Modules
 import numpy as np
+import typing
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import sample_entry, delphin_entry
@@ -147,16 +148,19 @@ def add_sample_to_strategy(strategy_id: str, sample_id: str) -> None:
     logger.debug(f'Added samples with ID: {sample_id} to strategy with ID: {strategy_id}')
 
 
-def upload_sample_mean(sampling_id: str, sample_mean: dict) -> None:
-    sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
+def upload_sample_mean(sample_id: str, sample_mean: dict) -> None:
+    sampling_document = sample_entry.Sample.objects(id=sample_id).first()
     sampling_document.update(set__mean=sample_mean)
 
+    logger.debug(f'Uploads sample mean to sample with ID: {sample_id}')
     return None
 
 
-def upload_sample_std(sampling_id: str, sample_std: dict) -> None:
-    sampling_document = sample_entry.Sample.objects(id=sampling_id).first()
+def upload_sample_std(sample_id: str, sample_std: dict) -> None:
+    sampling_document = sample_entry.Sample.objects(id=sample_id).first()
     sampling_document.update(set__standard_deviation=sample_std)
+
+    logger.debug(f'Uploads sample standard deviation to sample with ID: {sample_id}')
 
     return None
 
@@ -170,3 +174,12 @@ def upload_sample_iteration_parameters(strategy_doc: sample_entry.Strategy, iter
                  f'used samples per set: {used_samples}')
 
     return None
+
+
+def get_delphin_for_sample(sample: sample_entry.Sample) -> typing.List[str]:
+
+    sample.reload()
+
+    logger.debug(f'Fetches Delphin document related to sample with ID: {sample.id}')
+
+    return [delphin.id for delphin in sample.delphin_docs]
