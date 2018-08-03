@@ -22,6 +22,7 @@ from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import simulation_interactions
+from delphin_6_automation.file_parsing import delphin_parser
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
@@ -77,6 +78,16 @@ def delphin_file_path(test_folder):
 
     return delphin_file
 
+
+@pytest.fixture(params=['1d_exterior_interior_plaster_insulated2layers',
+                        '1d_exterior_interior_plaster_insulated3layers',
+                        '1d_interior_plaster_insulated2layers',
+                        '1d_interior_plaster_insulated3layers'])
+def delphin_with_insulation(test_folder, request):
+
+    delphin_file = test_folder + f'/delphin/{request.param}.d6p'
+
+    return delphin_parser.dp6_to_dict(delphin_file)
 
 @pytest.fixture()
 def add_single_user(setup_database):
