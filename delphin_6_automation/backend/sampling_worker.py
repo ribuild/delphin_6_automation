@@ -113,7 +113,7 @@ def sampling_worker(strategy_id):
         sampling_interactions.upload_standard_error(strategy_doc, current_error)
         convergence = sampling.check_convergence(strategy_doc)
 
-        logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}\n')
+        logger.debug(f'Standard Error at iteration {sample_iteration} is: {current_error}\n')
 
         # Update parameters for next iteration
         used_samples_per_set = used_samples_per_set + new_samples_per_set
