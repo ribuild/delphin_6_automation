@@ -134,25 +134,24 @@ def sampling_overview(strategy_id):
 
     strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
 
-    def animate(axis, damage_model):
-
-        axis.clear()
+    def create_figure(damage_model: str):
+        plt.figure()
 
         for design in strategy_doc.standard_error.keys():
             data = strategy_doc.standard_error[design][damage_model]
             x = np.arange(0, len(data))
-            axis.plot(x, data, label=design)
+            if len(data) == 1:
+                plt.scatter(x, data, label=design)
+            else:
+                plt.plot(x, data, label=design)
 
-    figure_mould = plt.figure()
-    axis_mould = figure_mould.add_subplot(1, 1, 1)
-    animate_mould = animation.FuncAnimation(figure_mould, animate, interval=30000, fargs=(axis_mould, 'mould'))
+        plt.legend()
+        plt.title(f'Sampling Convergence:\n{damage_model.capitalize()}')
+        plt.xlabel('Iterations')
+        plt.ylabel('Standard Error')
 
-    figure_algae = plt.figure()
-    axis_algae = figure_algae.add_subplot(1, 1, 1)
-    animate_algae = animation.FuncAnimation(figure_algae, animate, interval=30000, fargs=(axis_algae, 'algae'))
-
-    figure_heat = plt.figure()
-    axis_heat = figure_heat.add_subplot(1, 1, 1)
-    animate_heat = animation.FuncAnimation(figure_heat, animate, interval=30000, fargs=(axis_heat, 'heat_loss'))
+    create_figure('mould')
+    create_figure('heat_loss')
+    #create_figure('algea')
 
     plt.show()
