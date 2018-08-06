@@ -273,7 +273,7 @@ def construct_design_options():
                 xmltodict.unparse(option_dicts[i],
                                   output=open(os.path.join(folder,
                                                            'design',
-                                                           file.split('.')[0] + '_option'/
-                                                           + str(system_number).zfill(2)/
-                                                           + str(dim) + '.d6p'),
+                                                           file.split('.')[0] + '_option'\
+                                                           + str(system_number).zfill(2)\
+                                                           + '-' + str(dim).zfill(3) + '.d6p'),
                                               'w'), pretty=True)

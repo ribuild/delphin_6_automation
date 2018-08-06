@@ -310,7 +310,7 @@
 		</Assignment>
 
 		<Assignment type="Material" location="Element">
-			<Reference>CalsithermCalciumsilikatHamstad_571</Reference>
+			<Reference>CalsithermCalciumsilikatHamstad [571]</Reference>
 			<Range>39 0 51 0</Range>
 		</Assignment>
 
