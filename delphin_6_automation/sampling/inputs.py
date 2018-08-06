@@ -79,7 +79,7 @@ def insulation_systems() -> pd.DataFrame:
     """
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
-    # constructions = pd.read_excel(folder + '/InsulationSystems.xlsx', usecols=[0,3,4,5,6])
+    #constructions = pd.read_excel(folder + '/InsulationSystems.xlsx', usecols=[0,3,4,5,6], nrows=2)
     constructions = pd.read_excel(folder + '/InsulationSystems_test.xlsx', usecols=[0, 3, 4, 5, 6])
 
     # change format on constructions DataFrame
@@ -186,8 +186,8 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame):
     """
 
     # general material names (template projects) - in order: insulation, finish, detail
-    material_names = {'insulation': 'CalsithermCalciumsilikatHamstad_571',
-                      'finish': 'Climate plaster [125]',
+    material_names = {'insulation': 'CalsithermCalciumsilikatHamstad [571]',
+                      'finish': 'KlimaputzMKKQuickmix [125]',
                       'detail': 'Calsitherm KP Glue Mortar [705]'}
 
     # for two layer systems reduce materials
@@ -198,7 +198,6 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame):
     for layer, material in material_names.items():
 
         # material dict all layers representative as _00 instances
-        look = system.loc[layer + '_00', 'ID']
         db_material = get_material_info(system.loc[layer + '_00', 'ID'])
 
         # step 1 new delphin dict - input dict, str, dict
@@ -206,6 +205,15 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame):
                                                              material,
                                                              db_material
                                                              )
+
+        if layer != 'insulation':
+            select_layer = [layer in string for string in system.index]
+            new_width = system.loc[select_layer, 'Dimension'].astype(float)
+            new_delphin_dict = delphin_permutations.change_layer_width(new_delphin_dict,
+                                                                       db_material['@name'],
+                                                                       new_width)
+
+
     return new_delphin_dict
 
 

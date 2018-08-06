@@ -59,7 +59,10 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
         return layers[identifier]
     elif isinstance(identifier, str):
         for layer_ in layers:
-            if layers[layer_]['material'] == identifier:
+            # work around unstrict naming
+            id_string = identifier.split('[').pop()[:-1]
+
+            if (layers[layer_]['material'] == identifier) | (id_string in layers[layer_]['material']):
                 return layers[layer_]
     else:
         error_message = f'identifier should be int or str. Type given was: {type(identifier)}'
