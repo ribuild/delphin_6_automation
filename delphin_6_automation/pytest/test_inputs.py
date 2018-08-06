@@ -57,12 +57,6 @@ def test_construction_types():
                for file in constructions])
 
 
-def test_construct_design_options(add_five_materials):
-
-    variations = inputs.construct_design_options()
-
-    assert isinstance(variations, pd.DataFrame)
-
 def test_insulation_systems():
 
     systems = inputs.insulation_systems()
@@ -86,6 +80,7 @@ def test_implement_system_materials(delphin_with_insulation, add_five_materials)
 
     inputs.implement_system_materials(delphin_with_insulation, systems.loc[0])
 
+
 def test_implement_insulation_widths(delphin_with_insulation, add_five_materials):
 
     systems = inputs.insulation_systems()
@@ -96,3 +91,7 @@ def test_implement_insulation_widths(delphin_with_insulation, add_five_materials
 
     assert  isinstance(permutated_dicts, list)
 
+
+def test_construct_design_options(delphin_with_insulation, add_five_materials):
+
+    inputs.construct_design_options()

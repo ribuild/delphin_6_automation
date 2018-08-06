@@ -270,7 +270,7 @@ def construct_design_options():
 
             # write option files (above dicts)
             for i, dim in enumerate(system.loc[insulation_select, 'Dimension']):
-                xmltodict.unparse(option_dicts[0],
+                xmltodict.unparse(option_dicts[i],
                                   output=open(os.path.join(folder,
                                                            'design',
                                                            file.split('.')[0] + '_option'/
