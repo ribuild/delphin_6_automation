@@ -131,12 +131,12 @@ def get_average_computation_time(sim_id: str) -> int:
         return avg_time
 
     elif dimension == 2:
-        logger.debug(f'No previous simulations found. Setting time to 60min for a 2D simulation')
-        return 60
+        logger.debug(f'No previous simulations found. Setting time to 180min for a 2D simulation')
+        return 240
 
     else:
         logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
-        return 15
+        return 120
 
 
 def create_submit_file(sim_id: str, simulation_folder: str, restart=False) -> typing.Tuple[str, int]:

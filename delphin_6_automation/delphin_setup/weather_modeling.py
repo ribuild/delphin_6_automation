@@ -271,7 +271,6 @@ def short_wave_radiation(radiation: np.array, longitude: float, latitude: float,
     def radiation_ratio(incident_angle_: np.array, zenith_angle_: np.array) -> np.array:
         """... DK: Bestrålingsstyrkeforholdet"""
 
-        # TODO - Function returns negative values!!
         return np.maximum(0, cos_deg(incident_angle_) / cos_deg(zenith_angle_))
 
     def radiation_strength(radiation_ratio_: np.array, radiation_: np.array) -> np.array:
