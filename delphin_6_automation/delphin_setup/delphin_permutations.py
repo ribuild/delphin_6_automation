@@ -62,7 +62,10 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
 
     elif isinstance(identifier, str):
         for layer_ in layers:
-            if layers[layer_]['material'] == identifier:
+            # work around un-strict naming
+            id_string = identifier.split('[').pop()[:-1]
+
+            if (layers[layer_]['material'] == identifier) | (id_string in layers[layer_]['material']):
                 return layers[layer_]
     else:
         error_message = f'identifier should be int or str. Type given was: {type(identifier)}'
@@ -174,13 +177,17 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
 
     # Find original material
     for mat_index in range(0, len(delphin_dict['DelphinProject']['Materials']['MaterialReference'])):
-        if delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index]['@name'] == original_material:
+
+        name = delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index]['@name']
+        if name == original_material:
             # Replace with new material
             new_delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index] = new_material
 
     # Find original material assignment
     for assign_index in range(0, len(delphin_dict['DelphinProject']['Assignments']['Assignment'])):
-        if delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] == original_material:
+
+        reference = delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference']
+        if reference == original_material:
             # Replace with new material
             new_delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] = \
                 new_material['@name']
