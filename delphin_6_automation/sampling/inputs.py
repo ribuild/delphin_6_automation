@@ -19,6 +19,7 @@ from delphin_6_automation.database_interactions.material_interactions import get
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
+
 def construction_types() -> list:
     """Gets available template strings.
 
@@ -79,41 +80,42 @@ def insulation_systems() -> pd.DataFrame:
     """
 
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
-    #constructions = pd.read_excel(folder + '/InsulationSystems.xlsx', usecols=[0,3,4,5,6], nrows=2)
-    constructions = pd.read_excel(folder + '/InsulationSystems_test.xlsx', usecols=[0, 3, 4, 5, 6])
 
-    # change format on constructions DataFrame
+    # partial insulation system portfolio and test file functional 20180807 SBJ
+    constructions = pd.read_excel(folder + '/InsulationSystems.xlsx', usecols=[0, 3, 4, 5, 6], nrows=2)
+    # constructions = pd.read_excel(folder + '/InsulationSystems_test.xlsx', usecols=[0, 3, 4, 5, 6])
+
     systems = pd.DataFrame()
     level_1 = []
     level_2 = np.array([])
 
     for idx, row in constructions.iterrows():
-        material_ID_and_dim = []
+        material_id_and_dim = []
 
-        # provide distinction between ID's and dimensions
+        # provide distinction between ID strings, dimensions and ect..
         for col in row:
 
             if type(col) is float:
-                material_ID_and_dim.append([col])
+                material_id_and_dim.append([col])
 
             elif type(col) is int:
-                material_ID_and_dim.append([col])
+                material_id_and_dim.append([col])
 
             elif type(col) is bool:
-                material_ID_and_dim.append([col])
+                material_id_and_dim.append([col])
 
             else:
-                material_ID_and_dim.append([int(j) for j in col.split(', ')])
+                material_id_and_dim.append([int(j) for j in col.split(', ')])
 
         # re-combine values in a DataFrame (first element is ID's)
         columns = []
         elements = ['insulation_', 'finish_', 'detail_']
 
         # each element: insulation, finish, detail
-        for i, ID in enumerate(material_ID_and_dim[0]):
+        for i, ID in enumerate(material_id_and_dim[0]):
 
             part = pd.DataFrame({'ID': ID,
-                                 'Dimension': material_ID_and_dim[i + 1]}
+                                 'Dimension': material_id_and_dim[i + 1]}
                                 )
             # each variation title
             for index in part.index:
@@ -189,9 +191,12 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame):
     material_names = {'insulation': 'CalsithermCalciumsilikatHamstad [571]',
                       'finish': 'KlimaputzMKKQuickmix [125]',
                       'detail': 'Calsitherm KP Glue Mortar [705]'}
+    """material_names = {'insulation': 'TecTem Insulation Board Indoor 50 + 60 mm [659]',
+                      'finish': 'TecTem Clay-based plaster [665]',
+                      'detail': 'TecTem Adhesive Mortar [664]'}"""
 
     # for two layer systems reduce materials
-    if ~any('detail' in string for string in system.index):
+    if not any('detail' in string for string in system.index):
         del material_names['detail']
 
     # in current model each layer type
@@ -201,20 +206,21 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame):
         db_material = get_material_info(system.loc[layer + '_00', 'ID'])
 
         # step 1 new delphin dict - input dict, str, dict
-        new_delphin_dict = delphin_permutations.change_layer_material(delphin_dict,
-                                                             material,
-                                                             db_material
-                                                             )
+        delphin_dict = delphin_permutations.change_layer_material(delphin_dict,
+                                                                  material,
+                                                                  db_material
+                                                                  )
 
         if layer != 'insulation':
+            # thickness of layer detail
             select_layer = [layer in string for string in system.index]
-            new_width = system.loc[select_layer, 'Dimension'].astype(float)
-            new_delphin_dict = delphin_permutations.change_layer_width(new_delphin_dict,
-                                                                       db_material['@name'],
-                                                                       new_width)
+            new_width = round(system.loc[select_layer, 'Dimension'].astype(float).values[0] * 10e-4, 3)
+            delphin_dict = delphin_permutations.change_layer_width(delphin_dict,
+                                                                   db_material['@name'],
+                                                                   new_width
+                                                                   )
 
-
-    return new_delphin_dict
+    return delphin_dict
 
 
 def implement_insulation_widths(delphin_dict: dict, system: pd.DataFrame) -> list:
@@ -226,14 +232,18 @@ def implement_insulation_widths(delphin_dict: dict, system: pd.DataFrame) -> lis
     """
 
     # look up current material assume system
-    db_material = get_material_info(system.loc['insulation'+ '_00', 'ID'])
+    db_material = get_material_info(system.loc['insulation' + '_00', 'ID'])
     insulation_select = ['insulation' in row for row in system.index]
 
+    new_widths = system.loc[insulation_select, 'Dimension'].astype(float) * 10e-4
     permutated_dicts = delphin_permutations.change_layer_widths(delphin_dict,
                                                                 db_material['@name'],
-                                                                system.loc[insulation_select,
-                                                                           'Dimension'].astype(float).tolist()
+                                                                new_widths.tolist()
                                                                 )
+    # inspection of result
+    for delphin_dict in permutated_dicts:
+        layers = delphin_permutations.get_layers(delphin_dict)
+
     return permutated_dicts
 
 
@@ -275,13 +285,11 @@ def construct_design_options():
                 message = 'no length match'
                 raise TypeError(message)
 
-
             # write option files (above dicts)
             for i, dim in enumerate(system.loc[insulation_select, 'Dimension']):
                 xmltodict.unparse(option_dicts[i],
                                   output=open(os.path.join(folder,
                                                            'design',
-                                                           file.split('.')[0] + '_option'\
-                                                           + str(system_number).zfill(2)\
+                                                           file.split('.')[0] + '_option' + str(system_number).zfill(2)\
                                                            + '-' + str(dim).zfill(3) + '.d6p'),
                                               'w'), pretty=True)
