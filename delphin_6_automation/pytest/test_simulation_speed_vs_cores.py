@@ -65,7 +65,7 @@ def test_speed_vs_cores(mock_submit_file, db_one_project):
     folder = 'H:/ribuild'
     simulation_folder = os.path.join(folder, db_one_project)
     os.mkdir(simulation_folder)
-    delphin_interactions.change_entry_simulation_length(db_one_project, 7, 'd')
+    delphin_interactions.change_entry_simulation_length(db_one_project, 5, 'd')
     general_interactions.download_full_project_from_database(db_one_project, simulation_folder)
     submit_file, estimated_time = simulation_worker.create_submit_file(db_one_project, simulation_folder)
     simulation_worker.submit_job(submit_file, db_one_project)
@@ -75,4 +75,4 @@ def test_speed_vs_cores(mock_submit_file, db_one_project):
     delta_time = datetime.datetime.now() - time_0
 
     with open(os.path.join(folder, 'time.txt'), 'a') as out:
-        out.write(str(delta_time.total_seconds()))
+        out.write(str(delta_time.total_seconds())+'\n')
