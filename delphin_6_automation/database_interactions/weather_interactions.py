@@ -40,6 +40,7 @@ def list_project_weather(sim_id: str) -> list:
 
 
 def assign_weather_by_name_and_years(delphin_id: str, weather_station_name: str, years: list) -> str:
+    """Assigns weather and years to a Delphin project in the database"""
 
     weather_documents = []
     for year in years:
@@ -57,11 +58,8 @@ def assign_weather_to_project(delphin_id: str, weather_documents: list) -> str:
     Assign weather to a Delphin entry
 
     :param delphin_id: Delphin document database.rst ID
-    :type delphin_id: str
     :param weather_documents: List with weather entries
-    :type weather_documents: list
     :return: Database ID
-    :rtype: str
     """
 
     # Save climate class to delphin document
@@ -72,6 +70,9 @@ def assign_weather_to_project(delphin_id: str, weather_documents: list) -> str:
 
     [delphin_document.update(push__weather=weather) for weather in weather_documents]
 
+    logger.debug(f'Weather documents with IDs: {[weather_ for weather_ in weather_documents]} '
+                 f'assigned to Delphin project with ID: {delphin_id}')
+
     return delphin_document.id
 
 
@@ -80,11 +81,8 @@ def assign_indoor_climate_to_project(delphin_id: str, climate_class: str) -> str
     Assign indoor climate class to a Delphin entry
 
     :param delphin_id: Database ID
-    :type delphin_id: str
     :param climate_class: Climate class can be either a or b
-    :type climate_class: str
     :return: Database ID
-    :rtype: str
     """
 
     # Make check
@@ -95,12 +93,14 @@ def assign_indoor_climate_to_project(delphin_id: str, climate_class: str) -> str
     # Save climate class to delphin document
     delphin_document = delphin_db.Delphin.objects(id=delphin_id).first()
     delphin_document.update(set__indoor_climate=climate_class.lower())
+
     logger.debug(f'Added indoor climate class {climate_class} to Delphin project with ID: {delphin_id}')
 
     return delphin_document.id
 
 
 def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
+    """Concatenate weather documents together from a Delphin project in the database"""
 
     weather_dict = {'temperature': [], 'relative_humidity': [],
                     'vertical_rain': [], 'wind_direction': [],
@@ -131,10 +131,12 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
         weather_dict['altitude'].append(reloaded_delphin.weather[index].altitude)
 
     logger.debug(f'Concatenated weather for Delphin project with ID: {sim_id}')
+
     return weather_dict
 
 
 def change_weather_file_location(delphin_document: delphin_db.Delphin):
+    """Change the file location for the weather files in a Delphin project"""
 
     folder = '${Project Directory}/weather'
     delphin_dict = dict(delphin_document.dp6_file)
@@ -175,12 +177,14 @@ def change_weather_file_location(delphin_document: delphin_db.Delphin):
                 climate_conditions[index]['Filename'] = folder + '/long_wave_radiation.ccd'
 
     delphin_document.update(set__dp6_file=delphin_dict)
+
     logger.debug(f'Changed weather directory to {folder} for Delphin project with ID: {delphin_document.id}')
 
     return delphin_document.id
 
 
 def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
+    """Download the weather associated with a Delphin project in the database"""
 
     weather = concatenate_weather(delphin_document)
     weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
@@ -206,6 +210,8 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
 
     weather_parser.dict_to_ccd(weather, folder)
     change_weather_file_location(delphin_document)
+
+    logger.debug(f'Downloaded weather for Delphin project with ID: {delphin_document.id} to {folder}')
 
     return True
 
@@ -243,6 +249,8 @@ def update_short_wave_condition(delphin_dict):
 
 
 def upload_weather_to_db(file_path: str) -> list:
+    """Upload a WAC weather file to the database"""
+
     weather_dict = weather_parser.wac_to_dict(file_path)
 
     # Split years
@@ -326,5 +334,10 @@ def upload_weather_to_db(file_path: str) -> list:
         yearly_weather_entry.weather_data.put(bson.BSON.encode(weather))
         yearly_weather_entry.save()
         entry_ids.append(yearly_weather_entry.id)
+
+        yearly_weather_entry.reload()
+
+        logger.debug(f'Uploaded weather files from {yearly_weather_entry.location_name} '
+                     f'for year {yearly_weather_entry.year}')
 
     return entry_ids

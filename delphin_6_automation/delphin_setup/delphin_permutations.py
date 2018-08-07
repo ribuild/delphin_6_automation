@@ -6,12 +6,11 @@ __license__ = 'MIT'
 
 # Modules:
 import copy
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import typing
 
 # RiBuild Modules:
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
-
 
 # Logger
 logger = ribuild_logger(__name__)
@@ -20,28 +19,24 @@ logger = ribuild_logger(__name__)
 # DELPHIN PERMUTATION FUNCTIONS
 
 
-def change_layer_width(delphin_dict, original_material: str, new_width: float) -> dict:
+def change_layer_width(delphin: dict, original_material: str, new_width: float) -> dict:
     """
     Changes the width of a single layer, while keeping number of elements in the project.
 
-    :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
+    :param delphin: Delphin dict to change.
     :param original_material: Name of material to change the width of.
-    :type original_material: str
     :param new_width: New width in m
-    :type new_width: float
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
-    layers = get_layers(delphin_dict)
+    layers = get_layers(delphin)
     layer = identify_layer(layers, original_material)
     new_discretization = discretize_layer(new_width)
-    update_range_of_assignments(delphin_dict, layer, new_discretization)
+    update_range_of_assignments(delphin, layer, new_discretization)
 
-    logger.debug(f'Changed layer {layer} to {new_width}m')
+    logger.debug(f'Changed layer {layer["material"]} to {new_width} m')
 
-    return delphin_dict
+    return delphin
 
 
 def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
@@ -50,11 +45,8 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
     material.
 
     :param layers: Layers to look in
-    :type layers: dict
     :param identifier: Identifier to identify layer by
-    :type identifier: str or int
     :return: The found layer
-    :rtype: dict
     """
 
     if isinstance(identifier, int):
@@ -78,13 +70,9 @@ def update_range_of_assignments(delphin_dict: dict, layer: dict, new_discretizat
     Update the ranges of all assignments in a Delphin dict, given a layer and a new discretization of that layer
 
     :param delphin_dict: Delphin dict to update
-    :type delphin_dict: dict
     :param layer: Layer to update
-    :type layer: dict
     :param new_discretization: New discretization
-    :type new_discretization: list
     :return: Updated Delphin dict
-    :rtype: dict
     """
 
     # Update discretization
@@ -116,11 +104,8 @@ def update_assignment_range(assignment: dict, delta_range: int, range_to_update_
     Updates the range of a single assignment.
 
     :param assignment: Assignment to change
-    :type assignment: dict
     :param delta_range: Change in range
-    :type delta_range: int
     :param range_to_update_after: After which the ranges should be updated
-    :type range_to_update_after: int
     """
 
     range_list = [int(r)
@@ -137,18 +122,14 @@ def update_assignment_range(assignment: dict, delta_range: int, range_to_update_
     return None
 
 
-def change_layer_widths(delphin_dict: dict, layer_material: str, widths: list) -> list:
+def change_layer_widths(delphin_dict: dict, layer_material: str, widths: list) -> typing.List[dict]:
     """
     Creates a new Delphin dict with the width of each value in widths.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param layer_material: Name of material to change the width of.
-    :type layer_material: str
     :param widths: New widths in m
-    :type widths: list
     :return: List with modified Delphin dicts
-    :rtype: list
     """
 
     permutated_dicts = []
@@ -164,13 +145,9 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
     Changes the material of a layer.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param original_material: Name of material that should be changed.
-    :type original_material: str
     :param new_material: New material given as a dict. Dict should have the following keys: @name, @color, @hatchCode and #text.
-    :type new_material: dict
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
     new_delphin_dict = copy.deepcopy(delphin_dict)
@@ -203,13 +180,9 @@ def change_weather(delphin_dict: dict, original_weather: str, new_weather: str) 
     from a file.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param original_weather: Name of the original weather
-    :type original_weather: str
     :param new_weather: New weather file path
-    :type new_weather: str
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
     # Find original weather
@@ -226,11 +199,8 @@ def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
     Changes the orientation of the Delphin project.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param new_orientation: New orientation. Value between 0 and 360
-    :type new_orientation: int
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
     assert 0 <= new_orientation <= 360
@@ -244,23 +214,20 @@ def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
         except KeyError:
             pass
 
+    logger.debug(f'Changed orientation to {new_orientation} degrees from North')
     return delphin_dict
 
 
-def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coefficient: str, new_value: float) -> dict:
+def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coefficient: str, new_value: float) \
+        -> dict:
     """
     Changes a boundary coefficient of a boundary condition instance.
 
     :param delphin_dict: Delphin dict to change.
-    :type delphin_dict: dict
     :param boundary_condition: Name of the boundary condition
-    :type boundary_condition: str
     :param coefficient: Name of the coefficient to change
-    :type coefficient: str
     :param new_value: New value of the coefficient
-    :type new_value: float
     :return: Modified Delphin dict
-    :rtype: dict
     """
 
     boundary_conditions = delphin_dict['DelphinProject']['Conditions']['BoundaryConditions']['BoundaryCondition']
@@ -275,6 +242,8 @@ def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coe
                 if boundary_conditions[index]['IBK:Parameter']['@name'] == coefficient:
                     boundary_conditions[index]['IBK:Parameter']['#text'] = str(new_value)
 
+    logger.debug(f'Changed the {coefficient} of {boundary_condition} to: {new_value}')
+
     return delphin_dict
 
 
@@ -283,9 +252,7 @@ def get_layers(delphin_dict: dict) -> dict:
     Get the layers of a Delphin dict.
 
     :param delphin_dict: Delphin dict to get layers from.
-    :type delphin_dict: dict
     :return: Dict of dicts. Each nested dict has the keys: material, x_width, x_index
-    :rtype: dict
     """
 
     x_list = convert_discretization_to_list(delphin_dict)
@@ -306,14 +273,12 @@ def get_layers(delphin_dict: dict) -> dict:
     return layers_dict
 
 
-def convert_discretization_to_list(delphin_dict: dict) -> list:
+def convert_discretization_to_list(delphin_dict: dict) -> typing.List[float]:
     """
     Get the discretized elements of a project.
 
     :param delphin_dict: Delphin dict to look in.
-    :type delphin_dict: dict
     :return: A list with the discretizated values.
-    :rtype: list
     """
 
     x_list = [float(x)
@@ -322,18 +287,16 @@ def convert_discretization_to_list(delphin_dict: dict) -> list:
     return x_list
 
 
-def discretize_layer(width: float, stretch_factor: float = 1.3,  minimum_division=0.001, maximum_division=0.2) -> list:
+def discretize_layer(width: float, stretch_factor: float = 1.3,  minimum_division=0.001, maximum_division=0.2) \
+        -> typing.List[float]:
     """
     Creates a subdivision of the material to be used for the discretization.
 
     :param width: Width of the material to be subdivided
-    :type width: float
     :param minimum_division: Width of the smallest division
-    :type minimum_division: float
     :param stretch_factor: Increase in subdivisions
-    :type stretch_factor: float
+    :param maximum_division: Maximum size of a cell
     :return: List containing width of subdivisions
-    :rtype: list
     """
 
     processed_width = 0
@@ -366,6 +329,7 @@ def discretize_layer(width: float, stretch_factor: float = 1.3,  minimum_divisio
 
 
 def change_simulation_length(delphin_dict: dict, simulation_length: int, length_unit: str) -> dict:
+    """Change the simulation length of a Delphin file"""
 
     simulation_properties = delphin_dict['DelphinProject']['Init']['SimulationParameter']['Interval']['IBK:Parameter']
     simulation_properties['#text'] = str(simulation_length)
@@ -374,7 +338,8 @@ def change_simulation_length(delphin_dict: dict, simulation_length: int, length_
     return delphin_dict
 
 
-def get_simulation_length(delphin_dict: dict) -> tuple:
+def get_simulation_length(delphin_dict: dict) -> typing.NamedTuple:
+    """Get the simulation length of a Delphin file"""
 
     SimulationLength = namedtuple('SimulationLength', ['length', 'unit'])
 
@@ -383,15 +348,16 @@ def get_simulation_length(delphin_dict: dict) -> tuple:
     return SimulationLength(float(simulation_properties['#text']), simulation_properties['@unit'])
 
 
-def compute_vapour_diffusion_slope(heat_slope, vapour_exchange):
+def compute_vapour_diffusion_slope(heat_slope: float, vapour_exchange: float) -> typing.Tuple[float, float]:
+    """Computes the vapour diffusion slope and the vapour diffusion exchange coefficient"""
 
     heat_exchange = 4
+
     return heat_slope * vapour_exchange, heat_exchange * vapour_exchange
 
 
 def update_output_locations(delphin: dict) -> dict:
-    # Make sure that outputs are where they should be
-    # Loop through assignments and check if they are at the right location
+    """Update the output locations in a Delphin file, so they are located correctly"""
 
     x_steps = convert_discretization_to_list(delphin)
     layers = get_layers(delphin)
@@ -424,3 +390,41 @@ def update_output_locations(delphin: dict) -> dict:
                     assignment['IBK:Point3D'] = f'{width} 0.034 0'
 
     return delphin
+
+
+def change_kirchhoff_potential(delphin: dict, set_to: bool) -> dict:
+
+    sim_parameters = delphin['DelphinProject']['Init']['SimulationParameter']
+
+    try:
+        if isinstance(sim_parameters['IBK:Flag'], list):
+            raise NotImplementedError
+        else:
+            sim_parameters['IBK:Flag']['#text'] = str(set_to).lower()
+    except KeyError:
+        sim_parameters['IBK:Flag'] = OrderedDict([('@name', 'UseKirchhoffPotential'),
+                                                  ('#text', str(set_to).lower())])
+
+    return delphin
+
+
+def change_solver_relative_tolerance(delphin: dict, relative_tolerance: float) -> dict:
+
+    try:
+        solver_parameters = delphin['DelphinProject']['Init']['SolverParameter']
+        if isinstance(solver_parameters['IBK:Parameter'], list):
+            raise NotImplementedError
+
+        elif delphin['DelphinProject']['Init']['SolverParameter']['IBK:Parameter']['@name'] == 'RelTol':
+            delphin['DelphinProject']['Init']['SolverParameter']['IBK:Parameter']['#text'] = str(relative_tolerance)
+
+        else:
+            raise KeyError
+
+    except KeyError:
+        delphin['DelphinProject']['Init']['SolverParameter'] = OrderedDict()
+        delphin['DelphinProject']['Init']['SolverParameter']['IBK:Parameter'] = OrderedDict([('@name', 'RelTol'),
+                                                                                             ('@unit', '---'),
+                                                                                             ('#text',
+                                                                                              str(relative_tolerance))
+                                                                                             ])

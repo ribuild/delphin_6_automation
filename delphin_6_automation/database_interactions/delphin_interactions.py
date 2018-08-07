@@ -1,4 +1,4 @@
-__author__ = ""
+__author__ = "Christian Kongsgaard"
 __license__ = "MIT"
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -65,6 +65,8 @@ def upload_delphin_dict_to_database(delphin_dict: dict, queue_priority: int) -> 
     entry.dimensions = get_delphin_project_dimension(delphin_dict)
     entry.save()
 
+    logger.debug(f'Uploaded Delphin project with ID: {entry.id} to database')
+
     return entry.id
 
 
@@ -93,6 +95,8 @@ def download_delphin_entry(delphin_document: delphin_db.Delphin, path: str) -> b
     delphin_dict = dict(delphin_document.dp6_file)
     xmltodict.unparse(delphin_dict, output=open(os.path.join(path,
                                                              f'{str(delphin_document.id)}.d6p'), 'w'), pretty=True)
+
+    logger.debug(f'Downloaded Delphin project with ID: {delphin_document.id} to {path}')
 
     return True
 
@@ -136,20 +140,25 @@ def upload_results_to_database(path_: str, delete_files: bool = True) -> str:
     entry.geometry_file_hash = meta_dict['geo_file_hash']
     entry.save()
 
+    logger.debug(f'Uploaded raw results with ID: {entry.id}')
+
     # Add results reference to Delphin entry
     delphin_entry.update(set__results_raw=entry)
 
+    logger.debug(f'Added raw result with ID: {entry.id} to Delphin project with ID: {delphin_entry.id}')
+
     if delete_files:
         shutil.rmtree(path_, ignore_errors=True)
+        logger.debug(f'Deleted {path_}')
 
     return entry.id
 
 
 def download_result_files(result_obj: result_db.Result, download_path: str) -> bool:
     """
-    Writes out all the result files from a result database.rst entry.
+    Writes out all the result files from a result database entry.
 
-    :param result_obj: Database entry
+    :param result_obj: Raw result entry
     :param download_path: Where to write the files
     :return: True
     """
@@ -168,6 +177,8 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
     for result_name in result_dict.keys():
         delphin_parser.dict_to_d6o(result_dict, result_name, result_path, result_obj.simulation_started,
                                    result_obj.geometry_file['name'], result_obj.geometry_file_hash)
+
+    logger.debug(f'Downloaded raw results with ID: {result_obj.id}')
 
     return True
 
@@ -278,11 +289,15 @@ def permutate_entry_simulation_length(original_id, length_list, unit_list, queue
 
 
 def change_entry_simulation_length(sim_id, length, unit):
+    """Change the simulation length of a Delphin project"""
+
     delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
     permutations.change_simulation_length(delphin_dict, length, unit)
 
     delphin_document.update(set__dp6_file=delphin_dict)
+
+    logger.debug(f'Changed simulation length to {length} {unit} for Delphin project with ID: {sim_id}')
 
     return delphin_document.id
 
@@ -292,7 +307,6 @@ def check_delphin_file(delphin_dict: dict):
     Checks if a Delphin project file is valid for simulation.
 
     :return:
-    :rtype:
     """
 
     error = False
@@ -454,14 +468,7 @@ def check_delphin_file(delphin_dict: dict):
 
 
 def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -> result_db.Result.id:
-    """
-    Process results and upload.
-
-    :param folder:
-    :param delphin_id:
-    :param raw_result_id:
-    :return:
-    """
+    """Process simulation results and upload them to the database"""
 
     # Paths
     folder = os.path.join(folder, 'results')
@@ -477,21 +484,27 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -
     exterior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'temperature.ccd'))
     interior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'indoor_temperature.ccd'))
 
+    logger.debug(f'Collected simulation result data for Delphin project with ID: {delphin_id}')
+
     # Upload
     result_entry = result_processed_entry.ProcessedResult()
     raw_result_doc = result_db.Result.objects(id=raw_result_id).first()
     delphin_doc = delphin_db.Delphin.objects(id=delphin_id).first()
+
     result_entry.delphin = delphin_doc
     result_entry.results_raw = raw_result_doc
+
     mould = {'a': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='a'),
              'b': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='b'),
              'c': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='c'),
              'd': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='d'),
              'e': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='e')}
+
     result_entry.mould.put(bson.BSON.encode(mould))
     result_entry.heat_loss.put(np.array(heat_loss).tobytes())
     result_entry.algae.put(np.array(damage_models.algae(relative_humidity_algae, temperature_algae)).tobytes())
     result_entry.u_value = damage_models.u_value(heat_loss, exterior_temperature, interior_temperature)
+
     result_entry.thresholds = {'mould': max(max(damage_models.mould_pj(relative_humidity_mould,
                                                                        temperature_mould, aed_group='a')[0]),
                                             max(damage_models.mould_pj(relative_humidity_mould,
@@ -500,16 +513,52 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -
                                'algae': max(damage_models.algae(relative_humidity_algae, temperature_algae))}
 
     result_entry.save()
+    logger.debug(f'Uploaded processed result with ID: {result_entry.id}')
 
     # Cross reference
     delphin_doc.update(set__result_processed=result_entry)
     raw_result_doc.update(set__result_processed=result_entry)
 
+    logger.debug(f'Added processed result entry to Delphin project with ID: {delphin_id}')
+    logger.debug(f'Added processed result entry to raw result entry with ID: {raw_result_id}')
+
     return result_entry.id
 
 
-def add_sampling_dict(delphin_id, sample_dict):
+def add_sampling_dict(delphin_id: str, sample_data: dict) -> str:
+    """Adds a sample metadata dict to a Delphin project in the database."""
+
     entry = delphin_db.Delphin.objects(id=delphin_id).first()
-    entry.update(set__sample_data=sample_dict)
+    entry.update(set__sample_data=sample_data)
+
+    logger.debug(f'Added sample metadata to Delphin project with ID: {delphin_id}')
 
     return entry.id
+
+
+def change_entry_kirchhoff_potential(sim_id, set_to):
+    """Change the Kirchhoff potential of a Delphin project"""
+
+    delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    permutations.change_kirchhoff_potential(delphin_dict, set_to)
+
+    delphin_document.update(set__dp6_file=delphin_dict)
+
+    logger.debug(f'Changed Kirchhoff potential to {set_to} for Delphin project with ID: {sim_id}')
+
+    return delphin_document.id
+
+
+def change_entry_solver_relative_tolerance(sim_id, rel_tol):
+    """Change the solver relative tolerance of a Delphin project"""
+
+    delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    permutations.change_solver_relative_tolerance(delphin_dict, rel_tol)
+
+    delphin_document.update(set__dp6_file=delphin_dict)
+
+    logger.debug(f'Changed the solver relative tolerance to {rel_tol} for Delphin project with ID: {sim_id}')
+
+    return delphin_document.id

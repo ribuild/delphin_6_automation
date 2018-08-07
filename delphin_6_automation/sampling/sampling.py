@@ -26,7 +26,10 @@ from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.sampling import sobol_lib
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
+# Logger
+logger = ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -109,6 +112,9 @@ def create_sampling_strategy(path: str) -> dict:
     with open(os.path.join(path, 'sampling_strategy.json'), 'w') as file:
         json.dump(combined_dict, file)
 
+    logger.info(f'Created new sampling strategy')
+    logger.debug(f'Saved sampling strategy to: {path}')
+
     return combined_dict
 
 
@@ -117,43 +123,15 @@ def load_strategy(path: str) -> dict:
     Load a sampling strategy from a JSON file.
 
     :param path: Folder, where the sampling strategy is located
-    :type path: string
     :return: Sampling strategy
-    :rtype: dict
     """
 
     with open(os.path.join(path, 'sampling_strategy.json'), 'r') as file:
         sampling_strategy = json.load(file)
 
+    logger.debug(f'Loads sampling strategy from {path}')
+
     return sampling_strategy
-
-
-def load_existing_samples(sampling_strategy_id):
-    """
-    Look up the existing sample entries in the database connected to the strategy
-    If there is not previous samples in database return empty dict
-
-    :param sampling_strategy_id: Sampling strategy id
-    :type sampling_strategy_id: str
-    :return: Return the samples as a dict
-    :rtype: dict
-    """
-
-    strategy = sample_entry.Strategy.objects(id=sampling_strategy_id).first()
-
-    if strategy.samples:
-        samples_list = strategy.samples
-        samples = samples_list[0].samples
-
-        for sample in samples_list[1:]:
-
-            for parameter in sample.keys():
-                samples[parameter]['sample_values'].append(sample[parameter]['sample_values'])
-
-        return samples
-
-    else:
-        return {}
 
 
 def load_latest_sample(sampling_strategy_id: str) -> typing.Optional[sample_entry.Sample]:
@@ -162,30 +140,41 @@ def load_latest_sample(sampling_strategy_id: str) -> typing.Optional[sample_entr
     If there is not previous samples in database return empty dict
 
     :param sampling_strategy_id: Sampling strategy id
-    :type sampling_strategy_id: str
     :return: Return the samples as a dict
-    :rtype: dict
     """
 
     strategy = sample_entry.Strategy.objects(id=sampling_strategy_id).first()
 
     if strategy.samples:
         samples_list = strategy.samples
+
+        logger.debug(f'Found latest sample with ID: {samples_list[-1].id} for strategy with ID: {sampling_strategy_id}')
+
         return samples_list[-1]
 
     else:
+        logger.debug(f'No samples found assosiated with strategy with ID: {sampling_strategy_id}')
+
         return None
 
 
-def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.array:
+def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.ndarray:
+    """
+    Collects raw samples from database associated with sampling strategy. If the raw samples do not exists in
+    the database new ones will be created by calling the Sobol function
+    """
+
     sampling_strategy.reload()
 
-    # Check if the strategy has a raw sampling with the same sequence number as step
     for raw_sample in sampling_strategy.samples_raw:
         if raw_sample.sequence_number == step:
+
+            logger.debug(f'Found existing raw sample with sequence #{step}')
+
             return np.array(raw_sample.samples_raw)
 
-    # If not create a new raw sampling
+    logger.debug(f'Creating new raw sample with sequence #{step}')
+
     distribution_dimension = len(sampling_strategy.strategy['distributions'].keys())
     samples_raw = sobol(m=sampling_strategy.strategy['settings']['raw sample size'],
                         dimension=distribution_dimension, sets=1)
@@ -195,17 +184,36 @@ def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.a
     return samples_raw
 
 
+def sample_exists(sampling_strategy: sample_entry.Strategy) -> typing.Optional[sample_entry.Sample]:
+    """Check whether a sample exists with the same iteration as the current iteration in the sampling strategy"""
+
+    sample = load_latest_sample(sampling_strategy.id)
+    if sample and sample.iteration == sampling_strategy.current_iteration:
+
+        logger.info(f'Found existing sample for the current sampling iteration #{sampling_strategy.current_iteration}')
+
+        return sample
+
+    else:
+        return None
+
+
 def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_set: int) -> dict:
-    # TODO - Create new samples based on the old ones and the sampling strategy
-    # Loop through the sampling sequences and generate samples each time
-    # Call Sobol to create new samples based on strategy and previous samples
+    """
+    Creates new samples fitting the sampling strategy. Raw samples are generated if they do not exist already.
+    The function loops through the sampling sequences and generate samples each time.
+
+    :param sampling_strategy: Sampling Strategy
+    :param used_samples_per_set: How many samples should be generated per set
+    :return: The generated samples
+    """
+
     samples = dict()
 
     for step in range(sampling_strategy.strategy['settings']['sequence']):
-        # if sampling sequence iteration exists download that.
-        # if not create new sampling
-        # used the sampling to create the distributions
-        # return the raw samples and distributions
+
+        logger.debug(f'Generates samples for sequence #{step}')
+
         raw_samples = get_raw_samples(sampling_strategy, step)
         samples_subset = compute_sampling_distributions(sampling_strategy.strategy, raw_samples,
                                                         used_samples_per_set)
@@ -215,11 +223,14 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
     return samples
 
 
-def load_design_options(designs: list) -> typing.List[dict]:
+def load_design_options(designs: typing.List[str]) -> typing.List[dict]:
+    """Loads the Delphin files into memory associated with the design options"""
 
     folder = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                           'input_files/design')
     delphin_projects = []
+
+    logger.debug(f'Loads {len(designs)} design Delphin projects')
 
     for design in designs:
         delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, f'{design}.d6p')))
@@ -228,16 +239,19 @@ def load_design_options(designs: list) -> typing.List[dict]:
 
 
 def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.List[str]:
-    # The paths for the base delphin files should be found in the sampling strategy
-    # Permutate the base files according to the samples
-    # Upload the new delphin files
-    # Return the database ids for the delphin files
+    """Generate the Delphin project associated with the given sample"""
 
     delphin_ids = []
     delphin_projects = load_design_options(sampling_strategy['design'])
 
     for sequence in samples.keys():
+
+        logger.debug(f'Generates Delphin projects for sequence #{sequence}')
+
         for design in samples[sequence].keys():
+
+            logger.debug(f'Generates Delphin projects for design: {design}')
+
             sample_dict = dict()
             design_index = sampling_strategy['design'].index(design)
             design_variation = copy.deepcopy(delphin_projects[design_index])
@@ -358,11 +372,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.Li
 
 
 def calculate_error(sample_strategy: sample_entry.Strategy) -> dict:
-    # TODO - Calculated the standard error on the results from the given delphin simulations
-    # retrieve the processed data from all delphin simulations in the sampling scheme.
-    # calculate the standard error for all design options, sequences should be collapsed
-    # There should both a mean standard error and a standard deviation of the standard error
-    # Return the error
+    """Calculates the standard error on the results from the given delphin simulations"""
 
     standard_error = dict()
     sequence_length = sample_strategy.strategy['settings']['sequence']
@@ -382,66 +392,62 @@ def calculate_error(sample_strategy: sample_entry.Strategy) -> dict:
 
     for design in mould.keys():
 
+        logger.debug(f'Calculates standard error for design: {design}')
+
         design_standard_error = {'mould': relative_standard_error(mould[design], sequence_length),
                                  'algae': relative_standard_error(algae[design], sequence_length),
                                  'heat_loss': relative_standard_error(heat_loss[design], sequence_length)}
 
         standard_error[design] = design_standard_error
 
-    """
-    for design in sample_strategy['design']:
-        projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design)
-        mould = []
-        algae = []
-        heat_loss = []
-
-        # TODO - Speed up this with a better query
-        for project in projects_given_design:
-            mould.append(project.result_processed['thresholds']['mould'])
-            algae.append(project.result_processed['thresholds']['algae'])
-            heat_loss.append(project.result_processed['thresholds']['heat_loss'])
-
-        design_standard_error = {'mould': relative_standard_error(mould, sequence),
-                                 'algae': relative_standard_error(algae, sequence),
-                                 'heat_loss': relative_standard_error(heat_loss, sequence)}
-
-        standard_error[design] = design_standard_error
-    """
-
     return standard_error
 
 
-def relative_standard_error(series: list, sequence: int) -> float:
+def relative_standard_error(series: list, sequence_length: int) -> float:
+    """
+    Calculate the relative standard error
+
+    Source:
+    Hou, T, et. al.
+    Quasi-Monte Carlo based uncertainty analysis: sampling effciency and error estimation
+    Reliability Engineering & System Safety
+    2018
+    """
 
     series = np.asarray(series)
-    standard_error = np.sqrt(1/(sequence * (sequence - 1)) * np.sum((series - np.mean(series)) ** 2))
+    standard_error = np.sqrt(1/(sequence_length * (sequence_length - 1)) * np.sum((series - np.mean(series)) ** 2))
 
-    return standard_error / np.mean(series)
+    mean_standard_error = standard_error / np.mean(series)
+
+    logger.debug(f'Mean Standard Error was: {mean_standard_error}')
+
+    return mean_standard_error
 
 
 def check_convergence(strategy_document: sample_entry.Strategy) -> bool:
     """
     Check if the standard error is lower than the threshold value in the sampling strategy
     If it is return True otherwise return False
-
-    :param strategy_document:
-    :type strategy_document:
-    :return:
-    :rtype:
     """
+
     standard_error = strategy_document.standard_error
     checks = [standard_error[design][damage_model][-1]
               for design in standard_error.keys()
               for damage_model in standard_error[design].keys()]
 
+    logger.debug(f'Current standard errors: {checks}')
     if all(check <= strategy_document.strategy['settings']['standard error threshold']
            for check in checks):
+        logger.info(f'Convergence found')
         return True
     else:
+        logger.info(f'Convergence not found')
         return False
 
 
 def compute_sampling_distributions(sampling_strategy: dict, samples_raw: np.ndarray, used_samples_per_set: int) -> dict:
+    """Compute the sampling values for the sampling strategy"""
+
     designs = [design_
                for design_ in sampling_strategy['design']]
 
@@ -488,25 +494,36 @@ def compute_sampling_distributions(sampling_strategy: dict, samples_raw: np.ndar
 
                 distributions[design][scenario][sample_param] = values
 
+    logger.debug(f'Finished computing sampling distributions')
+
     return distributions
 
 
 def sobol(m: int, dimension: int, sets: int=1) -> np.ndarray:
+    """Compute the Sobol sequence"""
+
     design = np.empty([0, dimension])
 
     for i in range(sets):
         d = sobol_lib.scrambled_sobol_generate(k=dimension, N=m, skip=2, leap=0)
         design = np.vstack((design, d))
 
+    logger.debug(f'Created {m}x{dimension} Sobol matrix')
+
     return design
 
 
 def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
+    """Compute the mean and standard deviation of the simulation results for a given sample"""
 
     sample_mean = dict()
     sample_std = dict()
     sequence = sample_strategy['settings']['sequence']
+
     for sequence_index in range(sequence):
+
+        logger.debug(f'Calculates the sample output for sequence #{sequence_index}')
+
         sample_mean[str(sequence_index)] = dict()
         sample_std[str(sequence_index)] = dict()
 
@@ -530,6 +547,9 @@ def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
                                                        'algae': np.std(algae),
                                                        'heat_loss': np.std(heat_loss)}
 
+            logger.debug(f'Sample mean: {sample_mean[str(sequence_index)][design]} for design: {design}')
+            logger.debug(f'Sample std: {sample_std[str(sequence_index)][design]} for design: {design}')
+
     sampling_interactions.upload_sample_mean(sampling_id, sample_mean)
     sampling_interactions.upload_sample_std(sampling_id, sample_std)
 
@@ -537,10 +557,17 @@ def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
 
 
 def initialize_sampling(strategy_doc: sample_entry.Strategy) -> tuple:
+    """Initialize a sampling"""
 
     iteration = strategy_doc.current_iteration
     convergence = False
     new_samples_per_set = strategy_doc.strategy['settings']['initial samples per set']
     used_samples_per_set = strategy_doc.used_samples_per_set
+
+    logger.info('Initializing sampling scheme')
+    logger.info(f'Iteration: {iteration}')
+    logger.info(f'Convergence: {convergence}')
+    logger.info(f'New Samples per Set: {new_samples_per_set}')
+    logger.info(f'Used Samples per Set: {used_samples_per_set}\n')
 
     return iteration, convergence, new_samples_per_set, used_samples_per_set

@@ -1,0 +1,294 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>delphin_6_automation.database_interactions.general_interactions &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for delphin_6_automation.database_interactions.general_interactions</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christian Kongsgaard&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># IMPORTS</span>
+
+<span class="c1"># Modules:</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">github</span>
+
+<span class="c1"># RiBuild Modules:</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions.db_templates</span> <span class="k">import</span> <span class="n">delphin_entry</span> <span class="k">as</span> <span class="n">delphin_db</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions.db_templates</span> <span class="k">import</span> <span class="n">result_raw_entry</span> <span class="k">as</span> <span class="n">result_db</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions.db_templates</span> <span class="k">import</span> <span class="n">weather_entry</span> <span class="k">as</span> <span class="n">weather_db</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions.db_templates</span> <span class="k">import</span> <span class="n">material_entry</span> <span class="k">as</span> <span class="n">material_db</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions</span> <span class="k">import</span> <span class="n">delphin_interactions</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions</span> <span class="k">import</span> <span class="n">material_interactions</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions</span> <span class="k">import</span> <span class="n">weather_interactions</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.logging.ribuild_logger</span> <span class="k">import</span> <span class="n">ribuild_logger</span>
+
+<span class="c1"># Logger</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">ribuild_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># MATERIAL INTERACTIONS</span>
+
+
+<div class="viewcode-block" id="download_raw_result"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.download_raw_result">[docs]</a><span class="k">def</span> <span class="nf">download_raw_result</span><span class="p">(</span><span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">download_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads a result entry from the database.rst.</span>
+
+<span class="sd">    :param result_id: Database entry id</span>
+<span class="sd">    :param download_path: Path where the result should be written</span>
+<span class="sd">    :return: True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">result_obj</span> <span class="o">=</span> <span class="n">result_db</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">result_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">download_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">download_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_id</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">download_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">download_path</span><span class="p">)</span>
+
+    <span class="c1"># delphin_parser.write_log_files(result_obj, download_path)</span>
+    <span class="n">delphin_interactions</span><span class="o">.</span><span class="n">download_result_files</span><span class="p">(</span><span class="n">result_obj</span><span class="p">,</span> <span class="n">download_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="queue_priorities"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.queue_priorities">[docs]</a><span class="k">def</span> <span class="nf">queue_priorities</span><span class="p">(</span><span class="n">priority</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a queue priority number.</span>
+
+<span class="sd">    :param priority: High, medium or low priority</span>
+<span class="sd">    :return: Priority number</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">priority_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">queue_priority</span>
+                     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;queue_priority&#39;</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">priority_list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">min_priority</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">priority_list</span><span class="p">)</span>
+        <span class="n">max_priority</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">priority_list</span><span class="p">)</span>
+        <span class="n">span</span> <span class="o">=</span> <span class="n">max_priority</span> <span class="o">-</span> <span class="n">min_priority</span>
+
+        <span class="k">if</span> <span class="n">priority</span> <span class="o">==</span> <span class="s1">&#39;high&#39;</span><span class="p">:</span>
+            <span class="n">priority_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_priority</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">priority</span> <span class="o">==</span> <span class="s1">&#39;medium&#39;</span><span class="p">:</span>
+            <span class="n">priority_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">span</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">min_priority</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">priority</span> <span class="o">==</span> <span class="s1">&#39;low&#39;</span><span class="p">:</span>
+            <span class="n">priority_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">span</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">min_priority</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;priority has to be: high, medium or low. Value given was: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">priority</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">priority_number</span></div>
+
+
+<div class="viewcode-block" id="add_to_simulation_queue"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.add_to_simulation_queue">[docs]</a><span class="k">def</span> <span class="nf">add_to_simulation_queue</span><span class="p">(</span><span class="n">delphin_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">priority</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uploads and adds a Delphin project file to the simulation queue.</span>
+
+<span class="sd">    :param delphin_file: Delphin 6 project file path</span>
+<span class="sd">    :param priority: High, medium or low priority</span>
+<span class="sd">    :return: Database entry id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">priority_number</span> <span class="o">=</span> <span class="n">queue_priorities</span><span class="p">(</span><span class="n">priority</span><span class="p">)</span>
+    <span class="n">simulation_id</span> <span class="o">=</span> <span class="n">delphin_interactions</span><span class="o">.</span><span class="n">upload_delphin_to_database</span><span class="p">(</span><span class="n">delphin_file</span><span class="p">,</span> <span class="n">priority_number</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Added Delphin project with ID: </span><span class="si">{simulation_id}</span><span class="s1"> to queue with priority: </span><span class="si">{priority}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">simulation_id</span></div>
+
+
+<div class="viewcode-block" id="is_simulation_finished"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.is_simulation_finished">[docs]</a><span class="k">def</span> <span class="nf">is_simulation_finished</span><span class="p">(</span><span class="n">sim_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if a Delphin project entry is simulated or not.</span>
+
+<span class="sd">    :param sim_id: Database entry to check</span>
+<span class="sd">    :return: True if it is simulated otherwise returns False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">object_</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">sim_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">object_</span><span class="o">.</span><span class="n">simulated</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Delphin project with ID: </span><span class="si">{sim_id}</span><span class="s1"> is finished simulating&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Delphin project with ID: </span><span class="si">{sim_id}</span><span class="s1"> is not finished simulating&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="list_finished_simulations"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.list_finished_simulations">[docs]</a><span class="k">def</span> <span class="nf">list_finished_simulations</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a list with Delphin entry ID&#39;s for simulated entries.&quot;&quot;&quot;</span>
+
+    <span class="n">finished_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">document</span><span class="o">.</span><span class="n">id</span>
+                     <span class="k">for</span> <span class="n">document</span> <span class="ow">in</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">()</span>
+                     <span class="k">if</span> <span class="n">document</span><span class="o">.</span><span class="n">simulated</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">finished_list</span></div>
+
+
+<div class="viewcode-block" id="download_full_project_from_database"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.download_full_project_from_database">[docs]</a><span class="k">def</span> <span class="nf">download_full_project_from_database</span><span class="p">(</span><span class="n">document_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads a Delphin project file from the database.rst with all of its materials and weather.</span>
+
+<span class="sd">    :param document_id: Database entry id</span>
+<span class="sd">    :param folder: Path where the files should be written.</span>
+<span class="sd">    :return: True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">document_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="n">material_interactions</span><span class="o">.</span><span class="n">download_materials</span><span class="p">(</span><span class="n">delphin_document</span><span class="p">,</span> <span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/materials&#39;</span><span class="p">)</span>
+    <span class="n">weather_interactions</span><span class="o">.</span><span class="n">download_weather</span><span class="p">(</span><span class="n">delphin_document</span><span class="p">,</span> <span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/weather&#39;</span><span class="p">)</span>
+    <span class="n">delphin_interactions</span><span class="o">.</span><span class="n">download_delphin_entry</span><span class="p">(</span><span class="n">delphin_document</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Download Delphin project with ID: </span><span class="si">{document_id}</span><span class="s1"> from database with weather and materials.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="list_weather_stations"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.list_weather_stations">[docs]</a><span class="k">def</span> <span class="nf">list_weather_stations</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;List the weather stations currently in database&quot;&quot;&quot;</span>
+
+    <span class="n">weather_stations</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">document</span> <span class="ow">in</span> <span class="n">weather_db</span><span class="o">.</span><span class="n">Weather</span><span class="o">.</span><span class="n">objects</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">document</span><span class="o">.</span><span class="n">location_name</span> <span class="ow">in</span> <span class="n">weather_stations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">weather_stations</span><span class="p">[</span><span class="n">document</span><span class="o">.</span><span class="n">location_name</span><span class="p">][</span><span class="s1">&#39;years&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">document</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weather_stations</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">document</span><span class="o">.</span><span class="n">location_name</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">weather_stations</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">document</span><span class="o">.</span><span class="n">location_name</span><span class="p">)][</span><span class="s1">&#39;location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">location</span>
+            <span class="n">weather_stations</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">document</span><span class="o">.</span><span class="n">location_name</span><span class="p">)][</span><span class="s1">&#39;years&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">document</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">weather_stations</span></div>
+
+
+<div class="viewcode-block" id="print_weather_stations_dict"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.print_weather_stations_dict">[docs]</a><span class="k">def</span> <span class="nf">print_weather_stations_dict</span><span class="p">(</span><span class="n">weather_station_dict</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">weather_station_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Weather Station: </span><span class="si">{key}</span><span class="s1"> at location: </span><span class="si">{weather_station_dict[key][&quot;location&quot;]}</span><span class="s1"> contains &#39;</span>
+              <span class="n">f</span><span class="s1">&#39;{len(weather_station_dict[key][&quot;years&quot;])} years.</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="n">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1"> The years are: </span><span class="si">{weather_station_dict[key][&quot;years&quot;]}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="list_materials"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.list_materials">[docs]</a><span class="k">def</span> <span class="nf">list_materials</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;List materials currently in the database&quot;&quot;&quot;</span>
+
+    <span class="n">materials</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">document</span> <span class="ow">in</span> <span class="n">material_db</span><span class="o">.</span><span class="n">Material</span><span class="o">.</span><span class="n">objects</span><span class="p">():</span>
+        <span class="n">materials</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">document</span><span class="o">.</span><span class="n">material_name</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">materials</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">document</span><span class="o">.</span><span class="n">material_name</span><span class="p">)][</span><span class="s1">&#39;material_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">material_id</span>
+        <span class="n">materials</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">document</span><span class="o">.</span><span class="n">material_name</span><span class="p">)][</span><span class="s1">&#39;database_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="k">return</span> <span class="n">materials</span></div>
+
+
+<div class="viewcode-block" id="print_material_dict"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.print_material_dict">[docs]</a><span class="k">def</span> <span class="nf">print_material_dict</span><span class="p">(</span><span class="n">materials</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">materials</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Material:</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="n">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Name: </span><span class="si">{key}</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="n">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Delphin Material ID: </span><span class="si">{materials[key][&quot;material_id&quot;]}</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="n">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Database ID: </span><span class="si">{materials[key][&quot;database_id&quot;]}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="does_simulation_exists"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.does_simulation_exists">[docs]</a><span class="k">def</span> <span class="nf">does_simulation_exists</span><span class="p">(</span><span class="n">sim_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if a Delphin project entry is in the database or not.</span>
+
+<span class="sd">    :param sim_id: Database entry to check</span>
+<span class="sd">    :return: True if it is in database otherwise returns False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">object_</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">sim_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">object_</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="get_github_version"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.get_github_version">[docs]</a><span class="k">def</span> <span class="nf">get_github_version</span><span class="p">():</span>
+    <span class="n">gh</span> <span class="o">=</span> <span class="n">github</span><span class="o">.</span><span class="n">Github</span><span class="p">()</span>
+    <span class="n">rp</span> <span class="o">=</span> <span class="n">gh</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="s1">&#39;ribuild/delphin_6_automation&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rp</span><span class="o">.</span><span class="n">get_commits</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sha</span></div>
+
+
+<div class="viewcode-block" id="get_git_revision_hash"><a class="viewcode-back" href="../../../general_interactions.html#delphin_6_automation.database_interactions.general_interactions.get_git_revision_hash">[docs]</a><span class="k">def</span> <span class="nf">get_git_revision_hash</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;rev-parse&#39;</span><span class="p">,</span> <span class="s1">&#39;HEAD&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

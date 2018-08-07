@@ -115,7 +115,6 @@ def mock_calculate_sample_output(monkeypatch):
                 algae = []
                 heat_loss = []
 
-                # TODO - Speed up this with a better query
                 for project in projects_given_design:
                     mould.append(project.sample_data['output'])
                     algae.append(project.sample_data['output'])

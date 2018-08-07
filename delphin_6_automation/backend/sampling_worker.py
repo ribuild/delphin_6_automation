@@ -8,7 +8,6 @@ __license__ = 'MIT'
 import sys
 import os
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import numpy as np
 
 # RiBuild Modules
@@ -60,11 +59,11 @@ def menu():
     choice = input("> ").strip().lower()
 
     if choice == 'a':
-        logger.info('starting sampling')
-        sampling_strategy_id = input("Define sampling strategy ID >")
-        logger.info(sampling_strategy_id)
+        logger.debug('starting sampling')
+        sampling_strategy_id = input("Define sampling strategy ID > ")
+        logger.debug(sampling_strategy_id)
 
-        print('\nStarting sampling\n')
+        logger.info('\nStarting sampling\n')
         sampling_worker(sampling_strategy_id)
 
     elif choice == 'b':
@@ -73,38 +72,47 @@ def menu():
         logger.info(f'Created sampling and uploaded it with ID: {strategy_id}')
 
     elif choice == 'c':
-        sampling_strategy_id = input("Define sampling strategy ID >")
+        sampling_strategy_id = input("Define sampling strategy ID > ")
         sampling_overview(sampling_strategy_id)
 
     elif choice == 'x':
-        print("Goodbye")
+        logger.info("Goodbye")
 
 
 def sampling_worker(strategy_id):
-    # Initialize
     strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
     (sample_iteration, convergence,
      new_samples_per_set, used_samples_per_set) = sampling.initialize_sampling(strategy_doc)
 
     # Run loop
     while not convergence:
-        logger.info(f'\nRunning sampling iteration #{sample_iteration}')
+        logger.info(f'Running sampling iteration #{sample_iteration}')
         logger.info(f'New Samples per set: {new_samples_per_set}')
         logger.info(f'Used samples per set: {used_samples_per_set}')
 
         strategy_doc.reload()
-        new_samples = sampling.create_samples(strategy_doc, used_samples_per_set)
-        sampling_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
-        delphin_ids = sampling.create_delphin_projects(strategy_doc.strategy, new_samples)
-        sampling_interactions.add_delphin_to_sampling(sampling_id, delphin_ids)
-        sampling_interactions.add_sample_to_strategy(strategy_id, sampling_id)
+        existing_sample = sampling.sample_exists(strategy_doc)
+
+        if not existing_sample:
+            logger.info('Creating new samples')
+            new_samples = sampling.create_samples(strategy_doc, used_samples_per_set)
+            sample_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
+            delphin_ids = sampling.create_delphin_projects(strategy_doc.strategy, new_samples)
+            sampling_interactions.add_delphin_to_sampling(sample_id, delphin_ids)
+            sampling_interactions.add_sample_to_strategy(strategy_id, sample_id)
+
+        else:
+            logger.debug('Found existing sample')
+            delphin_ids = sampling_interactions.get_delphin_for_sample(existing_sample)
+            sample_id = existing_sample.id
+
         simulation_interactions.wait_until_simulated(delphin_ids)
-        sampling.calculate_sample_output(strategy_doc.strategy, sampling_id)
+        sampling.calculate_sample_output(strategy_doc.strategy, sample_id)
         current_error = sampling.calculate_error(strategy_doc)
         sampling_interactions.upload_standard_error(strategy_doc, current_error)
         convergence = sampling.check_convergence(strategy_doc)
 
-        logger.info(f'Standard Error at iteration {sample_iteration} is: {current_error}')
+        logger.debug(f'Standard Error at iteration {sample_iteration} is: {current_error}\n')
 
         # Update parameters for next iteration
         used_samples_per_set = used_samples_per_set + new_samples_per_set
@@ -112,12 +120,12 @@ def sampling_worker(strategy_id):
         sampling_interactions.upload_sample_iteration_parameters(strategy_doc, sample_iteration, used_samples_per_set)
 
         if used_samples_per_set >= strategy_doc.strategy['settings']['max samples']:
-            logger.info(f'Maximum number of samples reached. Simulated {used_samples_per_set} samples per set')
-            logger.info('\nExits. Bye')
+            logger.info(f'Maximum number of samples reached. Simulated {used_samples_per_set} samples per set\n')
+            logger.info('Exits. Bye')
             sys.exit()
 
-    logger.info(f'Convergence reached at iteration #{sample_iteration}')
-    logger.info('\nExits. Bye')
+    logger.info(f'Convergence reached at iteration #{sample_iteration}\n')
+    logger.info('Exits. Bye')
     sys.exit()
 
 
@@ -125,25 +133,25 @@ def sampling_overview(strategy_id):
 
     strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
 
-    def animate(axis, damage_model):
-
-        axis.clear()
+    def create_figure(damage_model: str):
+        plt.figure()
 
         for design in strategy_doc.standard_error.keys():
             data = strategy_doc.standard_error[design][damage_model]
             x = np.arange(0, len(data))
-            axis.plot(x, data, label=design)
+            if len(data) == 1:
+                plt.scatter(x, data, label=design)
+            else:
+                plt.plot(x, data, label=design)
+            plt.xlim(x[0]-1, x[-1]+1)
 
-    figure_mould = plt.figure()
-    axis_mould = figure_mould.add_subplot(1, 1, 1)
-    animate_mould = animation.FuncAnimation(figure_mould, animate, interval=30000, fargs=(axis_mould, 'mould'))
+        plt.legend()
+        plt.title(f'Sampling Convergence:\n{damage_model.capitalize()}')
+        plt.xlabel('Iterations')
+        plt.ylabel('Standard Error')
 
-    figure_algae = plt.figure()
-    axis_algae = figure_algae.add_subplot(1, 1, 1)
-    animate_algae = animation.FuncAnimation(figure_algae, animate, interval=30000, fargs=(axis_algae, 'algae'))
-
-    figure_heat = plt.figure()
-    axis_heat = figure_heat.add_subplot(1, 1, 1)
-    animate_heat = animation.FuncAnimation(figure_heat, animate, interval=30000, fargs=(axis_heat, 'heat_loss'))
+    create_figure('mould')
+    create_figure('heat_loss')
+    #create_figure('algea')
 
     plt.show()

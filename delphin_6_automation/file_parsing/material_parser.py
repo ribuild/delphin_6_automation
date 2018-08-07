@@ -1,5 +1,5 @@
 __author__ = "Thomas Perkov"
-
+__license__ = 'MIT'
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
@@ -48,7 +48,8 @@ def num(s):
         return float(s)
 
 
-def material_file_to_dict(file_path):
+def material_file_to_dict(file_path: str) -> dict:
+    """Converts a material file into a dict"""
 
     material_dict = {}
     data = codecs.open(file_path, "r", "utf-8")

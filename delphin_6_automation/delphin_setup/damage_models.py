@@ -22,7 +22,11 @@ def mould_index(relative_humidity: typing.List[float], temperature: typing.List[
                 sensitivity_class: int, surface_quality: int) -> typing.List[float]:
     """
     Computes a time series of the mould index
-    Source: T. Ojanen, H. Viitanen - Mold growth modeling of building structures using sensitivity classes of materials - 2010
+
+    Source:
+    T. Ojanen, H. Viitanen
+    Mold growth modeling of building structures using sensitivity classes of materials
+    2010
     """
 
     # Initial setup:
@@ -111,8 +115,11 @@ def mould_index(relative_humidity: typing.List[float], temperature: typing.List[
 def frost_risk(relative_humidity: np.array, temperature: np.array) -> np.array:
     """
     Evaluates frost risk
-    Returns: List - Containing 0's and 1's. Where a 0 indicates no frost risk and an 1 indicate frost risk
-    Source: John Grünewalds Frost Model
+
+    Source:
+    John Grünewalds Frost Model
+
+    :return: a list Containing 0's and 1's. Where a 0 indicates no frost risk and an 1 indicate frost risk
     """
 
     # Constants
@@ -138,7 +145,10 @@ def frost_risk(relative_humidity: np.array, temperature: np.array) -> np.array:
 
 def frost_curves(temperature: typing.List[float]):
     """
-    Outputs Frost curve
+    Outputs Frost curves
+
+    Source:
+    John Grünewalds Frost Model
     """
 
     # Constants
@@ -165,7 +175,16 @@ def frost_curves(temperature: typing.List[float]):
 
 
 def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typing.List[float]) \
-        -> tuple:
+        -> typing.Tuple[list, list]:
+    """
+    Calculates the mass loss of wood due to rot
+
+    Source:
+    Viitanen, H., Toratti, T., Makkonen, L. et al.
+    Towards modelling of decay risk of wooden materials
+    Eur. J. Wood Prod.
+    2010
+    """
 
     def time_critical(relative_humidity, temperature):
         return (2.3 * temperature + 0.035 * relative_humidity - 0.024 * temperature * relative_humidity) / \
@@ -195,29 +214,33 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
     return mass_loss[1:], alpha[1:]
 
 
-def mould_pj(relative_humidity_list,
-             temperature_list,
-             aed_group='b') -> tuple:
+def mould_pj(relative_humidity: list, temperature: list, aed_group='b') \
+        -> typing.Tuple[typing.Iterable, typing.Iterable]:
     """
     Outputs RH difference between measured and critical RH for each time step and two limits.
-    Possitive values imply how much RH exceed the critial RH. A low and upper critial RH are applied.
+    Positive values imply how much RH exceed the critical RH. A low and upper critical RH are applied.
 
     Literature:
     """
 
     betas = {'a': 0.043, 'b': 0.036, 'c': 0.028, 'd': 0.021, 'e': 0.014}
-    temperature_list = np.array(temperature_list)
-    relative_humidity_list = np.array(relative_humidity_list)
+    temperature = np.asarray(temperature)
+    relative_humidity = np.asarray(relative_humidity)
 
-    def relative_humidity_crit_low(temperature):
-        return 105 + betas[aed_group] * (temperature ** 2 - 54 * temperature)
+    def relative_humidity_crit_low(temperature_):
+        return 105 + betas[aed_group] * (temperature_ ** 2 - 54 * temperature_)
 
-    def relative_humidity_crit_up(temperature):
-        return 105 + (betas[aed_group] - 0.007) * (temperature ** 2 - 54 * temperature)
+    def relative_humidity_crit_up(temperature_):
+        return 105 + (betas[aed_group] - 0.007) * (temperature_ ** 2 - 54 * temperature_)
 
-    difference_crit_low = relative_humidity_list - relative_humidity_crit_low(temperature_list)
+    difference_crit_low = relative_humidity - relative_humidity_crit_low(temperature)
 
-    difference_crit_up = relative_humidity_list - relative_humidity_crit_up(temperature_list)
+    difference_crit_up = relative_humidity - relative_humidity_crit_up(temperature)
+
+    logger.debug(f'Difference between relative humidity and lower critical value for {len(difference_crit_low)} values:'
+                 f' Mean: {np.mean(difference_crit_low)}, StD: {np.std(difference_crit_low)}')
+    logger.debug(f'Difference between relative humidity and upper critical value for {len(difference_crit_up)} values:'
+                 f' Mean: {np.mean(difference_crit_up)}, StD: {np.std(difference_crit_up)}')
 
     return difference_crit_low.tolist(), difference_crit_up.tolist()
 
@@ -267,12 +290,17 @@ def algae(relative_humidity_list,
 
 def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typing.Union[np.ndarray, list],
             interior_temperature: typing.Union[np.ndarray, list], area=0.68) -> np.ndarray:
+    """Calculates the mean U-value given the outdoor and indoor temperature and the heat loss"""
 
     heat_loss = np.asarray(heat_loss)
     exterior_temperature = np.asarray(exterior_temperature)
     interior_temperature = np.asarray(interior_temperature)
 
     delta_temperature = exterior_temperature - interior_temperature
-    u_value_ = np.nanmean(heat_loss / (delta_temperature[:-1] * area))
+    u_value_ = heat_loss / (delta_temperature[:-1] * area)
+    u_value_ = u_value_[~np.isinf(u_value_)]
+    u_value_mean = np.nanmean(u_value_)
 
-    return u_value_
+    logger.debug(f'Calculated U-value to: {u_value_mean}')
+
+    return u_value_mean
