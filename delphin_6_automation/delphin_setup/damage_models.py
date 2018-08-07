@@ -214,13 +214,14 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
     return mass_loss[1:], alpha[1:]
 
 
-def mould_pj(relative_humidity: list, temperature: list, aed_group='b') \
+def mould_pj(relative_humidity_list: typing.List[float], temperature_list: typing.List[float], aed_group='b') \
         -> typing.Tuple[typing.Iterable, typing.Iterable]:
-    """
-    Outputs RH difference between measured and critical RH for each time step and two limits.
+    """Outputs RH difference between measured and critical RH for each time step and two limits.
     Positive values imply how much RH exceed the critical RH. A low and upper critical RH are applied.
 
     Literature:
+    :param relative_humidity_list
+    :param temperature_list
     """
 
     betas = {'a': 0.043, 'b': 0.036, 'c': 0.028, 'd': 0.021, 'e': 0.014}
@@ -245,15 +246,19 @@ def mould_pj(relative_humidity: list, temperature: list, aed_group='b') \
     return difference_crit_low.tolist(), difference_crit_up.tolist()
 
 
-def algae(relative_humidity_list,
-          temperature_list,
-          material='dummy'):
-    '''
-    Implement UNIVPM Algae Model
-    '''
+def algae(relative_humidity_list: typing.List[float], temperature_list: typing.List[float], material=dict()):
+    """Implement UNIVPM Algae Model
+    Currently a dummy function!
+
+    :param relative_humidity_list
+    :param temperature_list
+    :param material: dictionary with relevant properties and their values
+
+    :return growth: list with eval. values
+    """
 
     def area_ratio_calc(total_porosity, roughness):
-        1 - np.exp(-(2.48 * total_porosity + 0.126 * roughness) ** 4)
+        return 1 - np.exp(-(2.48 * total_porosity + 0.126 * roughness) ** 4)
 
     # time - the variable (time from simulation start e.g. 3 years? in hours?)
     time = 1
@@ -266,24 +271,24 @@ def algae(relative_humidity_list,
     rate_coefficient = 1
     latency_time = 1
 
-    if material == 'dummy':
+    if material == dict():
         # [-], [my-meter], [m2/g]
         total_porosity = 0.44
         roughness = 6e-6
-        total_pore_area = 5   # not used in area_ratio_calc as indicated
-    else:
-        # split up or use parsing funktion to get values (if they excists?)
-        total_porosity, roughness, total_pore_area = material
+        total_pore_area = 5
 
     # Growth condition
-    if relative_humidity_list > 0.98:
-        on_off = 1
-    elif relative_humidity_list <= 0.98:
-        on_off = 0
+    growth = []
+    for rh in relative_humidity_list:
 
-    # Growth process
-    growth = on_off * tau_s * area_ratio_calc(total_porosity, roughness) \
-             * (1 - np.exp(-(tau_k * rate_coefficient) * (time - latency_time)))
+        if rh > 0.98:
+            on_off = 1
+        elif rh <= 0.98:
+            on_off = 0
+
+        # Growth process
+        growth.append(on_off * tau_s * area_ratio_calc(total_porosity, roughness) * (
+                    1 - np.exp(-(tau_k * rate_coefficient) * (time - latency_time))))
 
     return growth
 
