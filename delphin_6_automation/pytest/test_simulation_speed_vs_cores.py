@@ -58,8 +58,27 @@ def mock_submit_file(monkeypatch, request):
     monkeypatch.setattr(simulation_worker, 'create_submit_file', mock_return)
 
 
+@pytest.fixture()
+def mock_wait_until_finished(monkeypatch):
+
+    def mock_return(sim_id: str, estimated_run_time: int, simulation_folder: str):
+        finished = False
+        start_time = None
+
+        while not start_time:
+            if os.path.exists(f"{simulation_folder}/{sim_id}"):
+                start_time = datetime.datetime.now()
+
+        while not finished:
+
+            if os.path.exists(f"{simulation_folder}/{sim_id}/log/summary.txt"):
+                finished = True
+
+    monkeypatch.setattr(simulation_worker, 'wait_until_finished', mock_return)
+
+
 @pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
-def test_speed_vs_cores(mock_sleep, mock_submit_file, db_one_project):
+def test_speed_vs_cores(mock_wait_until_finished, mock_submit_file, db_one_project):
 
     db_one_project = str(db_one_project)
     folder = 'H:/ribuild'
