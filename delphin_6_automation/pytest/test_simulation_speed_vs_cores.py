@@ -19,7 +19,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 # RIBuild
 
 
-@pytest.skipif(platform.system() == 'Linux', reason='Test should only run locally')
+@pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
 @pytest.mark.parametrize('cores', [4, 8, 12, 16, 20, 24])
 def test_speed_vs_cores(cores, db_one_project, tmpdir):
 
