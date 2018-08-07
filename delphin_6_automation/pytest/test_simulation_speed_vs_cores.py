@@ -19,9 +19,47 @@ from delphin_6_automation.database_interactions import delphin_interactions
 # RIBuild
 
 
+@pytest.fixture(params=[8, 12, 16, 20, 24])
+def mock_submit_file(monkeypatch, request):
+
+    def mock_return(sim_id: str, simulation_folder: str, restart=False):
+        """Create a submit file for the DTU HPC queue system."""
+
+        delphin_path = '~/Delphin-6.0/bin/DelphinSolver'
+        computation_time = simulation_worker.get_average_computation_time(sim_id)
+        cpus = request.param
+        ram_per_cpu = '3MB'
+        submit_file = f'submit_{sim_id}.sh'
+
+        file = open(f"{simulation_folder}/{submit_file}", 'w', newline='\n')
+        file.write("#!/bin/bash\n")
+        file.write("#BSUB -J DelphinJob\n")
+        file.write("#BSUB -o DelphinJob_%J.out\n")
+        file.write("#BSUB -e DelphinJob_%J.err\n")
+        file.write("#BSUB -q hpc\n")
+        file.write(f"#BSUB -W {computation_time}\n")
+        file.write(f'#BSUB -R "rusage[mem={ram_per_cpu}] span[hosts=1]"\n')
+        file.write(f"#BSUB -n {cpus}\n")
+        file.write(f"#BSUB -N\n")
+        file.write('\n')
+        file.write(f"export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n")
+        file.write('\n')
+
+        if not restart:
+            file.write(f"{delphin_path} {sim_id}.d6p\n")
+        else:
+            file.write(f"{delphin_path} --restart {sim_id}.d6p\n")
+
+        file.write('\n')
+        file.close()
+
+        return submit_file, computation_time
+
+    monkeypatch.setattr(simulation_worker, 'create_submit_file', mock_return)
+
+
 @pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
-@pytest.mark.parametrize('cores', [4, 8, 12, 16, 20, 24])
-def test_speed_vs_cores(cores, db_one_project):
+def test_speed_vs_cores(mock_submit_file, db_one_project):
 
     db_one_project = str(db_one_project)
     folder = 'H:/ribuild'
