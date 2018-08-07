@@ -28,8 +28,8 @@ def test_create_submit_file(tmpdir, db_one_project, restart):
     delphin_id = delphin_entry.Delphin.objects().first().id
 
     expected_submit_file = ["#!/bin/bash\n", "#BSUB -J DelphinJob\n", "#BSUB -o DelphinJob_%J.out\n",
-                            "#BSUB -e DelphinJob_%J.err\n", "#BSUB -q hpc\n", "#BSUB -W 15\n",
-                            '#BSUB -R "rusage[mem=3MB] span[hosts=1]"\n', "#BSUB -n 24\n", "#BSUB -N\n",
+                            "#BSUB -e DelphinJob_%J.err\n", "#BSUB -q hpc\n", "#BSUB -W 120\n",
+                            '#BSUB -R "rusage[mem=3MB] span[hosts=1]"\n', "#BSUB -n 6\n", "#BSUB -N\n",
                             '\n', "export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n", '\n',
                             f"~/Delphin-6.0/bin/DelphinSolver {delphin_id}.d6p\n", '\n']
 
@@ -102,7 +102,7 @@ def test_get_average_computation_time(db_one_project, sim_time):
     if sim_time:
         assert computation_time == 3
     else:
-        assert computation_time == 15
+        assert computation_time == 120
 
 
 def test_simulation_worker(mock_hpc_worker, mock_find_next_sim_in_queue, capsys):
