@@ -17,9 +17,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+source_folder = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, source_folder)
 
 
 # -- General configuration ------------------------------------------------
@@ -32,10 +33,10 @@
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.imgmath',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages']
+              'sphinx.ext.coverage',
+              'sphinx.ext.imgmath',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.githubpages']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
@@ -81,7 +82,6 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
-
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -93,7 +93,8 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {'page_width': 800,}
+                      #'sidebar_width': 200}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -112,12 +113,10 @@ html_sidebars = {
     ]
 }
 
-
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'DelphinAutomationdoc'
-
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -147,7 +146,6 @@ latex_documents = [
      'Christian Kongsgaard, Thomas Perkov', 'manual'),
 ]
 
-
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
@@ -156,7 +154,6 @@ man_pages = [
     (master_doc, 'delphinautomation', 'Delphin Automation Documentation',
      [author], 1)
 ]
-
 
 # -- Options for Texinfo output -------------------------------------------
 
@@ -168,6 +165,3 @@ texinfo_documents = [
      author, 'DelphinAutomation', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

@@ -1,0 +1,223 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Delphin Interactions &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="General Interactions" href="general_interactions.html" />
+    <link rel="prev" title="RiBuild Database Interactions" href="database_interactions.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-delphin_6_automation.database_interactions.delphin_interactions">
+<span id="delphin-interactions"></span><h1>Delphin Interactions<a class="headerlink" href="#module-delphin_6_automation.database_interactions.delphin_interactions" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.add_sampling_dict">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">add_sampling_dict</code><span class="sig-paren">(</span><em>delphin_id: str</em>, <em>sample_data: dict</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#add_sampling_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.add_sampling_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a sample metadata dict to a Delphin project in the database.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.change_entry_simulation_length">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">change_entry_simulation_length</code><span class="sig-paren">(</span><em>sim_id</em>, <em>length</em>, <em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#change_entry_simulation_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.change_entry_simulation_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the simulation length of a Delphin project</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.check_delphin_file">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">check_delphin_file</code><span class="sig-paren">(</span><em>delphin_dict: dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#check_delphin_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.check_delphin_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a Delphin project file is valid for simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.download_delphin_entry">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">download_delphin_entry</code><span class="sig-paren">(</span><em>delphin_document: delphin_6_automation.database_interactions.db_templates.delphin_entry.Delphin</em>, <em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#download_delphin_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.download_delphin_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a database.rst entry to Delphin 6 project file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>delphin_document</strong> – Database entry id.</li>
+<li><strong>path</strong> – Path to where the files should be written.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.download_result_files">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">download_result_files</code><span class="sig-paren">(</span><em>result_obj: delphin_6_automation.database_interactions.db_templates.result_raw_entry.Result</em>, <em>download_path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#download_result_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.download_result_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes out all the result files from a result database entry.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>result_obj</strong> – Raw result entry</li>
+<li><strong>download_path</strong> – Where to write the files</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_dict_to_database">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_delphin_dict_to_database</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x000001E69FD8C5F8&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_delphin_dict_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_dict_to_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads a Delphin file to a database.rst.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>delphin_dict</strong> – Dict with a Delphin 6 project</li>
+<li><strong>queue_priority</strong> – Queue priority for the simulation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Database entry id</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_to_database">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_delphin_to_database</code><span class="sig-paren">(</span><em>delphin_file: str</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x000001E69FD8C5F8&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_delphin_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_to_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads a Delphin file to a database.rst.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>delphin_file</strong> – Path to a Delphin 6 project file</li>
+<li><strong>queue_priority</strong> – Queue priority for the simulation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Database entry id</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_processed_results">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_processed_results</code><span class="sig-paren">(</span><em>folder: str</em>, <em>delphin_id: str</em>, <em>raw_result_id: str</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x000001E69FD01630&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_processed_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_processed_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process simulation results and upload them to the database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_results_to_database">
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_results_to_database</code><span class="sig-paren">(</span><em>path_: str</em>, <em>delete_files: bool = True</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_results_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_results_to_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads the results from a Delphin simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – folder path containing the result files</li>
+<li><strong>delete_files</strong> – if True the result folder will be deleted. Default is True</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Result entry id</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="database_interactions.html">RiBuild Database Interactions</a><ul>
+      <li>Previous: <a href="database_interactions.html" title="previous chapter">RiBuild Database Interactions</a></li>
+      <li>Next: <a href="general_interactions.html" title="next chapter">General Interactions</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/delphin_interactions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
