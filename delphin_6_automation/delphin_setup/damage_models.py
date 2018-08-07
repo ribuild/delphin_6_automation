@@ -214,14 +214,12 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
     return mass_loss[1:], alpha[1:]
 
 
-def mould_pj(relative_humidity_list: typing.List[float], temperature_list: typing.List[float], aed_group='b') \
+def mould_pj(relative_humidity: typing.List[float], temperature: typing.List[float], aed_group='b') \
         -> typing.Tuple[typing.Iterable, typing.Iterable]:
     """Outputs RH difference between measured and critical RH for each time step and two limits.
     Positive values imply how much RH exceed the critical RH. A low and upper critical RH are applied.
 
     Literature:
-    :param relative_humidity_list
-    :param temperature_list
     """
 
     betas = {'a': 0.043, 'b': 0.036, 'c': 0.028, 'd': 0.021, 'e': 0.014}
