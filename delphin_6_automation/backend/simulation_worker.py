@@ -326,7 +326,7 @@ def menu():
 
     elif choice == 'b':
         logger.info('Simulation on DTU HPC Chosen\n')
-        n_threads = 8
+        n_threads = 28
         threads = []
 
         for n in range(n_threads):
