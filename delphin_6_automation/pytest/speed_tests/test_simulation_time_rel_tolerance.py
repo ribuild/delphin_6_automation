@@ -18,6 +18,10 @@ from delphin_6_automation.backend import simulation_worker
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
+#
+# Result: No significant changes could be found
+#
+
 
 @pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
 @pytest.mark.parametrize('rel_tol', [1e-05, 1e-04, 1e-03])
