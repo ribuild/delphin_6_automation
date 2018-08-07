@@ -59,7 +59,7 @@ def mock_submit_file(monkeypatch, request):
 
 
 @pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
-def test_speed_vs_cores(mock_submit_file, db_one_project):
+def test_speed_vs_cores(mock_sleep, mock_submit_file, db_one_project):
 
     db_one_project = str(db_one_project)
     folder = 'H:/ribuild'
