@@ -6,7 +6,7 @@ __license__ = 'MIT'
 
 # Modules:
 import copy
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import typing
 
 # RiBuild Modules:
@@ -381,5 +381,21 @@ def update_output_locations(delphin: dict) -> dict:
                 elif len(layers) == 6:
                     width = layers[0]["x_width"] + layers[1]["x_width"] + layers[2]["x_width"] - 0.0005
                     assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+    return delphin
+
+
+def change_kirchhoff_potential(delphin: dict, set_to: bool) -> dict:
+
+    sim_parameters = delphin['DelphinProject']['Init']['SimulationParameter']
+
+    try:
+        if isinstance(sim_parameters['IBK:Flag'], list):
+            pass
+        else:
+            sim_parameters['IBK:Flag']['#text'] = str(set_to).lower()
+    except KeyError:
+        sim_parameters['IBK:Flag'] = OrderedDict([('@name', 'UseKirchhoffPotential'),
+                                                  ('#text', str(set_to).lower())])
 
     return delphin

@@ -194,3 +194,18 @@ def test_update_output_locations(delphin_with_insulation, width, request):
                     correct_width = width + 0.0125
                 found_location = float(assignment['IBK:Point3D'].split(' ')[0])
                 assert pytest.approx(found_location) == correct_width
+
+
+@pytest.mark.parametrize('change_to', [True, False])
+def test_change_kirchhoff_potential(delphin_file_path, change_to):
+
+    delphin_project = delphin_parser.dp6_to_dict(delphin_file_path)
+    delphin_permutations.change_kirchhoff_potential(delphin_project, change_to)
+
+    kirchhoff = delphin_project['DelphinProject']['Init']['SimulationParameter']['IBK:Flag']['#text']
+
+    if kirchhoff == 'false':
+        assert not change_to
+
+    elif kirchhoff == 'true':
+        assert change_to

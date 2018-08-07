@@ -534,3 +534,17 @@ def add_sampling_dict(delphin_id: str, sample_data: dict) -> str:
     logger.debug(f'Added sample metadata to Delphin project with ID: {delphin_id}')
 
     return entry.id
+
+
+def change_entry_kirchhoff_potential(sim_id, set_to):
+    """Change the simulation length of a Delphin project"""
+
+    delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    permutations.change_kirchhoff_potential(delphin_dict, set_to)
+
+    delphin_document.update(set__dp6_file=delphin_dict)
+
+    logger.debug(f'Changed Kirchhoff potential to {set_to} for Delphin project with ID: {sim_id}')
+
+    return delphin_document.id
