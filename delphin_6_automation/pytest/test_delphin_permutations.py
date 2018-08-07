@@ -7,6 +7,8 @@ __author__ = "Christian Kongsgaard"
 # Modules:
 from collections import OrderedDict
 import pytest
+import xmltodict
+import os
 
 # RiBuild Modules:
 from delphin_6_automation.delphin_setup import delphin_permutations
@@ -152,16 +154,15 @@ def test_change_simulation_length(delphin_file_path, length, value):
 
 
 @pytest.mark.parametrize('width', [0.1, 0.3, 0.5])
-def test_update_output_locations(delphin_file_path, width):
+def test_update_output_locations(delphin_with_insulation, width, request):
 
-    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
-    delphin_permutations.change_layer_width(delphin_dict,
+    delphin_permutations.change_layer_width(delphin_with_insulation,
                                             'Old Building Brick Dresden ZP [504]',
                                             width)
-    delphin_permutations.update_output_locations(delphin_dict)
+    delphin_permutations.update_output_locations(delphin_with_insulation)
 
-    x_steps = delphin_permutations.convert_discretization_to_list(delphin_dict)
-    for assignment in delphin_dict['DelphinProject']['Assignments']['Assignment']:
+    x_steps = delphin_permutations.convert_discretization_to_list(delphin_with_insulation)
+    for assignment in delphin_with_insulation['DelphinProject']['Assignments']['Assignment']:
         if assignment['@type'] == 'Output':
             if assignment['Reference'].endswith('algae'):
                 assert assignment['IBK:Point3D'] == '0.0005 0.034 0'
@@ -173,9 +174,23 @@ def test_update_output_locations(delphin_file_path, width):
                 assert assignment['Range'] == f'{len(x_steps)-1} 0 {len(x_steps)-1} 0'
 
             elif assignment['Reference'].endswith('interior surface'):
-                correct_width = width + 0.0245
-                assert pytest.approx(assignment['IBK:Point3D'] == f'{correct_width} 0.034 0')
+                if 'exterior' not in request.node.name and 'insulated' not in request.node.name:
+                    correct_width = width + 0.0125
+                elif 'exterior' in request.node.name and 'insulated' in request.node.name:
+                    correct_width = width + 0.0685
+                elif 'interior' in request.node.name and 'insulated' in request.node.name:
+                    correct_width = width + 0.0565
+                else:
+                    correct_width = width + 0.0245
+                found_location = float(assignment['IBK:Point3D'].split(' ')[0])
+                assert pytest.approx(found_location) == correct_width
 
             elif assignment['Reference'].endswith('mould'):
-                correct_width = width + 0.0125
-                assert pytest.approx(assignment['IBK:Point3D'] == f'{correct_width} 0.034 0')
+                if 'exterior' not in request.node.name and 'insulated' not in request.node.name:
+                    correct_width = width + 0.0005
+                elif 'exterior' in request.node.name and 'insulated' in request.node.name:
+                    correct_width = width + 0.0245
+                else:
+                    correct_width = width + 0.0125
+                found_location = float(assignment['IBK:Point3D'].split(' ')[0])
+                assert pytest.approx(found_location) == correct_width
