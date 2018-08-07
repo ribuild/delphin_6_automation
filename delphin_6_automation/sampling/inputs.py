@@ -258,6 +258,7 @@ def construct_design_options():
     # appreciate formatted insulation systems
     systems = insulation_systems()
     folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
+    construct_delphin_reference()
 
     # permutation of insulation systems
     for system_number in systems.index.levels[0]:
