@@ -537,7 +537,7 @@ def add_sampling_dict(delphin_id: str, sample_data: dict) -> str:
 
 
 def change_entry_kirchhoff_potential(sim_id, set_to):
-    """Change the simulation length of a Delphin project"""
+    """Change the Kirchhoff potential of a Delphin project"""
 
     delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
     delphin_dict = dict(delphin_document.dp6_file)
@@ -546,5 +546,19 @@ def change_entry_kirchhoff_potential(sim_id, set_to):
     delphin_document.update(set__dp6_file=delphin_dict)
 
     logger.debug(f'Changed Kirchhoff potential to {set_to} for Delphin project with ID: {sim_id}')
+
+    return delphin_document.id
+
+
+def change_entry_solver_relative_tolerance(sim_id, rel_tol):
+    """Change the solver relative tolerance of a Delphin project"""
+
+    delphin_document = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_dict = dict(delphin_document.dp6_file)
+    permutations.change_solver_relative_tolerance(delphin_dict, rel_tol)
+
+    delphin_document.update(set__dp6_file=delphin_dict)
+
+    logger.debug(f'Changed the solver relative tolerance to {rel_tol} for Delphin project with ID: {sim_id}')
 
     return delphin_document.id
