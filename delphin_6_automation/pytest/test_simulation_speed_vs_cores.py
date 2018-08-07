@@ -8,6 +8,7 @@ __license__ = 'MIT'
 import pytest
 import datetime
 import os
+import platform
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
@@ -18,7 +19,8 @@ from delphin_6_automation.database_interactions import delphin_interactions
 # RIBuild
 
 
-@pytest.mark.parametrize(['cores', [4, 8, 12, 16, 20, 24]])
+@pytest.skipif(platform.system() == 'Linux', reason='Test should only run locally')
+@pytest.mark.parametrize('cores', [4, 8, 12, 16, 20, 24])
 def test_speed_vs_cores(cores, db_one_project, tmpdir):
 
     folder = 'H:/ribuild'
