@@ -18,6 +18,10 @@ from delphin_6_automation.backend import simulation_worker
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
+#
+# Result: Simulation without Kirchhoff is significatly faster
+#
+
 
 @pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
 @pytest.mark.parametrize('change_to', [True, False])

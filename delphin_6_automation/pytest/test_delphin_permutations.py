@@ -209,3 +209,14 @@ def test_change_kirchhoff_potential(delphin_file_path, change_to):
 
     elif kirchhoff == 'true':
         assert change_to
+
+
+@pytest.mark.parametrize('rel_tol', [1e-05, 1e-04, 1e-03])
+def test_change_solver_relative_tolerance(delphin_file_path, rel_tol):
+
+    delphin_project = delphin_parser.dp6_to_dict(delphin_file_path)
+    delphin_permutations.change_solver_relative_tolerance(delphin_project, rel_tol)
+
+    solver_tol = float(delphin_project['DelphinProject']['Init']['SolverParameter']['IBK:Parameter']['#text'])
+
+    assert solver_tol == rel_tol

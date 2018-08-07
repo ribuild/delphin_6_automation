@@ -391,7 +391,7 @@ def change_kirchhoff_potential(delphin: dict, set_to: bool) -> dict:
 
     try:
         if isinstance(sim_parameters['IBK:Flag'], list):
-            pass
+            raise NotImplementedError
         else:
             sim_parameters['IBK:Flag']['#text'] = str(set_to).lower()
     except KeyError:
@@ -399,3 +399,25 @@ def change_kirchhoff_potential(delphin: dict, set_to: bool) -> dict:
                                                   ('#text', str(set_to).lower())])
 
     return delphin
+
+
+def change_solver_relative_tolerance(delphin: dict, relative_tolerance: float) -> dict:
+
+    try:
+        solver_parameters = delphin['DelphinProject']['Init']['SolverParameter']
+        if isinstance(solver_parameters['IBK:Parameter'], list):
+            raise NotImplementedError
+
+        elif delphin['DelphinProject']['Init']['SolverParameter']['IBK:Parameter']['@name'] == 'RelTol':
+            delphin['DelphinProject']['Init']['SolverParameter']['IBK:Parameter']['#text'] = str(relative_tolerance)
+
+        else:
+            raise KeyError
+
+    except KeyError:
+        delphin['DelphinProject']['Init']['SolverParameter'] = OrderedDict()
+        delphin['DelphinProject']['Init']['SolverParameter']['IBK:Parameter'] = OrderedDict([('@name', 'RelTol'),
+                                                                                             ('@unit', '---'),
+                                                                                             ('#text',
+                                                                                              str(relative_tolerance))
+                                                                                             ])
