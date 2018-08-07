@@ -27,7 +27,7 @@ def test_speed_vs_cores(cores, db_one_project, tmpdir):
     folder = 'H:/ribuild'
     simulation_folder = os.path.join(folder, db_one_project)
     delphin_interactions.change_entry_simulation_length(db_one_project, 10, 'd')
-    general_interactions.download_full_project_from_database(db_one_project, folder)
+    general_interactions.download_full_project_from_database(db_one_project, simulation_folder)
     submit_file, estimated_time = simulation_worker.create_submit_file(db_one_project, simulation_folder)
     simulation_worker.submit_job(submit_file, db_one_project)
 
