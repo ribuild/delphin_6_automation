@@ -14,6 +14,7 @@ import platform
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.backend import simulation_worker
 from delphin_6_automation.database_interactions import delphin_interactions
+from delphin_6_automation.delphin_setup import weather_modeling
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -77,8 +78,18 @@ def mock_wait_until_finished(monkeypatch):
     monkeypatch.setattr(simulation_worker, 'wait_until_finished', mock_return)
 
 
+@pytest.fixture()
+def mock_driving_rain(monkeypatch):
+
+    def mock_return(precipitation: list, wind_direction: list, wind_speed: list, wall_location: dict,
+                 orientation, inclination=90, catch_ratio=None):
+        return [0.0 for _ in range(len(precipitation))]
+
+    monkeypatch.setattr(weather_modeling, 'driving_rain', mock_return)
+
+
 @pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
-def test_speed_vs_cores(mock_wait_until_finished, mock_submit_file, db_one_project):
+def test_speed_vs_cores(mock_driving_rain, mock_wait_until_finished, mock_submit_file, db_one_project):
 
     db_one_project = str(db_one_project)
     folder = 'H:/ribuild'
