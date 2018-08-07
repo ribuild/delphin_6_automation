@@ -28,7 +28,7 @@ def mock_submit_file(monkeypatch, request):
         delphin_path = '~/Delphin-6.0/bin/DelphinSolver'
         computation_time = simulation_worker.get_average_computation_time(sim_id)
         cpus = request.param
-        ram_per_cpu = '3MB'
+        ram_per_cpu = '7MB'
         submit_file = f'submit_{sim_id}.sh'
 
         file = open(f"{simulation_folder}/{submit_file}", 'w', newline='\n')
