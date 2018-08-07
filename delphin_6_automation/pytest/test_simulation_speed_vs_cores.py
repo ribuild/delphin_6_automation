@@ -21,7 +21,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 
 @pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
 @pytest.mark.parametrize('cores', [4, 8, 12, 16, 20, 24])
-def test_speed_vs_cores(cores, db_one_project, tmpdir):
+def test_speed_vs_cores(cores, db_one_project):
 
     db_one_project = str(db_one_project)
     folder = 'H:/ribuild'
@@ -36,5 +36,5 @@ def test_speed_vs_cores(cores, db_one_project, tmpdir):
     simulation_worker.wait_until_finished(db_one_project, estimated_time, simulation_folder)
     delta_time = datetime.datetime.now() - time_0
 
-    with open(os.path.join(tmpdir, 'time.txt'), 'a') as out:
+    with open(os.path.join(folder, 'time.txt'), 'a') as out:
         out.write(str(delta_time.total_seconds()))
