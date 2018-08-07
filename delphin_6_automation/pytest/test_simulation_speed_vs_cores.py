@@ -23,6 +23,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 @pytest.mark.parametrize('cores', [4, 8, 12, 16, 20, 24])
 def test_speed_vs_cores(cores, db_one_project, tmpdir):
 
+    db_one_project = str(db_one_project)
     folder = 'H:/ribuild'
     simulation_folder = os.path.join(folder, db_one_project)
     delphin_interactions.change_entry_simulation_length(db_one_project, 10, 'd')
