@@ -173,26 +173,38 @@ def test_update_output_locations(delphin_with_insulation, width, request):
                 assert assignment['Range'] == f'{len(x_steps)-1} 0 {len(x_steps)-1} 0'
 
             elif assignment['Reference'].endswith('interior surface'):
-                if 'exterior' not in request.node.name and 'insulated' not in request.node.name:
-                    correct_width = width + 0.0125
-                elif 'exterior' in request.node.name and 'insulated' in request.node.name:
-                    correct_width = width + 0.0685
-                elif 'interior' in request.node.name and 'insulated' in request.node.name:
-                    correct_width = width + 0.0565
+                if 'exterior' not in request.node.name:
+                    if 'insulated' not in request.node.name:
+                        correct_width = width + 0.0115
+                    elif '2' in request.node.name:
+                        correct_width = width + 0.0515
+                    else:
+                        correct_width = width + 0.0555
                 else:
-                    correct_width = width + 0.0245
+                    if 'insulated' not in request.node.name:
+                        correct_width = width + 0.0235
+                    elif '2' in request.node.name:
+                        correct_width = width + 0.0635
+                    else:
+                        correct_width = width + 0.0675
+
                 found_location = float(assignment['IBK:Point3D'].split(' ')[0])
-                assert pytest.approx(found_location) == correct_width
+                assert correct_width == pytest.approx(found_location)
 
             elif assignment['Reference'].endswith('mould'):
-                if 'exterior' not in request.node.name and 'insulated' not in request.node.name:
-                    correct_width = width + 0.0005
+                if 'exterior' not in request.node.name:
+                    if 'insulated' not in request.node.name:
+                        correct_width = width + 0.0005
+                    else:
+                        correct_width = width + 0.0115
+
                 elif 'exterior' in request.node.name and 'insulated' in request.node.name:
-                    correct_width = width + 0.0245
+                    correct_width = width + 0.0235
                 else:
-                    correct_width = width + 0.0125
+                    correct_width = width + 0.0115
+
                 found_location = float(assignment['IBK:Point3D'].split(' ')[0])
-                assert pytest.approx(found_location) == correct_width
+                assert correct_width == pytest.approx(found_location)
 
 
 @pytest.mark.parametrize('change_to', [True, False])

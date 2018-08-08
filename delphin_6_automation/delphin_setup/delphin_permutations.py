@@ -381,9 +381,13 @@ def update_output_locations(delphin: dict) -> dict:
                     width = layers[0]["x_width"] - 0.0005
                     assignment['IBK:Point3D'] = f'{width} 0.034 0'
 
-                elif len(layers) in [3, 5]:
-                    width = layers[0]["x_width"] + layers[1]["x_width"] - 0.0005
-                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+                elif len(layers) in [3, 4, 5]:
+                    if layers[0]["x_width"] > layers[1]["x_width"]:
+                        width = layers[0]["x_width"] + layers[1]["x_width"] - 0.0005
+                        assignment['IBK:Point3D'] = f'{width} 0.034 0'
+                    else:
+                        width = layers[0]["x_width"] + layers[1]["x_width"] + layers[2]["x_width"] - 0.0005
+                        assignment['IBK:Point3D'] = f'{width} 0.034 0'
 
                 elif len(layers) == 6:
                     width = layers[0]["x_width"] + layers[1]["x_width"] + layers[2]["x_width"] - 0.0005
