@@ -1,0 +1,30 @@
+D6MARLZ! 006.000
+
+[IDENTIFICATION]
+  NAME                     = DE: Luftschicht 50 mm (horizontal) |EN: Air gap 50 mm (horizontal) |IT: Strato d'aria 50 mm (orizzontale) |RU: Слой воздуха 50 mm (горизонтально)
+  LABORATORY               = DE: Literatur |EN: Literature |IT: Letteratura |RU: Литертура
+  DATE                     = 11.04.14
+  COLOUR                   = #409020
+  FLAGS                    = AIR WATER_TIGHT 
+  USE_INSTEAD              = 0
+  CATEGORY                 = MISC
+  COMMENTS                 = DE: Werte nur für eine Dicke von 50 mm! |EN: Only valid with a thickness of 50 mm! |IT: Valori solo per spessore di 50 mm! |RU: Данные только для Толщины в 50 mm!
+  DBTYPE                   = 1
+  HATCHING                 = 13
+
+
+[STORAGE_BASE_PARAMETERS]
+  RHO                      = 1.3 kg/m3
+  CE                       = 1050 J/kgK
+  THETA_POR                = 1 m3/m3
+  THETA_EFF                = 1 m3/m3
+  THETA_80                 = 1e-005 m3/m3
+
+
+[TRANSPORT_BASE_PARAMETERS]
+  LAMBDA                   = 0.313 W/mK
+  AW                       = 1e-007 kg/m2s05
+  MEW                      = 0.2 -
+  KLEFF                    = 0 s
+  KG                       = 0.1 s
+

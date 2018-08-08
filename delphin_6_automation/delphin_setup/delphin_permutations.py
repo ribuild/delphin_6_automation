@@ -49,6 +49,7 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
     :return: The found layer
     """
 
+    found = False
     if isinstance(identifier, int):
         return layers[identifier]
 
@@ -59,6 +60,12 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
 
             if (layers[layer_]['material'] == identifier) | (id_string in layers[layer_]['material']):
                 return layers[layer_]
+
+        if not found:
+            error = f'Could not find material: {identifier} among layers'
+            logger.error(error)
+            raise KeyError(error)
+
     else:
         error_message = f'identifier should be int or str. Type given was: {type(identifier)}'
         logger.error(error_message)
@@ -135,7 +142,8 @@ def change_layer_widths(delphin_dict: dict, layer_material: str, widths: list) -
     permutated_dicts = []
 
     for width in widths:
-        permutated_dicts.append(change_layer_width(delphin_dict, layer_material, width))
+        new_delphin = copy.deepcopy(delphin_dict)
+        permutated_dicts.append(change_layer_width(new_delphin, layer_material, width))
 
     return permutated_dicts
 
@@ -151,20 +159,28 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
     """
 
     new_delphin_dict = copy.deepcopy(delphin_dict)
+    found = False
 
     # Find original material
     for mat_index in range(0, len(delphin_dict['DelphinProject']['Materials']['MaterialReference'])):
 
         name = delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index]['@name']
-        if name == original_material:
+        if original_material in name:
             # Replace with new material
             new_delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index] = new_material
+            found = True
+            break
+
+    if not found:
+        error = f'Could not find material: {original_material} in Delphin file.'
+        logger.error(error)
+        raise KeyError(error)
 
     # Find original material assignment
     for assign_index in range(0, len(delphin_dict['DelphinProject']['Assignments']['Assignment'])):
 
         reference = delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference']
-        if reference == original_material:
+        if original_material in reference:
             # Replace with new material
             new_delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] = \
                 new_material['@name']

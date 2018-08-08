@@ -1,4 +1,4 @@
-__author__ = "Christian Kongsgaard"
+__author__ = "Christian Kongsgaard, Simon Jørgensen"
 __license__ = 'MIT'
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -10,6 +10,8 @@ import numpy as np
 import xmltodict
 import os
 from collections import defaultdict
+import typing
+import shutil
 
 # RiBuild Modules
 from delphin_6_automation.file_parsing.delphin_parser import dp6_to_dict
@@ -20,7 +22,7 @@ from delphin_6_automation.database_interactions.material_interactions import get
 # RIBuild
 
 
-def construction_types() -> list:
+def construction_types() -> typing.List[str]:
     """Gets available template strings.
 
     :return: list of file name strings
@@ -31,13 +33,11 @@ def construction_types() -> list:
     return os.listdir(folder)
 
 
-def wall_core_materials() -> list:
+def wall_core_materials(folder: str) -> typing.List[str]:
     """All included material IDs relevant for a wall's core.
 
     :return: list of IDs
     """
-
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
 
     bricks = pd.read_excel(folder + '/Brick.xlsx')
     natural_stones = pd.read_excel(folder + '/Natural Stone.xlsx')
@@ -47,43 +47,30 @@ def wall_core_materials() -> list:
     return material_list
 
 
-def plaster_materials() -> list:
+def plaster_materials(folder: str) -> typing.List[str]:
     """All included material IDs relevant for plastering of a wall.
 
     :return: list of IDs
     """
-
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
 
     plasters = pd.read_excel(folder + '/Plaster.xlsx')['Material ID'].tolist()
 
     return plasters
 
 
-def insulation_type() -> list:
-    """All included material IDs in insulation systems as such.
+def insulation_type(folder: str) -> typing.List[typing.List[int]]:
+    """All included material IDs in insulation systems as such."""
 
-    :return:
-    """
-
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
     insulation = pd.read_excel(folder + '/InsulationSystems.xlsx')['Material ID'].str.split(', ')
 
     return [[int(i) for i in sublist]
             for sublist in insulation.tolist()]
 
 
-def insulation_systems() -> pd.DataFrame:
-    """Reformat insulation DataFrame to different design options DataFrame
+def insulation_systems(folder: str, rows_to_read=2, excel_file='InsulationSystems') -> pd.DataFrame:
+    """Reformat insulation DataFrame to different design options DataFrame"""
 
-    :return:
-    """
-
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
-
-    # partial insulation system portfolio and test file functional 20180807 SBJ
-    constructions = pd.read_excel(folder + '/InsulationSystems.xlsx', usecols=[0, 3, 4, 5, 6], nrows=2)
-    # constructions = pd.read_excel(folder + '/InsulationSystems_test.xlsx', usecols=[0, 3, 4, 5, 6])
+    constructions = pd.read_excel(folder + f'/{excel_file}.xlsx', usecols=[0, 3, 4, 5, 6], nrows=rows_to_read)
 
     systems = pd.DataFrame()
     level_1 = []
@@ -95,13 +82,7 @@ def insulation_systems() -> pd.DataFrame:
         # provide distinction between ID strings, dimensions and ect..
         for col in row:
 
-            if type(col) is float:
-                material_id_and_dim.append([col])
-
-            elif type(col) is int:
-                material_id_and_dim.append([col])
-
-            elif type(col) is bool:
+            if isinstance(col, (float, int, bool)):
                 material_id_and_dim.append([col])
 
             else:
@@ -133,7 +114,7 @@ def insulation_systems() -> pd.DataFrame:
     return systems
 
 
-def delphin_templates() -> dict:
+def delphin_templates(folder: str) -> dict:
     """Titles on delphin files to variate (select by amount of layers).
 
     :return: dictionary with integer keys according to layers
@@ -141,45 +122,39 @@ def delphin_templates() -> dict:
 
     # available template files indexed using amount of layers
     to_copy = defaultdict(lambda: [])
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
 
     for root, dirs, files in os.walk(folder + '/delphin'):
 
         for title in files:
 
-            fileinfo = title.split('_')[-1]
-
-            if fileinfo == 'plaster.d6p':
+            if title.endswith('plaster.d6p'):
                 to_copy[0].append(title)
 
-            elif fileinfo == 'insulated2layers.d6p':
+            elif title.endswith('insulated2layers.d6p'):
                 to_copy[2].append(title)
 
-            elif fileinfo == 'insulated3layers.d6p':
+            elif title.endswith('insulated3layers.d6p'):
                 to_copy[3].append(title)
 
     return to_copy
 
 
-def construct_delphin_reference():
-    """Generate Delphin files for models without insulation.
+def construct_delphin_reference(folder: str) -> typing.List[str]:
+    """Generate Delphin files for models without insulation."""
 
-    :return:
-    """
+    copied_files = []
 
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
+    for i, file in enumerate(delphin_templates(folder)[0]):
+        from_file = os.path.join(folder, 'delphin', file)
+        new_name = file.split('.')[0] + '_reference.d6p'
+        to_file = os.path.join(folder, 'design', new_name)
+        copied_files.append(new_name)
+        shutil.copyfile(from_file, to_file)
 
-    # each reference wall (0 layers) with number for specfic identification
-    for i, file in enumerate(delphin_templates()[0]):
-        design = dp6_to_dict(folder + '/delphin/' + file)
-
-        xmltodict.unparse(design,
-                          output=open(os.path.join(folder,
-                                                   'design',
-                                                   file.split('.')[0] + '_reference.d6p'), 'w'), pretty=True)
+    return copied_files
 
 
-def implement_system_materials(delphin_dict: dict, system: pd.DataFrame):
+def implement_system_materials(delphin_dict: dict, system: pd.DataFrame) -> dict:
     """Loop through materials of the system.
 
     :param delphin_dict: relevant template delphin dict
@@ -207,7 +182,7 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame):
 
         # step 1 new delphin dict - input dict, str, dict
         delphin_dict = delphin_permutations.change_layer_material(delphin_dict,
-                                                                  material,
+                                                                  material.split('[')[-1],
                                                                   db_material
                                                                   )
 
@@ -223,13 +198,8 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame):
     return delphin_dict
 
 
-def implement_insulation_widths(delphin_dict: dict, system: pd.DataFrame) -> list:
-    """Permutate with of system applied materials.
-
-    :param delphin_dict:
-    :param system:
-    :return:
-    """
+def implement_insulation_widths(delphin_dict: dict, system: pd.DataFrame) -> typing.List[dict]:
+    """Permutate with of system applied materials"""
 
     # look up current material assume system
     db_material = get_material_info(system.loc['insulation' + '_00', 'ID'])
@@ -240,25 +210,19 @@ def implement_insulation_widths(delphin_dict: dict, system: pd.DataFrame) -> lis
                                                                 db_material['@name'],
                                                                 new_widths.tolist()
                                                                 )
-    # inspection of result
-    for delphin_dict in permutated_dicts:
-        layers = delphin_permutations.get_layers(delphin_dict)
 
     return permutated_dicts
 
 
-def construct_design_options():
-    """Generate Delphin files to cover all the design options.
-
-        Options arise from separate insulation systems X variation
-         within those e.g. thickness of insulation layer.
-        :return:
+def construct_design_files(folder: str) -> typing.List[str]:
+    """
+    Generate Delphin files to cover all the design options.
+    Options arise from separate insulation systems X variation within those e.g. thickness of insulation layer.
     """
 
     # appreciate formatted insulation systems
-    systems = insulation_systems()
-    folder = os.path.dirname(os.path.realpath(__file__)) + '/input_files'
-    construct_delphin_reference()
+    systems = insulation_systems(folder=folder)
+    file_names = construct_delphin_reference(folder)
 
     # permutation of insulation systems
     for system_number in systems.index.levels[0]:
@@ -273,10 +237,10 @@ def construct_design_options():
         else:
             layers = 2
 
-        for file in delphin_templates()[layers]:
+        for file in delphin_templates(folder)[layers]:
 
             # each template as dict to be permutated
-            design = dp6_to_dict(folder + '/delphin/' + file)
+            design = dp6_to_dict(os.path.join(folder, 'delphin', file))
 
             # material and dimension change
             delphin_with_system_materials = implement_system_materials(design, system)
@@ -288,9 +252,19 @@ def construct_design_options():
 
             # write option files (above dicts)
             for i, dim in enumerate(system.loc[insulation_select, 'Dimension']):
+                file_name = f'{file.split(".")[0]}_option{str(system_number).zfill(2)}-{str(dim).zfill(3)}.d6p'
+                file_names.append(file_name)
                 xmltodict.unparse(option_dicts[i],
                                   output=open(os.path.join(folder,
                                                            'design',
-                                                           file.split('.')[0] + '_option' + str(system_number).zfill(2)\
-                                                           + '-' + str(dim).zfill(3) + '.d6p'),
+                                                           file_name),
                                               'w'), pretty=True)
+
+    return file_names
+
+
+def design_options(folder=os.path.dirname(os.path.realpath(__file__)) + '/input_files') -> typing.List[str]:
+
+    design_files = construct_design_files(folder)
+
+    return [file.split('.')[0] for file in design_files]

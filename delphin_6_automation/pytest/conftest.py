@@ -13,6 +13,7 @@ import shutil
 import sys
 import numpy as np
 import time
+import pandas as pd
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -29,6 +30,7 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry
 from delphin_6_automation.sampling import sampling
 from delphin_6_automation.backend import simulation_worker
+from delphin_6_automation.sampling import inputs
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -112,6 +114,18 @@ def add_five_materials(test_folder, setup_database):
     material_files = ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6',
                       'GlueMortarForClimateBoard_705.m6', 'CalsithermCalciumsilikatHamstad_571.m6',
                       'KlimaputzMKKQuickmix_125.m6']
+
+    for file in material_files:
+        material_interactions.upload_material_file(test_folder + '/materials/' + file)
+
+    yield
+
+
+@pytest.fixture()
+def add_insulation_materials(test_folder, setup_database):
+    material_files = ['CalciumSilicateBoard_39.m6', 'PolystyreneBoardExpanded_187.m6',
+                      'GlueMortarForClimateBoard_705.m6', 'CarraraMamorSkluptur_559.m6',
+                      'KlimaputzMKKQuickmix_125.m6', 'AirGapHorizontal50mm_12.m6']
 
     for file in material_files:
         material_interactions.upload_material_file(test_folder + '/materials/' + file)
@@ -326,3 +340,45 @@ def add_sample_for_errors(add_strategy_for_errors, dummy_sample):
     sample_id = sampling_interactions.upload_samples(dummy_sample, 0)
     sampling_interactions.upload_sample_mean(sample_id, mean)
     sampling_interactions.add_sample_to_strategy(strategy_doc.id, sample_id)
+
+
+@pytest.fixture()
+def dummy_systems():
+
+    multi_index = pd.MultiIndex(levels=[[0, 1], ['insulation_00', 'insulation_01',
+                                                 'insulation_02', 'finish_00', 'detail_00']],
+                                labels=[[0, 0, 0, 0, 0, 1, 1, 1], [0, 1, 2, 3, 4, 0, 1, 3]],
+                                names=['ID', 'Dimension'],)
+    frame = pd.DataFrame(index=multi_index, data={'ID': [39, 39, 39, 125, 705, 187, 187, 559],
+                                                  'Dimension': [25, 50, 100, 10, 5, 25, 35, 12]})
+
+    return frame
+
+
+@pytest.fixture()
+def delphin_reference_folder(test_folder, tmpdir):
+
+    folder = tmpdir.mkdir('test')
+    folder.mkdir('design')
+    folder.mkdir('delphin')
+    delphin_folder = os.path.join(test_folder, 'delphin')
+
+    for file in os.listdir(delphin_folder):
+        new_file = os.path.join(folder, 'delphin', file)
+        shutil.copyfile(os.path.join(delphin_folder, file), new_file)
+
+    return folder
+
+
+@pytest.fixture()
+def mock_insulation_systems(monkeypatch, dummy_systems):
+
+    def mock_return(rows_to_read=None, excel_file=None, folder=None):
+        return dummy_systems
+
+    monkeypatch.setattr(inputs, 'insulation_systems', mock_return)
+
+
+@pytest.fixture()
+def input_sets():
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_files', 'input_sets')
