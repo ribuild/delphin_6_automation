@@ -170,7 +170,7 @@ def add_results(db_one_project, tmpdir, test_folder):
 
 
 @pytest.fixture()
-def add_sampling_strategy(empty_database, add_three_years_weather, tmpdir):
+def add_sampling_strategy(empty_database, add_three_years_weather, tmpdir, mock_design_options):
     test_dir = tmpdir.mkdir('test')
     strategy = sampling.create_sampling_strategy(test_dir)
     sampling_interactions.upload_sampling_strategy(strategy)
@@ -371,6 +371,26 @@ def delphin_reference_folder(test_folder, tmpdir):
 
 
 @pytest.fixture()
+def delphin_design_folder(test_folder, tmpdir):
+
+    if not os.path.exists(os.path.join(tmpdir, 'test')):
+        folder = tmpdir.mkdir('test')
+        folder.mkdir('design')
+        folder.mkdir('delphin')
+    else:
+        folder = os.path.join(tmpdir, 'test')
+        os.mkdir(os.path.join(folder, 'design'))
+        os.mkdir(os.path.join(folder, 'delphin'))
+
+    delphin_folder = os.path.join(test_folder, 'delphin')
+
+    for file in os.listdir(delphin_folder):
+        new_file = os.path.join(folder, 'design', file)
+        shutil.copyfile(os.path.join(delphin_folder, file), new_file)
+
+    return os.path.join(folder, 'design')
+
+@pytest.fixture()
 def mock_insulation_systems(monkeypatch, dummy_systems):
 
     def mock_return(rows_to_read=None, excel_file=None, folder=None):
@@ -382,3 +402,19 @@ def mock_insulation_systems(monkeypatch, dummy_systems):
 @pytest.fixture()
 def input_sets():
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_files', 'input_sets')
+
+
+@pytest.fixture()
+def mock_design_options(monkeypatch):
+
+    def mock_return(folder=None):
+        design_files = inputs.construction_types()
+        designs = []
+        for file in design_files:
+            if file.endswith('plaster.d6p'):
+                designs.append(f'{file.split(".")[0]}_reference')
+            else:
+                designs.append(file.split(".")[0])
+        return [file.split(".")[0] for file in design_files]
+
+    monkeypatch.setattr(inputs, 'design_options', mock_return)

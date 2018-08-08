@@ -20,7 +20,7 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 # RIBuild
 
 
-def test_create_sampling_strategy(tmpdir, add_three_years_weather):
+def test_create_sampling_strategy(tmpdir, add_three_years_weather, mock_design_options):
     folder = tmpdir.mkdir('test')
     test_strategy = sampling.create_sampling_strategy(folder)
 
@@ -33,7 +33,7 @@ def test_create_sampling_strategy(tmpdir, add_three_years_weather):
     assert test_strategy['settings']
 
 
-def test_load_strategy(tmpdir):
+def test_load_strategy(mock_design_options, add_three_years_weather, tmpdir):
     folder = tmpdir.mkdir('test')
     source_strategy = sampling.create_sampling_strategy(folder)
     test_strategy = sampling.load_strategy(folder)
@@ -114,11 +114,10 @@ def test_create_samples(add_sampling_strategy, used_samples_per_set, mock_sobol)
     assert all([isinstance(key, str) for key in samples.keys()])
 
 
-def test_load_design_options(add_three_years_weather, tmpdir):
-    test_dir = tmpdir.mkdir('test')
+def test_load_design_options(add_three_years_weather, mock_design_options, delphin_design_folder):
 
-    strategy = sampling.create_sampling_strategy(test_dir)
-    design_options = sampling.load_design_options(strategy['design'])
+    strategy = sampling.create_sampling_strategy(delphin_design_folder)
+    design_options = sampling.load_design_options(strategy['design'], delphin_design_folder)
 
     assert design_options
     assert isinstance(design_options, list)
@@ -126,9 +125,10 @@ def test_load_design_options(add_three_years_weather, tmpdir):
                for project in design_options)
 
 
-def test_create_delphin_projects(create_samples, mock_material_info, add_five_materials):
+def test_create_delphin_projects(create_samples, mock_material_info, add_five_materials, mock_design_options,
+                                 delphin_design_folder):
     strategy = sample_entry.Strategy.objects().first()
-    delphin_ids = sampling.create_delphin_projects(strategy.strategy, create_samples)
+    delphin_ids = sampling.create_delphin_projects(strategy.strategy, create_samples, delphin_design_folder)
 
     assert delphin_ids
     assert isinstance(delphin_ids, list)

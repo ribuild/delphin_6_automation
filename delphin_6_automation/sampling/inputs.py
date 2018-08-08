@@ -33,7 +33,7 @@ def construction_types() -> typing.List[str]:
     return os.listdir(folder)
 
 
-def wall_core_materials(folder: str) -> typing.List[str]:
+def wall_core_materials(folder=os.path.dirname(os.path.realpath(__file__)) + '/input_files') -> typing.List[str]:
     """All included material IDs relevant for a wall's core.
 
     :return: list of IDs
@@ -47,7 +47,7 @@ def wall_core_materials(folder: str) -> typing.List[str]:
     return material_list
 
 
-def plaster_materials(folder: str) -> typing.List[str]:
+def plaster_materials(folder=os.path.dirname(os.path.realpath(__file__)) + '/input_files') -> typing.List[str]:
     """All included material IDs relevant for plastering of a wall.
 
     :return: list of IDs
@@ -58,7 +58,8 @@ def plaster_materials(folder: str) -> typing.List[str]:
     return plasters
 
 
-def insulation_type(folder: str) -> typing.List[typing.List[int]]:
+def insulation_type(folder=os.path.dirname(os.path.realpath(__file__)) + '/input_files') \
+        -> typing.List[typing.List[int]]:
     """All included material IDs in insulation systems as such."""
 
     insulation = pd.read_excel(folder + '/InsulationSystems.xlsx')['Material ID'].str.split(', ')

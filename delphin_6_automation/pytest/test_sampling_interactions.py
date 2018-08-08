@@ -34,7 +34,7 @@ def test_download_sampling_strategy(add_sampling_strategy):
     assert test_strategy.strategy['settings']
 
 
-def test_upload_sampling_strategy(add_three_years_weather, tmpdir):
+def test_upload_sampling_strategy(add_three_years_weather, tmpdir, mock_design_options):
     test_dir = tmpdir.mkdir('test')
     strategy = sampling.create_sampling_strategy(test_dir)
     strategy_id = sampling_interactions.upload_sampling_strategy(strategy)

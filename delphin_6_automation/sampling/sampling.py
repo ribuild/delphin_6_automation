@@ -37,8 +37,8 @@ logger = ribuild_logger(__name__)
 
 def create_sampling_strategy(path: str) -> dict:
     """
-    Create a sampling strategy for WP6 Delphin Automation. The sampling strategy will be name 'sampling_strategy.json' and
-    be located at the given folder.
+    Create a sampling strategy for WP6 Delphin Automation. The sampling strategy will be name 'sampling_strategy.json'
+    and be located at the given folder.
 
     :param path: Folder, where the strategy will be saved.
     :type path: str
@@ -46,7 +46,7 @@ def create_sampling_strategy(path: str) -> dict:
     :rtype: dict
     """
 
-    design = inputs.construct_design_options()
+    design = inputs.design_options()
 
     scenario = {'generic scenario': None}
 
@@ -223,11 +223,9 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
     return samples
 
 
-def load_design_options(designs: typing.List[str]) -> typing.List[dict]:
+def load_design_options(designs: typing.List[str], folder: str) -> typing.List[dict]:
     """Loads the Delphin files into memory associated with the design options"""
 
-    folder = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                          'input_files/design')
     delphin_projects = []
 
     logger.debug(f'Loads {len(designs)} design Delphin projects')
@@ -238,11 +236,13 @@ def load_design_options(designs: typing.List[str]) -> typing.List[dict]:
     return delphin_projects
 
 
-def create_delphin_projects(sampling_strategy: dict, samples: dict) -> typing.List[str]:
+def create_delphin_projects(sampling_strategy: dict, samples: dict,
+                            folder=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'input_files/design')) \
+        -> typing.List[str]:
     """Generate the Delphin project associated with the given sample"""
 
     delphin_ids = []
-    delphin_projects = load_design_options(sampling_strategy['design'])
+    delphin_projects = load_design_options(sampling_strategy['design'], folder)
 
     for sequence in samples.keys():
 

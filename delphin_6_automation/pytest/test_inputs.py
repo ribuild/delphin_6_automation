@@ -5,14 +5,11 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
-import pytest
 import pandas as pd
 import os
-import shutil
 
 # RiBuild Modules
 from delphin_6_automation.sampling import inputs
-from delphin_6_automation.file_parsing import delphin_parser
 from delphin_6_automation.delphin_setup import delphin_permutations
 
 # -------------------------------------------------------------------------------------------------------------------- #
