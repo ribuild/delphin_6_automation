@@ -432,3 +432,6 @@ def change_solver_relative_tolerance(delphin: dict, relative_tolerance: float) -
                                                                                              ('#text',
                                                                                               str(relative_tolerance))
                                                                                              ])
+
+    finally:
+        return delphin
