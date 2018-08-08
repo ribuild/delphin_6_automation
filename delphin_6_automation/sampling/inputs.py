@@ -144,11 +144,18 @@ def construct_delphin_reference(folder: str) -> typing.List[str]:
     """Generate Delphin files for models without insulation."""
 
     copied_files = []
+    design_folder = os.path.join(folder, 'design')
+
+    if os.path.exists(design_folder):
+        shutil.rmtree(design_folder)
+        os.mkdir(design_folder)
+    else:
+        os.mkdir(design_folder)
 
     for i, file in enumerate(delphin_templates(folder)[0]):
         from_file = os.path.join(folder, 'delphin', file)
         new_name = file.split('.')[0] + '_reference.d6p'
-        to_file = os.path.join(folder, 'design', new_name)
+        to_file = os.path.join(design_folder, new_name)
         copied_files.append(new_name)
         shutil.copyfile(from_file, to_file)
 
