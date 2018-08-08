@@ -79,11 +79,11 @@ def update_range_of_assignments(delphin_dict: dict, layer: dict, new_discretizat
     logger.debug('Updated range assignment for Delphin project')
     current_x_list = convert_discretization_to_list(delphin_dict)
     range_ = layer['x_index']
-    new_x_list = current_x_list[:range_[0]] + new_discretization + current_x_list[range_[1]:]
+    new_x_list = current_x_list[:range_[0]] + new_discretization + current_x_list[range_[1]+1:]
     delphin_dict['DelphinProject']['Discretization']['XSteps']['#text'] = ' '.join([str(value_)
                                                                                     for value_ in new_x_list])
     # Update layer range
-    old_range_length = range_[1] - range_[0]
+    old_range_length = range_[1]+1 - range_[0]
     new_range_length = len(new_discretization)
 
     if old_range_length == new_range_length:
