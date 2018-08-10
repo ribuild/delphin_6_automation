@@ -1,0 +1,163 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Weather Modeling &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Weather Modeling" href="weather_modelling.html" />
+    <link rel="prev" title="RiBuild Delphin Setup" href="delphin_setup.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-delphin_6_automation.delphin_setup.damage_models">
+<span id="weather-modeling"></span><h1>Weather Modeling<a class="headerlink" href="#module-delphin_6_automation.delphin_setup.damage_models" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.damage_models.algae">
+<code class="descclassname">delphin_6_automation.delphin_setup.damage_models.</code><code class="descname">algae</code><span class="sig-paren">(</span><em>relative_humidity_list: List[float], temperature_list: List[float], material={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/damage_models.html#algae"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.damage_models.algae" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement UNIVPM Algae Model
+Currently a dummy function!</p>
+<p>:param relative_humidity_list
+:param temperature_list
+:param material: dictionary with relevant properties and their values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return growth:</th><td class="field-body">list with eval. values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.damage_models.frost_curves">
+<code class="descclassname">delphin_6_automation.delphin_setup.damage_models.</code><code class="descname">frost_curves</code><span class="sig-paren">(</span><em>temperature: List[float]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/damage_models.html#frost_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.damage_models.frost_curves" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs Frost curves</p>
+<p>Source:
+John Grünewalds Frost Model</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.damage_models.frost_risk">
+<code class="descclassname">delphin_6_automation.delphin_setup.damage_models.</code><code class="descname">frost_risk</code><span class="sig-paren">(</span><em>relative_humidity: &lt;built-in function array&gt;</em>, <em>temperature: &lt;built-in function array&gt;</em><span class="sig-paren">)</span> &#x2192; &lt;built-in function array&gt;<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/damage_models.html#frost_risk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.damage_models.frost_risk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates frost risk</p>
+<p>Source:
+John Grünewalds Frost Model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list Containing 0’s and 1’s. Where a 0 indicates no frost risk and an 1 indicate frost risk</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.damage_models.mould_index">
+<code class="descclassname">delphin_6_automation.delphin_setup.damage_models.</code><code class="descname">mould_index</code><span class="sig-paren">(</span><em>relative_humidity: List[float], temperature: List[float], draw_back: int, sensitivity_class: int, surface_quality: int</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/damage_models.html#mould_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.damage_models.mould_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a time series of the mould index</p>
+<p>Source:
+T. Ojanen, H. Viitanen
+Mold growth modeling of building structures using sensitivity classes of materials
+2010</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.damage_models.mould_pj">
+<code class="descclassname">delphin_6_automation.delphin_setup.damage_models.</code><code class="descname">mould_pj</code><span class="sig-paren">(</span><em>relative_humidity: List[float], temperature: List[float], aed_group='b'</em><span class="sig-paren">)</span> &#x2192; Tuple[Iterable, Iterable]<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/damage_models.html#mould_pj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.damage_models.mould_pj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs RH difference between measured and critical RH for each time step and two limits.
+Positive values imply how much RH exceed the critical RH. A low and upper critical RH are applied.</p>
+<p>Literature:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.damage_models.u_value">
+<code class="descclassname">delphin_6_automation.delphin_setup.damage_models.</code><code class="descname">u_value</code><span class="sig-paren">(</span><em>heat_loss: Union[numpy.ndarray, list], exterior_temperature: Union[numpy.ndarray, list], interior_temperature: Union[numpy.ndarray, list], area=0.68</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/damage_models.html#u_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.damage_models.u_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the mean U-value given the outdoor and indoor temperature and the heat loss</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.delphin_setup.damage_models.wood_rot">
+<code class="descclassname">delphin_6_automation.delphin_setup.damage_models.</code><code class="descname">wood_rot</code><span class="sig-paren">(</span><em>relative_humidity_list: List[float], temperature_list: List[float]</em><span class="sig-paren">)</span> &#x2192; Tuple[list, list]<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/damage_models.html#wood_rot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.damage_models.wood_rot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the mass loss of wood due to rot</p>
+<p>Source:
+Viitanen, H., Toratti, T., Makkonen, L. et al.
+Towards modelling of decay risk of wooden materials
+Eur. J. Wood Prod.
+2010</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="delphin_setup.html">RiBuild Delphin Setup</a><ul>
+      <li>Previous: <a href="delphin_setup.html" title="previous chapter">RiBuild Delphin Setup</a></li>
+      <li>Next: <a href="weather_modelling.html" title="next chapter">Weather Modeling</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/damage_models.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

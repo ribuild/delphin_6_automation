@@ -1,0 +1,431 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Sobol Library &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Inputs" href="inputs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-delphin_6_automation.sampling.sobol_lib">
+<span id="sobol-library"></span><h1>Sobol Library<a class="headerlink" href="#module-delphin_6_automation.sampling.sobol_lib" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.i4_bit_hi1">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">i4_bit_hi1</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#i4_bit_hi1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.i4_bit_hi1" title="Permalink to this definition">¶</a></dt>
+<dd><p>I4_BIT_HI1 returns the position of the high 1 bit base 2 in an integer.</p>
+<p>Example:</p>
+<blockquote>
+<div>N    Binary     BIT</div></blockquote>
+<dl class="docutils">
+<dt>—-    ——–  —-</dt>
+<dd><blockquote class="first">
+<div>0           0     0
+1           1     1
+2          10     2
+3          11     2
+4         100     3
+5         101     3
+6         110     3
+7         111     3
+8        1000     4
+9        1001     4</div></blockquote>
+<p class="last">10        1010     4
+11        1011     4
+12        1100     4
+13        1101     4
+14        1110     4
+15        1111     4
+16       10000     5
+17       10001     5</p>
+</dd>
+</dl>
+<p>1023  1111111111    10
+1024 10000000000    11
+1025 10000000001    11</p>
+<p>Licensing:</p>
+<p>This code is distributed under the GNU LGPL license.
+Modified: 22 February 2011</p>
+<p>Author:
+Original MATLAB version by John Burkardt.
+PYTHON version by Corrado Chisari</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<em>int</em>) – The integer to be measured. n should be non-negative. If n is non-positive, the value will always be 0.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">BIT, the number of bits base 2.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.i4_bit_lo0">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">i4_bit_lo0</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#i4_bit_lo0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.i4_bit_lo0" title="Permalink to this definition">¶</a></dt>
+<dd><p>I4_BIT_LO0 returns the position of the low 0 bit base 2 in an integer.</p>
+<p>Example:</p>
+<blockquote>
+<div>N    Binary     BIT</div></blockquote>
+<dl class="docutils">
+<dt>—-    ——–  —-</dt>
+<dd><blockquote class="first">
+<div>0           0     1
+1           1     2
+2          10     1
+3          11     3
+4         100     1
+5         101     2
+6         110     1
+7         111     4
+8        1000     1
+9        1001     2</div></blockquote>
+<p class="last">10        1010     1
+11        1011     3
+12        1100     1
+13        1101     2
+14        1110     1
+15        1111     5
+16       10000     1
+17       10001     2</p>
+</dd>
+</dl>
+<p>1023  1111111111     1
+1024 10000000000     1
+1025 10000000001     1</p>
+<p>Licensing:</p>
+<p>This code is distributed under the GNU LGPL license.</p>
+<p>Modified: 22 February 2011</p>
+<p>Author:
+Original MATLAB version by John Burkardt.
+PYTHON version by Corrado Chisari</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<em>int</em>) – The integer to be measured. N should be nonnegative.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">BIT, the position of the low 1 bit.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.i4_sobol">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">i4_sobol</code><span class="sig-paren">(</span><em>dim_num</em>, <em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#i4_sobol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.i4_sobol" title="Permalink to this definition">¶</a></dt>
+<dd><p>I4_SOBOL generates a new quasirandom Sobol vector with each call.</p>
+<p>Discussion:
+The routine adapts the ideas of Antonov and Saleev.</p>
+<p>Licensing:
+This code is distributed under the GNU LGPL license.</p>
+<p>Modified: 22 February 2011</p>
+<p>Author:
+Original FORTRAN77 version by Bennett Fox.
+MATLAB version by John Burkardt.
+PYTHON version by Corrado Chisari</p>
+<p>Reference:</p>
+<p>Antonov, Saleev,
+USSR Computational Mathematics and Mathematical Physics,
+Volume 19, 1980, pages 252 - 256.</p>
+<p>Paul Bratley, Bennett Fox,
+Algorithm 659:
+Implementing Sobol’s Quasirandom Sequence Generator,
+ACM Transactions on Mathematical Software,
+Volume 14, Number 1, pages 88-100, 1988.</p>
+<p>Bennett Fox,
+Algorithm 647:
+Implementation and Relative Efficiency of Quasirandom
+Sequence Generators,
+ACM Transactions on Mathematical Software,
+Volume 12, Number 4, pages 362-376, 1986.</p>
+<p>Ilya Sobol,
+USSR Computational Mathematics and Mathematical Physics,
+Volume 16, pages 236-242, 1977.</p>
+<p>Ilya Sobol, Levitan,
+The Production of Points Uniformly Distributed in a Multidimensional
+Cube (in Russian),
+Preprint IPM Akad. Nauk SSSR,
+Number 40, Moscow 1976.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dim_num</strong> (<em>int</em>) – DIM_NUM, the number of spatial dimensions. DIM_NUM must satisfy 1 &lt;= DIM_NUM &lt;= 40.</li>
+<li><strong>seed</strong> – SEED, the “seed” for the sequence. This is essentially the index in the sequence of the quasirandom</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>value to be generated.      On output, SEED has been set to the appropriate next value, usually simply SEED+1. If SEED
+is less than 0 on input, it is treated as though it were 0. An input value of 0 requests the first (0-th)
+element of the sequence.
+:type seed: int
+:return: QUASI(DIM_NUM), the next quasirandom vector.
+:rtype: float</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.i4_sobol_generate">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">i4_sobol_generate</code><span class="sig-paren">(</span><em>m</em>, <em>n</em>, <em>skip</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#i4_sobol_generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.i4_sobol_generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>I4_SOBOL_GENERATE generates a Sobol dataset.</p>
+<p>Licensing:
+This code is distributed under the GNU LGPL license.</p>
+<p>Modified: 22 February 2011</p>
+<p>Author:
+Original MATLAB version by John Burkardt.
+PYTHON version by Corrado Chisari</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>m</strong> (<em>int</em>) – M, the spatial dimension.</li>
+<li><strong>n</strong> (<em>int</em>) – N, the number of points to generate.</li>
+<li><strong>skip</strong> (<em>int</em>) – SKIP, the number of initial points to skip.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">R(M,N), the points.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.i4_uniform">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">i4_uniform</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#i4_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.i4_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>I4_UNIFORM returns a scaled pseudorandom I4.</p>
+<p>Discussion:
+The pseudorandom number will be scaled to be uniformly distributed
+between A and B.</p>
+<p>Licensing:
+This code is distributed under the GNU LGPL license.</p>
+<p>Modified: 22 February 2011</p>
+<p>Author:
+Original MATLAB version by John Burkardt.
+PYTHON version by Corrado Chisari</p>
+<p>Reference:
+Paul Bratley, Bennett Fox, Linus Schrage,
+A Guide to Simulation,
+Springer Verlag, pages 201-202, 1983.</p>
+<p>Pierre L’Ecuyer,
+Random Number Generation,
+in Handbook of Simulation,
+edited by Jerry Banks,
+Wiley Interscience, page 95, 1998.</p>
+<p>Bennett Fox,
+Algorithm 647:
+Implementation and Relative Efficiency of Quasirandom
+Sequence Generators,
+ACM Transactions on Mathematical Software,
+Volume 12, Number 4, pages 362-376, 1986.</p>
+<p>Peter Lewis, Allen Goodman, James Miller
+A Pseudo-Random Number Generator for the System/360,
+IBM Systems Journal,
+Volume 8, pages 136-143, 1969.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<em>int</em>) – A, the minimum acceptable values.</li>
+<li><strong>b</strong> (<em>int</em>) – B, the maximum acceptable values.</li>
+<li><strong>seed</strong> (<em>int</em>) – SEED, a seed for the random number generator.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">C, the randomly chosen integer. SEED, the updated seed.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.isprime">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">isprime</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#isprime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.isprime" title="Permalink to this definition">¶</a></dt>
+<dd><p>IS_PRIME returns True if N is a prime number, False otherwise</p>
+<p>Licensing:
+This code is distributed under the GNU LGPL license.</p>
+<p>Modified: 22 February 2011</p>
+<p>Author:
+Corrado Chisari</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<em>int</em>) – N, the number to be checked.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True or false</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.prime_ge">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">prime_ge</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#prime_ge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.prime_ge" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIME_GE returns the smallest prime greater than or equal to N.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd>N                PRIME_GE
+-10                 2
+1                   2
+2                   2
+3                   3
+4                   5
+5                   5
+6                   7
+7                   7
+8           11
+9           11
+10          11</dd>
+</dl>
+<p>Licensing:
+This code is distributed under the GNU LGPL license.</p>
+<p>Modified: 22 February 2011</p>
+<p>Author:
+Original MATLAB version by John Burkardt.
+PYTHON version by Corrado Chisari</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<em>int</em>) – N, the number to be bounded.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">P, the smallest prime number that is greater than or equal to N.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.scramble">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">scramble</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#scramble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.scramble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scramble function as in Owen (1997)</p>
+<p>Reference:</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Saltelli, A., Chan, K., Scott, E.M., “Sensitivity Analysis”</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.scrambled_sobol_generate">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">scrambled_sobol_generate</code><span class="sig-paren">(</span><em>k</em>, <em>N</em>, <em>skip</em>, <em>leap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#scrambled_sobol_generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.scrambled_sobol_generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scramble function as in Owen (1997)</p>
+<p>Reference:</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Saltelli, A., Chan, K., Scott, E.M., “Sensitivity Analysis”</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sobol_lib.sobol_generate">
+<code class="descclassname">delphin_6_automation.sampling.sobol_lib.</code><code class="descname">sobol_generate</code><span class="sig-paren">(</span><em>k</em>, <em>N</em>, <em>skip</em>, <em>leap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/sampling/sobol_lib.html#sobol_generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sobol_lib.sobol_generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Skip and leap sobol sequence</p>
+<p>Reference:</p>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Saltelli, A., Chan, K., Scott, E.M., “Sensitivity Analysis”</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="sampling.html">RiBuild Sampling</a><ul>
+      <li>Previous: <a href="inputs.html" title="previous chapter">Inputs</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/sobol_lib.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

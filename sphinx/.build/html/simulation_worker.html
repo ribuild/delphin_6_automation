@@ -1,0 +1,155 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Simulation Worker &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="RiBuild Database Interactions" href="database_interactions.html" />
+    <link rel="prev" title="Sampling Worker" href="sampling_worker.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-delphin_6_automation.backend.simulation_worker">
+<span id="simulation-worker"></span><h1>Simulation Worker<a class="headerlink" href="#module-delphin_6_automation.backend.simulation_worker" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.create_submit_file">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">create_submit_file</code><span class="sig-paren">(</span><em>sim_id: str</em>, <em>simulation_folder: str</em>, <em>restart=False</em><span class="sig-paren">)</span> &#x2192; Tuple[str, int]<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#create_submit_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.create_submit_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a submit file for the DTU HPC queue system.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.get_average_computation_time">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">get_average_computation_time</code><span class="sig-paren">(</span><em>sim_id: str</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#get_average_computation_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.get_average_computation_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the average time for this type of construction (2D or 1D)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sim_id</strong> – Delphin entry id from database</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Average simulation time in minutes</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.hpc_worker">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">hpc_worker</code><span class="sig-paren">(</span><em>id_: str</em>, <em>thread_name: str</em>, <em>folder='H:/ribuild'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#hpc_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.hpc_worker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves a Delphin project through DTU HPC</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.local_worker">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">local_worker</code><span class="sig-paren">(</span><em>id_: str</em><span class="sig-paren">)</span> &#x2192; Union[bool, NoneType]<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#local_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.local_worker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulation worker. Supposed to be used with main simulation loop.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> – Database entry ID from simulation queue</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True on success otherwise False</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.simulation_worker">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">simulation_worker</code><span class="sig-paren">(</span><em>sim_location: str</em>, <em>thread_name=None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#simulation_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.simulation_worker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves Delphin projects in the database until interrupted</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.solve_delphin">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">solve_delphin</code><span class="sig-paren">(</span><em>file: str</em>, <em>delphin_exe='C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe'</em>, <em>verbosity_level=1</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#solve_delphin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.solve_delphin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves a delphin file locally</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.submit_job">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">submit_job</code><span class="sig-paren">(</span><em>submit_file: str</em>, <em>sim_id: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#submit_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.submit_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits a job (submit file) to the DTU HPC queue.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.wait_until_finished">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">wait_until_finished</code><span class="sig-paren">(</span><em>sim_id: str</em>, <em>estimated_run_time: int</em>, <em>simulation_folder: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#wait_until_finished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.wait_until_finished" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look for summary file. If it is created, continue. If it is not created and the estimated time runs out.
+Then submit a new job continuing the simulation from where it ended.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="backend.html">RiBuild Backend</a><ul>
+      <li>Previous: <a href="sampling_worker.html" title="previous chapter">Sampling Worker</a></li>
+      <li>Next: <a href="database_interactions.html" title="next chapter">RiBuild Database Interactions</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/simulation_worker.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

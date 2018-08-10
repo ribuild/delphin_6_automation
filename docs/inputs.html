@@ -1,0 +1,194 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Inputs &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sobol Library" href="sobol_lib.html" />
+    <link rel="prev" title="Sampling" href="sampling_sampling.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-delphin_6_automation.sampling.inputs">
+<span id="inputs"></span><h1>Inputs<a class="headerlink" href="#module-delphin_6_automation.sampling.inputs" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.construct_delphin_reference">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">construct_delphin_reference</code><span class="sig-paren">(</span><em>folder: str</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#construct_delphin_reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.construct_delphin_reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Delphin files for models without insulation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.construct_design_files">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">construct_design_files</code><span class="sig-paren">(</span><em>folder: str</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#construct_design_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.construct_design_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Delphin files to cover all the design options.
+Options arise from separate insulation systems X variation within those e.g. thickness of insulation layer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.construction_types">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">construction_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#construction_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.construction_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets available template strings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of file name strings</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.delphin_templates">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">delphin_templates</code><span class="sig-paren">(</span><em>folder: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#delphin_templates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.delphin_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Titles on delphin files to variate (select by amount of layers).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary with integer keys according to layers</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.implement_insulation_widths">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">implement_insulation_widths</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>system: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; List[dict]<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#implement_insulation_widths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.implement_insulation_widths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permutate with of system applied materials</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.implement_system_materials">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">implement_system_materials</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>system: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#implement_system_materials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.implement_system_materials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loop through materials of the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>delphin_dict</strong> – relevant template delphin dict</li>
+<li><strong>system</strong> – one insulation system’s Dataframe</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">new delphin dict with all system materials implemented</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.insulation_systems">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">insulation_systems</code><span class="sig-paren">(</span><em>folder: str</em>, <em>rows_to_read=2</em>, <em>excel_file='InsulationSystems'</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#insulation_systems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.insulation_systems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reformat insulation DataFrame to different design options DataFrame</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.insulation_type">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">insulation_type</code><span class="sig-paren">(</span><em>folder='C:\\Users\\ocni\\PycharmProjects\\delphin_6_automation\\delphin_6_automation\\sampling/input_files'</em><span class="sig-paren">)</span> &#x2192; List[List[int]]<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#insulation_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.insulation_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>All included material IDs in insulation systems as such.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.plaster_materials">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">plaster_materials</code><span class="sig-paren">(</span><em>folder='C:\\Users\\ocni\\PycharmProjects\\delphin_6_automation\\delphin_6_automation\\sampling/input_files'</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#plaster_materials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.plaster_materials" title="Permalink to this definition">¶</a></dt>
+<dd><p>All included material IDs relevant for plastering of a wall.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of IDs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.inputs.wall_core_materials">
+<code class="descclassname">delphin_6_automation.sampling.inputs.</code><code class="descname">wall_core_materials</code><span class="sig-paren">(</span><em>folder='C:\\Users\\ocni\\PycharmProjects\\delphin_6_automation\\delphin_6_automation\\sampling/input_files'</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="_modules/delphin_6_automation/sampling/inputs.html#wall_core_materials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.inputs.wall_core_materials" title="Permalink to this definition">¶</a></dt>
+<dd><p>All included material IDs relevant for a wall’s core.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of IDs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="sampling.html">RiBuild Sampling</a><ul>
+      <li>Previous: <a href="sampling_sampling.html" title="previous chapter">Sampling</a></li>
+      <li>Next: <a href="sobol_lib.html" title="next chapter">Sobol Library</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/inputs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

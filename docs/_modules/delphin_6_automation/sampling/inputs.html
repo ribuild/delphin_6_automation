@@ -1,0 +1,355 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>delphin_6_automation.sampling.inputs &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for delphin_6_automation.sampling.inputs</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Christian Kongsgaard, Simon Jørgensen&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s1">&#39;MIT&#39;</span>
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># IMPORTS</span>
+
+<span class="c1"># Modules</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xmltodict</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="c1"># RiBuild Modules</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.file_parsing.delphin_parser</span> <span class="k">import</span> <span class="n">dp6_to_dict</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.delphin_setup</span> <span class="k">import</span> <span class="n">delphin_permutations</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions.material_interactions</span> <span class="k">import</span> <span class="n">get_material_info</span>
+
+<span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
+<span class="c1"># RIBuild</span>
+
+
+<div class="viewcode-block" id="construction_types"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.construction_types">[docs]</a><span class="k">def</span> <span class="nf">construction_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Gets available template strings.</span>
+
+<span class="sd">    :return: list of file name strings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/input_files/delphin&#39;</span>
+
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="wall_core_materials"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.wall_core_materials">[docs]</a><span class="k">def</span> <span class="nf">wall_core_materials</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/input_files&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;All included material IDs relevant for a wall&#39;s core.</span>
+
+<span class="sd">    :return: list of IDs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bricks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/Brick.xlsx&#39;</span><span class="p">)</span>
+    <span class="n">natural_stones</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/Natural Stone.xlsx&#39;</span><span class="p">)</span>
+
+    <span class="n">material_list</span> <span class="o">=</span> <span class="n">bricks</span><span class="p">[</span><span class="s1">&#39;Material ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">natural_stones</span><span class="p">[</span><span class="s1">&#39;Material ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">material_list</span></div>
+
+
+<div class="viewcode-block" id="plaster_materials"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.plaster_materials">[docs]</a><span class="k">def</span> <span class="nf">plaster_materials</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/input_files&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;All included material IDs relevant for plastering of a wall.</span>
+
+<span class="sd">    :return: list of IDs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">plasters</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/Plaster.xlsx&#39;</span><span class="p">)[</span><span class="s1">&#39;Material ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">plasters</span></div>
+
+
+<div class="viewcode-block" id="insulation_type"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.insulation_type">[docs]</a><span class="k">def</span> <span class="nf">insulation_type</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/input_files&#39;</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;All included material IDs in insulation systems as such.&quot;&quot;&quot;</span>
+
+    <span class="n">insulation</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/InsulationSystems.xlsx&#39;</span><span class="p">)[</span><span class="s1">&#39;Material ID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">insulation</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="insulation_systems"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.insulation_systems">[docs]</a><span class="k">def</span> <span class="nf">insulation_systems</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rows_to_read</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">excel_file</span><span class="o">=</span><span class="s1">&#39;InsulationSystems&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reformat insulation DataFrame to different design options DataFrame&quot;&quot;&quot;</span>
+
+    <span class="n">constructions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="s1">&#39;/</span><span class="si">{excel_file}</span><span class="s1">.xlsx&#39;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">nrows</span><span class="o">=</span><span class="n">rows_to_read</span><span class="p">)</span>
+
+    <span class="n">systems</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">level_1</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">level_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">constructions</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">material_id_and_dim</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># provide distinction between ID strings, dimensions and ect..</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)):</span>
+                <span class="n">material_id_and_dim</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">col</span><span class="p">])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">material_id_and_dim</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)])</span>
+
+        <span class="c1"># re-combine values in a DataFrame (first element is ID&#39;s)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;insulation_&#39;</span><span class="p">,</span> <span class="s1">&#39;finish_&#39;</span><span class="p">,</span> <span class="s1">&#39;detail_&#39;</span><span class="p">]</span>
+
+        <span class="c1"># each element: insulation, finish, detail</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ID</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">material_id_and_dim</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+
+            <span class="n">part</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="n">ID</span><span class="p">,</span>
+                                 <span class="s1">&#39;Dimension&#39;</span><span class="p">:</span> <span class="n">material_id_and_dim</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]}</span>
+                                <span class="p">)</span>
+            <span class="c1"># each variation title</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">part</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+            <span class="n">systems</span> <span class="o">=</span> <span class="n">systems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+
+        <span class="c1"># preperation to multiindex</span>
+        <span class="n">level_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_1</span><span class="p">,</span> <span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
+        <span class="n">level_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_2</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># assign multiindex</span>
+    <span class="n">systems</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">level_1</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">),</span> <span class="n">level_2</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">systems</span></div>
+
+
+<div class="viewcode-block" id="delphin_templates"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.delphin_templates">[docs]</a><span class="k">def</span> <span class="nf">delphin_templates</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Titles on delphin files to variate (select by amount of layers).</span>
+
+<span class="sd">    :return: dictionary with integer keys according to layers</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># available template files indexed using amount of layers</span>
+    <span class="n">to_copy</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>
+
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/delphin&#39;</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">title</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;plaster.d6p&#39;</span><span class="p">):</span>
+                <span class="n">to_copy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">title</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;insulated2layers.d6p&#39;</span><span class="p">):</span>
+                <span class="n">to_copy</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">title</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;insulated3layers.d6p&#39;</span><span class="p">):</span>
+                <span class="n">to_copy</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">to_copy</span></div>
+
+
+<div class="viewcode-block" id="construct_delphin_reference"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.construct_delphin_reference">[docs]</a><span class="k">def</span> <span class="nf">construct_delphin_reference</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Generate Delphin files for models without insulation.&quot;&quot;&quot;</span>
+
+    <span class="n">copied_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">design_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;design&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">design_folder</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">design_folder</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">design_folder</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">design_folder</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">delphin_templates</span><span class="p">(</span><span class="n">folder</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">from_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;delphin&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+        <span class="n">new_name</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_reference.d6p&#39;</span>
+        <span class="n">to_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">design_folder</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
+        <span class="n">copied_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_name</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">from_file</span><span class="p">,</span> <span class="n">to_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">copied_files</span></div>
+
+
+<div class="viewcode-block" id="implement_system_materials"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.implement_system_materials">[docs]</a><span class="k">def</span> <span class="nf">implement_system_materials</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">system</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Loop through materials of the system.</span>
+
+<span class="sd">    :param delphin_dict: relevant template delphin dict</span>
+<span class="sd">    :param system: one insulation system&#39;s Dataframe</span>
+<span class="sd">    :return: new delphin dict with all system materials implemented</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># general material names (template projects) - in order: insulation, finish, detail</span>
+    <span class="n">material_names</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;insulation&#39;</span><span class="p">:</span> <span class="s1">&#39;CalsithermCalciumsilikatHamstad [571]&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;finish&#39;</span><span class="p">:</span> <span class="s1">&#39;KlimaputzMKKQuickmix [125]&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;detail&#39;</span><span class="p">:</span> <span class="s1">&#39;Calsitherm KP Glue Mortar [705]&#39;</span><span class="p">}</span>
+    <span class="sd">&quot;&quot;&quot;material_names = {&#39;insulation&#39;: &#39;TecTem Insulation Board Indoor 50 + 60 mm [659]&#39;,</span>
+<span class="sd">                      &#39;finish&#39;: &#39;TecTem Clay-based plaster [665]&#39;,</span>
+<span class="sd">                      &#39;detail&#39;: &#39;TecTem Adhesive Mortar [664]&#39;}&quot;&quot;&quot;</span>
+
+    <span class="c1"># for two layer systems reduce materials</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span> <span class="ow">in</span> <span class="n">string</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+        <span class="k">del</span> <span class="n">material_names</span><span class="p">[</span><span class="s1">&#39;detail&#39;</span><span class="p">]</span>
+
+    <span class="c1"># in current model each layer type</span>
+    <span class="k">for</span> <span class="n">layer</span><span class="p">,</span> <span class="n">material</span> <span class="ow">in</span> <span class="n">material_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="c1"># material dict all layers representative as _00 instances</span>
+        <span class="n">db_material</span> <span class="o">=</span> <span class="n">get_material_info</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">layer</span> <span class="o">+</span> <span class="s1">&#39;_00&#39;</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">])</span>
+
+        <span class="c1"># step 1 new delphin dict - input dict, str, dict</span>
+        <span class="n">delphin_dict</span> <span class="o">=</span> <span class="n">delphin_permutations</span><span class="o">.</span><span class="n">change_layer_material</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span>
+                                                                  <span class="n">material</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                                  <span class="n">db_material</span>
+                                                                  <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">layer</span> <span class="o">!=</span> <span class="s1">&#39;insulation&#39;</span><span class="p">:</span>
+            <span class="c1"># thickness of layer detail</span>
+            <span class="n">select_layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">layer</span> <span class="ow">in</span> <span class="n">string</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">new_width</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">select_layer</span><span class="p">,</span> <span class="s1">&#39;Dimension&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">10e-4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">delphin_dict</span> <span class="o">=</span> <span class="n">delphin_permutations</span><span class="o">.</span><span class="n">change_layer_width</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span>
+                                                                   <span class="n">db_material</span><span class="p">[</span><span class="s1">&#39;@name&#39;</span><span class="p">],</span>
+                                                                   <span class="n">new_width</span>
+                                                                   <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">delphin_dict</span></div>
+
+
+<div class="viewcode-block" id="implement_insulation_widths"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.implement_insulation_widths">[docs]</a><span class="k">def</span> <span class="nf">implement_insulation_widths</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">system</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Permutate with of system applied materials&quot;&quot;&quot;</span>
+
+    <span class="c1"># look up current material assume system</span>
+    <span class="n">db_material</span> <span class="o">=</span> <span class="n">get_material_info</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;insulation&#39;</span> <span class="o">+</span> <span class="s1">&#39;_00&#39;</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">])</span>
+    <span class="n">insulation_select</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;insulation&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="n">new_widths</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">insulation_select</span><span class="p">,</span> <span class="s1">&#39;Dimension&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="mf">10e-4</span>
+    <span class="n">permutated_dicts</span> <span class="o">=</span> <span class="n">delphin_permutations</span><span class="o">.</span><span class="n">change_layer_widths</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span>
+                                                                <span class="n">db_material</span><span class="p">[</span><span class="s1">&#39;@name&#39;</span><span class="p">],</span>
+                                                                <span class="n">new_widths</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                                                                <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">permutated_dicts</span></div>
+
+
+<div class="viewcode-block" id="construct_design_files"><a class="viewcode-back" href="../../../inputs.html#delphin_6_automation.sampling.inputs.construct_design_files">[docs]</a><span class="k">def</span> <span class="nf">construct_design_files</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate Delphin files to cover all the design options.</span>
+<span class="sd">    Options arise from separate insulation systems X variation within those e.g. thickness of insulation layer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># appreciate formatted insulation systems</span>
+    <span class="n">systems</span> <span class="o">=</span> <span class="n">insulation_systems</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span>
+    <span class="n">file_names</span> <span class="o">=</span> <span class="n">construct_delphin_reference</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+
+    <span class="c1"># permutation of insulation systems</span>
+    <span class="k">for</span> <span class="n">system_number</span> <span class="ow">in</span> <span class="n">systems</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+
+        <span class="c1"># one insulation system each loop</span>
+        <span class="n">system</span> <span class="o">=</span> <span class="n">systems</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">system_number</span><span class="p">]</span>
+        <span class="n">insulation_select</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;insulation&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="c1"># appreciate template - three or two layers</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+            <span class="n">layers</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">layers</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">delphin_templates</span><span class="p">(</span><span class="n">folder</span><span class="p">)[</span><span class="n">layers</span><span class="p">]:</span>
+
+            <span class="c1"># each template as dict to be permutated</span>
+            <span class="n">design</span> <span class="o">=</span> <span class="n">dp6_to_dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;delphin&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
+
+            <span class="c1"># material and dimension change</span>
+            <span class="n">delphin_with_system_materials</span> <span class="o">=</span> <span class="n">implement_system_materials</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">system</span><span class="p">)</span>
+            <span class="n">option_dicts</span> <span class="o">=</span> <span class="n">implement_insulation_widths</span><span class="p">(</span><span class="n">delphin_with_system_materials</span><span class="p">,</span> <span class="n">system</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">option_dicts</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">insulation_select</span><span class="p">):</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;no length match&#39;</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+            <span class="c1"># write option files (above dicts)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">insulation_select</span><span class="p">,</span> <span class="s1">&#39;Dimension&#39;</span><span class="p">]):</span>
+                <span class="n">file_name</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{file.split(&quot;.&quot;)[0]}_option{str(system_number).zfill(2)}-{str(dim).zfill(3)}.d6p&#39;</span>
+                <span class="n">file_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+                <span class="n">xmltodict</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">option_dicts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                  <span class="n">output</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span>
+                                                           <span class="s1">&#39;design&#39;</span><span class="p">,</span>
+                                                           <span class="n">file_name</span><span class="p">),</span>
+                                              <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">pretty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">file_names</span></div>
+
+
+<span class="k">def</span> <span class="nf">design_options</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/input_files&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+    <span class="n">design_files</span> <span class="o">=</span> <span class="n">construct_design_files</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">design_files</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

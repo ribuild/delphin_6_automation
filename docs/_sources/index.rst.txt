@@ -22,9 +22,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
    :maxdepth: 3
    :caption: Contents:
 
-   database
+   backend
+   database_interactions
    delphin_setup
    file_parsing
+   sampling
 
 
 

@@ -4,35 +4,26 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>RiBuild Delphin Setup &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="RiBuild File Parsing" href="file_parsing.html" />
-    <link rel="prev" title="RiBuild Database Interactions" href="database.html" />
+    <link rel="next" title="Weather Modeling" href="damage_models.html" />
+    <link rel="prev" title="Weather Interactions" href="weather_interactions.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -43,296 +34,13 @@
   <div class="section" id="ribuild-delphin-setup">
 <h1>RiBuild Delphin Setup<a class="headerlink" href="#ribuild-delphin-setup" title="Permalink to this headline">¶</a></h1>
 <p>This modules handles the setup and modifications of Delphin Projects</p>
-<div class="section" id="module-delphin_6_automation.delphin_setup.create_delphin_file">
-<span id="create-delphin-file"></span><h2>Create Delphin File<a class="headerlink" href="#module-delphin_6_automation.delphin_setup.create_delphin_file" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File">
-<em class="property">class </em><code class="descclassname">delphin_6_automation.delphin_setup.create_delphin_file.</code><code class="descname">Delphin6File</code><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_assignments">
-<code class="descname">create_assignments</code><span class="sig-paren">(</span><em>assignment_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_assignments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_assignments" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_attributes">
-<code class="descname">create_attributes</code><span class="sig-paren">(</span><em>file_attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_attributes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_conditions">
-<code class="descname">create_conditions</code><span class="sig-paren">(</span><em>interfaces</em>, <em>climates</em>, <em>boundary</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_conditions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_directory_placeholders">
-<code class="descname">create_directory_placeholders</code><span class="sig-paren">(</span><em>climate_database=None</em>, <em>material_database=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_directory_placeholders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_directory_placeholders" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_discretization">
-<code class="descname">create_discretization</code><span class="sig-paren">(</span><em>discretization</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_discretization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_discretization" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_init">
-<code class="descname">create_init</code><span class="sig-paren">(</span><em>duration_unit</em>, <em>duration</em>, <em>longitude</em>, <em>latitude</em>, <em>climate_data_path</em>, <em>albedo</em>, <em>balance_equation_module='BEHeatMoisture'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_materials">
-<code class="descname">create_materials</code><span class="sig-paren">(</span><em>material_numbers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_materials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_materials" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_outputs">
-<code class="descname">create_outputs</code><span class="sig-paren">(</span><em>output_unit</em>, <em>output_grids</em>, <em>output_files</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_outputs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_project_info">
-<code class="descname">create_project_info</code><span class="sig-paren">(</span><em>comment</em>, <em>created=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_project_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_project_info" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_xml">
-<code class="descname">create_xml</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.create_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.create_xml" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.write_xml">
-<code class="descname">write_xml</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/create_delphin_file.html#Delphin6File.write_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.create_delphin_file.Delphin6File.write_xml" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-delphin_6_automation.delphin_setup.delphin_permutations">
-<span id="delphin-permutations"></span><h2>Delphin Permutations<a class="headerlink" href="#module-delphin_6_automation.delphin_setup.delphin_permutations" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.change_boundary_coefficient">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">change_boundary_coefficient</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>boundary_condition: str</em>, <em>coefficient: str</em>, <em>new_value: float</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#change_boundary_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.change_boundary_coefficient" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes a boundary coefficient of a boundary condition instance.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to change.</li>
-<li><strong>boundary_condition</strong> (<em>str</em>) – Name of the boundary condition</li>
-<li><strong>coefficient</strong> (<em>str</em>) – Name of the coefficient to change</li>
-<li><strong>new_value</strong> (<em>float</em>) – New value of the coefficient</li>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="damage_models.html">Weather Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="delphin_permutations.html">Delphin Permutations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weather_modelling.html">Weather Modeling</a></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Modified Delphin dict</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.change_layer_material">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">change_layer_material</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>original_material: str</em>, <em>new_material: dict</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#change_layer_material"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.change_layer_material" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes the material of a layer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to change.</li>
-<li><strong>original_material</strong> (<em>str</em>) – Name of material that should be changed.</li>
-<li><strong>new_material</strong> (<em>dict</em>) – New material given as a dict. Dict should have the following keys: &#64;name, &#64;color, &#64;hatchCode and #test.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Modified Delphin dict</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.change_layer_width">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">change_layer_width</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>original_material: str</em>, <em>new_width: float</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#change_layer_width"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.change_layer_width" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes the width of a single layer, while keeping number of elements in the project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to change.</li>
-<li><strong>original_material</strong> (<em>str</em>) – Name of material to change the width of.</li>
-<li><strong>new_width</strong> (<em>float</em>) – New width in m</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Modified Delphin dict</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.change_orientation">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">change_orientation</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>new_orientation: int</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#change_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.change_orientation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes the orientation of the Delphin project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to change.</li>
-<li><strong>new_orientation</strong> (<em>int</em>) – New orientation. Value between 0 and 360</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Modified Delphin dict</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.change_weather">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">change_weather</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>original_weather: str</em>, <em>new_weather: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#change_weather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.change_weather" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes the weather file of a weather instance. Can therefore only be used on climate conditions that is loaded
-from a file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to change.</li>
-<li><strong>original_weather</strong> (<em>str</em>) – Name of the original weather</li>
-<li><strong>new_weather</strong> (<em>str</em>) – New weather file path</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Modified Delphin dict</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.convert_discretization_to_list">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">convert_discretization_to_list</code><span class="sig-paren">(</span><em>delphin_dict: dict</em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#convert_discretization_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.convert_discretization_to_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the discretized elements of a project.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to look in.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list with the discretizated values.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.discrete_layer">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">discrete_layer</code><span class="sig-paren">(</span><em>width: float</em>, <em>steps: int</em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#discrete_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.discrete_layer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Discretization of width in a given number of steps.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>width</strong> (<em>float</em>) – Width in m</li>
-<li><strong>steps</strong> (<em>int</em>) – Number of steps or discretizations to make.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list with the discretizated values.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.get_layers">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">get_layers</code><span class="sig-paren">(</span><em>delphin_dict: dict</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#get_layers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.get_layers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the layers of a Delphin dict.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delphin_dict</strong> (<em>dict</em>) – Delphin dict to get layers from.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dict of dicts. Each nested dict has the keys: material, x_width, x_index</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.delphin_permutations.sub_division">
-<code class="descclassname">delphin_6_automation.delphin_setup.delphin_permutations.</code><code class="descname">sub_division</code><span class="sig-paren">(</span><em>width: float</em>, <em>minimum_division: float</em>, <em>stretch_factor: float</em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/delphin_permutations.html#sub_division"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.delphin_permutations.sub_division" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a subdivision of the material to be used for the discretization.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>width</strong> (<em>float</em>) – Width of the material to be subdivided</li>
-<li><strong>minimum_division</strong> (<em>float</em>) – Width of the smallest division</li>
-<li><strong>stretch_factor</strong> (<em>float</em>) – Increase in subdivisions</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List containing width of subdivisions</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-delphin_6_automation.delphin_setup.weather_modeling">
-<span id="weather-modeling"></span><h2>Weather Modeling<a class="headerlink" href="#module-delphin_6_automation.delphin_setup.weather_modeling" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.weather_modeling.convert_weather_to_indoor_climate">
-<code class="descclassname">delphin_6_automation.delphin_setup.weather_modeling.</code><code class="descname">convert_weather_to_indoor_climate</code><span class="sig-paren">(</span><em>temperature: list</em>, <em>indoor_class</em>, <em>calculation_method='en15026'</em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/weather_modeling.html#convert_weather_to_indoor_climate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.weather_modeling.convert_weather_to_indoor_climate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="delphin_6_automation.delphin_setup.weather_modeling.driving_rain">
-<code class="descclassname">delphin_6_automation.delphin_setup.weather_modeling.</code><code class="descname">driving_rain</code><span class="sig-paren">(</span><em>vertical_rain</em>, <em>wind_direction</em>, <em>wind_speed</em>, <em>location</em>, <em>orientation</em>, <em>inclination=90</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/delphin_setup/weather_modeling.html#driving_rain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.delphin_setup.weather_modeling.driving_rain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 </div>
 
@@ -345,19 +53,21 @@ from a file.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="database.html" title="previous chapter">RiBuild Database Interactions</a></li>
-      <li>Next: <a href="file_parsing.html" title="next chapter">RiBuild File Parsing</a></li>
+      <li>Previous: <a href="weather_interactions.html" title="previous chapter">Weather Interactions</a></li>
+      <li>Next: <a href="damage_models.html" title="next chapter">Weather Modeling</a></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -368,7 +78,7 @@ from a file.</p>
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

@@ -1,0 +1,233 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Sampling &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Inputs" href="inputs.html" />
+    <link rel="prev" title="RiBuild Sampling" href="sampling.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-delphin_6_automation.sampling.sampling">
+<span id="sampling"></span><h1>Sampling<a class="headerlink" href="#module-delphin_6_automation.sampling.sampling" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.calculate_error">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">calculate_error</code><span class="sig-paren">(</span><em>sample_strategy: delphin_6_automation.database_interactions.db_templates.sample_entry.Strategy</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#calculate_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.calculate_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the standard error on the results from the given delphin simulations</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.calculate_sample_output">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">calculate_sample_output</code><span class="sig-paren">(</span><em>sample_strategy: dict</em>, <em>sampling_id: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#calculate_sample_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.calculate_sample_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the mean and standard deviation of the simulation results for a given sample</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.check_convergence">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">check_convergence</code><span class="sig-paren">(</span><em>strategy_document: delphin_6_automation.database_interactions.db_templates.sample_entry.Strategy</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#check_convergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.check_convergence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the standard error is lower than the threshold value in the sampling strategy
+If it is return True otherwise return False</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.compute_sampling_distributions">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">compute_sampling_distributions</code><span class="sig-paren">(</span><em>sampling_strategy: dict</em>, <em>samples_raw: numpy.ndarray</em>, <em>used_samples_per_set: int</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#compute_sampling_distributions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.compute_sampling_distributions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the sampling values for the sampling strategy</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.create_delphin_projects">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">create_delphin_projects</code><span class="sig-paren">(</span><em>sampling_strategy: dict</em>, <em>samples: dict</em>, <em>folder='C:\\Users\\ocni\\PycharmProjects\\delphin_6_automation\\delphin_6_automation\\sampling\\input_files/design'</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#create_delphin_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.create_delphin_projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the Delphin project associated with the given sample</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.create_samples">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">create_samples</code><span class="sig-paren">(</span><em>sampling_strategy: delphin_6_automation.database_interactions.db_templates.sample_entry.Strategy</em>, <em>used_samples_per_set: int</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#create_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.create_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates new samples fitting the sampling strategy. Raw samples are generated if they do not exist already.
+The function loops through the sampling sequences and generate samples each time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sampling_strategy</strong> – Sampling Strategy</li>
+<li><strong>used_samples_per_set</strong> – How many samples should be generated per set</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The generated samples</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.create_sampling_strategy">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">create_sampling_strategy</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#create_sampling_strategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.create_sampling_strategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a sampling strategy for WP6 Delphin Automation. The sampling strategy will be name ‘sampling_strategy.json’
+and be located at the given folder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) – Folder, where the strategy will be saved.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Created sampling strategy</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.get_raw_samples">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">get_raw_samples</code><span class="sig-paren">(</span><em>sampling_strategy: delphin_6_automation.database_interactions.db_templates.sample_entry.Strategy</em>, <em>step: int</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#get_raw_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.get_raw_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collects raw samples from database associated with sampling strategy. If the raw samples do not exists in
+the database new ones will be created by calling the Sobol function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.initialize_sampling">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">initialize_sampling</code><span class="sig-paren">(</span><em>strategy_doc: delphin_6_automation.database_interactions.db_templates.sample_entry.Strategy</em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#initialize_sampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.initialize_sampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a sampling</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.load_design_options">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">load_design_options</code><span class="sig-paren">(</span><em>designs: List[str], folder: str</em><span class="sig-paren">)</span> &#x2192; List[dict]<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#load_design_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.load_design_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the Delphin files into memory associated with the design options</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.load_latest_sample">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">load_latest_sample</code><span class="sig-paren">(</span><em>sampling_strategy_id: str</em><span class="sig-paren">)</span> &#x2192; Union[delphin_6_automation.database_interactions.db_templates.sample_entry.Sample, NoneType]<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#load_latest_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.load_latest_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look up the last existing sample entries in the database connected to the strategy
+If there is not previous samples in database return empty dict</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sampling_strategy_id</strong> – Sampling strategy id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Return the samples as a dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.load_strategy">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">load_strategy</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#load_strategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.load_strategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a sampling strategy from a JSON file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – Folder, where the sampling strategy is located</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Sampling strategy</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.relative_standard_error">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">relative_standard_error</code><span class="sig-paren">(</span><em>series: list</em>, <em>sequence_length: int</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#relative_standard_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.relative_standard_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the relative standard error</p>
+<p>Source:
+Hou, T, et. al.
+Quasi-Monte Carlo based uncertainty analysis: sampling effciency and error estimation
+Reliability Engineering &amp; System Safety
+2018</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.sample_exists">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">sample_exists</code><span class="sig-paren">(</span><em>sampling_strategy: delphin_6_automation.database_interactions.db_templates.sample_entry.Strategy</em><span class="sig-paren">)</span> &#x2192; Union[delphin_6_automation.database_interactions.db_templates.sample_entry.Sample, NoneType]<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#sample_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.sample_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a sample exists with the same iteration as the current iteration in the sampling strategy</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.sampling.sampling.sobol">
+<code class="descclassname">delphin_6_automation.sampling.sampling.</code><code class="descname">sobol</code><span class="sig-paren">(</span><em>m: int</em>, <em>dimension: int</em>, <em>sets: int = 1</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/delphin_6_automation/sampling/sampling.html#sobol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.sampling.sampling.sobol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Sobol sequence</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="sampling.html">RiBuild Sampling</a><ul>
+      <li>Previous: <a href="sampling.html" title="previous chapter">RiBuild Sampling</a></li>
+      <li>Next: <a href="inputs.html" title="next chapter">Inputs</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/sampling_sampling.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

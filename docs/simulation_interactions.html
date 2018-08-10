@@ -1,0 +1,197 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Simulation Interactions &#8212; Delphin Automation 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Weather Interactions" href="weather_interactions.html" />
+    <link rel="prev" title="Sampling Interactions" href="sampling_interactions.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-delphin_6_automation.database_interactions.simulation_interactions">
+<span id="simulation-interactions"></span><h1>Simulation Interactions<a class="headerlink" href="#module-delphin_6_automation.database_interactions.simulation_interactions" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.clean_simulation_folder">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">clean_simulation_folder</code><span class="sig-paren">(</span><em>path: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/simulation_interactions.html#clean_simulation_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.clean_simulation_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans the simulation folder for content</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – Path to the simulation folder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True on success</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.download_simulation_result">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">download_simulation_result</code><span class="sig-paren">(</span><em>sim_id: str</em>, <em>download_path: str</em>, <em>raw_or_processed='raw'</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/simulation_interactions.html#download_simulation_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.download_simulation_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads Delphin simulation results from the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sim_id</strong> – Delphin project ID</li>
+<li><strong>download_path</strong> – Path to download to</li>
+<li><strong>raw_or_processed</strong> – Whether to download the raw results or the processed ones</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.find_next_sim_in_queue">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">find_next_sim_in_queue</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Union[str, NoneType]<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/simulation_interactions.html#find_next_sim_in_queue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.find_next_sim_in_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the next entry in the simulation queue, which is not yet simulated and has the highest queue priority.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">If a entry is found the id will be returned otherwise None.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.set_simulated">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">set_simulated</code><span class="sig-paren">(</span><em>id_: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/simulation_interactions.html#set_simulated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.set_simulated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flags an entry for finishing the simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> – ID of the entry</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">ID of the entry</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.set_simulating">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">set_simulating</code><span class="sig-paren">(</span><em>id_: str</em>, <em>set_to: bool</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/simulation_interactions.html#set_simulating"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.set_simulating" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the simulating flag of an entry.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>id</strong> – ID of the entry</li>
+<li><strong>set_to</strong> – What to set simulating to. Should be either True or False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">ID of the entry</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.set_simulation_time">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">set_simulation_time</code><span class="sig-paren">(</span><em>sim_id: str</em>, <em>computation_time: datetime.timedelta</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/simulation_interactions.html#set_simulation_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.set_simulation_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the time it took to simulate Delphin project</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.database_interactions.simulation_interactions.wait_until_simulated">
+<code class="descclassname">delphin_6_automation.database_interactions.simulation_interactions.</code><code class="descname">wait_until_simulated</code><span class="sig-paren">(</span><em>delphin_ids: list</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/simulation_interactions.html#wait_until_simulated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.simulation_interactions.wait_until_simulated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait until all simulations in the given list is simulated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delphin_ids</strong> – List with Delphin database ids</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="database_interactions.html">RiBuild Database Interactions</a><ul>
+      <li>Previous: <a href="sampling_interactions.html" title="previous chapter">Sampling Interactions</a></li>
+      <li>Next: <a href="weather_interactions.html" title="next chapter">Weather Interactions</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Christian Kongsgaard, Thomas Perkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/simulation_interactions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
