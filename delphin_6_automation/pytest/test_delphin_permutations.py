@@ -191,6 +191,15 @@ def test_update_output_locations(delphin_with_insulation, width, request):
                 found_location = float(assignment['IBK:Point3D'].split(' ')[0])
                 assert correct_width == pytest.approx(found_location)
 
+            elif assignment['Reference'].endswith('wood rot'):
+                if 'exterior' in request.node.name:
+                    correct_width = width + 0.012 - 0.05
+                else:
+                    correct_width = width - 0.05
+
+                found_location = float(assignment['IBK:Point3D'].split(' ')[0])
+                assert correct_width == pytest.approx(found_location)
+
             elif assignment['Reference'].endswith('mould'):
                 if 'exterior' not in request.node.name:
                     if 'insulated' not in request.node.name:

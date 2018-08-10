@@ -386,6 +386,14 @@ def update_output_locations(delphin: dict) -> dict:
             elif assignment['Reference'].endswith('frost'):
                 assignment['IBK:Point3D'] = '0.005 0.034 0'
 
+            elif assignment['Reference'].endswith('wood rot'):
+                if layers[0]["x_width"] > layers[1]["x_width"]:
+                    width = layers[0]["x_width"] - 0.05
+                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+                else:
+                    width = layers[0]["x_width"] + layers[1]["x_width"] - 0.05
+                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
             elif assignment['Reference'] == 'heat loss':
                 assignment['Range'] = f'{len(x_steps)-1} 0 {len(x_steps)-1} 0'
 
