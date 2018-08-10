@@ -51,7 +51,7 @@
 <span class="c1"># DELPHIN FUNCTIONS AND CLASSES</span>
 
 
-<div class="viewcode-block" id="dp6_to_dict"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.dp6_to_dict">[docs]</a><span class="k">def</span> <span class="nf">dp6_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="dp6_to_dict"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.dp6_to_dict">[docs]</a><span class="k">def</span> <span class="nf">dp6_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a Delphin 6 project file to a python dict.</span>
 
@@ -65,7 +65,7 @@
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">xml_dict</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="d6o_to_dict"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.d6o_to_dict">[docs]</a><span class="k">def</span> <span class="nf">d6o_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<div class="viewcode-block" id="d6o_to_dict"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.d6o_to_dict">[docs]</a><span class="k">def</span> <span class="nf">d6o_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a Delphin results file into a dict.</span>
 
@@ -128,7 +128,7 @@
     <span class="k">return</span> <span class="n">result_dict</span><span class="p">,</span> <span class="n">meta_dict</span></div>
 
 
-<div class="viewcode-block" id="g6a_to_dict"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.g6a_to_dict">[docs]</a><span class="k">def</span> <span class="nf">g6a_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="g6a_to_dict"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.g6a_to_dict">[docs]</a><span class="k">def</span> <span class="nf">g6a_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a Delphin geometry file into a dict.</span>
 
@@ -210,7 +210,7 @@
     <span class="k">return</span> <span class="n">geometry_dict</span></div>
 
 
-<div class="viewcode-block" id="cvode_stats_to_dict"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.cvode_stats_to_dict">[docs]</a><span class="k">def</span> <span class="nf">cvode_stats_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="cvode_stats_to_dict"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.cvode_stats_to_dict">[docs]</a><span class="k">def</span> <span class="nf">cvode_stats_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a Delphin integrator_cvode_stats file into a dict.</span>
 
@@ -247,7 +247,7 @@
     <span class="k">return</span> <span class="n">tsv_dict</span></div>
 
 
-<div class="viewcode-block" id="les_stats_to_dict"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.les_stats_to_dict">[docs]</a><span class="k">def</span> <span class="nf">les_stats_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="les_stats_to_dict"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.les_stats_to_dict">[docs]</a><span class="k">def</span> <span class="nf">les_stats_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a Delphin LES_direct_stats file into a dict.</span>
 
@@ -282,7 +282,7 @@
     <span class="k">return</span> <span class="n">les_dict</span></div>
 
 
-<div class="viewcode-block" id="progress_to_dict"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.progress_to_dict">[docs]</a><span class="k">def</span> <span class="nf">progress_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="progress_to_dict"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.progress_to_dict">[docs]</a><span class="k">def</span> <span class="nf">progress_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a Delphin progress file into a dict.</span>
 
@@ -309,7 +309,7 @@
     <span class="k">return</span> <span class="n">progress_dict</span></div>
 
 
-<div class="viewcode-block" id="dict_to_progress_file"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_progress_file">[docs]</a><span class="k">def</span> <span class="nf">dict_to_progress_file</span><span class="p">(</span><span class="n">file_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="dict_to_progress_file"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_progress_file">[docs]</a><span class="k">def</span> <span class="nf">dict_to_progress_file</span><span class="p">(</span><span class="n">file_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turns a dictionary into a delphin progress file.</span>
 
@@ -348,7 +348,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="dict_to_cvode_stats_file"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_cvode_stats_file">[docs]</a><span class="k">def</span> <span class="nf">dict_to_cvode_stats_file</span><span class="p">(</span><span class="n">file_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="dict_to_cvode_stats_file"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_cvode_stats_file">[docs]</a><span class="k">def</span> <span class="nf">dict_to_cvode_stats_file</span><span class="p">(</span><span class="n">file_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turns a dictionary into a delphin cvode stats file.</span>
 
@@ -399,7 +399,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="dict_to_les_stats_file"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_les_stats_file">[docs]</a><span class="k">def</span> <span class="nf">dict_to_les_stats_file</span><span class="p">(</span><span class="n">file_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="dict_to_les_stats_file"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_les_stats_file">[docs]</a><span class="k">def</span> <span class="nf">dict_to_les_stats_file</span><span class="p">(</span><span class="n">file_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turns a dictionary into a delphin les stats file.</span>
 
@@ -429,7 +429,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="write_log_files"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.write_log_files">[docs]</a><span class="k">def</span> <span class="nf">write_log_files</span><span class="p">(</span><span class="n">result_obj</span><span class="p">:</span> <span class="n">result_db</span><span class="o">.</span><span class="n">Result</span><span class="p">,</span> <span class="n">download_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="write_log_files"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.write_log_files">[docs]</a><span class="k">def</span> <span class="nf">write_log_files</span><span class="p">(</span><span class="n">result_obj</span><span class="p">:</span> <span class="n">result_db</span><span class="o">.</span><span class="n">Result</span><span class="p">,</span> <span class="n">download_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turns a result database entry into a delphin log file.</span>
 
@@ -459,7 +459,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="dict_to_g6a"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_g6a">[docs]</a><span class="k">def</span> <span class="nf">dict_to_g6a</span><span class="p">(</span><span class="n">geometry_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">result_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="dict_to_g6a"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_g6a">[docs]</a><span class="k">def</span> <span class="nf">dict_to_g6a</span><span class="p">(</span><span class="n">geometry_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">result_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turns a dictionary into a delphin geometry file.</span>
 
@@ -518,7 +518,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="dict_to_d6o"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_d6o">[docs]</a><span class="k">def</span> <span class="nf">dict_to_d6o</span><span class="p">(</span><span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">result_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">simulation_start</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
+<div class="viewcode-block" id="dict_to_d6o"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_d6o">[docs]</a><span class="k">def</span> <span class="nf">dict_to_d6o</span><span class="p">(</span><span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">result_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">simulation_start</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
                 <span class="n">geometry_file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">geometry_file_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turns a dictionary into a delphin result file.</span>

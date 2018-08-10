@@ -102,7 +102,7 @@
     <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">id</span></div>
 
 
-<div class="viewcode-block" id="get_delphin_project_dimension"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.get_delphin_project_dimension">[docs]</a><span class="k">def</span> <span class="nf">get_delphin_project_dimension</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_delphin_project_dimension</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">[</span><span class="s1">&#39;DelphinProject&#39;</span><span class="p">][</span><span class="s1">&#39;Discretization&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">3</span>
@@ -112,7 +112,7 @@
             <span class="k">return</span> <span class="mi">1</span>
 
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">1</span></div>
+        <span class="k">return</span> <span class="mi">1</span>
 
 
 <div class="viewcode-block" id="download_delphin_entry"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.download_delphin_entry">[docs]</a><span class="k">def</span> <span class="nf">download_delphin_entry</span><span class="p">(</span><span class="n">delphin_document</span><span class="p">:</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -215,7 +215,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="permutate_entry_layer_width"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.permutate_entry_layer_width">[docs]</a><span class="k">def</span> <span class="nf">permutate_entry_layer_width</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">layer_material</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">permutate_entry_layer_width</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">layer_material</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
     <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">original_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
     <span class="n">modified_ids</span> <span class="o">=</span> <span class="p">[]</span>
@@ -224,10 +224,10 @@
         <span class="n">modified_dict</span> <span class="o">=</span> <span class="n">permutations</span><span class="o">.</span><span class="n">change_layer_width</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span> <span class="n">layer_material</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
         <span class="n">modified_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">upload_delphin_dict_to_database</span><span class="p">(</span><span class="n">modified_dict</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">)))</span>
 
-    <span class="k">return</span> <span class="n">modified_ids</span></div>
+    <span class="k">return</span> <span class="n">modified_ids</span>
 
 
-<div class="viewcode-block" id="permutate_entry_layer_material"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.permutate_entry_layer_material">[docs]</a><span class="k">def</span> <span class="nf">permutate_entry_layer_material</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">original_material</span><span class="p">,</span> <span class="n">new_materials</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">permutate_entry_layer_material</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">original_material</span><span class="p">,</span> <span class="n">new_materials</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
     <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">original_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
     <span class="n">modified_ids</span> <span class="o">=</span> <span class="p">[]</span>
@@ -260,10 +260,10 @@
             <span class="n">modified_dict</span> <span class="o">=</span> <span class="n">permutations</span><span class="o">.</span><span class="n">change_layer_material</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span> <span class="n">original_material</span><span class="p">,</span> <span class="n">material_dict</span><span class="p">)</span>
             <span class="n">modified_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">upload_delphin_dict_to_database</span><span class="p">(</span><span class="n">modified_dict</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">modified_ids</span></div>
+    <span class="k">return</span> <span class="n">modified_ids</span>
 
 
-<div class="viewcode-block" id="permutate_entry_orientation"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.permutate_entry_orientation">[docs]</a><span class="k">def</span> <span class="nf">permutate_entry_orientation</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">orientation_list</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">permutate_entry_orientation</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">orientation_list</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
     <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">original_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
     <span class="n">modified_ids</span> <span class="o">=</span> <span class="p">[]</span>
@@ -272,10 +272,10 @@
         <span class="n">modified_dict</span> <span class="o">=</span> <span class="n">permutations</span><span class="o">.</span><span class="n">change_orientation</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span> <span class="n">orientation</span><span class="p">)</span>
         <span class="n">modified_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">upload_delphin_dict_to_database</span><span class="p">(</span><span class="n">modified_dict</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">)))</span>
 
-    <span class="k">return</span> <span class="n">modified_ids</span></div>
+    <span class="k">return</span> <span class="n">modified_ids</span>
 
 
-<div class="viewcode-block" id="permutate_entry_weather"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.permutate_entry_weather">[docs]</a><span class="k">def</span> <span class="nf">permutate_entry_weather</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">weather_stations</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">permutate_entry_weather</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">weather_stations</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
     <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">original_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
     <span class="n">modified_ids</span> <span class="o">=</span> <span class="p">[]</span>
@@ -290,10 +290,10 @@
                 <span class="n">modified_id</span><span class="p">,</span> <span class="n">station</span><span class="p">,</span> <span class="n">weather_stations</span><span class="p">[</span><span class="s1">&#39;years&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">])</span>
             <span class="n">modified_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modified_id</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">modified_ids</span></div>
+    <span class="k">return</span> <span class="n">modified_ids</span>
 
 
-<div class="viewcode-block" id="permutate_entry_boundary_coefficient"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.permutate_entry_boundary_coefficient">[docs]</a><span class="k">def</span> <span class="nf">permutate_entry_boundary_coefficient</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="p">,</span> <span class="n">coefficient_name</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">permutate_entry_boundary_coefficient</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">boundary_condition</span><span class="p">,</span> <span class="n">coefficient_name</span><span class="p">,</span>
                                          <span class="n">coefficient_list</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
     <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">original_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
@@ -304,10 +304,10 @@
                                                                  <span class="n">coefficient_name</span><span class="p">,</span> <span class="n">coefficient</span><span class="p">)</span>
         <span class="n">modified_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">upload_delphin_dict_to_database</span><span class="p">(</span><span class="n">modified_dict</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">)))</span>
 
-    <span class="k">return</span> <span class="n">modified_ids</span></div>
+    <span class="k">return</span> <span class="n">modified_ids</span>
 
 
-<div class="viewcode-block" id="permutate_entry_simulation_length"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.permutate_entry_simulation_length">[docs]</a><span class="k">def</span> <span class="nf">permutate_entry_simulation_length</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">length_list</span><span class="p">,</span> <span class="n">unit_list</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">permutate_entry_simulation_length</span><span class="p">(</span><span class="n">original_id</span><span class="p">,</span> <span class="n">length_list</span><span class="p">,</span> <span class="n">unit_list</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">):</span>
     <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">original_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
     <span class="n">modified_ids</span> <span class="o">=</span> <span class="p">[]</span>
@@ -317,7 +317,7 @@
             <span class="n">modified_dict</span> <span class="o">=</span> <span class="n">permutations</span><span class="o">.</span><span class="n">change_simulation_length</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
             <span class="n">modified_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">upload_delphin_dict_to_database</span><span class="p">(</span><span class="n">modified_dict</span><span class="p">,</span> <span class="n">queue_priority</span><span class="p">)))</span>
 
-    <span class="k">return</span> <span class="n">modified_ids</span></div>
+    <span class="k">return</span> <span class="n">modified_ids</span>
 
 
 <div class="viewcode-block" id="change_entry_simulation_length"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.change_entry_simulation_length">[docs]</a><span class="k">def</span> <span class="nf">change_entry_simulation_length</span><span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
@@ -566,6 +566,34 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Added sample metadata to Delphin project with ID: </span><span class="si">{delphin_id}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">id</span></div>
+
+
+<div class="viewcode-block" id="change_entry_kirchhoff_potential"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.change_entry_kirchhoff_potential">[docs]</a><span class="k">def</span> <span class="nf">change_entry_kirchhoff_potential</span><span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">set_to</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Change the Kirchhoff potential of a Delphin project&quot;&quot;&quot;</span>
+
+    <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">sim_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
+    <span class="n">permutations</span><span class="o">.</span><span class="n">change_kirchhoff_potential</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span> <span class="n">set_to</span><span class="p">)</span>
+
+    <span class="n">delphin_document</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">set__dp6_file</span><span class="o">=</span><span class="n">delphin_dict</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Changed Kirchhoff potential to </span><span class="si">{set_to}</span><span class="s1"> for Delphin project with ID: </span><span class="si">{sim_id}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">delphin_document</span><span class="o">.</span><span class="n">id</span></div>
+
+
+<div class="viewcode-block" id="change_entry_solver_relative_tolerance"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.change_entry_solver_relative_tolerance">[docs]</a><span class="k">def</span> <span class="nf">change_entry_solver_relative_tolerance</span><span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">rel_tol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Change the solver relative tolerance of a Delphin project&quot;&quot;&quot;</span>
+
+    <span class="n">delphin_document</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">sim_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">delphin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">delphin_document</span><span class="o">.</span><span class="n">dp6_file</span><span class="p">)</span>
+    <span class="n">permutations</span><span class="o">.</span><span class="n">change_solver_relative_tolerance</span><span class="p">(</span><span class="n">delphin_dict</span><span class="p">,</span> <span class="n">rel_tol</span><span class="p">)</span>
+
+    <span class="n">delphin_document</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">set__dp6_file</span><span class="o">=</span><span class="n">delphin_dict</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Changed the solver relative tolerance to </span><span class="si">{rel_tol}</span><span class="s1"> for Delphin project with ID: </span><span class="si">{sim_id}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">delphin_document</span><span class="o">.</span><span class="n">id</span></div>
 </pre></div>
 
           </div>

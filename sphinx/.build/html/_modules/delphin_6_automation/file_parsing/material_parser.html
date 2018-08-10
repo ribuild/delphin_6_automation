@@ -48,7 +48,7 @@
 <span class="c1"># MATERIAL PARSER</span>
 
 
-<div class="viewcode-block" id="MyNumber"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.material_parser.MyNumber">[docs]</a><span class="k">class</span> <span class="nc">MyNumber</span><span class="p">:</span>
+<div class="viewcode-block" id="MyNumber"><a class="viewcode-back" href="../../../material_parser.html#delphin_6_automation.file_parsing.material_parser.MyNumber">[docs]</a><span class="k">class</span> <span class="nc">MyNumber</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Makes it possible to have 3 digits after the e of a scientific notation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -80,7 +80,7 @@
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="material_file_to_dict"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.material_parser.material_file_to_dict">[docs]</a><span class="k">def</span> <span class="nf">material_file_to_dict</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="material_file_to_dict"><a class="viewcode-back" href="../../../material_parser.html#delphin_6_automation.file_parsing.material_parser.material_file_to_dict">[docs]</a><span class="k">def</span> <span class="nf">material_file_to_dict</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Converts a material file into a dict&quot;&quot;&quot;</span>
 
     <span class="n">material_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -156,7 +156,7 @@
     <span class="k">return</span> <span class="n">material_dict</span></div>
 
 
-<div class="viewcode-block" id="dict_to_m6"><a class="viewcode-back" href="../../../file_parsing.html#delphin_6_automation.file_parsing.material_parser.dict_to_m6">[docs]</a><span class="k">def</span> <span class="nf">dict_to_m6</span><span class="p">(</span><span class="n">material</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="dict_to_m6"><a class="viewcode-back" href="../../../material_parser.html#delphin_6_automation.file_parsing.material_parser.dict_to_m6">[docs]</a><span class="k">def</span> <span class="nf">dict_to_m6</span><span class="p">(</span><span class="n">material</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes an material dict and converts it into a .m6 file.</span>
 
