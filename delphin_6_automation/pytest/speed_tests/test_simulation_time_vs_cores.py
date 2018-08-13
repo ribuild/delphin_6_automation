@@ -24,7 +24,7 @@ from delphin_6_automation.delphin_setup import weather_modeling
 #
 
 
-@pytest.fixture(params=[2, 4, 6, 8, 12, 16, 20, 24])
+@pytest.fixture(params=[1, 2, 4, 8, 12, 16, 20])
 def mock_submit_file(monkeypatch, request):
 
     def mock_return(sim_id: str, simulation_folder: str, restart=False):
