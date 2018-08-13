@@ -64,7 +64,7 @@ def mock_submit_file(monkeypatch, request):
 
 
 @pytest.mark.skipif(platform.system() == 'Linux', reason='Test should only run locally')
-def test_speed_vs_cores(mock_driving_rain, mock_wait_until_finished, mock_submit_file, db_one_project):
+def test_speed_vs_cores(mock_wait_until_finished, mock_submit_file, db_one_project, request):
 
     db_one_project = str(db_one_project)
     folder = 'H:/ribuild'
@@ -80,4 +80,5 @@ def test_speed_vs_cores(mock_driving_rain, mock_wait_until_finished, mock_submit
     delta_time = datetime.datetime.now() - time_0
 
     with open(os.path.join(folder, 'time.txt'), 'a') as out:
-        out.write(str(delta_time.total_seconds())+'\n')
+        cores = request.node.name.split('[')[-1][:-1]
+        out.write(f'{cores} Cores - Simulation Time: {delta_time.total_seconds()} seconds\n')
