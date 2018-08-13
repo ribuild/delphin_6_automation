@@ -292,18 +292,18 @@ def algae(relative_humidity_list: typing.List[float], temperature_list: typing.L
 
 
 def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typing.Union[np.ndarray, list],
-            interior_temperature: typing.Union[np.ndarray, list], area=0.68) -> np.ndarray:
+            interior_temperature: typing.Union[np.ndarray, list], area=0.68) -> float:
     """Calculates the mean U-value given the outdoor and indoor temperature and the heat loss"""
 
-    heat_loss = np.asarray(heat_loss)
+    heat_loss = np.absolute(np.asarray(heat_loss))
     exterior_temperature = np.asarray(exterior_temperature)
     interior_temperature = np.asarray(interior_temperature)
 
-    delta_temperature = exterior_temperature - interior_temperature
+    delta_temperature = np.absolute(exterior_temperature - interior_temperature)
     u_value_ = heat_loss / (delta_temperature[:-1] * area)
     u_value_ = u_value_[~np.isinf(u_value_)]
     u_value_mean = np.nanmean(u_value_)
 
     logger.debug(f'Calculated U-value to: {u_value_mean}')
 
-    return u_value_mean
+    return float(u_value_mean)

@@ -39,9 +39,9 @@ def download_simulation_result(sim_id: str, download_path: str, raw_or_processed
     os.mkdir(download_extended_path)
 
     if raw_or_processed == 'raw':
-        result_id = object_.result_id
+        result_id = object_.results_raw
         logger.info(f'Downloads raw result with ID: {result_id} from Delphin project with ID: {sim_id}')
-        general_interact.download_raw_result(result_id, download_extended_path)
+        general_interact.download_raw_result(result_id.id, download_extended_path)
 
     elif raw_or_processed == 'processed':
         pass

@@ -25,6 +25,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.file_parsing import delphin_parser
+from delphin_6_automation.file_parsing import weather_parser
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry
@@ -418,3 +419,16 @@ def mock_design_options(monkeypatch):
         return [file.split(".")[0] for file in design_files]
 
     monkeypatch.setattr(inputs, 'design_options', mock_return)
+
+
+@pytest.fixture(params=[1, 2])
+def uvalue_data(test_folder, request):
+
+    folder = os.path.join(test_folder, 'damage_models', f'u_value_{request.param}')
+
+    indoor_temp = weather_parser.ccd_to_list(os.path.join(folder, 'indoor_temperature.ccd'))
+    outdoor_temp = weather_parser.ccd_to_list(os.path.join(folder, 'temperature.ccd'))
+    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o')[0]['result']
+    heat_loss = heat_loss[list(heat_loss.keys())[0]]
+
+    return heat_loss, outdoor_temp, indoor_temp
