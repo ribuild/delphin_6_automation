@@ -428,7 +428,19 @@ def uvalue_data(test_folder, request):
 
     indoor_temp = weather_parser.ccd_to_list(os.path.join(folder, 'indoor_temperature.ccd'))
     outdoor_temp = weather_parser.ccd_to_list(os.path.join(folder, 'temperature.ccd'))
-    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o')[0]['result']
-    heat_loss = heat_loss[list(heat_loss.keys())[0]]
+    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o')[0]
 
     return heat_loss, outdoor_temp, indoor_temp
+
+
+@pytest.fixture(params=[1, 2])
+def result_files(tmpdir, test_folder, request):
+    temp_folder = tmpdir.mkdir('test')
+
+    result_zip = test_folder + f'/raw_results/delphin_results{request.param}.zip'
+    shutil.unpack_archive(result_zip, temp_folder)
+
+    for file in os.listdir(os.path.join(temp_folder, 'delphin_id', 'results')):
+        os.rename(os.path.join(temp_folder, 'delphin_id', 'results', file), os.path.join(temp_folder, file))
+
+    return temp_folder
