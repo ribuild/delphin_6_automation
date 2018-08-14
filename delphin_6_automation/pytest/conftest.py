@@ -87,7 +87,6 @@ def delphin_file_path(test_folder):
                         '1d_interior_plaster_insulated2layers',
                         '1d_interior_plaster_insulated3layers'])
 def delphin_with_insulation(test_folder, request):
-
     delphin_file = test_folder + f'/delphin/{request.param}.d6p'
 
     return delphin_parser.dp6_to_dict(delphin_file)
@@ -267,7 +266,6 @@ def add_delphin_for_errors(empty_database, delphin_file_path, add_two_materials,
 
 @pytest.fixture()
 def add_strategy_for_errors(setup_database, add_three_years_weather):
-
     strategy = {'design': ['1d_interior_plaster', '1d_exterior_interior_plaster'],
                 'settings': {'sequence': 10, 'standard error threshold': 0.1}}
     sampling_interactions.upload_sampling_strategy(strategy)
@@ -275,7 +273,6 @@ def add_strategy_for_errors(setup_database, add_three_years_weather):
 
 @pytest.fixture()
 def mock_submit_job(monkeypatch):
-
     def mockreturn(submit_file, sim_id):
         return None
 
@@ -284,7 +281,6 @@ def mock_submit_job(monkeypatch):
 
 @pytest.fixture()
 def mock_sleep(monkeypatch):
-
     def mockreturn(secs):
         return None
 
@@ -293,7 +289,6 @@ def mock_sleep(monkeypatch):
 
 @pytest.fixture()
 def mock_hpc_worker(monkeypatch):
-
     def mockreturn(id_, thread_name, folder=None):
         print('hpc called')
         exit()
@@ -304,7 +299,6 @@ def mock_hpc_worker(monkeypatch):
 
 @pytest.fixture()
 def mock_find_next_sim_in_queue(monkeypatch):
-
     def mockreturn():
         return 'test_id'
 
@@ -313,7 +307,6 @@ def mock_find_next_sim_in_queue(monkeypatch):
 
 @pytest.fixture()
 def mock_hpc_worker_exception(monkeypatch):
-
     def mockreturn(id_, thread_name, folder=None):
         raise FileNotFoundError
 
@@ -322,7 +315,6 @@ def mock_hpc_worker_exception(monkeypatch):
 
 @pytest.fixture()
 def mock_sleep_exception(monkeypatch):
-
     def mockreturn(secs):
         exit()
         return None
@@ -332,7 +324,6 @@ def mock_sleep_exception(monkeypatch):
 
 @pytest.fixture()
 def add_sample_for_errors(add_strategy_for_errors, dummy_sample):
-
     mean = {str(i): {'1d_interior_plaster': {'mould': 0.5,
                                              'algae': 0.5,
                                              'heat_loss': 0.5}} for i in range(10)}
@@ -345,11 +336,10 @@ def add_sample_for_errors(add_strategy_for_errors, dummy_sample):
 
 @pytest.fixture()
 def dummy_systems():
-
     multi_index = pd.MultiIndex(levels=[[0, 1], ['insulation_00', 'insulation_01',
                                                  'insulation_02', 'finish_00', 'detail_00']],
                                 labels=[[0, 0, 0, 0, 0, 1, 1, 1], [0, 1, 2, 3, 4, 0, 1, 3]],
-                                names=['ID', 'Dimension'],)
+                                names=['ID', 'Dimension'], )
     frame = pd.DataFrame(index=multi_index, data={'ID': [39, 39, 39, 125, 705, 187, 187, 559],
                                                   'Dimension': [25, 50, 100, 10, 5, 25, 35, 12]})
 
@@ -358,7 +348,6 @@ def dummy_systems():
 
 @pytest.fixture()
 def delphin_reference_folder(test_folder, tmpdir):
-
     folder = tmpdir.mkdir('test')
     folder.mkdir('design')
     folder.mkdir('delphin')
@@ -373,7 +362,6 @@ def delphin_reference_folder(test_folder, tmpdir):
 
 @pytest.fixture()
 def delphin_design_folder(test_folder, tmpdir):
-
     if not os.path.exists(os.path.join(tmpdir, 'test')):
         folder = tmpdir.mkdir('test')
         folder.mkdir('design')
@@ -385,8 +373,19 @@ def delphin_design_folder(test_folder, tmpdir):
 
     delphin_folder = os.path.join(test_folder, 'delphin')
 
-    for file in os.listdir(delphin_folder):
-        new_file = os.path.join(folder, 'design', file)
+    for index, file in enumerate(os.listdir(delphin_folder)):
+        names = ['1d_exterior.d6p', '1d_interior.d6p',
+                 '1d_exterior_CalciumSilicateBoard_39_125_705_25.d6p',
+                 '1d_exterior_CalciumSilicateBoard_39_125_705_50.d6p',
+                 '1d_exterior_CalciumSilicateBoard_39_125_705_100.d6p',
+                 '1d_exterior_PolystyreneBoardExpanded_187_559_25.d6p',
+                 '1d_exterior_PolystyreneBoardExpanded_187_559_35.d6p',
+                 '1d_interior_CalciumSilicateBoard_39_125_705_25.d6p',
+                 '1d_interior_CalciumSilicateBoard_39_125_705_50.d6p',
+                 '1d_interior_CalciumSilicateBoard_39_125_705_100.d6p',
+                 '1d_interior_PolystyreneBoardExpanded_187_559_25.d6p',
+                 '1d_interior_PolystyreneBoardExpanded_187_559_35.d6p']
+        new_file = os.path.join(folder, 'design', names[index])
         shutil.copyfile(os.path.join(delphin_folder, file), new_file)
 
     return os.path.join(folder, 'design')
@@ -394,7 +393,6 @@ def delphin_design_folder(test_folder, tmpdir):
 
 @pytest.fixture()
 def mock_insulation_systems(monkeypatch, dummy_systems, delphin_reference_folder, test_folder):
-
     def mock_return(rows_to_read=None, excel_file=None, folder=None):
         return dummy_systems
 
@@ -404,6 +402,7 @@ def mock_insulation_systems(monkeypatch, dummy_systems, delphin_reference_folder
     to_file = os.path.join(delphin_reference_folder, 'InsulationSystems.xlsx')
     shutil.copyfile(from_file, to_file)
 
+
 @pytest.fixture()
 def input_sets():
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_files', 'input_sets')
@@ -411,23 +410,27 @@ def input_sets():
 
 @pytest.fixture()
 def mock_design_options(monkeypatch):
-
     def mock_return(folder=None):
-        design_files = inputs.construction_types()
-        designs = []
-        for file in design_files:
-            if file.endswith('plaster.d6p'):
-                designs.append(f'{file.split(".")[0]}_reference')
-            else:
-                designs.append(file.split(".")[0])
-        return [file.split(".")[0] for file in design_files]
+        # design_files = inputs.construction_types()
+        # designs = []
+        # for file in design_files:
+        #    if file.endswith('plaster.d6p'):
+        #        designs.append(f'{file.split(".")[0]}_reference')
+        #    else:
+        #        designs.append(file.split(".")[0])
+
+        return ['1d_exterior', '1d_interior',
+                '1d_exterior_CalciumSilicateBoard_39_125_705_25',
+                '1d_exterior_CalciumSilicateBoard_39_125_705_50',
+                '1d_exterior_CalciumSilicateBoard_39_125_705_100',
+                '1d_exterior_PolystyreneBoardExpanded_187_559_25',
+                '1d_exterior_PolystyreneBoardExpanded_187_559_35', ]
 
     monkeypatch.setattr(inputs, 'design_options', mock_return)
 
 
 @pytest.fixture(params=[1, 2])
 def uvalue_data(test_folder, request):
-
     folder = os.path.join(test_folder, 'damage_models', f'u_value_{request.param}')
 
     indoor_temp = weather_parser.ccd_to_list(os.path.join(folder, 'indoor_temperature.ccd'))
@@ -451,7 +454,5 @@ def result_files(tmpdir, test_folder, request):
 
 
 @pytest.fixture()
-def design_options(mock_insulation_systems,
-                        add_insulation_materials, delphin_reference_folder):
-
+def design_options(mock_insulation_systems, add_insulation_materials, delphin_reference_folder):
     return inputs.design_options(delphin_reference_folder)
