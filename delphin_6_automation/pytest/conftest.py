@@ -411,13 +411,6 @@ def input_sets():
 @pytest.fixture()
 def mock_design_options(monkeypatch):
     def mock_return(folder=None):
-        # design_files = inputs.construction_types()
-        # designs = []
-        # for file in design_files:
-        #    if file.endswith('plaster.d6p'):
-        #        designs.append(f'{file.split(".")[0]}_reference')
-        #    else:
-        #        designs.append(file.split(".")[0])
 
         return ['1d_exterior', '1d_interior',
                 '1d_exterior_CalciumSilicateBoard_39_125_705_25',
