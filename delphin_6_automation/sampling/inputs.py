@@ -152,9 +152,14 @@ def construct_delphin_reference(folder: str) -> typing.List[str]:
     else:
         os.mkdir(design_folder)
 
-    for i, file in enumerate(delphin_templates(folder)[0]):
+    for file in delphin_templates(folder)[0]:
+
+        if 'exterior' in file:
+            new_name = '1d_exterior.d6p'
+        else:
+            new_name = '1d_interior.d6p'
+
         from_file = os.path.join(folder, 'delphin', file)
-        new_name = file.split('.')[0] + '_reference.d6p'
         to_file = os.path.join(design_folder, new_name)
         copied_files.append(new_name)
         shutil.copyfile(from_file, to_file)
@@ -229,7 +234,8 @@ def construct_design_files(folder: str) -> typing.List[str]:
     """
 
     # appreciate formatted insulation systems
-    systems = insulation_systems(folder=folder)
+    excel_file = 'InsulationSystems'
+    systems = insulation_systems(folder=folder, excel_file=excel_file)
     file_names = construct_delphin_reference(folder)
 
     # permutation of insulation systems
@@ -260,7 +266,21 @@ def construct_design_files(folder: str) -> typing.List[str]:
 
             # write option files (above dicts)
             for i, dim in enumerate(system.loc[insulation_select, 'Dimension']):
-                file_name = f'{file.split(".")[0]}_option{str(system_number).zfill(2)}-{str(dim).zfill(3)}.d6p'
+                if 'exterior' in file:
+                    new_name = '1d_exterior_'
+                else:
+                    new_name = '1d_interior_'
+
+                insulation_name = pd.read_excel(folder + f'/{excel_file}.xlsx', usecols=[1]).loc[system_number, 'Name']
+
+                if layers == 2:
+                    new_name += f'{insulation_name}_{system.loc["insulation_00", "ID"]}_' \
+                                f'{system.loc["finish_00", "ID"]}_{dim}'
+                elif layers == 3:
+                    new_name += f'{insulation_name}_{system.loc["insulation_00", "ID"]}_' \
+                                f'{system.loc["finish_00", "ID"]}_{system.loc["detail_00", "ID"]}_{dim}'
+
+                file_name = new_name + '.d6p'
                 file_names.append(file_name)
                 xmltodict.unparse(option_dicts[i],
                                   output=open(os.path.join(folder,

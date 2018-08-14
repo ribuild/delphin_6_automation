@@ -391,14 +391,18 @@ def delphin_design_folder(test_folder, tmpdir):
 
     return os.path.join(folder, 'design')
 
+
 @pytest.fixture()
-def mock_insulation_systems(monkeypatch, dummy_systems):
+def mock_insulation_systems(monkeypatch, dummy_systems, delphin_reference_folder, test_folder):
 
     def mock_return(rows_to_read=None, excel_file=None, folder=None):
         return dummy_systems
 
     monkeypatch.setattr(inputs, 'insulation_systems', mock_return)
 
+    from_file = os.path.join(test_folder, 'input_sets', 'InsulationSystems.xlsx')
+    to_file = os.path.join(delphin_reference_folder, 'InsulationSystems.xlsx')
+    shutil.copyfile(from_file, to_file)
 
 @pytest.fixture()
 def input_sets():
@@ -444,3 +448,10 @@ def result_files(tmpdir, test_folder, request):
         os.rename(os.path.join(temp_folder, 'delphin_id', 'results', file), os.path.join(temp_folder, file))
 
     return temp_folder
+
+
+@pytest.fixture()
+def design_options(mock_insulation_systems,
+                        add_insulation_materials, delphin_reference_folder):
+
+    return inputs.design_options(delphin_reference_folder)

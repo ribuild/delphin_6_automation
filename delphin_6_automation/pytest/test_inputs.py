@@ -7,6 +7,7 @@ __license__ = 'MIT'
 # Modules
 import pandas as pd
 import os
+import shutil
 
 # RiBuild Modules
 from delphin_6_automation.sampling import inputs

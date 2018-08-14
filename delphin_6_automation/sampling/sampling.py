@@ -361,7 +361,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
             sample_dict['start year'] = samples[sequence][design]['generic scenario']['start year'][0]
             sample_dict['exterior climate'] = samples[sequence][design]['generic scenario']['exterior climate'][0]
             sample_dict['interior climate'] = samples[sequence][design]['generic scenario']['interior climate'][0]
-            sample_dict['design_option'] = design
+            sample_dict['design_option'] = create_design_info(design)
             sample_dict['sequence'] = sequence
 
             delphin_interactions.add_sampling_dict(delphin_id, sample_dict)
@@ -369,6 +369,43 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
             delphin_ids.append(delphin_id)
 
     return delphin_ids
+
+
+def create_design_info(design: str) -> dict:
+
+    design_data = design.split('_')
+    if len(design_data) == 7:
+        design_info = {'exterior_plaster': design_data[1] == 'exterior',
+                       'system_name': design_data[2],
+                       'insulation_material': int(design_data[3]),
+                       'finish_material': int(design_data[4]),
+                       'detail_material': int(design_data[5]),
+                       'insulation_thickness': int(design_data[6]),
+                       }
+
+    elif len(design_data) == 6:
+        design_info = {'exterior_plaster': design_data[1] == 'exterior',
+                       'system_name': design_data[2],
+                       'insulation_material': int(design_data[3]),
+                       'finish_material': int(design_data[4]),
+                       'detail_material': None,
+                       'insulation_thickness': int(design_data[5]),
+                       }
+
+    elif len(design_data) == 2:
+        design_info = {'exterior_plaster': design_data[1] == 'exterior',
+                       'system_name': None,
+                       'insulation_material': None,
+                       'finish_material': None,
+                       'detail_material': None,
+                       'insulation_thickness': None,
+                       }
+    else:
+        error = f'Unknown design string. Given design was: {design}'
+        logger.error(error)
+        raise ValueError(error)
+
+    return design_info
 
 
 def calculate_error(sample_strategy: sample_entry.Strategy) -> dict:

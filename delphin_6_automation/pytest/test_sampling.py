@@ -223,3 +223,11 @@ def test_initialize_sampling(add_sampling_strategy):
     assert not convergence
     assert new_samples_per_set == 1
     assert used_samples_per_set == 0
+
+
+def test_create_design_info(design_options):
+
+    for design in design_options:
+        design_info = sampling.create_design_info(design)
+
+        assert isinstance(design_info, dict)
