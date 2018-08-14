@@ -113,14 +113,16 @@ def upload_results_to_database(path_: str, delete_files: bool = True) -> str:
     id_ = os.path.split(path_)[1]
     delphin_entry = delphin_db.Delphin.objects(id=id_).first()
     result_dict = {}
-    result_path = path_ + '/results'
-    log_path = path_ + '/log'
+    result_path = os.path.join(path_, 'results')
+    #log_path = path_ + '/log'
     geometry_dict = {}
-    meta_dict = {}
 
     for result_file in os.listdir(result_path):
         if result_file.endswith('.d6o'):
-            result_dict[result_file.split('.')[0]], meta_dict = delphin_parser.d6o_to_dict(result_path, result_file)
+            result_name = result_file.split('.')[0]
+            result_dict[result_name] = {'result': [], 'meta': []}
+            (result_dict[result_name]['result'],
+             result_dict[result_name]['meta']) = delphin_parser.d6o_to_dict(result_path, result_file)
 
         elif result_file.endswith('.g6a'):
             geometry_dict = delphin_parser.g6a_to_dict(result_path, result_file)
@@ -136,8 +138,9 @@ def upload_results_to_database(path_: str, delete_files: bool = True) -> str:
 
     entry.geometry_file = geometry_dict
     entry.results.put(bson.BSON.encode(result_dict))
-    entry.simulation_started = meta_dict['created']
-    entry.geometry_file_hash = meta_dict['geo_file_hash']
+    last_meta = result_dict[list(result_dict.keys())[0]]['meta']
+    entry.simulation_started = last_meta['created']
+    entry.geometry_file_hash = last_meta['geo_file_hash']
     entry.save()
 
     logger.debug(f'Uploaded raw results with ID: {entry.id}')
@@ -175,8 +178,9 @@ def download_result_files(result_obj: result_db.Result, download_path: str) -> b
     delphin_parser.dict_to_g6a(dict(result_obj.geometry_file), result_path)
 
     for result_name in result_dict.keys():
-        delphin_parser.dict_to_d6o(result_dict, result_name, result_path, result_obj.simulation_started,
-                                   result_obj.geometry_file['name'], result_obj.geometry_file_hash)
+        delphin_parser.dict_to_d6o(result_dict[result_name], os.path.join(result_path, result_name),
+                                   result_obj.simulation_started, result_obj.geometry_file['name'],
+                                   result_obj.geometry_file_hash)
 
     logger.debug(f'Downloaded raw results with ID: {result_obj.id}')
 
@@ -472,13 +476,11 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -
 
     # Paths
     folder = os.path.join(folder, 'results')
-    temperature_mould = list(delphin_parser.d6o_to_dict(folder, 'temperature mould.d6o')[0]['result'].values())[0]
-    relative_humidity_mould = \
-        list(delphin_parser.d6o_to_dict(folder, 'relative humidity mould.d6o')[0]['result'].values())[0]
-    temperature_algae = list(delphin_parser.d6o_to_dict(folder, 'temperature algae.d6o')[0]['result'].values())[0]
-    relative_humidity_algae = \
-        list(delphin_parser.d6o_to_dict(folder, 'relative humidity algae.d6o')[0]['result'].values())[0]
-    heat_loss = list(delphin_parser.d6o_to_dict(folder, 'heat loss.d6o')[0]['result'].values())[0]
+    temperature_mould = delphin_parser.d6o_to_dict(folder, 'temperature mould.d6o')[0]
+    relative_humidity_mould = delphin_parser.d6o_to_dict(folder, 'relative humidity mould.d6o')[0]
+    temperature_algae = delphin_parser.d6o_to_dict(folder, 'temperature algae.d6o')[0]
+    relative_humidity_algae = delphin_parser.d6o_to_dict(folder, 'relative humidity algae.d6o')[0]
+    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o')[0]
 
     weather_path = os.path.join(os.path.dirname(os.path.dirname(folder)), 'weather')
     exterior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'temperature.ccd'))

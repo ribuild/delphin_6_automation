@@ -11,9 +11,14 @@ import datetime
 import os
 import shutil
 import bson
+import typing
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger(__name__)
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES
@@ -33,7 +38,7 @@ def dp6_to_dict(path: str) -> dict:
     return dict(xml_dict)
 
 
-def d6o_to_dict(path: str, filename: str)-> tuple:
+def d6o_to_dict(path: str, filename: str)-> typing.Tuple[list, dict]:
     """
     Converts a Delphin results file into a dict.
 
@@ -44,10 +49,9 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
 
     # Helper functions
     def d6o(d6o_lines):
-        result_dict_ = dict()
-        result_dict_['D6OARLZ'] = lines[0].split(' ')[-1].strip()
 
-        meta_dict_ = {}
+        meta_dict_ = dict()
+        meta_dict_['D6OARLZ'] = lines[0].split(' ')[-1].strip()
 
         for i in range(1, 14):
             line = lines[i].split('=')
@@ -62,30 +66,26 @@ def d6o_to_dict(path: str, filename: str)-> tuple:
             elif name == 'indices':
                 value = [int(i)
                          for i in line[1].strip().split(' ')]
-                result_dict_[name] = value
+                meta_dict_[name] = value
             else:
                 value = line[1].strip()
-                result_dict_[name] = value
+                meta_dict_[name] = value
 
-        result_values = dict()
-
-        for index_ in result_dict_['indices']:
-            cell = 'cell_' + str(index_)
-            result_values[cell] = []
+        result_values = list()
+        result_times = set()
 
         for j in range(15, len(d6o_lines)):
 
             line = lines[j].strip().split('\t')
 
-            for index, value in enumerate(line[1:]):
-                cell = 'cell_' + str(result_dict_['indices'][index])
-                result_values[cell].append(float(value.strip()))
+            hour = int(line[0].strip())
+            if hour not in result_times:
+                result_times.add(hour)
+                result_values.append(float(line[1].strip()))
+            else:
+                logger.debug(f'Hour {hour} already in result file: {filename}. Duplicate value is not saved')
 
-        result_values = {cell: value for cell, value in result_values.items() if value}
-
-        result_dict_['result'] = result_values
-
-        return result_dict_, meta_dict_
+        return result_values, meta_dict_
 
     file_obj = open(os.path.join(path, filename), 'r')
     lines = file_obj.readlines()
@@ -486,13 +486,12 @@ def dict_to_g6a(geometry_dict: dict, result_path: str) -> bool:
     return True
 
 
-def dict_to_d6o(result_dict: dict, result_name: str, result_path: str, simulation_start: datetime.datetime,
+def dict_to_d6o(result_dict: dict, result_path: str, simulation_start: datetime.datetime,
                 geometry_file_name: str, geometry_file_hash: int) -> bool:
     """
     Turns a dictionary into a delphin result file.
 
     :param result_dict: Dictionary representation of the database entry
-    :param result_name: Name of the result file
     :param result_path: Path to were the result file should be written
     :param simulation_start: Start time for the simulation
     :param geometry_file_name: Name of the geometry file
@@ -500,39 +499,34 @@ def dict_to_d6o(result_dict: dict, result_name: str, result_path: str, simulatio
     :return: True
     """
 
-    file_obj = open(result_path + '/' + result_name + '.d6o', 'w')
+    file_obj = open(result_path + '.d6o', 'w')
 
-    file_obj.write('D6OARLZ! ' + str(result_dict[result_name]['D6OARLZ']) + '\n')
-    file_obj.write('TYPE          = ' + str(result_dict[result_name]['type']) + '\n')
-    file_obj.write('PROJECT_FILE  = ' + str(result_dict[result_name]['project_file']) + '\n')
+    file_obj.write('D6OARLZ! ' + str(result_dict['meta']['D6OARLZ']) + '\n')
+    file_obj.write('TYPE          = ' + str(result_dict['meta']['type']) + '\n')
+    file_obj.write('PROJECT_FILE  = ' + str(result_dict['meta']['project_file']) + '\n')
     file_obj.write('CREATED       = ' + str(simulation_start.strftime('%a %b %d %H:%M:%S %Y')) + '\n')
     file_obj.write('GEO_FILE      = ' + str(geometry_file_name) + '.g6a' + '\n')
     file_obj.write('GEO_FILE_HASH = ' + str(geometry_file_hash) + '\n')
-    file_obj.write('QUANTITY      = ' + str(result_dict[result_name]['quantity']) + '\n')
-    file_obj.write('QUANTITY_KW   = ' + str(result_dict[result_name]['quantity_kw']) + '\n')
-    file_obj.write('SPACE_TYPE    = ' + str(result_dict[result_name]['space_type']) + '\n')
-    file_obj.write('TIME_TYPE     = ' + str(result_dict[result_name]['time_type']) + '\n')
-    file_obj.write('VALUE_UNIT    = ' + str(result_dict[result_name]['value_unit']) + '\n')
-    file_obj.write('TIME_UNIT     = ' + str(result_dict[result_name]['time_unit']) + '\n')
-    file_obj.write('START_YEAR    = ' + str(result_dict[result_name]['start_year']) + '\n')
-    file_obj.write('INDICES       = ' + ' '.join([str(i) for i in result_dict[result_name]['indices']]) +
+    file_obj.write('QUANTITY      = ' + str(result_dict['meta']['quantity']) + '\n')
+    file_obj.write('QUANTITY_KW   = ' + str(result_dict['meta']['quantity_kw']) + '\n')
+    file_obj.write('SPACE_TYPE    = ' + str(result_dict['meta']['space_type']) + '\n')
+    file_obj.write('TIME_TYPE     = ' + str(result_dict['meta']['time_type']) + '\n')
+    file_obj.write('VALUE_UNIT    = ' + str(result_dict['meta']['value_unit']) + '\n')
+    file_obj.write('TIME_UNIT     = ' + str(result_dict['meta']['time_unit']) + '\n')
+    file_obj.write('START_YEAR    = ' + str(result_dict['meta']['start_year']) + '\n')
+    file_obj.write('INDICES       = ' + ' '.join([str(i) for i in result_dict['meta']['indices']]) +
                    ' \n\n')
 
-    result_keys = list(result_dict[result_name]['result'].keys())
-    for count in range(0, len(result_dict[result_name]['result'][result_keys[0]])):
+    for count in range(len(result_dict['result'])):
         space_count = ' ' * (13 - len(str(count)))
         line_to_write = str(count) + space_count
 
-        for key in result_keys:
-            try:
-                value = result_dict[result_name]['result'][key][count]
-                if value == int(value):
-                    value = int(value)
-                space_value = ' ' * (15 - len(str(value)))
-                line_to_write += '\t' + str(value) + space_value
+        value = result_dict['result'][count]
+        if value == int(value):
+            value = int(value)
 
-            except IndexError:
-                pass
+        space_value = ' ' * (15 - len(str(value)))
+        line_to_write += '\t' + str(value) + space_value
 
         file_obj.write(line_to_write + '\t\n')
 
