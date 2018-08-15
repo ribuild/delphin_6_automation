@@ -106,5 +106,3 @@ print("latitude_deg", latitude_deg)
 print("incident_angle", incident_angle)
 print("radiation_ratio", radiation_ratio)
 print("radiation_strength", radiation_strength)
-
-# TODO - Build this sh#t into the project...
