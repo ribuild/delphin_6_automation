@@ -78,7 +78,15 @@ def d6o_to_dict(path: str, filename: str)-> typing.Tuple[list, dict]:
 
             line = lines[j].strip().split('\t')
 
-            hour = int(line[0].strip())
+            try:
+                hour = int(line[0].strip())
+            except ValueError:
+                hour = line[0].strip('\x00').strip()
+                if hour:
+                    hour = int(hour)
+                else:
+                    continue
+
             if hour not in result_times:
                 result_times.add(hour)
                 result_values.append(float(line[1].strip()))

@@ -433,7 +433,7 @@ def uvalue_data(test_folder, request):
     return heat_loss, outdoor_temp, indoor_temp
 
 
-@pytest.fixture(params=[1, 2])
+@pytest.fixture(params=[1, 2, 3])
 def result_files(tmpdir, test_folder, request):
     temp_folder = tmpdir.mkdir('test')
 
