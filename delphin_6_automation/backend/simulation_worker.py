@@ -218,7 +218,6 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
         else:
             time.sleep(2)
 
-    sim_runs = 1
     while not finished:
         simulation_ends = start_time + datetime.timedelta(minutes=estimated_run_time)
 
@@ -227,7 +226,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
         elif datetime.datetime.now() > simulation_ends + datetime.timedelta(seconds=10):
             files_in_folder = len(os.listdir(simulation_folder))
-            estimated_run_time = min(int(estimated_run_time * sim_runs * 1.5), 1440)
+            estimated_run_time = min(int(estimated_run_time * 1.5), 1440)
             submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
             submit_job(submit_file, sim_id)
 
@@ -239,7 +238,6 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
                     time.sleep(5)
 
             start_time = datetime.datetime.now()
-            sim_runs += 1
             logger.debug(f'Rerunning simulation with ID: {sim_id} '
                          f'with new estimated run time of: {estimated_run_time}')
 
@@ -262,9 +260,8 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
                                 time.sleep(5)
 
                         start_time = datetime.datetime.now()
-                        sim_runs += 1
-                        logger.warning(f'Simulation with ID: {sim_id} encountered a critical error: {log_data[-4:]}'
-                                       f'Rerunning failed simulation with new estimated run '
+                        logger.warning(f'Simulation with ID: {sim_id} encountered a critical error: {log_data[-4:]} '
+                                       f'\nRerunning failed simulation with new estimated run '
                                        f'time of: {estimated_run_time}')
                     else:
                         time.sleep(60)
