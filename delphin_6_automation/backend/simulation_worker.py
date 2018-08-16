@@ -197,7 +197,7 @@ def submit_job(submit_file: str, sim_id: str) -> None:
 
     logger.debug(channel_data)
 
-    logger.info(f'Submitted job {sim_id}')
+    logger.info(f'Submitted job {sim_id}\n')
 
     channel.close()
     client.close()
@@ -296,7 +296,7 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     simulation_interactions.set_simulation_time(id_, delta_time)
     simulation_interactions.clean_simulation_folder(simulation_folder)
 
-    logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}')
+    logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
 
 
 def simulation_worker(sim_location: str) -> None:
@@ -364,7 +364,7 @@ def menu():
 
         for n in range(n_threads):
             t_name = f"Worker_{n}"
-            logger.info(f'Created thread with name: {t_name}')
+            logger.info(f'Created thread with name: {t_name}\n')
             thread = threading.Thread(target=simulation_worker, args=('hpc', ))
             thread.name = t_name
             thread.daemon = True
