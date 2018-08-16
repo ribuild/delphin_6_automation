@@ -139,11 +139,10 @@ def get_average_computation_time(sim_id: str) -> int:
         return 120
 
 
-def create_submit_file(sim_id: str, simulation_folder: str, restart=False) -> typing.Tuple[str, int]:
+def create_submit_file(sim_id: str, simulation_folder: str, computation_time: int, restart=False) -> str:
     """Create a submit file for the DTU HPC queue system."""
 
     delphin_path = '~/Delphin-6.0/bin/DelphinSolver'
-    computation_time = get_average_computation_time(sim_id)
     cpus = 2
     ram_per_cpu = '12MB'
     submit_file = f'submit_{sim_id}.sh'
@@ -172,7 +171,7 @@ def create_submit_file(sim_id: str, simulation_folder: str, restart=False) -> ty
 
     logger.debug(f'Create a submit file for {sim_id} with restart = {restart}')
 
-    return submit_file, computation_time
+    return submit_file
 
 
 def submit_job(submit_file: str, sim_id: str) -> None:
@@ -219,17 +218,46 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
         else:
             time.sleep(2)
 
+    sim_runs = 1
     while not finished:
         simulation_ends = start_time + datetime.timedelta(minutes=estimated_run_time)
 
         if os.path.exists(f"{simulation_folder}/{sim_id}/log/summary.txt"):
             finished = True
+
         elif datetime.datetime.now() > simulation_ends + datetime.timedelta(seconds=10):
-            submit_file, estimated_time = create_submit_file(sim_id, simulation_folder, restart=True)
-            start_time = datetime.datetime.now()
+
+            estimated_run_time = min(get_average_computation_time(sim_id) * sim_runs * 1.5, 1440)
+            submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
+            files_in_folder = len(os.listdir(simulation_folder))
             submit_job(submit_file, sim_id)
+
+            while files_in_folder <= len(os.listdir(simulation_folder)):
+                time.sleep(2)
+
+            start_time = datetime.datetime.now()
+            sim_runs += 1
+            logger.debug(f'Rerunning simulation with ID: {sim_id} with new estimated run time of: {estimated_run_time}')
+
         else:
-            time.sleep(60)
+            with open(os.path.join(simulation_folder, sim_id, 'log', 'screenlog.txt'), 'r') as logfile:
+                log_data = logfile.readlines()
+
+            if "Critical error, simulation aborted." in log_data[-1]:
+                submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
+                files_in_folder = len(os.listdir(simulation_folder))
+                submit_job(submit_file, sim_id)
+
+                while files_in_folder <= len(os.listdir(simulation_folder)):
+                    time.sleep(2)
+
+                start_time = datetime.datetime.now()
+                sim_runs += 1
+                logger.warning(f'Simulation with ID: {sim_id} encountered a critical error: {log_data[-4:]}'
+                               f'Rerunning failed simulation with new estimated run time of: {estimated_run_time}')
+
+            else:
+                time.sleep(60)
 
 
 def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
@@ -247,7 +275,8 @@ def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
     logger.info(f'{thread_name} downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(id_, simulation_folder)
-    submit_file, estimated_time = create_submit_file(id_, simulation_folder)
+    estimated_time = get_average_computation_time(id_)
+    submit_file = create_submit_file(id_, simulation_folder, estimated_time)
     submit_job(submit_file, id_)
 
     time_0 = datetime.datetime.now()

@@ -34,7 +34,8 @@ def test_create_submit_file(tmpdir, db_one_project, restart):
                             f"~/Delphin-6.0/bin/DelphinSolver {delphin_id}.d6p\n", '\n']
 
     expected_restart = f"~/Delphin-6.0/bin/DelphinSolver --restart {delphin_id}.d6p\n"
-    submit_file, _ = simulation_worker.create_submit_file(delphin_id, folder, restart)
+
+    submit_file = simulation_worker.create_submit_file(delphin_id, folder, 120, restart)
 
     assert submit_file
     assert submit_file == f'submit_{delphin_id}.sh'
