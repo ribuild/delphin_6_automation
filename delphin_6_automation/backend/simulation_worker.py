@@ -15,6 +15,7 @@ import time
 import threading
 import paramiko
 import typing
+import shutil
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -308,18 +309,29 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
 def simulation_worker(sim_location: str) -> None:
     """Solves Delphin projects in the database until interrupted"""
 
+    folder = 'H:/ribuild'
+
     try:
         while True:
             id_ = simulation_interactions.find_next_sim_in_queue()
+
             if id_:
                 if sim_location == 'local':
                     local_worker(str(id_))
+
                 elif sim_location == 'hpc':
                     try:
-                        hpc_worker(str(id_))
+                        hpc_worker(str(id_), folder)
+
                     except Exception as err:
                         simulation_interactions.set_simulating(str(id_), False)
                         logger.exception(err)
+
+                        if not os.path.isdir(os.path.join(folder, 'failed')):
+                            os.mkdir(os.path.join(folder, 'failed'))
+
+                        shutil.copytree(os.path.join(folder, str(id_)),
+                                        os.path.join(folder, 'failed', str(id_)))
                         time.sleep(5)
                         pass
 
