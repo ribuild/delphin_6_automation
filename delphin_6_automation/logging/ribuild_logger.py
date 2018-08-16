@@ -49,7 +49,7 @@ def ribuild_logger(name):
                     'username': gmail['mail'],
                     'password': gmail['password']}
     nh = NotificationHandler('gmail', defaults=message_dict)
-    nh.setLevel(logging.ERROR)
+    nh.setLevel(logging.WARNING)
     nh.setFormatter(formatter)
     logger.addHandler(nh)
 
