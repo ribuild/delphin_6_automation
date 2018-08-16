@@ -28,7 +28,7 @@ def ribuild_logger(name):
     # create logger
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(threadName)s - %(funcName)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(threadName)s - %(funcName)s - %(message)s')
 
     # create console handler and set level to debug
     if os.path.exists(f'{source_folder}/{name}.log'):

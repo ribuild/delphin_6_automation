@@ -310,7 +310,7 @@ def simulation_worker(sim_location: str) -> None:
                         hpc_worker(str(id_))
                     except Exception as err:
                         simulation_interactions.set_simulating(str(id_), False)
-                        logger.error(err)
+                        logger.exception(err)
                         time.sleep(5)
                         pass
 
