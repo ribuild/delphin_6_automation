@@ -183,7 +183,7 @@ def submit_job(submit_file: str, sim_id: str) -> None:
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    logger.info('Connecting to HPC')
+    logger.debug(f'Connecting to HPC to upload simulation with ID: {sim_id}')
     client.connect(hostname=hpc['ip'], username=hpc['user'], port=hpc['port'], pkey=key)
 
     channel = client.invoke_shell()
