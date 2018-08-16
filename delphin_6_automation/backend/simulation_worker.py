@@ -241,21 +241,24 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
                          f'with new estimated run time of: {estimated_run_time}')
 
         else:
-            with open(os.path.join(simulation_folder, sim_id, 'log', 'screenlog.txt'), 'r') as logfile:
-                log_data = logfile.readlines()
+            if os.path.exists(os.path.join(simulation_folder, sim_id, 'log', 'screenlog.txt')):
+                with open(os.path.join(simulation_folder, sim_id, 'log', 'screenlog.txt'), 'r') as logfile:
+                    log_data = logfile.readlines()
 
-            if "Critical error, simulation aborted." in log_data[-1]:
-                submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
-                files_in_folder = len(os.listdir(simulation_folder))
-                submit_job(submit_file, sim_id)
+                if len(log_data) > 1:
+                    if "Critical error, simulation aborted." in log_data[-1]:
+                        submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
+                        files_in_folder = len(os.listdir(simulation_folder))
+                        submit_job(submit_file, sim_id)
 
-                while files_in_folder <= len(os.listdir(simulation_folder)):
-                    time.sleep(2)
+                        while files_in_folder <= len(os.listdir(simulation_folder)):
+                            time.sleep(2)
 
-                start_time = datetime.datetime.now()
-                sim_runs += 1
-                logger.warning(f'Simulation with ID: {sim_id} encountered a critical error: {log_data[-4:]}'
-                               f'Rerunning failed simulation with new estimated run time of: {estimated_run_time}')
+                        start_time = datetime.datetime.now()
+                        sim_runs += 1
+                        logger.warning(f'Simulation with ID: {sim_id} encountered a critical error: {log_data[-4:]}'
+                                       f'Rerunning failed simulation with new estimated run '
+                                       f'time of: {estimated_run_time}')
 
             else:
                 time.sleep(60)
