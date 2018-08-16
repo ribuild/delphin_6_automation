@@ -75,7 +75,7 @@ def test_hpc_worker(tmpdir, db_one_project, mock_submit_job, monkeypatch, test_f
 
     monkeypatch.setattr(simulation_worker, 'wait_until_finished', mockreturn)
 
-    simulation_worker.hpc_worker(str(delphin_doc.id), 'Test_Thread', folder)
+    simulation_worker.hpc_worker(str(delphin_doc.id), folder)
 
     delphin_doc.reload()
 
@@ -109,7 +109,7 @@ def test_get_average_computation_time(db_one_project, sim_time):
 def test_simulation_worker(mock_hpc_worker, mock_find_next_sim_in_queue, capsys):
 
     with pytest.raises(SystemExit) as exc_info:
-        simulation_worker.simulation_worker('hpc', 'Test_Thread')
+        simulation_worker.simulation_worker('hpc')
 
     out, err = capsys.readouterr()
     assert out.split('\n')[0] == 'hpc called'
@@ -119,7 +119,7 @@ def test_simulation_worker(mock_hpc_worker, mock_find_next_sim_in_queue, capsys)
 def test_simulation_worker_exception(db_one_project, mock_hpc_worker_exception, mock_sleep_exception, ):
 
     with pytest.raises(SystemExit) as exc_info:
-        simulation_worker.simulation_worker('hpc', 'Test_Thread')
+        simulation_worker.simulation_worker('hpc')
 
     delphin_doc = delphin_entry.Delphin.objects().first()
     assert 'None' in str(exc_info.value)

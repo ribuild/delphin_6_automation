@@ -289,7 +289,7 @@ def mock_sleep(monkeypatch):
 
 @pytest.fixture()
 def mock_hpc_worker(monkeypatch):
-    def mockreturn(id_, thread_name, folder=None):
+    def mockreturn(id_, folder=None):
         print('hpc called')
         exit()
         return None
