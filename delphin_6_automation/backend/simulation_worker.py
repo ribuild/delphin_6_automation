@@ -237,7 +237,8 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
             start_time = datetime.datetime.now()
             sim_runs += 1
-            logger.debug(f'Rerunning simulation with ID: {sim_id} with new estimated run time of: {estimated_run_time}')
+            logger.debug(f'Rerunning simulation with ID: {sim_id} '
+                         f'with new estimated run time of: {estimated_run_time}')
 
         else:
             with open(os.path.join(simulation_folder, sim_id, 'log', 'screenlog.txt'), 'r') as logfile:
@@ -260,7 +261,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
                 time.sleep(60)
 
 
-def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
+def hpc_worker(id_: str, folder='H:/ribuild'):
     """Solves a Delphin project through DTU HPC"""
 
     simulation_folder = os.path.join(folder, id_)
@@ -272,7 +273,7 @@ def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
         os.mkdir(simulation_folder)
 
     # Download, solve, upload
-    logger.info(f'{thread_name} downloads project with ID: {id_}')
+    logger.info(f'Downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(id_, simulation_folder)
     estimated_time = get_average_computation_time(id_)
@@ -292,10 +293,10 @@ def hpc_worker(id_: str, thread_name: str, folder='H:/ribuild'):
     simulation_interactions.set_simulation_time(id_, delta_time)
     simulation_interactions.clean_simulation_folder(simulation_folder)
 
-    logger.info(f'{thread_name} finished solving {id_}. Simulation duration: {delta_time}')
+    logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}')
 
 
-def simulation_worker(sim_location: str, thread_name=None) -> None:
+def simulation_worker(sim_location: str) -> None:
     """Solves Delphin projects in the database until interrupted"""
 
     try:
@@ -306,7 +307,7 @@ def simulation_worker(sim_location: str, thread_name=None) -> None:
                     local_worker(str(id_))
                 elif sim_location == 'hpc':
                     try:
-                        hpc_worker(str(id_), thread_name)
+                        hpc_worker(str(id_))
                     except Exception as err:
                         simulation_interactions.set_simulating(str(id_), False)
                         logger.error(err)
@@ -361,7 +362,7 @@ def menu():
         for n in range(n_threads):
             t_name = f"Worker_{n}"
             logger.info(f'Created thread with name: {t_name}')
-            thread = threading.Thread(target=simulation_worker, args=('hpc', t_name))
+            thread = threading.Thread(target=simulation_worker, args=('hpc', ))
             thread.name = t_name
             thread.daemon = True
             thread.start()
