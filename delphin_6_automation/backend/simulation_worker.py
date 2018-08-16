@@ -227,7 +227,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
         elif datetime.datetime.now() > simulation_ends + datetime.timedelta(seconds=10):
 
-            estimated_run_time = min(get_average_computation_time(sim_id) * sim_runs * 1.5, 1440)
+            estimated_run_time = min(int(get_average_computation_time(sim_id) * sim_runs * 1.5), 1440)
             submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
             files_in_folder = len(os.listdir(simulation_folder))
             submit_job(submit_file, sim_id)
