@@ -314,6 +314,22 @@ def mock_hpc_worker_exception(monkeypatch):
 
 
 @pytest.fixture()
+def mock_hpc_worker_failed_simulation(monkeypatch, tmpdir, db_one_project):
+
+    def mockreturn(id_, thread_name, folder=None):
+        raise FileNotFoundError
+
+    monkeypatch.setattr(simulation_worker, 'hpc_worker', mockreturn)
+
+    folder = tmpdir.mkdir('test')
+    sim_folder = os.path.join(folder, str(db_one_project))
+    os.mkdir(sim_folder)
+    general_interactions.download_full_project_from_database(db_one_project, sim_folder)
+
+    return folder
+
+
+@pytest.fixture()
 def mock_sleep_exception(monkeypatch):
     def mockreturn(secs):
         exit()

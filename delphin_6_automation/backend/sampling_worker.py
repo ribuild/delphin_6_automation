@@ -152,6 +152,5 @@ def sampling_overview(strategy_id):
 
     create_figure('mould')
     create_figure('heat_loss')
-    #create_figure('algea')
 
     plt.show()

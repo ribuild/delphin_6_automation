@@ -127,6 +127,13 @@ def test_simulation_worker_exception(db_one_project, mock_hpc_worker_exception, 
     assert not delphin_doc.simulating
 
 
-def test_simulation_worker_failed_simulation():
-    # TODO: Make it
-    assert True
+def test_simulation_worker_failed_simulation(mock_hpc_worker_failed_simulation, mock_sleep_exception):
+
+    with pytest.raises(SystemExit) as exc_info:
+        simulation_worker.simulation_worker('hpc', mock_hpc_worker_failed_simulation)
+
+    delphin_doc = delphin_entry.Delphin.objects().first()
+    original_folder = os.path.join(mock_hpc_worker_failed_simulation, str(delphin_doc.id))
+    failed_folder = os.path.join(mock_hpc_worker_failed_simulation, 'failed', str(delphin_doc.id))
+
+    assert os.listdir(original_folder) == os.listdir(failed_folder)
