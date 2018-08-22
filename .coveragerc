@@ -1,3 +1,3 @@
 [run]
 source = delphin_6_automation
-omit = */archive/* */ui_parallel_coordinates/* */input_files/* */__init__.py/*
+omit = */archive/* */ui_parallel_coordinates/* */input_files/* */__init__.py
