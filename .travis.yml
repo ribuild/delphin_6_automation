@@ -9,7 +9,7 @@ install:
 
 # command to run tests
 script:
-  - python -m pytest delphin_6_automation/pytest/
+  - python -m pytest --cov-config .coveragerc --cov=delphin_6_automation pytest/
 
 services:
   - mongodb
