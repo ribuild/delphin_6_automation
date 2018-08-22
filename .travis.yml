@@ -1,4 +1,5 @@
 language: python
+
 python:
   - "3.6"
 
@@ -15,3 +16,7 @@ services:
 
 before_script:
   - mongo mydb_test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
+
+after_success:
+  - coverage report
+  - coveralls

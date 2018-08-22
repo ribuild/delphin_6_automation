@@ -7,8 +7,10 @@ xmltodict
 numpy
 scipy
 pytest
+pytest-cov
 notifiers
 pygithub
 scikit-learn
 sshtunnel
 xlrd
+coveralls

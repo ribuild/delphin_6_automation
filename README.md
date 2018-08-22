@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ribuild/delphin_6_automation.svg?branch=master)](https://travis-ci.org/ribuild/delphin_6_automation)
+[![Coverage Status](https://coveralls.io/repos/github/ribuild/delphin_6_automation/badge.svg)](https://coveralls.io/github/ribuild/delphin_6_automation)
 
 # Delphin 6 Automation
 Automation script for the hygrothermal simulation program Delphin 6 made under the EU research project: [RIBuild](http://ribuild.eu/).
