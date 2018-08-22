@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DelphinProject xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de DelphinProject.xsd" fileVersion="6.5">
+	<ProjectInfo created="fr mar 23 12:09:02 2018" lastEdited="ti apr 17 10:48:52 2018">
+		<Comment>&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;1D Validation model&lt;/p&gt;</Comment>
+	</ProjectInfo>
+	<DirectoryPlaceholders>
+		<Placeholder name="Climate Database">C:/Program Files/IBK/Delphin 6.0/resources/DB_climate</Placeholder>
+		<Placeholder name="Material Database">C:/ribuild/materials</Placeholder>
+	</DirectoryPlaceholders>
+	<Init>
+		<SimulationParameter>
+			<BalanceEquationModule>BEHeatMoisture</BalanceEquationModule>
+			<Interval>
+				<IBK:Parameter name="Duration" unit="a">4</IBK:Parameter>
+			</Interval>
+			<ClimateDataFilePath>${Climate Database}/Europe/Germany/TRY2011/DE-01-TRY-2010__Bremerhaven__Jahr_00000K0_00007m.c6b</ClimateDataFilePath>
+			<DefaultInitialCondition name="DefaultRelativeHumidity" unit="%">80</DefaultInitialCondition>
+		</SimulationParameter>
+		<SolverParameter>
+			<Integrator>CVODE</Integrator>
+		</SolverParameter>
+	</Init>
+	<Materials>
+		<MaterialReference name="Lime cement mortar [717]" color="#ff55ff00" hatchCode="13">${Material Database}/LimeCementMortarHighCementRatio_717.m6</MaterialReference>
+		<MaterialReference name="Old Building Brick Dresden ZP [504]" color="#ffaa0000" hatchCode="13">${Material Database}/AltbauziegelDresdenZP_504.m6</MaterialReference>
+		<MaterialReference name="Remmers Calciumsilicate Mouls Renovation Board 2 [592]" color="#ff409020" hatchCode="13">${Material Database}/RemmersCalciumsilikatSchimmelsanierplatte2_592.m6</MaterialReference>
+	</Materials>
+	<Discretization>
+		<XSteps unit="m">0.0020025 0.0020025 0.0020025 0.0020025 0.00169 0.0013 0.001 0.001 0.0013 0.00169 0.002197 0.0028561 0.00371293 0.00482681 0.00627485 0.00815731 0.0106045 0.0137858 0.0179216 0.0199346 0.0199346 0.0199346 0.0199346 0.0199346 0.0199346 0.0199346 0.0199346 0.0199346 0.0199346 0.0179216 0.0137858 0.0106045 0.00815731 0.00627485 0.00482681 0.00371293 0.0028561 0.002197 0.00169 0.0013 0.001 0.001 0.0013 0.00169 0.00201 0.00201 0.00169 0.0013 0.001 0.001 0.0013 0.00169 0.002197 0.0028561 0.00371293 0.00482681 0.00627485 0.00815731 0.0106045 0.0114761 0.0114761 0.0114761 0.0114761 0.0114761</XSteps>
+	</Discretization>
+	<Conditions>
+		<Interfaces>
+			<Interface name="exterior surface" type="Detailed">
+				<IBK:Parameter name="Orientation" unit="Deg">220</IBK:Parameter>
+				<BCReference>OutdoorHeatConduction</BCReference>
+				<BCReference>OutdoorVaporDiffusion</BCReference>
+				<BCReference>OutdoorWindDrivenRain</BCReference>
+				<BCReference>OutdoorShortWaveRadiation</BCReference>
+				<BCReference>OutdoorLongWaveRadiation</BCReference>
+			</Interface>
+			<Interface name="indoor surface" type="Detailed">
+				<BCReference>IndoorHeatConduction</BCReference>
+				<BCReference>IndoorVaporDiffusion</BCReference>
+			</Interface>
+		</Interfaces>
+		<ClimateConditions>
+			<ClimateCondition name="Temp_Bremerhaven" type="Temperature" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/temperature.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="RH_Bremerhaven" type="RelativeHumidity" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/relative_humidity.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="Wind direction_Bremerhaven" type="WindDirection" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/wind_direction.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="Deg">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="Wind velocity_Bremerhaven" type="WindVelocity" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/wind_speed.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="m/s">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="Rain flux_Bremerhaven" type="RainFluxNormal" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/wind_driven_rain.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="l/m2s">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="Direct Radiation_Bremerhaven" type="SWRadiationDirect" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/direct_radiation.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="Diffuse radiation_Bremerhaven" type="SWRadiationDiffuse" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/diffuse_radiation.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="Longwave radiation_Bremerhaven" type="LWRadiationSkyEmission" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/long_wave_radiation.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="indoor temp" type="Temperature" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/indoor_temperature.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="indoor relhum" type="RelativeHumidity" kind="TabulatedData">
+				<Filename>C:/ribuild/weather/indoor_relative_humidity.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">false</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+		</ClimateConditions>
+		<BoundaryConditions>
+			<BoundaryCondition name="OutdoorHeatConduction" type="HeatConduction" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">25</IBK:Parameter>
+				<CCReference type="Temperature">Temp_Bremerhaven</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="OutdoorVaporDiffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">2e-07</IBK:Parameter>
+				<IBK:Parameter name="SDValue" unit="m">0</IBK:Parameter>
+				<CCReference type="Temperature">Temp_Bremerhaven</CCReference>
+				<CCReference type="RelativeHumidity">RH_Bremerhaven</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="OutdoorWindDrivenRain" type="WindDrivenRain" kind="ImposedFlux">
+				<IBK:Parameter name="ExposureCoefficient" unit="-">1</IBK:Parameter>
+				<IBK:Parameter name="MinRainTemperature" unit="C">-2</IBK:Parameter>
+				<CCReference type="Temperature">Temp_Bremerhaven</CCReference>
+				<CCReference type="RelativeHumidity">RH_Bremerhaven</CCReference>
+				<CCReference type="RainFluxNormal">Rain flux_Bremerhaven</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="OutdoorShortWaveRadiation" type="ShortWaveRadiation" kind="StandardRadiationModel">
+				<IBK:Parameter name="SurfaceAbsorptionCoefficient" unit="-">0.6</IBK:Parameter>
+				<CCReference type="SWRadiationDirect">Direct Radiation_Bremerhaven</CCReference>
+				<CCReference type="SWRadiationDiffuse">Diffuse radiation_Bremerhaven</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="OutdoorLongWaveRadiation" type="LongWaveRadiation" kind="LongWaveComponents">
+				<IBK:Parameter name="SurfaceEmissionCoefficient" unit="-">0.9</IBK:Parameter>
+				<CCReference type="LWRadiationSkyEmission">Longwave radiation_Bremerhaven</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="IndoorHeatConduction" type="HeatConduction" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">8</IBK:Parameter>
+				<CCReference type="Temperature">indoor temp</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="IndoorVaporDiffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">3e-08</IBK:Parameter>
+				<IBK:Parameter name="SDValue" unit="m">0</IBK:Parameter>
+				<CCReference type="Temperature">indoor temp</CCReference>
+				<CCReference type="RelativeHumidity">indoor relhum</CCReference>
+			</BoundaryCondition>
+		</BoundaryConditions>
+	</Conditions>
+	<Outputs>
+		<IBK:Unit name="TimeUnit">h</IBK:Unit>
+		<OutputGrids>
+			<OutputGrid name="Fields and Profiles">
+				<Interval>
+					<IBK:Parameter name="Duration" unit="a">0</IBK:Parameter>
+					<IBK:Parameter name="StepSize" unit="h">1</IBK:Parameter>
+				</Interval>
+			</OutputGrid>
+			<OutputGrid name="Scalars">
+				<Interval>
+					<IBK:Parameter name="Duration" unit="a">0</IBK:Parameter>
+					<IBK:Parameter name="StepSize" unit="h">1</IBK:Parameter>
+				</Interval>
+			</OutputGrid>
+		</OutputGrids>
+		<OutputFiles>
+			<OutputFile name="Temperature profile [2]">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Single</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="Relative humidity profile [2]">
+				<Quantity unit="%">RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Single</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="Moisture content profile [2]">
+				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Single</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="Moisture content integral [2]">
+				<Quantity unit="kg">MoistureMassDensity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Integral</SpaceType>
+				<OutputGrid>Scalars</OutputGrid>
+			</OutputFile>
+		</OutputFiles>
+	</Outputs>
+	<Assignments>
+		<Assignment type="Material" location="Element">
+			<Reference>Lime cement mortar [717]</Reference>
+			<Range>0 0 6 0</Range>
+		</Assignment>
+		<Assignment type="Material" location="Element">
+			<Reference>Old Building Brick Dresden ZP [504]</Reference>
+			<Range>7 0 40 0</Range>
+		</Assignment>
+		<Assignment type="Material" location="Element">
+			<Reference>Lime cement mortar [717]</Reference>
+			<Range>41 0 48 0</Range>
+		</Assignment>
+		<Assignment type="Material" location="Element">
+			<Reference>Remmers Calciumsilicate Mouls Renovation Board 2 [592]</Reference>
+			<Range>49 0 63 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Temperature profile [2]</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Relative humidity profile [2]</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content profile [2]</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content integral [2]</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Temperature profile [2]</Reference>
+			<Range>7 0 7 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Relative humidity profile [2]</Reference>
+			<Range>7 0 7 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content profile [2]</Reference>
+			<Range>7 0 7 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content integral [2]</Reference>
+			<Range>7 0 7 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Temperature profile [2]</Reference>
+			<Range>23 0 23 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Relative humidity profile [2]</Reference>
+			<Range>23 0 23 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content profile [2]</Reference>
+			<Range>23 0 23 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content integral [2]</Reference>
+			<Range>23 0 23 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Temperature profile [2]</Reference>
+			<Range>27 0 27 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Relative humidity profile [2]</Reference>
+			<Range>27 0 27 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content profile [2]</Reference>
+			<Range>27 0 27 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content integral [2]</Reference>
+			<Range>27 0 27 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Temperature profile [2]</Reference>
+			<Range>48 0 48 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Relative humidity profile [2]</Reference>
+			<Range>48 0 48 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content profile [2]</Reference>
+			<Range>48 0 48 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content integral [2]</Reference>
+			<Range>48 0 48 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Temperature profile [2]</Reference>
+			<Range>63 0 63 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Relative humidity profile [2]</Reference>
+			<Range>63 0 63 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content profile [2]</Reference>
+			<Range>63 0 63 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content integral [2]</Reference>
+			<Range>63 0 63 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Temperature profile [2]</Reference>
+			<Range>40 0 40 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Relative humidity profile [2]</Reference>
+			<Range>40 0 40 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content profile [2]</Reference>
+			<Range>40 0 40 0</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>Moisture content integral [2]</Reference>
+			<Range>40 0 40 0</Range>
+		</Assignment>
+		<Assignment type="Interface" location="Left">
+			<Reference>exterior surface</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+		<Assignment type="Interface" location="Right">
+			<Reference>indoor surface</Reference>
+			<Range>63 0 63 0</Range>
+		</Assignment>
+	</Assignments>
+</DelphinProject>

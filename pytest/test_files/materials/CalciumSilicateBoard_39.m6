@@ -1,0 +1,30 @@
+D6MARLZ! 006.000
+
+[IDENTIFICATION]
+  NAME                     = DE: Calciumsilikatplatte |EN: Calcium Silicate Board |IT: Pannello in calciosilicato |RU: Пластина из силиката кальция
+  PRODUCER                 = DE: Skamol |EN: Skamol |IT: Skamol |RU: Skamol
+  PRODUCT_ID               = DE: Casiplus |EN: Casiplus |IT: Casiplus |RU: Casiplus
+  LABORATORY               = DE: Literatur |EN: Literature |IT: Letteratura |RU: Литертура
+  DATE                     = 08.04.14
+  COLOUR                   = #404060
+  FLAGS                    = AIR_TIGHT 
+  USE_INSTEAD              = 0
+  CATEGORY                 = INSULATION BUILDING_BOARDS
+  DBTYPE                   = 1,4,5,7,16
+  HATCHING                 = 13
+
+
+[STORAGE_BASE_PARAMETERS]
+  RHO                      = 225 kg/m3
+  CE                       = 900 J/kgK
+  THETA_POR                = 0.911 m3/m3
+  THETA_EFF                = 0.91 m3/m3
+  THETA_80                 = 0.025 m3/m3
+
+
+[TRANSPORT_BASE_PARAMETERS]
+  LAMBDA                   = 0.067 W/mK
+  AW                       = 0.726 kg/m2s05
+  MEW                      = 2.5 -
+  KLEFF                    = 0 s
+

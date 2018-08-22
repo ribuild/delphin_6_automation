@@ -1,0 +1,10 @@
+{
+  "speed_tests/test_simulation_time_vs_cores.py": true,
+  "test_sampling.py::test_sobol": true,
+  "test_sampling.py::test_sobol[13]": true,
+  "test_sampling.py::test_sobol[7]": true,
+  "test_sampling.py::test_upload_standard_error[1]": true,
+  "test_sampling_convergence.py::test_sampling_worker[5]": true,
+  "test_simulation_interactions.py::test_clean_simulation_folder_fail": true,
+  "test_weather_models.py::test_rain_model": true
+}
