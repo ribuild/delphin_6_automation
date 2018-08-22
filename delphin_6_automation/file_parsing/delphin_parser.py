@@ -12,6 +12,7 @@ import os
 import shutil
 import bson
 import typing
+import numpy as np
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
@@ -38,7 +39,7 @@ def dp6_to_dict(path: str) -> dict:
     return dict(xml_dict)
 
 
-def d6o_to_dict(path: str, filename: str)-> typing.Tuple[list, dict]:
+def d6o_to_dict(path: str, filename: str, number_of_hours=None)-> typing.Tuple[list, dict]:
     """
     Converts a Delphin results file into a dict.
 
@@ -48,7 +49,7 @@ def d6o_to_dict(path: str, filename: str)-> typing.Tuple[list, dict]:
     """
 
     # Helper functions
-    def d6o(d6o_lines):
+    def d6o(d6o_lines, length):
 
         meta_dict_ = dict()
         meta_dict_['D6OARLZ'] = lines[0].split(' ')[-1].strip()
@@ -89,17 +90,52 @@ def d6o_to_dict(path: str, filename: str)-> typing.Tuple[list, dict]:
 
             if hour not in result_times:
                 result_times.add(hour)
-                result_values.append(float(line[1].strip()))
+                result_values.append((hour, float(line[1].strip())))
             else:
                 logger.debug(f'Hour {hour} already in result file: {filename}. Duplicate value is not saved')
 
-        return result_values, meta_dict_
+        if not length:
+            result_values.sort(key=lambda x: x[0])
+            sorted_values = [v[1] for v in result_values]
+            return sorted_values, meta_dict_
+
+        else:
+            return check_values(result_values, length), meta_dict_
+
+    def check_values(values: typing.List[tuple], length: int) -> typing.List[float]:
+
+        values.sort(key=lambda x: x[0])
+        sorted_values = [v[1] for v in values]
+
+        if length == values[-1][0]-1:
+            return sorted_values
+        else:
+            hours = [v[0] for v in values]
+
+            for i in range(length):
+                try:
+                    if not i == hours[i]:
+                        hours.insert(i, i)
+                        sorted_values.insert(i, np.nan)
+                except IndexError:
+                    hours.append(i)
+                    sorted_values.append(np.nan)
+
+            sorted_values = np.array(sorted_values)
+            correct_values = ~np.isnan(sorted_values)
+            xp = correct_values.ravel().nonzero()[0]
+            fp = sorted_values[correct_values]
+            x = np.isnan(sorted_values).ravel().nonzero()[0]
+
+            sorted_values[np.isnan(sorted_values)] = np.interp(x, xp, fp)
+
+            return list(sorted_values)
 
     file_obj = open(os.path.join(path, filename), 'r')
     lines = file_obj.readlines()
     file_obj.close()
 
-    result_dict, meta_dict = d6o(lines)
+    result_dict, meta_dict = d6o(lines, number_of_hours)
 
     return result_dict, meta_dict
 

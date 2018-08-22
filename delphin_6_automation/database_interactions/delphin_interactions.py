@@ -101,7 +101,7 @@ def download_delphin_entry(delphin_document: delphin_db.Delphin, path: str) -> b
     return True
 
 
-def upload_results_to_database(path_: str, delete_files: bool = True) -> str:
+def upload_results_to_database(path_: str, delete_files: bool = True, result_length=None) -> str:
     """
     Uploads the results from a Delphin simulation.
 
@@ -122,7 +122,7 @@ def upload_results_to_database(path_: str, delete_files: bool = True) -> str:
             result_name = result_file.split('.')[0]
             result_dict[result_name] = {'result': [], 'meta': []}
             (result_dict[result_name]['result'],
-             result_dict[result_name]['meta']) = delphin_parser.d6o_to_dict(result_path, result_file)
+             result_dict[result_name]['meta']) = delphin_parser.d6o_to_dict(result_path, result_file, result_length)
 
         elif result_file.endswith('.g6a'):
             geometry_dict = delphin_parser.g6a_to_dict(result_path, result_file)
@@ -476,15 +476,25 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -
 
     # Paths
     folder = os.path.join(folder, 'results')
-    temperature_mould = delphin_parser.d6o_to_dict(folder, 'temperature mould.d6o')[0]
-    relative_humidity_mould = delphin_parser.d6o_to_dict(folder, 'relative humidity mould.d6o')[0]
-    temperature_algae = delphin_parser.d6o_to_dict(folder, 'temperature algae.d6o')[0]
-    relative_humidity_algae = delphin_parser.d6o_to_dict(folder, 'relative humidity algae.d6o')[0]
-    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o')[0]
-
     weather_path = os.path.join(os.path.dirname(os.path.dirname(folder)), 'weather')
+
+    # Parse
     exterior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'temperature.ccd'))
     interior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'indoor_temperature.ccd'))
+    temperature_mould = delphin_parser.d6o_to_dict(folder, 'temperature mould.d6o',
+                                                   len(exterior_temperature))[0]
+
+    relative_humidity_mould = delphin_parser.d6o_to_dict(folder, 'relative humidity mould.d6o',
+                                                         len(exterior_temperature))[0]
+
+    temperature_algae = delphin_parser.d6o_to_dict(folder, 'temperature algae.d6o',
+                                                   len(exterior_temperature))[0]
+
+    relative_humidity_algae = delphin_parser.d6o_to_dict(folder, 'relative humidity algae.d6o',
+                                                         len(exterior_temperature))[0]
+
+    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o',
+                                           len(exterior_temperature))[0]
 
     logger.debug(f'Collected simulation result data for Delphin project with ID: {delphin_id}')
 

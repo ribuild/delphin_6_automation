@@ -428,12 +428,12 @@ def uvalue_data(test_folder, request):
 
     indoor_temp = weather_parser.ccd_to_list(os.path.join(folder, 'indoor_temperature.ccd'))
     outdoor_temp = weather_parser.ccd_to_list(os.path.join(folder, 'temperature.ccd'))
-    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o')[0]
+    heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o', len(outdoor_temp))[0]
 
     return heat_loss, outdoor_temp, indoor_temp
 
 
-@pytest.fixture(params=[1, 2, 3])
+@pytest.fixture(params=[1, 2, 3, 4])
 def result_files(tmpdir, test_folder, request):
     temp_folder = tmpdir.mkdir('test')
 
@@ -449,3 +449,11 @@ def result_files(tmpdir, test_folder, request):
 @pytest.fixture()
 def design_options(mock_insulation_systems, add_insulation_materials, delphin_reference_folder):
     return inputs.design_options(delphin_reference_folder)
+
+
+@pytest.fixture()
+def mock_copytree(monkeypatch):
+    def mockreturn(src, dst):
+        return None
+
+    monkeypatch.setattr(shutil, 'copytree', mockreturn)

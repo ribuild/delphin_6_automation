@@ -294,8 +294,9 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     wait_until_finished(id_, estimated_time, simulation_folder)
     delta_time = datetime.datetime.now() - time_0
 
+    simulation_hours = len(delphin_entry.Delphin.objects(id=id_).first().weather) * 8760
     result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_),
-                                                                delete_files=False)
+                                                                delete_files=False, result_length=simulation_hours)
     delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
                                                   id_, result_id)
 
@@ -306,10 +307,8 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
 
 
-def simulation_worker(sim_location: str) -> None:
+def simulation_worker(sim_location: str, folder='H:/ribuild') -> None:
     """Solves Delphin projects in the database until interrupted"""
-
-    folder = 'H:/ribuild'
 
     try:
         while True:

@@ -116,10 +116,11 @@ def test_simulation_worker(mock_hpc_worker, mock_find_next_sim_in_queue, capsys)
     assert 'None' in str(exc_info.value)
 
 
-def test_simulation_worker_exception(db_one_project, mock_hpc_worker_exception, mock_sleep_exception, ):
+def test_simulation_worker_exception(db_one_project, mock_hpc_worker_exception, mock_sleep_exception,
+                                     tmpdir, mock_copytree):
 
     with pytest.raises(SystemExit) as exc_info:
-        simulation_worker.simulation_worker('hpc')
+        simulation_worker.simulation_worker('hpc', tmpdir)
 
     delphin_doc = delphin_entry.Delphin.objects().first()
     assert 'None' in str(exc_info.value)
