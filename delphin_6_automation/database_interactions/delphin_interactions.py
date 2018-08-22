@@ -521,8 +521,7 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -
                                                                        temperature_mould, aed_group='a')[0]),
                                             max(damage_models.mould_pj(relative_humidity_mould,
                                                                        temperature_mould, aed_group='a')[1])),
-                               'heat_loss': sum(heat_loss),
-                               'algae': max(damage_models.algae(relative_humidity_algae, temperature_algae))}
+                               'heat_loss': sum(heat_loss)}
 
     result_entry.save()
     logger.debug(f'Uploaded processed result with ID: {result_entry.id}')

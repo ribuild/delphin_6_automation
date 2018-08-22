@@ -121,10 +121,8 @@ def mock_calculate_sample_output(monkeypatch):
                     heat_loss.append(project.sample_data['output'])
 
                 sample_mean[str(sequence_index)][design] = {'mould': np.mean(mould),
-                                                            'algae': np.mean(algae),
                                                             'heat_loss': np.mean(heat_loss)}
                 sample_std[str(sequence_index)][design] = {'mould': np.std(mould),
-                                                           'algae': np.std(algae),
                                                            'heat_loss': np.std(heat_loss)}
 
         sampling_interactions.upload_sample_mean(sampling_id, sample_mean)
