@@ -145,7 +145,7 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
 
     delphin_path = '~/Delphin-6.0/bin/DelphinSolver'
     cpus = 2
-    ram_per_cpu = '12MB'
+    ram_per_cpu = '14MB'
     submit_file = f'submit_{sim_id}.sh'
 
     file = open(f"{simulation_folder}/{submit_file}", 'w', newline='\n')
