@@ -5,3 +5,8 @@ omit =
     */ui_parallel_coordinates/*
     */input_files/*
     *__init__*
+    *main*
+    *sampling_scheme*
+    *create_delphin_file.py
+    *simulation.py
+    *auth*
