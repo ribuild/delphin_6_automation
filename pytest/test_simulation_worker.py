@@ -29,7 +29,7 @@ def test_create_submit_file(tmpdir, db_one_project, restart):
 
     expected_submit_file = ["#!/bin/bash\n", "#BSUB -J DelphinJob\n", "#BSUB -o DelphinJob_%J.out\n",
                             "#BSUB -e DelphinJob_%J.err\n", "#BSUB -q hpc\n", "#BSUB -W 120\n",
-                            '#BSUB -R "rusage[mem=12MB] span[hosts=1]"\n', "#BSUB -n 2\n", "#BSUB -N\n",
+                            '#BSUB -R "rusage[mem=14MB] span[hosts=1]"\n', "#BSUB -n 2\n", "#BSUB -N\n",
                             '\n', "export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n", '\n',
                             f"~/Delphin-6.0/bin/DelphinSolver {delphin_id}.d6p\n", '\n']
 
