@@ -7,7 +7,7 @@ __license__ = "MIT"
 # Modules:
 import os
 import subprocess
-import github
+#import github
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
@@ -207,6 +207,7 @@ def does_simulation_exists(sim_id: str) -> bool:
         return False
 
 
+"""
 def get_github_version():
     gh = github.Github()
     rp = gh.get_repo('ribuild/delphin_6_automation')
@@ -215,3 +216,4 @@ def get_github_version():
 
 def get_git_revision_hash():
     return subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode()
+"""
