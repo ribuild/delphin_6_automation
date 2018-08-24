@@ -104,11 +104,14 @@ def solve_delphin(file: str, delphin_exe=r'C:/Program Files/IBK/Delphin 6.0/Delp
 
 
 def github_updates():
+    """
     if general_interactions.get_github_version() != general_interactions.get_git_revision_hash():
         logger.info('New version of Delphin 6 Automation is available on Github!!')
         return False
     else:
         return True
+    """
+    raise NotImplementedError
 
 
 def get_average_computation_time(sim_id: str) -> int:
