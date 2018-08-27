@@ -19,5 +19,5 @@ excel_file = os.path.join(data_folder, 'sim_time.xlsx')
 
 df = pd.read_excel(excel_file)
 
-(df['time']/60).plot('hist', bins=20)
+(df['time']/60).plot('hist', bins=10)
 plt.show()
