@@ -313,6 +313,9 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
                                                   id_, result_id, return_code)
 
+    if return_code:
+        delphin_interactions.set_exceeding_time_limit(id_)
+
     simulation_interactions.set_simulated(id_)
     simulation_interactions.set_simulation_time(id_, delta_time)
     simulation_interactions.clean_simulation_folder(simulation_folder)

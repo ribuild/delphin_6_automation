@@ -580,3 +580,12 @@ def change_entry_solver_relative_tolerance(sim_id, rel_tol):
     logger.debug(f'Changed the solver relative tolerance to {rel_tol} for Delphin project with ID: {sim_id}')
 
     return delphin_document.id
+
+
+def set_exceeding_time_limit(sim_id: delphin_db.Delphin.id) -> str:
+
+    entry = delphin_db.Delphin.objects(id=sim_id).first()
+    entry.update(set__exceeded_time_limit=True)
+    logger.debug(f'Simulation with ID: {sim_id} got flagged as exceeding simulation time limit.')
+
+    return entry.id
