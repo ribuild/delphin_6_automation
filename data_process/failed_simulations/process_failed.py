@@ -42,20 +42,23 @@ for folder in os.listdir(data_folder):
 
 
 x = np.arange(len(mould))
-plt.figure('Hours over 90%')
+plt.figure()
+plt.title('Hours over 90%')
 plt.scatter(x, mould, label='Mould')
 plt.scatter(x, rot, label='Rot')
 plt.scatter(x, moisture, label='Moisture Content')
 plt.ylim(-0.1, 1.1)
 plt.legend()
 
-plt.figure('Average')
+plt.figure()
+plt.title('Average')
 plt.scatter(x, mould_avg, label='Mould')
 plt.scatter(x, rot_avg, label='Rot')
 plt.ylim(45, 110)
 plt.legend()
 
-plt.figure('Average Moisture')
+plt.figure()
+plt.title('Average Moisture')
 plt.scatter(x, moisture_avg, label='Moisture Content', color='green')
 plt.legend()
 plt.ylim(50, 160)

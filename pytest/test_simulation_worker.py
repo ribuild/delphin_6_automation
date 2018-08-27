@@ -137,3 +137,13 @@ def test_simulation_worker_failed_simulation(mock_hpc_worker_failed_simulation, 
     failed_folder = os.path.join(mock_hpc_worker_failed_simulation, 'failed', str(delphin_doc.id))
 
     assert os.listdir(original_folder) == os.listdir(failed_folder)
+
+
+def test_exceeding_time_limit(mock_hpc_worker_time_limit):
+    folder, sim_id = mock_hpc_worker_time_limit
+    simulation_worker.hpc_worker(str(sim_id), folder)
+
+    delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
+
+    assert delphin_doc
+    assert delphin_doc.exceeded_time_limit

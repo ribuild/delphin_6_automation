@@ -14,6 +14,7 @@ import sys
 import numpy as np
 import time
 import pandas as pd
+import datetime
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -280,6 +281,15 @@ def mock_submit_job(monkeypatch):
 
 
 @pytest.fixture()
+def mock_wait_until_finished_time_limit(monkeypatch, tmpdir):
+
+    def mockreturn(sim_id: str, estimated_run_time: int, simulation_folder: str):
+        return 'time limit reached'
+
+    monkeypatch.setattr(simulation_worker, 'wait_until_finished', mockreturn)
+
+
+@pytest.fixture()
 def mock_sleep(monkeypatch):
     def mockreturn(secs):
         return None
@@ -327,6 +337,20 @@ def mock_hpc_worker_failed_simulation(monkeypatch, tmpdir, db_one_project):
     general_interactions.download_full_project_from_database(db_one_project, sim_folder)
 
     return folder
+
+
+@pytest.fixture()
+def mock_hpc_worker_time_limit(monkeypatch, tmpdir, db_one_project, mock_submit_job,
+                               mock_wait_until_finished_time_limit, mock_upload_results):
+
+    def mockreturn(days=None, minutes=None, seconds=None):
+        return datetime.timedelta(seconds=2)
+
+    monkeypatch.setattr(datetime, 'timedelta', mockreturn)
+
+    folder = tmpdir.mkdir('test')
+
+    return folder, db_one_project
 
 
 @pytest.fixture()
@@ -473,3 +497,19 @@ def mock_copytree(monkeypatch):
         return None
 
     monkeypatch.setattr(shutil, 'copytree', mockreturn)
+
+
+@pytest.fixture()
+def mock_upload_results(monkeypatch):
+    def mock_return_raw(path_: str, delete_files: bool = True, result_length=None) -> str:
+
+        return 'No ID'
+
+    monkeypatch.setattr(delphin_interactions, 'upload_results_to_database', mock_return_raw)
+
+    def mock_return_processed(folder: str, delphin_id: str, raw_result_id: str,
+                             simulation_interrupted: bool=False) -> str:
+
+        return 'No ID'
+
+    monkeypatch.setattr(delphin_interactions, 'upload_processed_results', mock_return_processed)
