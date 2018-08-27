@@ -471,7 +471,8 @@ def check_delphin_file(delphin_dict: dict):
     return error
 
 
-def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -> result_db.Result.id:
+def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str,
+                             simulation_interrupted: bool=False) -> result_db.Result.id:
     """Process simulation results and upload them to the database"""
 
     # Paths
@@ -481,20 +482,26 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str) -
     # Parse
     exterior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'temperature.ccd'))
     interior_temperature = weather_parser.ccd_to_list(os.path.join(weather_path, 'indoor_temperature.ccd'))
+
+    if simulation_interrupted:
+        output_length = None
+    else:
+        output_length = len(exterior_temperature)
+
     temperature_mould = delphin_parser.d6o_to_dict(folder, 'temperature mould.d6o',
-                                                   len(exterior_temperature))[0]
+                                                   output_length)[0]
 
     relative_humidity_mould = delphin_parser.d6o_to_dict(folder, 'relative humidity mould.d6o',
-                                                         len(exterior_temperature))[0]
+                                                         output_length)[0]
 
     temperature_algae = delphin_parser.d6o_to_dict(folder, 'temperature algae.d6o',
-                                                   len(exterior_temperature))[0]
+                                                   output_length)[0]
 
     relative_humidity_algae = delphin_parser.d6o_to_dict(folder, 'relative humidity algae.d6o',
-                                                         len(exterior_temperature))[0]
+                                                         output_length)[0]
 
     heat_loss = delphin_parser.d6o_to_dict(folder, 'heat loss.d6o',
-                                           len(exterior_temperature))[0]
+                                           output_length)[0]
 
     logger.debug(f'Collected simulation result data for Delphin project with ID: {delphin_id}')
 

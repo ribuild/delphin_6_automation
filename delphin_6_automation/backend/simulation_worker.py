@@ -222,6 +222,8 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
         else:
             time.sleep(2)
 
+    time_limit = start_time + datetime.timedelta(days=1)
+
     while not finished:
         simulation_ends = start_time + datetime.timedelta(minutes=estimated_run_time)
 
@@ -244,6 +246,10 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
             start_time = datetime.datetime.now()
             logger.debug(f'Rerunning simulation with ID: {sim_id} '
                          f'with new estimated run time of: {estimated_run_time}')
+        elif datetime.datetime.now() > time_limit:
+            finished = True
+            logger.warning(f'Simulation with ID: {sim_id} exceeded the simulaiton time limit of 24 hours.')
+            return 'time limit reached'
 
         else:
             if os.path.exists(os.path.join(simulation_folder, sim_id, 'log', 'screenlog.txt')):
@@ -294,14 +300,18 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     submit_job(submit_file, id_)
 
     time_0 = datetime.datetime.now()
-    wait_until_finished(id_, estimated_time, simulation_folder)
+    return_code = wait_until_finished(id_, estimated_time, simulation_folder)
     delta_time = datetime.datetime.now() - time_0
 
-    simulation_hours = len(delphin_entry.Delphin.objects(id=id_).first().weather) * 8760
+    if return_code:
+        simulation_hours = None
+    else:
+        simulation_hours = len(delphin_entry.Delphin.objects(id=id_).first().weather) * 8760
+
     result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_),
                                                                 delete_files=False, result_length=simulation_hours)
     delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
-                                                  id_, result_id)
+                                                  id_, result_id, return_code)
 
     simulation_interactions.set_simulated(id_)
     simulation_interactions.set_simulation_time(id_, delta_time)

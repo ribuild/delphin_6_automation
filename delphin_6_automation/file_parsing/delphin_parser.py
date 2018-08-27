@@ -39,7 +39,7 @@ def dp6_to_dict(path: str) -> dict:
     return dict(xml_dict)
 
 
-def d6o_to_dict(path: str, filename: str, number_of_hours=None)-> typing.Tuple[list, dict]:
+def d6o_to_dict(path: str, filename: str, number_of_hours: typing.Optional[int]=None)-> typing.Tuple[list, dict]:
     """
     Converts a Delphin results file into a dict.
 
