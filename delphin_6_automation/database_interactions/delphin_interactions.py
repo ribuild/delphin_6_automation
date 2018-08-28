@@ -522,7 +522,9 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str,
     result_entry.mould.put(bson.BSON.encode(mould))
     result_entry.heat_loss.put(np.array(heat_loss).tobytes())
     result_entry.algae.put(np.array(damage_models.algae(relative_humidity_algae, temperature_algae)).tobytes())
-    result_entry.u_value = damage_models.u_value(heat_loss, exterior_temperature, interior_temperature)
+    result_entry.u_value = damage_models.u_value(heat_loss,
+                                                 exterior_temperature[:len(heat_loss)],
+                                                 interior_temperature[:len(heat_loss)])
 
     result_entry.thresholds = {'mould': max(max(damage_models.mould_pj(relative_humidity_mould,
                                                                        temperature_mould, aed_group='a')[0]),
