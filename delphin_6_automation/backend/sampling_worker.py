@@ -143,7 +143,7 @@ def sampling_overview(strategy_id):
                 plt.scatter(x, data, label=design)
             else:
                 plt.plot(x, data, label=design)
-            plt.xlim(x[0]-1, x[-1]+1)
+            plt.xlim(x[0] - 1, x[-1] + 1)
 
         plt.legend()
         plt.title(f'Sampling Convergence:\n{damage_model.capitalize()}')

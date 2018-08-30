@@ -112,12 +112,10 @@ def mock_calculate_sample_output(monkeypatch):
                 projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design,
                                                                       sample_data__sequence=str(sequence_index))
                 mould = []
-                algae = []
                 heat_loss = []
 
                 for project in projects_given_design:
                     mould.append(project.sample_data['output'])
-                    algae.append(project.sample_data['output'])
                     heat_loss.append(project.sample_data['output'])
 
                 sample_mean[str(sequence_index)][design] = {'mould': np.mean(mould),
