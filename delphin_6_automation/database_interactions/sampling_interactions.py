@@ -84,12 +84,10 @@ def upload_standard_error(strategy_document: sample_entry.Strategy, current_erro
         for design in current_error.keys():
             standard_error[design] = {}
             standard_error[design]['mould'] = []
-            standard_error[design]['algae'] = []
             standard_error[design]['heat_loss'] = []
 
     for design in current_error.keys():
         standard_error[design]['mould'].append(current_error[design]['mould'])
-        standard_error[design]['algae'].append(current_error[design]['algae'])
         standard_error[design]['heat_loss'].append(current_error[design]['heat_loss'])
 
     strategy_document.update(set__standard_error=standard_error)

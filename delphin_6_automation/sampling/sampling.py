@@ -417,14 +417,12 @@ def calculate_error(sample_strategy: sample_entry.Strategy) -> dict:
     mould = {design: []
              for sequence in sample.mean.keys()
              for design in sample.mean[sequence].keys()}
-    algae = copy.deepcopy(mould)
     heat_loss = copy.deepcopy(mould)
 
     for sequence in sample.mean.keys():
 
         for design in sample.mean[sequence].keys():
             mould[design].append(sample.mean[sequence][design]['mould'])
-            algae[design].append(sample.mean[sequence][design]['algae'])
             heat_loss[design].append(sample.mean[sequence][design]['heat_loss'])
 
     for design in mould.keys():
@@ -432,7 +430,6 @@ def calculate_error(sample_strategy: sample_entry.Strategy) -> dict:
         logger.debug(f'Calculates standard error for design: {design}')
 
         design_standard_error = {'mould': relative_standard_error(mould[design], sequence_length),
-                                 'algae': relative_standard_error(algae[design], sequence_length),
                                  'heat_loss': relative_standard_error(heat_loss[design], sequence_length)}
 
         standard_error[design] = design_standard_error
@@ -568,20 +565,16 @@ def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
             projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design,
                                                                   sample_data__sequence=str(sequence_index))
             mould = []
-            algae = []
             heat_loss = []
 
             # TODO - Speed up this with a better query
             for project in projects_given_design:
                 mould.append(project.result_processed['thresholds']['mould'])
-                algae.append(project.result_processed['thresholds']['algae'])
                 heat_loss.append(project.result_processed['thresholds']['heat_loss'])
 
             sample_mean[str(sequence_index)][design] = {'mould': np.mean(mould),
-                                                        'algae': np.mean(algae),
                                                         'heat_loss': np.mean(heat_loss)}
             sample_std[str(sequence_index)][design] = {'mould': np.std(mould),
-                                                       'algae': np.std(algae),
                                                        'heat_loss': np.std(heat_loss)}
 
             logger.debug(f'Sample mean: {sample_mean[str(sequence_index)][design]} for design: {design}')

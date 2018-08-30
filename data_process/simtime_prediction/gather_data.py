@@ -20,13 +20,11 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 
 data_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\simtime_prediction\data'
 
-
 mongo_setup.global_init(auth.auth_dict)
 
 entries = delphin_entry.Delphin.objects(simulation_time__exists=True)
 
 mongo_setup.global_end_ssh(auth.auth_dict)
-
 
 col = ['time', ] + list(entries[0].sample_data.keys())[:-2] + list(entries[0].sample_data['design_option'].keys())
 frames = []
@@ -44,8 +42,7 @@ for i in range(108):
             data.append(entry.sample_data[key])
     """
 
-    frames.append(pd.DataFrame(columns=col, data=data, index=[i,]))
-
+    frames.append(pd.DataFrame(columns=col, data=data, index=[i, ]))
 
 data_frame = pd.concat(frames)
 

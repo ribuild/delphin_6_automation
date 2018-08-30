@@ -158,7 +158,6 @@ def test_calculate_error(add_sample_for_errors):
 def test_upload_standard_error(add_strategy_for_errors, error):
     strategy = sample_entry.Strategy.objects().first()
     current_error = {'Test Design': {'mould': error,
-                                     'algae': error,
                                      'heat_loss': error}}
 
     sampling_interactions.upload_standard_error(strategy, current_error)
@@ -169,8 +168,6 @@ def test_upload_standard_error(add_strategy_for_errors, error):
     assert isinstance(strategy.standard_error, dict)
     assert isinstance(strategy.standard_error['Test Design']['mould'], list)
     assert strategy.standard_error['Test Design']['mould'][-1] == error
-    assert isinstance(strategy.standard_error['Test Design']['algae'], list)
-    assert strategy.standard_error['Test Design']['algae'][-1] == error
     assert isinstance(strategy.standard_error['Test Design']['heat_loss'], list)
     assert strategy.standard_error['Test Design']['heat_loss'][-1] == error
 
@@ -179,9 +176,7 @@ def test_upload_standard_error(add_strategy_for_errors, error):
                          [0.3, 0.101, 0.1, 0.01])
 def test_check_convergence(add_strategy_for_errors, add_dummy_sample, error):
     strategy = sample_entry.Strategy.objects().first()
-    sample = sample_entry.Sample.objects().first()
     current_error = {'Test Design': {'mould': error,
-                                     'algae': error,
                                      'heat_loss': error}}
 
     sampling_interactions.upload_standard_error(strategy, current_error)
