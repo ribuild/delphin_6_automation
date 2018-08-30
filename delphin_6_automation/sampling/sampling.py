@@ -96,7 +96,7 @@ def create_sampling_strategy(path: str) -> dict:
                          {'type': 'uniform', 'range': [0.01, 0.3], },
 
                      'start year':
-                         {'type': 'discrete', 'range': [2020, 2045], },
+                         {'type': 'discrete', 'range': [i for i in range(2020, 2046)], },
                      }
 
     sampling_settings = {'initial samples per set': 1,
