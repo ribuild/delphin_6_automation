@@ -17,7 +17,8 @@ import matplotlib.pyplot as plt
 data_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\simtime_prediction\data'
 excel_file = os.path.join(data_folder, 'sim_time.xlsx')
 
-df = pd.read_excel(excel_file)
+data = pd.read_excel(excel_file)
 
-(df['time']/60).plot('hist', bins=10)
+
+(df['time'][df['time'] < 1500 * 60] / 60).plot('hist', bins=50)
 plt.show()

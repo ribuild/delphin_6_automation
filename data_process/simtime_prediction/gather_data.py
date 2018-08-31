@@ -29,7 +29,7 @@ mongo_setup.global_end_ssh(auth.auth_dict)
 col = ['time', ] + list(entries[0].sample_data.keys())[:-2] + list(entries[0].sample_data['design_option'].keys())
 frames = []
 
-for i in range(108):
+for i in range(len(entries)):
     entry = entries[i]
     data = copy.deepcopy(entry.sample_data)
     del data['sequence']
@@ -49,3 +49,4 @@ data_frame = pd.concat(frames)
 writer = pd.ExcelWriter(os.path.join(data_folder, 'sim_time.xlsx'))
 data_frame.to_excel(writer, 'simtime')
 writer.save()
+print('done')
