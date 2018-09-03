@@ -513,3 +513,17 @@ def mock_upload_results(monkeypatch):
         return 'No ID'
 
     monkeypatch.setattr(delphin_interactions, 'upload_processed_results', mock_return_processed)
+
+
+@pytest.fixture()
+def project_with_restart(db_one_project, tmpdir, test_folder):
+
+    var_folder = os.path.join(test_folder, 'restart', 'var_0')
+    tmpdir.mkdir(str(db_one_project)).mkdir(str(db_one_project))
+    tmp_folder = os.path.join(tmpdir, str(db_one_project), str(db_one_project), 'var')
+    shutil.copytree(var_folder, tmp_folder)
+    delphin_folder = os.path.join(tmpdir, str(db_one_project))
+
+    delphin_interactions.upload_restart_data(delphin_folder, str(db_one_project))
+
+    return db_one_project

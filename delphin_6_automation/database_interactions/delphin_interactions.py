@@ -596,3 +596,26 @@ def set_exceeding_time_limit(sim_id: delphin_db.Delphin.id) -> str:
     logger.debug(f'Simulation with ID: {sim_id} got flagged as exceeding simulation time limit.')
 
     return entry.id
+
+
+def upload_restart_data(folder: str, delphin_id: str) -> str:
+
+    restart_folder = os.path.join(folder, delphin_id, 'var')
+
+    restart_dict = delphin_parser.restart_data(restart_folder)
+
+    delphin_doc = delphin_db.Delphin.objects(id=delphin_id).first()
+    delphin_doc.update(set__restart_data=restart_dict)
+
+    return delphin_doc.id
+
+
+def download_restart_data(folder: str, delphin_id: str) -> None:
+
+    delphin_doc = delphin_db.Delphin.objects(id=delphin_id).first()
+
+    restart_dict = delphin_doc.restart_data
+
+    delphin_parser.restart_data_to_file(folder, restart_dict)
+
+    return None

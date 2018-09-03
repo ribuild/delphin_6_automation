@@ -127,3 +127,27 @@ def test_upload_processed_results(add_results, tmpdir, test_folder):
     assert delphin_doc.result_processed == process_result_doc
     assert result_doc.result_processed == process_result_doc
 
+
+@pytest.mark.parametrize('number', [0, 1, 2])
+def test_upload_restart_data(db_one_project, test_folder, number, tmpdir):
+
+    var_folder = os.path.join(test_folder, 'restart', f'var_{number}')
+    tmpdir.mkdir(str(db_one_project)).mkdir(str(db_one_project))
+    tmp_folder = os.path.join(tmpdir, str(db_one_project), str(db_one_project), 'var')
+    shutil.copytree(var_folder, tmp_folder)
+    delphin_folder = os.path.join(tmpdir, str(db_one_project))
+
+    delphin_interactions.upload_restart_data(delphin_folder, str(db_one_project))
+
+    delphin_doc = delphin_entry.Delphin.objects(id=db_one_project).first()
+
+    assert delphin_doc.restart_data
+    assert isinstance(delphin_doc.restart_data, dict)
+
+
+def test_download_restart_data(project_with_restart, tmpdir):
+    folder = tmpdir.mkdir('test')
+
+    delphin_interactions.download_restart_data(folder, project_with_restart)
+
+    assert os.path.exists(os.path.join(folder, 'restart.bin'))

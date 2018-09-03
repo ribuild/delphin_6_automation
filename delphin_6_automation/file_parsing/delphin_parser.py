@@ -604,6 +604,9 @@ def restart_data_to_file(folder: str, restart_dict: typing.Dict[str, bytes]) -> 
     tmp_file = os.path.join(folder, 'restart.bin.tmp')
 
     def write_bytes(filename, bytes_):
+        if not isinstance(bytes_, bytes):
+            bytes_ = bytearray(bytes_)
+
         with open(filename, 'wb') as file:
             file.write(bytes_)
 
