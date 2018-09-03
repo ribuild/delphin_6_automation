@@ -41,7 +41,7 @@ def test_d6o_to_dict(result_files, request):
                 assert isinstance(meta, dict)
 
 
-@pytest.mark.parametrize('number', [0, 1])
+@pytest.mark.parametrize('number', [0, 1, 2])
 def test_restart_to_dict(test_folder, number):
 
     restart_folder = os.path.join(test_folder, 'restart', f'var_{number}')
@@ -49,7 +49,26 @@ def test_restart_to_dict(test_folder, number):
     data = delphin_parser.restart_data(restart_folder)
 
     assert data
-    assert isinstance(data, tuple)
+    assert isinstance(data, dict)
 
-    for element in data:
-        assert isinstance(element, bytes)
+    for element in data.values():
+        assert isinstance(element, bytes) or element is None
+
+
+@pytest.mark.parametrize('number', [0, 1, 2])
+def test_restart_data_to_file(test_folder, number, tmpdir):
+    folder = tmpdir.mkdir('test')
+
+    restart_folder = os.path.join(test_folder, 'restart', f'var_{number}')
+    data = delphin_parser.restart_data(restart_folder)
+
+    delphin_parser.restart_data_to_file(folder, data)
+
+    bin_file = os.path.join(folder, 'restart.bin')
+    tmp_file = os.path.join(folder, 'restart.bin.tmp')
+
+    assert os.path.exists(bin_file)
+    assert delphin_parser.restart_data(folder) == data
+
+    if data['tmp_data']:
+        assert os.path.exists(tmp_file)

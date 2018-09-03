@@ -579,7 +579,7 @@ def dict_to_d6o(result_dict: dict, result_path: str, simulation_start: datetime.
     return True
 
 
-def restart_data(folder: str) -> typing.Tuple[bytes, bytes]:
+def restart_data(folder: str) -> typing.Dict[str, bytes]:
 
     bin_file = os.path.join(folder, 'restart.bin')
     tmp_file = os.path.join(folder, 'restart.bin.tmp')
@@ -589,6 +589,27 @@ def restart_data(folder: str) -> typing.Tuple[bytes, bytes]:
             return file.read()
 
     bin_data = return_bytes(bin_file)
-    tmp_data = return_bytes(tmp_file)
 
-    return bin_data, tmp_data
+    if os.path.exists(tmp_file):
+        tmp_data = return_bytes(tmp_file)
+    else:
+        tmp_data = None
+
+    return {'bin_data': bin_data, 'tmp_data': tmp_data}
+
+
+def restart_data_to_file(folder: str, restart_dict: typing.Dict[str, bytes]) -> None:
+
+    bin_file = os.path.join(folder, 'restart.bin')
+    tmp_file = os.path.join(folder, 'restart.bin.tmp')
+
+    def write_bytes(filename, bytes_):
+        with open(filename, 'wb') as file:
+            file.write(bytes_)
+
+    write_bytes(bin_file, restart_dict['bin_data'])
+
+    if restart_dict['tmp_data']:
+        write_bytes(tmp_file, restart_dict['tmp_data'])
+
+    return None

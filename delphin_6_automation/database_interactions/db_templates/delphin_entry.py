@@ -29,6 +29,7 @@ class Delphin(mongoengine.Document):
     exceeded_time_limit = mongoengine.BooleanField()
     queue_priority = mongoengine.IntField(default=1)
     sample_data = mongoengine.DictField()
+    restart_data = mongoengine.DictField()
 
     # References
     dimensions = mongoengine.IntField(required=True)
