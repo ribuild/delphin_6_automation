@@ -513,6 +513,11 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str,
     result_entry.delphin = delphin_doc
     result_entry.results_raw = raw_result_doc
 
+    if len(relative_humidity_mould) < len(temperature_mould):
+        temperature_mould = temperature_mould[:len(relative_humidity_mould)]
+    elif len(temperature_mould) < len(relative_humidity_mould):
+        relative_humidity_mould = relative_humidity_mould[:len(temperature_mould)]
+
     mould = {'a': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='a'),
              'b': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='b'),
              'c': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='c'),
