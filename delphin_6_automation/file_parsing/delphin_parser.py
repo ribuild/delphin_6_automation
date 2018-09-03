@@ -577,3 +577,18 @@ def dict_to_d6o(result_dict: dict, result_path: str, simulation_start: datetime.
     file_obj.close()
 
     return True
+
+
+def restart_data(folder: str) -> typing.Tuple[bytes, bytes]:
+
+    bin_file = os.path.join(folder, 'restart.bin')
+    tmp_file = os.path.join(folder, 'restart.bin.tmp')
+
+    def return_bytes(file_name):
+        with open(file_name, 'rb') as file:
+            return file.read()
+
+    bin_data = return_bytes(bin_file)
+    tmp_data = return_bytes(tmp_file)
+
+    return bin_data, tmp_data

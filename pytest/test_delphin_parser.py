@@ -7,6 +7,7 @@ __license__ = 'MIT'
 # Modules
 import shutil
 import os
+import pytest
 
 # RiBuild Modules
 from delphin_6_automation.file_parsing import delphin_parser
@@ -38,3 +39,17 @@ def test_d6o_to_dict(result_files, request):
                 assert isinstance(result, list)
                 assert len(result) == 7 * 8760
                 assert isinstance(meta, dict)
+
+
+@pytest.mark.parametrize('number', [0, 1])
+def test_restart_to_dict(test_folder, number):
+
+    restart_folder = os.path.join(test_folder, 'restart', f'var_{number}')
+
+    data = delphin_parser.restart_data(restart_folder)
+
+    assert data
+    assert isinstance(data, tuple)
+
+    for element in data:
+        assert isinstance(element, bytes)
