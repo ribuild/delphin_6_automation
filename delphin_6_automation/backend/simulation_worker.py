@@ -315,6 +315,7 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
 
     if return_code:
         delphin_interactions.set_exceeding_time_limit(id_)
+        delphin_interactions.upload_restart_data(simulation_folder, id_)
 
     simulation_interactions.set_simulated(id_)
     simulation_interactions.set_simulation_time(id_, delta_time)
@@ -382,6 +383,7 @@ def menu():
     print("Available actions:")
     print("[a] Simulate locally")
     print("[b] Simulate on DTU HPC")
+    print("[c] Simulate exceeded simulations on DTU HPC")
     print("[x] Exit")
 
     choice = input("> ").strip().lower()
@@ -408,6 +410,9 @@ def menu():
 
         for thread in threads:
             thread.join()
+
+    elif choice == 'c':
+        raise NotImplementedError
 
     elif choice == 'x':
         print("Goodbye")
