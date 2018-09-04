@@ -281,9 +281,14 @@ def mock_submit_job(monkeypatch):
 
 
 @pytest.fixture()
-def mock_wait_until_finished_time_limit(monkeypatch, tmpdir):
+def mock_wait_until_finished_time_limit(monkeypatch, tmpdir, test_folder):
 
     def mockreturn(sim_id: str, estimated_run_time: int, simulation_folder: str):
+
+        source_folder = os.path.join(test_folder, 'restart', 'var_2')
+        dist_folder = os.path.join(simulation_folder, str(sim_id), 'var')
+        shutil.copytree(source_folder, dist_folder)
+
         return 'time limit reached'
 
     monkeypatch.setattr(simulation_worker, 'wait_until_finished', mockreturn)
@@ -527,3 +532,12 @@ def project_with_restart(db_one_project, tmpdir, test_folder):
     delphin_interactions.upload_restart_data(delphin_folder, str(db_one_project))
 
     return db_one_project
+
+
+@pytest.fixture()
+def mock_clean_simulation_folder(monkeypatch):
+
+    def mock_return(path):
+        return None
+
+    monkeypatch.setattr(simulation_interactions, 'clean_simulation_folder', mock_return)

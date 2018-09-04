@@ -25,6 +25,8 @@ logger = ribuild_logger(__name__)
 
 
 def main():
+    """Entrance to the sampling worker"""
+
     print_header()
 
     try:
@@ -79,7 +81,13 @@ def menu():
         logger.info("Goodbye")
 
 
-def sampling_worker(strategy_id):
+def sampling_worker(strategy_id: str) -> None:
+    """
+    Main sampling worker, which creates new Delphin projects based on a sample strategy and checks for convergence,
+    when all Delphin simulations in a given iteration is done.
+    If convergence was not reached then it creates new Delphin projects.
+    """
+
     strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
     (sample_iteration, convergence,
      new_samples_per_set, used_samples_per_set) = sampling.initialize_sampling(strategy_doc)
@@ -130,6 +138,7 @@ def sampling_worker(strategy_id):
 
 
 def sampling_overview(strategy_id):
+    """Shows the progress in the sampling strategy"""
 
     strategy_doc = sampling_interactions.get_sampling_strategy(strategy_id)
 
