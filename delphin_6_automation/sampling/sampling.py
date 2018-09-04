@@ -562,7 +562,8 @@ def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
         sample_std[str(sequence_index)] = dict()
 
         for design in sample_strategy['design']:
-            projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design,
+            design_dict = create_design_info(design)
+            projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design_dict,
                                                                   sample_data__sequence=str(sequence_index))
             mould = []
             heat_loss = []

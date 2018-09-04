@@ -201,12 +201,14 @@ def test_calculate_sample_output(empty_database, add_strategy_for_errors, add_du
     for key in sample_doc.mean.keys():
         assert isinstance(key, str)
         assert isinstance(int(key), int)
+        assert isinstance(sample_doc.mean[key], dict)
 
     assert sample_doc.standard_deviation
     assert isinstance(sample_doc.standard_deviation, dict)
     for key in sample_doc.standard_deviation.keys():
         assert isinstance(key, str)
         assert isinstance(int(key), int)
+        assert isinstance(sample_doc.standard_deviation[key], dict)
 
 
 def test_initialize_sampling(add_sampling_strategy):
