@@ -9,7 +9,7 @@
     <title>delphin_6_automation.file_parsing.delphin_parser &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -27,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for delphin_6_automation.file_parsing.delphin_parser</h1><div class="highlight"><pre>
@@ -43,9 +45,15 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">bson</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># RiBuild Modules:</span>
 <span class="kn">import</span> <span class="nn">delphin_6_automation.database_interactions.db_templates.result_raw_entry</span> <span class="k">as</span> <span class="nn">result_db</span>
+<span class="kn">from</span> <span class="nn">delphin_6_automation.logging.ribuild_logger</span> <span class="k">import</span> <span class="n">ribuild_logger</span>
+
+<span class="c1"># Logger</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">ribuild_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># -------------------------------------------------------------------------------------------------------------------- #</span>
 <span class="c1"># DELPHIN FUNCTIONS AND CLASSES</span>
@@ -65,7 +73,7 @@
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">xml_dict</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="d6o_to_dict"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.d6o_to_dict">[docs]</a><span class="k">def</span> <span class="nf">d6o_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<div class="viewcode-block" id="d6o_to_dict"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.d6o_to_dict">[docs]</a><span class="k">def</span> <span class="nf">d6o_to_dict</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">number_of_hours</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a Delphin results file into a dict.</span>
 
@@ -75,11 +83,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Helper functions</span>
-    <span class="k">def</span> <span class="nf">d6o</span><span class="p">(</span><span class="n">d6o_lines</span><span class="p">):</span>
-        <span class="n">result_dict_</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="n">result_dict_</span><span class="p">[</span><span class="s1">&#39;D6OARLZ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">d6o</span><span class="p">(</span><span class="n">d6o_lines</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
 
-        <span class="n">meta_dict_</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">meta_dict_</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">meta_dict_</span><span class="p">[</span><span class="s1">&#39;D6OARLZ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">14</span><span class="p">):</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
@@ -94,36 +101,75 @@
             <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;indices&#39;</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                          <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)]</span>
-                <span class="n">result_dict_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">meta_dict_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="n">result_dict_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">meta_dict_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-        <span class="n">result_values</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-
-        <span class="k">for</span> <span class="n">index_</span> <span class="ow">in</span> <span class="n">result_dict_</span><span class="p">[</span><span class="s1">&#39;indices&#39;</span><span class="p">]:</span>
-            <span class="n">cell</span> <span class="o">=</span> <span class="s1">&#39;cell_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index_</span><span class="p">)</span>
-            <span class="n">result_values</span><span class="p">[</span><span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">result_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">result_times</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d6o_lines</span><span class="p">)):</span>
 
             <span class="n">line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
-                <span class="n">cell</span> <span class="o">=</span> <span class="s1">&#39;cell_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict_</span><span class="p">[</span><span class="s1">&#39;indices&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">])</span>
-                <span class="n">result_values</span><span class="p">[</span><span class="n">cell</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">hour</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">hour</span><span class="p">:</span>
+                    <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
 
-        <span class="n">result_values</span> <span class="o">=</span> <span class="p">{</span><span class="n">cell</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">cell</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result_values</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">hour</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result_times</span><span class="p">:</span>
+                <span class="n">result_times</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span>
+                <span class="n">result_values</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">hour</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Hour </span><span class="si">{hour}</span><span class="s1"> already in result file: </span><span class="si">{filename}</span><span class="s1">. Duplicate value is not saved&#39;</span><span class="p">)</span>
 
-        <span class="n">result_dict_</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result_values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">length</span><span class="p">:</span>
+            <span class="n">result_values</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">sorted_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result_values</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">sorted_values</span><span class="p">,</span> <span class="n">meta_dict_</span>
 
-        <span class="k">return</span> <span class="n">result_dict_</span><span class="p">,</span> <span class="n">meta_dict_</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">check_values</span><span class="p">(</span><span class="n">result_values</span><span class="p">,</span> <span class="n">length</span><span class="p">),</span> <span class="n">meta_dict_</span>
+
+    <span class="k">def</span> <span class="nf">check_values</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">],</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+
+        <span class="n">values</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">sorted_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sorted_values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hours</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">==</span> <span class="n">hours</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">hours</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                        <span class="n">sorted_values</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="n">hours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="n">sorted_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+            <span class="n">sorted_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sorted_values</span><span class="p">)</span>
+            <span class="n">correct_values</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sorted_values</span><span class="p">)</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="n">correct_values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">sorted_values</span><span class="p">[</span><span class="n">correct_values</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sorted_values</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">sorted_values</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sorted_values</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">sorted_values</span><span class="p">)</span>
 
     <span class="n">file_obj</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">file_obj</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
     <span class="n">file_obj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="n">result_dict</span><span class="p">,</span> <span class="n">meta_dict</span> <span class="o">=</span> <span class="n">d6o</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="n">result_dict</span><span class="p">,</span> <span class="n">meta_dict</span> <span class="o">=</span> <span class="n">d6o</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">number_of_hours</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result_dict</span><span class="p">,</span> <span class="n">meta_dict</span></div>
 
@@ -518,13 +564,12 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="dict_to_d6o"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_d6o">[docs]</a><span class="k">def</span> <span class="nf">dict_to_d6o</span><span class="p">(</span><span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">result_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">simulation_start</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
+<div class="viewcode-block" id="dict_to_d6o"><a class="viewcode-back" href="../../../delphin_parser.html#delphin_6_automation.file_parsing.delphin_parser.dict_to_d6o">[docs]</a><span class="k">def</span> <span class="nf">dict_to_d6o</span><span class="p">(</span><span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">result_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">simulation_start</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
                 <span class="n">geometry_file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">geometry_file_hash</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Turns a dictionary into a delphin result file.</span>
 
 <span class="sd">    :param result_dict: Dictionary representation of the database entry</span>
-<span class="sd">    :param result_name: Name of the result file</span>
 <span class="sd">    :param result_path: Path to were the result file should be written</span>
 <span class="sd">    :param simulation_start: Start time for the simulation</span>
 <span class="sd">    :param geometry_file_name: Name of the geometry file</span>
@@ -532,48 +577,83 @@
 <span class="sd">    :return: True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">file_obj</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">result_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">result_name</span> <span class="o">+</span> <span class="s1">&#39;.d6o&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">result_path</span> <span class="o">+</span> <span class="s1">&#39;.d6o&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
 
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;D6OARLZ! &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;D6OARLZ&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;TYPE          = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;PROJECT_FILE  = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;project_file&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;D6OARLZ! &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;D6OARLZ&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;TYPE          = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;PROJECT_FILE  = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;project_file&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;CREATED       = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">simulation_start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%a %b </span><span class="si">%d</span><span class="s1"> %H:%M:%S %Y&#39;</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;GEO_FILE      = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">geometry_file_name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.g6a&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;GEO_FILE_HASH = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">geometry_file_hash</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;QUANTITY      = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;quantity&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;QUANTITY_KW   = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;quantity_kw&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SPACE_TYPE    = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;space_type&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;TIME_TYPE     = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;time_type&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;VALUE_UNIT    = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;value_unit&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;TIME_UNIT     = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;time_unit&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;START_YEAR    = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;start_year&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;INDICES       = &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;indices&#39;</span><span class="p">]])</span> <span class="o">+</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;QUANTITY      = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;quantity&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;QUANTITY_KW   = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;quantity_kw&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SPACE_TYPE    = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;space_type&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;TIME_TYPE     = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;time_type&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;VALUE_UNIT    = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;value_unit&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;TIME_UNIT     = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;time_unit&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;START_YEAR    = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;start_year&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;INDICES       = &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;meta&#39;</span><span class="p">][</span><span class="s1">&#39;indices&#39;</span><span class="p">]])</span> <span class="o">+</span>
                    <span class="s1">&#39; </span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="n">result_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="n">result_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])):</span>
+    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">])):</span>
         <span class="n">space_count</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">13</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)))</span>
         <span class="n">line_to_write</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="o">+</span> <span class="n">space_count</span>
 
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">result_keys</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="n">count</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="n">space_value</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">15</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-                <span class="n">line_to_write</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="n">space_value</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="n">count</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="k">pass</span>
+        <span class="n">space_value</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">15</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="n">line_to_write</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="n">space_value</span>
 
         <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line_to_write</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">file_obj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<span class="k">def</span> <span class="nf">restart_data</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
+
+    <span class="n">bin_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;restart.bin&#39;</span><span class="p">)</span>
+    <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;restart.bin.tmp&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">return_bytes</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">bin_data</span> <span class="o">=</span> <span class="n">return_bytes</span><span class="p">(</span><span class="n">bin_file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">):</span>
+        <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">return_bytes</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tmp_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;bin_data&#39;</span><span class="p">:</span> <span class="n">bin_data</span><span class="p">,</span> <span class="s1">&#39;tmp_data&#39;</span><span class="p">:</span> <span class="n">tmp_data</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">restart_data_to_file</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">restart_dict</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="n">bin_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;restart.bin&#39;</span><span class="p">)</span>
+    <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;restart.bin.tmp&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">write_bytes</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">bytes_</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bytes_</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">bytes_</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">bytes_</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bytes_</span><span class="p">)</span>
+
+    <span class="n">write_bytes</span><span class="p">(</span><span class="n">bin_file</span><span class="p">,</span> <span class="n">restart_dict</span><span class="p">[</span><span class="s1">&#39;bin_data&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">restart_dict</span><span class="p">[</span><span class="s1">&#39;tmp_data&#39;</span><span class="p">]:</span>
+        <span class="n">write_bytes</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="n">restart_dict</span><span class="p">[</span><span class="s1">&#39;tmp_data&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -606,8 +686,8 @@
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

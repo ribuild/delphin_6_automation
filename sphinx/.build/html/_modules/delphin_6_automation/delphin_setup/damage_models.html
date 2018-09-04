@@ -9,7 +9,7 @@
     <title>delphin_6_automation.delphin_setup.damage_models &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -27,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for delphin_6_automation.delphin_setup.damage_models</h1><div class="highlight"><pre>
@@ -324,24 +326,25 @@
 
 
 <div class="viewcode-block" id="u_value"><a class="viewcode-back" href="../../../damage_models.html#delphin_6_automation.delphin_setup.damage_models.u_value">[docs]</a><span class="k">def</span> <span class="nf">u_value</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">exterior_temperature</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
-            <span class="n">interior_temperature</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">area</span><span class="o">=</span><span class="mf">0.68</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <span class="n">interior_temperature</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">area</span><span class="o">=</span><span class="mf">0.68</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculates the mean U-value given the outdoor and indoor temperature and the heat loss&quot;&quot;&quot;</span>
 
-    <span class="n">heat_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">)</span>
+    <span class="n">heat_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">))</span>
     <span class="n">exterior_temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">exterior_temperature</span><span class="p">)</span>
     <span class="n">interior_temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">interior_temperature</span><span class="p">)</span>
 
-    <span class="n">delta_temperature</span> <span class="o">=</span> <span class="n">exterior_temperature</span> <span class="o">-</span> <span class="n">interior_temperature</span>
-    <span class="n">u_value_</span> <span class="o">=</span> <span class="n">heat_loss</span> <span class="o">/</span> <span class="p">(</span><span class="n">delta_temperature</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">area</span><span class="p">)</span>
+    <span class="n">delta_temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">exterior_temperature</span> <span class="o">-</span> <span class="n">interior_temperature</span><span class="p">)</span>
+    <span class="n">u_value_</span> <span class="o">=</span> <span class="n">heat_loss</span> <span class="o">/</span> <span class="p">(</span><span class="n">delta_temperature</span> <span class="o">*</span> <span class="n">area</span><span class="p">)</span>
     <span class="n">u_value_</span> <span class="o">=</span> <span class="n">u_value_</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">u_value_</span><span class="p">)]</span>
     <span class="n">u_value_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">u_value_</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Calculated U-value to: </span><span class="si">{u_value_mean}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">u_value_mean</span></div>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">u_value_mean</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -374,8 +377,8 @@
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

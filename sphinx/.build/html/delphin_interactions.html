@@ -9,7 +9,7 @@
     <title>Delphin Interactions &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -29,6 +29,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="module-delphin_6_automation.database_interactions.delphin_interactions">
@@ -115,7 +117,7 @@
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_dict_to_database">
-<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_delphin_dict_to_database</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x0000025AA2025978&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_delphin_dict_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_dict_to_database" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_delphin_dict_to_database</code><span class="sig-paren">(</span><em>delphin_dict: dict</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x000001AD7C662898&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_delphin_dict_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_dict_to_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uploads a Delphin file to a database.rst.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -136,7 +138,7 @@
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_to_database">
-<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_delphin_to_database</code><span class="sig-paren">(</span><em>delphin_file: str</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x0000025AA2025978&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_delphin_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_to_database" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_delphin_to_database</code><span class="sig-paren">(</span><em>delphin_file: str</em>, <em>queue_priority: int</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x000001AD7C662898&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_delphin_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_delphin_to_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uploads a Delphin file to a database.rst.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -157,13 +159,13 @@
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_processed_results">
-<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_processed_results</code><span class="sig-paren">(</span><em>folder: str</em>, <em>delphin_id: str</em>, <em>raw_result_id: str</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x0000025AA1F9F9B0&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_processed_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_processed_results" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_processed_results</code><span class="sig-paren">(</span><em>folder: str</em>, <em>delphin_id: str</em>, <em>raw_result_id: str</em>, <em>simulation_interrupted: bool = False</em><span class="sig-paren">)</span> &#x2192; &lt;mongoengine.base.fields.ObjectIdField object at 0x000001AD7AE46DD8&gt;<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_processed_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_processed_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process simulation results and upload them to the database</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.database_interactions.delphin_interactions.upload_results_to_database">
-<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_results_to_database</code><span class="sig-paren">(</span><em>path_: str</em>, <em>delete_files: bool = True</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_results_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_results_to_database" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.database_interactions.delphin_interactions.</code><code class="descname">upload_results_to_database</code><span class="sig-paren">(</span><em>path_: str</em>, <em>delete_files: bool = True</em>, <em>result_length=None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/delphin_6_automation/database_interactions/delphin_interactions.html#upload_results_to_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.database_interactions.delphin_interactions.upload_results_to_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uploads the results from a Delphin simulation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -186,6 +188,7 @@
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -220,8 +223,8 @@
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/delphin_interactions.rst.txt"

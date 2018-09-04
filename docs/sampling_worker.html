@@ -9,7 +9,7 @@
     <title>Sampling Worker &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -29,14 +29,37 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="module-delphin_6_automation.backend.sampling_worker">
 <span id="sampling-worker"></span><h1>Sampling Worker<a class="headerlink" href="#module-delphin_6_automation.backend.sampling_worker" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="delphin_6_automation.backend.sampling_worker.main">
+<code class="descclassname">delphin_6_automation.backend.sampling_worker.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/backend/sampling_worker.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.sampling_worker.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entrance to the sampling worker</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.sampling_worker.sampling_overview">
+<code class="descclassname">delphin_6_automation.backend.sampling_worker.</code><code class="descname">sampling_overview</code><span class="sig-paren">(</span><em>strategy_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/backend/sampling_worker.html#sampling_overview"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.sampling_worker.sampling_overview" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows the progress in the sampling strategy</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="delphin_6_automation.backend.sampling_worker.sampling_worker">
+<code class="descclassname">delphin_6_automation.backend.sampling_worker.</code><code class="descname">sampling_worker</code><span class="sig-paren">(</span><em>strategy_id: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/delphin_6_automation/backend/sampling_worker.html#sampling_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.sampling_worker.sampling_worker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main sampling worker, which creates new Delphin projects based on a sample strategy and checks for convergence,
+when all Delphin simulations in a given iteration is done.
+If convergence was not reached then it creates new Delphin projects.</p>
+</dd></dl>
+
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -71,8 +94,8 @@
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/sampling_worker.rst.txt"

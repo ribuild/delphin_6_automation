@@ -9,7 +9,7 @@
     <title>delphin_6_automation.sampling.inputs &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -27,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for delphin_6_automation.sampling.inputs</h1><div class="highlight"><pre>
@@ -184,9 +186,14 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">design_folder</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">delphin_templates</span><span class="p">(</span><span class="n">folder</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">delphin_templates</span><span class="p">(</span><span class="n">folder</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="s1">&#39;exterior&#39;</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="s1">&#39;1d_exterior.d6p&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="s1">&#39;1d_interior.d6p&#39;</span>
+
         <span class="n">from_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;delphin&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
-        <span class="n">new_name</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_reference.d6p&#39;</span>
         <span class="n">to_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">design_folder</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
         <span class="n">copied_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_name</span><span class="p">)</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">from_file</span><span class="p">,</span> <span class="n">to_file</span><span class="p">)</span>
@@ -261,7 +268,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># appreciate formatted insulation systems</span>
-    <span class="n">systems</span> <span class="o">=</span> <span class="n">insulation_systems</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span>
+    <span class="n">excel_file</span> <span class="o">=</span> <span class="s1">&#39;InsulationSystems&#39;</span>
+    <span class="n">systems</span> <span class="o">=</span> <span class="n">insulation_systems</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">excel_file</span><span class="o">=</span><span class="n">excel_file</span><span class="p">)</span>
     <span class="n">file_names</span> <span class="o">=</span> <span class="n">construct_delphin_reference</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
 
     <span class="c1"># permutation of insulation systems</span>
@@ -292,7 +300,21 @@
 
             <span class="c1"># write option files (above dicts)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">insulation_select</span><span class="p">,</span> <span class="s1">&#39;Dimension&#39;</span><span class="p">]):</span>
-                <span class="n">file_name</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{file.split(&quot;.&quot;)[0]}_option{str(system_number).zfill(2)}-{str(dim).zfill(3)}.d6p&#39;</span>
+                <span class="k">if</span> <span class="s1">&#39;exterior&#39;</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+                    <span class="n">new_name</span> <span class="o">=</span> <span class="s1">&#39;1d_exterior_&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_name</span> <span class="o">=</span> <span class="s1">&#39;1d_interior_&#39;</span>
+
+                <span class="n">insulation_name</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="s1">&#39;/</span><span class="si">{excel_file}</span><span class="s1">.xlsx&#39;</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">system_number</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">layers</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">new_name</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{insulation_name}</span><span class="s1">_</span><span class="si">{system.loc[&quot;insulation_00&quot;, &quot;ID&quot;]}</span><span class="s1">_&#39;</span> \
+                                <span class="n">f</span><span class="s1">&#39;</span><span class="si">{system.loc[&quot;finish_00&quot;, &quot;ID&quot;]}</span><span class="s1">_</span><span class="si">{dim}</span><span class="s1">&#39;</span>
+                <span class="k">elif</span> <span class="n">layers</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">new_name</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{insulation_name}</span><span class="s1">_</span><span class="si">{system.loc[&quot;insulation_00&quot;, &quot;ID&quot;]}</span><span class="s1">_&#39;</span> \
+                                <span class="n">f</span><span class="s1">&#39;</span><span class="si">{system.loc[&quot;finish_00&quot;, &quot;ID&quot;]}</span><span class="s1">_</span><span class="si">{system.loc[&quot;detail_00&quot;, &quot;ID&quot;]}</span><span class="s1">_</span><span class="si">{dim}</span><span class="s1">&#39;</span>
+
+                <span class="n">file_name</span> <span class="o">=</span> <span class="n">new_name</span> <span class="o">+</span> <span class="s1">&#39;.d6p&#39;</span>
                 <span class="n">file_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
                 <span class="n">xmltodict</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">option_dicts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                                   <span class="n">output</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span>
@@ -311,6 +333,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -343,8 +366,8 @@
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

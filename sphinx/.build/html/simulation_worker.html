@@ -9,7 +9,7 @@
     <title>Simulation Worker &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -29,13 +29,15 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="module-delphin_6_automation.backend.simulation_worker">
 <span id="simulation-worker"></span><h1>Simulation Worker<a class="headerlink" href="#module-delphin_6_automation.backend.simulation_worker" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="delphin_6_automation.backend.simulation_worker.create_submit_file">
-<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">create_submit_file</code><span class="sig-paren">(</span><em>sim_id: str</em>, <em>simulation_folder: str</em>, <em>restart=False</em><span class="sig-paren">)</span> &#x2192; Tuple[str, int]<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#create_submit_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.create_submit_file" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">create_submit_file</code><span class="sig-paren">(</span><em>sim_id: str</em>, <em>simulation_folder: str</em>, <em>computation_time: int</em>, <em>restart=False</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#create_submit_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.create_submit_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a submit file for the DTU HPC queue system.</p>
 </dd></dl>
 
@@ -56,14 +58,26 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="delphin_6_automation.backend.simulation_worker.github_updates">
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">github_updates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#github_updates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.github_updates" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>if general_interactions.get_github_version() != general_interactions.get_git_revision_hash():</dt>
+<dd>logger.info(‘New version of Delphin 6 Automation is available on Github!!’)
+return False</dd>
+<dt>else:</dt>
+<dd>return True</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="delphin_6_automation.backend.simulation_worker.hpc_worker">
-<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">hpc_worker</code><span class="sig-paren">(</span><em>id_: str</em>, <em>thread_name: str</em>, <em>folder='H:/ribuild'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#hpc_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.hpc_worker" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">hpc_worker</code><span class="sig-paren">(</span><em>id_: str</em>, <em>folder='H:/ribuild'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#hpc_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.hpc_worker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves a Delphin project through DTU HPC</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="delphin_6_automation.backend.simulation_worker.local_worker">
-<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">local_worker</code><span class="sig-paren">(</span><em>id_: str</em><span class="sig-paren">)</span> &#x2192; Union[bool, NoneType]<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#local_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.local_worker" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">local_worker</code><span class="sig-paren">(</span><em>id_: str</em><span class="sig-paren">)</span> &#x2192; Optional[bool]<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#local_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.local_worker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulation worker. Supposed to be used with main simulation loop.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -79,7 +93,7 @@
 
 <dl class="function">
 <dt id="delphin_6_automation.backend.simulation_worker.simulation_worker">
-<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">simulation_worker</code><span class="sig-paren">(</span><em>sim_location: str</em>, <em>thread_name=None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#simulation_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.simulation_worker" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">delphin_6_automation.backend.simulation_worker.</code><code class="descname">simulation_worker</code><span class="sig-paren">(</span><em>sim_location: str</em>, <em>folder='H:/ribuild'</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/delphin_6_automation/backend/simulation_worker.html#simulation_worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#delphin_6_automation.backend.simulation_worker.simulation_worker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves Delphin projects in the database until interrupted</p>
 </dd></dl>
 
@@ -106,6 +120,7 @@ Then submit a new job continuing the simulation from where it ended.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -140,8 +155,8 @@ Then submit a new job continuing the simulation from where it ended.</p>
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/simulation_worker.rst.txt"

@@ -9,7 +9,7 @@
     <title>delphin_6_automation.database_interactions.general_interactions &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -27,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for delphin_6_automation.database_interactions.general_interactions</h1><div class="highlight"><pre>
@@ -39,7 +41,7 @@
 <span class="c1"># Modules:</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">github</span>
+<span class="c1">#import github</span>
 
 <span class="c1"># RiBuild Modules:</span>
 <span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions.db_templates</span> <span class="k">import</span> <span class="n">delphin_entry</span> <span class="k">as</span> <span class="n">delphin_db</span>
@@ -239,17 +241,20 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<span class="k">def</span> <span class="nf">get_github_version</span><span class="p">():</span>
-    <span class="n">gh</span> <span class="o">=</span> <span class="n">github</span><span class="o">.</span><span class="n">Github</span><span class="p">()</span>
-    <span class="n">rp</span> <span class="o">=</span> <span class="n">gh</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="s1">&#39;ribuild/delphin_6_automation&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">rp</span><span class="o">.</span><span class="n">get_commits</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sha</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">def get_github_version():</span>
+<span class="sd">    gh = github.Github()</span>
+<span class="sd">    rp = gh.get_repo(&#39;ribuild/delphin_6_automation&#39;)</span>
+<span class="sd">    return rp.get_commits()[0].sha</span>
 
 
-<span class="k">def</span> <span class="nf">get_git_revision_hash</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;rev-parse&#39;</span><span class="p">,</span> <span class="s1">&#39;HEAD&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="sd">def get_git_revision_hash():</span>
+<span class="sd">    return subprocess.check_output([&#39;git&#39;, &#39;rev-parse&#39;, &#39;HEAD&#39;]).strip().decode()</span>
+<span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -282,8 +287,8 @@
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

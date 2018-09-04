@@ -9,7 +9,7 @@
     <title>delphin_6_automation.database_interactions.delphin_interactions &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -27,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for delphin_6_automation.database_interactions.delphin_interactions</h1><div class="highlight"><pre>
@@ -133,7 +135,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="upload_results_to_database"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.upload_results_to_database">[docs]</a><span class="k">def</span> <span class="nf">upload_results_to_database</span><span class="p">(</span><span class="n">path_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delete_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="upload_results_to_database"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.upload_results_to_database">[docs]</a><span class="k">def</span> <span class="nf">upload_results_to_database</span><span class="p">(</span><span class="n">path_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delete_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">result_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Uploads the results from a Delphin simulation.</span>
 
@@ -145,14 +147,16 @@
     <span class="n">id_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path_</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">delphin_entry</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">result_path</span> <span class="o">=</span> <span class="n">path_</span> <span class="o">+</span> <span class="s1">&#39;/results&#39;</span>
-    <span class="n">log_path</span> <span class="o">=</span> <span class="n">path_</span> <span class="o">+</span> <span class="s1">&#39;/log&#39;</span>
+    <span class="n">result_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span>
+    <span class="c1">#log_path = path_ + &#39;/log&#39;</span>
     <span class="n">geometry_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">meta_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">for</span> <span class="n">result_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">result_path</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">result_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.d6o&#39;</span><span class="p">):</span>
-            <span class="n">result_dict</span><span class="p">[</span><span class="n">result_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">meta_dict</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">result_path</span><span class="p">,</span> <span class="n">result_file</span><span class="p">)</span>
+            <span class="n">result_name</span> <span class="o">=</span> <span class="n">result_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;meta&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">],</span>
+             <span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">][</span><span class="s1">&#39;meta&#39;</span><span class="p">])</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">result_path</span><span class="p">,</span> <span class="n">result_file</span><span class="p">,</span> <span class="n">result_length</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">result_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.g6a&#39;</span><span class="p">):</span>
             <span class="n">geometry_dict</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">g6a_to_dict</span><span class="p">(</span><span class="n">result_path</span><span class="p">,</span> <span class="n">result_file</span><span class="p">)</span>
@@ -168,8 +172,9 @@
 
     <span class="n">entry</span><span class="o">.</span><span class="n">geometry_file</span> <span class="o">=</span> <span class="n">geometry_dict</span>
     <span class="n">entry</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">bson</span><span class="o">.</span><span class="n">BSON</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">result_dict</span><span class="p">))</span>
-    <span class="n">entry</span><span class="o">.</span><span class="n">simulation_started</span> <span class="o">=</span> <span class="n">meta_dict</span><span class="p">[</span><span class="s1">&#39;created&#39;</span><span class="p">]</span>
-    <span class="n">entry</span><span class="o">.</span><span class="n">geometry_file_hash</span> <span class="o">=</span> <span class="n">meta_dict</span><span class="p">[</span><span class="s1">&#39;geo_file_hash&#39;</span><span class="p">]</span>
+    <span class="n">last_meta</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">result_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]][</span><span class="s1">&#39;meta&#39;</span><span class="p">]</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">simulation_started</span> <span class="o">=</span> <span class="n">last_meta</span><span class="p">[</span><span class="s1">&#39;created&#39;</span><span class="p">]</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">geometry_file_hash</span> <span class="o">=</span> <span class="n">last_meta</span><span class="p">[</span><span class="s1">&#39;geo_file_hash&#39;</span><span class="p">]</span>
     <span class="n">entry</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Uploaded raw results with ID: </span><span class="si">{entry.id}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -207,8 +212,9 @@
     <span class="n">delphin_parser</span><span class="o">.</span><span class="n">dict_to_g6a</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">result_obj</span><span class="o">.</span><span class="n">geometry_file</span><span class="p">),</span> <span class="n">result_path</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">result_name</span> <span class="ow">in</span> <span class="n">result_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">delphin_parser</span><span class="o">.</span><span class="n">dict_to_d6o</span><span class="p">(</span><span class="n">result_dict</span><span class="p">,</span> <span class="n">result_name</span><span class="p">,</span> <span class="n">result_path</span><span class="p">,</span> <span class="n">result_obj</span><span class="o">.</span><span class="n">simulation_started</span><span class="p">,</span>
-                                   <span class="n">result_obj</span><span class="o">.</span><span class="n">geometry_file</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">result_obj</span><span class="o">.</span><span class="n">geometry_file_hash</span><span class="p">)</span>
+        <span class="n">delphin_parser</span><span class="o">.</span><span class="n">dict_to_d6o</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">result_name</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_path</span><span class="p">,</span> <span class="n">result_name</span><span class="p">),</span>
+                                   <span class="n">result_obj</span><span class="o">.</span><span class="n">simulation_started</span><span class="p">,</span> <span class="n">result_obj</span><span class="o">.</span><span class="n">geometry_file</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                                   <span class="n">result_obj</span><span class="o">.</span><span class="n">geometry_file_hash</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Downloaded raw results with ID: </span><span class="si">{result_obj.id}</span><span class="s1">&#39;</span><span class="p">)</span>
 
@@ -499,22 +505,37 @@
     <span class="k">return</span> <span class="n">error</span></div>
 
 
-<div class="viewcode-block" id="upload_processed_results"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.upload_processed_results">[docs]</a><span class="k">def</span> <span class="nf">upload_processed_results</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delphin_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raw_result_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result_db</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+<div class="viewcode-block" id="upload_processed_results"><a class="viewcode-back" href="../../../delphin_interactions.html#delphin_6_automation.database_interactions.delphin_interactions.upload_processed_results">[docs]</a><span class="k">def</span> <span class="nf">upload_processed_results</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delphin_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raw_result_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">simulation_interrupted</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result_db</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Process simulation results and upload them to the database&quot;&quot;&quot;</span>
 
     <span class="c1"># Paths</span>
     <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span>
-    <span class="n">temperature_mould</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;temperature mould.d6o&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">relative_humidity_mould</span> <span class="o">=</span> \
-        <span class="nb">list</span><span class="p">(</span><span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;relative humidity mould.d6o&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">temperature_algae</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;temperature algae.d6o&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">relative_humidity_algae</span> <span class="o">=</span> \
-        <span class="nb">list</span><span class="p">(</span><span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;relative humidity algae.d6o&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">heat_loss</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;heat loss.d6o&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-
     <span class="n">weather_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)),</span> <span class="s1">&#39;weather&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Parse</span>
     <span class="n">exterior_temperature</span> <span class="o">=</span> <span class="n">weather_parser</span><span class="o">.</span><span class="n">ccd_to_list</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">weather_path</span><span class="p">,</span> <span class="s1">&#39;temperature.ccd&#39;</span><span class="p">))</span>
     <span class="n">interior_temperature</span> <span class="o">=</span> <span class="n">weather_parser</span><span class="o">.</span><span class="n">ccd_to_list</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">weather_path</span><span class="p">,</span> <span class="s1">&#39;indoor_temperature.ccd&#39;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">simulation_interrupted</span><span class="p">:</span>
+        <span class="n">output_length</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">exterior_temperature</span><span class="p">)</span>
+
+    <span class="n">temperature_mould</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;temperature mould.d6o&#39;</span><span class="p">,</span>
+                                                   <span class="n">output_length</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">relative_humidity_mould</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;relative humidity mould.d6o&#39;</span><span class="p">,</span>
+                                                         <span class="n">output_length</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">temperature_algae</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;temperature algae.d6o&#39;</span><span class="p">,</span>
+                                                   <span class="n">output_length</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">relative_humidity_algae</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;relative humidity algae.d6o&#39;</span><span class="p">,</span>
+                                                         <span class="n">output_length</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">heat_loss</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">d6o_to_dict</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;heat loss.d6o&#39;</span><span class="p">,</span>
+                                           <span class="n">output_length</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Collected simulation result data for Delphin project with ID: </span><span class="si">{delphin_id}</span><span class="s1">&#39;</span><span class="p">)</span>
 
@@ -526,6 +547,11 @@
     <span class="n">result_entry</span><span class="o">.</span><span class="n">delphin</span> <span class="o">=</span> <span class="n">delphin_doc</span>
     <span class="n">result_entry</span><span class="o">.</span><span class="n">results_raw</span> <span class="o">=</span> <span class="n">raw_result_doc</span>
 
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">relative_humidity_mould</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">temperature_mould</span><span class="p">):</span>
+        <span class="n">temperature_mould</span> <span class="o">=</span> <span class="n">temperature_mould</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">relative_humidity_mould</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">temperature_mould</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">relative_humidity_mould</span><span class="p">):</span>
+        <span class="n">relative_humidity_mould</span> <span class="o">=</span> <span class="n">relative_humidity_mould</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">temperature_mould</span><span class="p">)]</span>
+
     <span class="n">mould</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="n">damage_models</span><span class="o">.</span><span class="n">mould_pj</span><span class="p">(</span><span class="n">relative_humidity_mould</span><span class="p">,</span> <span class="n">temperature_mould</span><span class="p">,</span> <span class="n">aed_group</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">),</span>
              <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="n">damage_models</span><span class="o">.</span><span class="n">mould_pj</span><span class="p">(</span><span class="n">relative_humidity_mould</span><span class="p">,</span> <span class="n">temperature_mould</span><span class="p">,</span> <span class="n">aed_group</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">),</span>
              <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="n">damage_models</span><span class="o">.</span><span class="n">mould_pj</span><span class="p">(</span><span class="n">relative_humidity_mould</span><span class="p">,</span> <span class="n">temperature_mould</span><span class="p">,</span> <span class="n">aed_group</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">),</span>
@@ -535,14 +561,15 @@
     <span class="n">result_entry</span><span class="o">.</span><span class="n">mould</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">bson</span><span class="o">.</span><span class="n">BSON</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">mould</span><span class="p">))</span>
     <span class="n">result_entry</span><span class="o">.</span><span class="n">heat_loss</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
     <span class="n">result_entry</span><span class="o">.</span><span class="n">algae</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">damage_models</span><span class="o">.</span><span class="n">algae</span><span class="p">(</span><span class="n">relative_humidity_algae</span><span class="p">,</span> <span class="n">temperature_algae</span><span class="p">))</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
-    <span class="n">result_entry</span><span class="o">.</span><span class="n">u_value</span> <span class="o">=</span> <span class="n">damage_models</span><span class="o">.</span><span class="n">u_value</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">,</span> <span class="n">exterior_temperature</span><span class="p">,</span> <span class="n">interior_temperature</span><span class="p">)</span>
+    <span class="n">result_entry</span><span class="o">.</span><span class="n">u_value</span> <span class="o">=</span> <span class="n">damage_models</span><span class="o">.</span><span class="n">u_value</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">,</span>
+                                                 <span class="n">exterior_temperature</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">)],</span>
+                                                 <span class="n">interior_temperature</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">)])</span>
 
     <span class="n">result_entry</span><span class="o">.</span><span class="n">thresholds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mould&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">damage_models</span><span class="o">.</span><span class="n">mould_pj</span><span class="p">(</span><span class="n">relative_humidity_mould</span><span class="p">,</span>
                                                                        <span class="n">temperature_mould</span><span class="p">,</span> <span class="n">aed_group</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
                                             <span class="nb">max</span><span class="p">(</span><span class="n">damage_models</span><span class="o">.</span><span class="n">mould_pj</span><span class="p">(</span><span class="n">relative_humidity_mould</span><span class="p">,</span>
                                                                        <span class="n">temperature_mould</span><span class="p">,</span> <span class="n">aed_group</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])),</span>
-                               <span class="s1">&#39;heat_loss&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">),</span>
-                               <span class="s1">&#39;algae&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">damage_models</span><span class="o">.</span><span class="n">algae</span><span class="p">(</span><span class="n">relative_humidity_algae</span><span class="p">,</span> <span class="n">temperature_algae</span><span class="p">))}</span>
+                               <span class="s1">&#39;heat_loss&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">heat_loss</span><span class="p">)}</span>
 
     <span class="n">result_entry</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Uploaded processed result with ID: </span><span class="si">{result_entry.id}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -594,9 +621,42 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Changed the solver relative tolerance to </span><span class="si">{rel_tol}</span><span class="s1"> for Delphin project with ID: </span><span class="si">{sim_id}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">delphin_document</span><span class="o">.</span><span class="n">id</span></div>
+
+
+<span class="k">def</span> <span class="nf">set_exceeding_time_limit</span><span class="p">(</span><span class="n">sim_id</span><span class="p">:</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">sim_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">set__exceeded_time_limit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Simulation with ID: </span><span class="si">{sim_id}</span><span class="s1"> got flagged as exceeding simulation time limit.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">id</span>
+
+
+<span class="k">def</span> <span class="nf">upload_restart_data</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delphin_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+    <span class="n">restart_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">delphin_id</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">)</span>
+
+    <span class="n">restart_dict</span> <span class="o">=</span> <span class="n">delphin_parser</span><span class="o">.</span><span class="n">restart_data</span><span class="p">(</span><span class="n">restart_folder</span><span class="p">)</span>
+
+    <span class="n">delphin_doc</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">delphin_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">delphin_doc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">set__restart_data</span><span class="o">=</span><span class="n">restart_dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">delphin_doc</span><span class="o">.</span><span class="n">id</span>
+
+
+<span class="k">def</span> <span class="nf">download_restart_data</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delphin_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="n">delphin_doc</span> <span class="o">=</span> <span class="n">delphin_db</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">delphin_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="n">restart_dict</span> <span class="o">=</span> <span class="n">delphin_doc</span><span class="o">.</span><span class="n">restart_data</span>
+
+    <span class="n">delphin_parser</span><span class="o">.</span><span class="n">restart_data_to_file</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">restart_dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -629,8 +689,8 @@
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

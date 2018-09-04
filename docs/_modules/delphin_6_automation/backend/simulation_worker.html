@@ -9,7 +9,7 @@
     <title>delphin_6_automation.backend.simulation_worker &#8212; Delphin Automation 0.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -27,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for delphin_6_automation.backend.simulation_worker</h1><div class="highlight"><pre>
@@ -47,6 +49,7 @@
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">paramiko</span>
 <span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
 
 <span class="c1"># RiBuild Modules:</span>
 <span class="kn">from</span> <span class="nn">delphin_6_automation.database_interactions.db_templates</span> <span class="k">import</span> <span class="n">delphin_entry</span>
@@ -134,12 +137,15 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<span class="k">def</span> <span class="nf">github_updates</span><span class="p">():</span>
-    <span class="k">if</span> <span class="n">general_interactions</span><span class="o">.</span><span class="n">get_github_version</span><span class="p">()</span> <span class="o">!=</span> <span class="n">general_interactions</span><span class="o">.</span><span class="n">get_git_revision_hash</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;New version of Delphin 6 Automation is available on Github!!&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
+<div class="viewcode-block" id="github_updates"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.github_updates">[docs]</a><span class="k">def</span> <span class="nf">github_updates</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    if general_interactions.get_github_version() != general_interactions.get_git_revision_hash():</span>
+<span class="sd">        logger.info(&#39;New version of Delphin 6 Automation is available on Github!!&#39;)</span>
+<span class="sd">        return False</span>
+<span class="sd">    else:</span>
+<span class="sd">        return True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="get_average_computation_time"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.get_average_computation_time">[docs]</a><span class="k">def</span> <span class="nf">get_average_computation_time</span><span class="p">(</span><span class="n">sim_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -171,13 +177,12 @@
         <span class="k">return</span> <span class="mi">120</span></div>
 
 
-<div class="viewcode-block" id="create_submit_file"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.create_submit_file">[docs]</a><span class="k">def</span> <span class="nf">create_submit_file</span><span class="p">(</span><span class="n">sim_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">restart</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<div class="viewcode-block" id="create_submit_file"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.create_submit_file">[docs]</a><span class="k">def</span> <span class="nf">create_submit_file</span><span class="p">(</span><span class="n">sim_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">computation_time</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">restart</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a submit file for the DTU HPC queue system.&quot;&quot;&quot;</span>
 
     <span class="n">delphin_path</span> <span class="o">=</span> <span class="s1">&#39;~/Delphin-6.0/bin/DelphinSolver&#39;</span>
-    <span class="n">computation_time</span> <span class="o">=</span> <span class="n">get_average_computation_time</span><span class="p">(</span><span class="n">sim_id</span><span class="p">)</span>
-    <span class="n">cpus</span> <span class="o">=</span> <span class="mi">6</span>
-    <span class="n">ram_per_cpu</span> <span class="o">=</span> <span class="s1">&#39;4MB&#39;</span>
+    <span class="n">cpus</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ram_per_cpu</span> <span class="o">=</span> <span class="s1">&#39;14MB&#39;</span>
     <span class="n">submit_file</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;submit_</span><span class="si">{sim_id}</span><span class="s1">.sh&#39;</span>
 
     <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{simulation_folder}</span><span class="s2">/</span><span class="si">{submit_file}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -204,7 +209,7 @@
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Create a submit file for </span><span class="si">{sim_id}</span><span class="s1"> with restart = </span><span class="si">{restart}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">submit_file</span><span class="p">,</span> <span class="n">computation_time</span></div>
+    <span class="k">return</span> <span class="n">submit_file</span></div>
 
 
 <div class="viewcode-block" id="submit_job"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.submit_job">[docs]</a><span class="k">def</span> <span class="nf">submit_job</span><span class="p">(</span><span class="n">submit_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sim_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -216,7 +221,7 @@
     <span class="n">client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
     <span class="n">client</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Connecting to HPC&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Connecting to HPC to upload simulation with ID: </span><span class="si">{sim_id}</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hpc</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">],</span> <span class="n">username</span><span class="o">=</span><span class="n">hpc</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">],</span> <span class="n">port</span><span class="o">=</span><span class="n">hpc</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">],</span> <span class="n">pkey</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
 
     <span class="n">channel</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">invoke_shell</span><span class="p">()</span>
@@ -230,7 +235,7 @@
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">channel_data</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Submitted job </span><span class="si">{sim_id}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Submitted job </span><span class="si">{sim_id}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -251,20 +256,65 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
+    <span class="n">time_limit</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
     <span class="k">while</span> <span class="ow">not</span> <span class="n">finished</span><span class="p">:</span>
         <span class="n">simulation_ends</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">estimated_run_time</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{simulation_folder}</span><span class="s2">/</span><span class="si">{sim_id}</span><span class="s2">/log/summary.txt&quot;</span><span class="p">):</span>
             <span class="n">finished</span> <span class="o">=</span> <span class="kc">True</span>
+
         <span class="k">elif</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">simulation_ends</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-            <span class="n">submit_file</span><span class="p">,</span> <span class="n">estimated_time</span> <span class="o">=</span> <span class="n">create_submit_file</span><span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">,</span> <span class="n">restart</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">files_in_folder</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">))</span>
+            <span class="n">estimated_run_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">estimated_run_time</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">),</span> <span class="mi">1440</span><span class="p">)</span>
+            <span class="n">submit_file</span> <span class="o">=</span> <span class="n">create_submit_file</span><span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">,</span> <span class="n">estimated_run_time</span><span class="p">,</span> <span class="n">restart</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">submit_job</span><span class="p">(</span><span class="n">submit_file</span><span class="p">,</span> <span class="n">sim_id</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Simulation with ID: </span><span class="si">{sim_id}</span><span class="s1"> is waiting to get simulated.&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">files_in_folder</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">)):</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Rerunning simulation with ID: </span><span class="si">{sim_id}</span><span class="s1"> &#39;</span>
+                         <span class="n">f</span><span class="s1">&#39;with new estimated run time of: </span><span class="si">{estimated_run_time}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">time_limit</span><span class="p">:</span>
+            <span class="n">finished</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Simulation with ID: </span><span class="si">{sim_id}</span><span class="s1"> exceeded the simulaiton time limit of 24 hours.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s1">&#39;time limit reached&#39;</span>
+
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">,</span> <span class="n">sim_id</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;screenlog.txt&#39;</span><span class="p">)):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">,</span> <span class="n">sim_id</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;screenlog.txt&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">logfile</span><span class="p">:</span>
+                    <span class="n">log_data</span> <span class="o">=</span> <span class="n">logfile</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;Critical error, simulation aborted.&quot;</span> <span class="ow">in</span> <span class="n">log_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="n">submit_file</span> <span class="o">=</span> <span class="n">create_submit_file</span><span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">,</span> <span class="n">estimated_run_time</span><span class="p">,</span> <span class="n">restart</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="n">files_in_folder</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">))</span>
+                        <span class="n">submit_job</span><span class="p">(</span><span class="n">submit_file</span><span class="p">,</span> <span class="n">sim_id</span><span class="p">)</span>
+
+                        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Simulation with ID: </span><span class="si">{sim_id}</span><span class="s1"> is waiting to get simulated.&#39;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">files_in_folder</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">)):</span>
+                                <span class="k">break</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+                        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Simulation with ID: </span><span class="si">{sim_id}</span><span class="s1"> encountered a critical error: </span><span class="si">{log_data[-4:]}</span><span class="s1"> &#39;</span>
+                                       <span class="n">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Rerunning failed simulation with new estimated run &#39;</span>
+                                       <span class="n">f</span><span class="s1">&#39;time of: </span><span class="si">{estimated_run_time}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="hpc_worker"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.hpc_worker">[docs]</a><span class="k">def</span> <span class="nf">hpc_worker</span><span class="p">(</span><span class="n">id_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">thread_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s1">&#39;H:/ribuild&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="hpc_worker"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.hpc_worker">[docs]</a><span class="k">def</span> <span class="nf">hpc_worker</span><span class="p">(</span><span class="n">id_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s1">&#39;H:/ribuild&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Solves a Delphin project through DTU HPC&quot;&quot;&quot;</span>
 
     <span class="n">simulation_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">id_</span><span class="p">)</span>
@@ -276,43 +326,62 @@
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">)</span>
 
     <span class="c1"># Download, solve, upload</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{thread_name}</span><span class="s1"> downloads project with ID: </span><span class="si">{id_}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Downloads project with ID: </span><span class="si">{id_}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">general_interactions</span><span class="o">.</span><span class="n">download_full_project_from_database</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">)</span>
-    <span class="n">submit_file</span><span class="p">,</span> <span class="n">estimated_time</span> <span class="o">=</span> <span class="n">create_submit_file</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">)</span>
+    <span class="n">estimated_time</span> <span class="o">=</span> <span class="n">get_average_computation_time</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span>
+    <span class="n">submit_file</span> <span class="o">=</span> <span class="n">create_submit_file</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">,</span> <span class="n">estimated_time</span><span class="p">)</span>
     <span class="n">submit_job</span><span class="p">(</span><span class="n">submit_file</span><span class="p">,</span> <span class="n">id_</span><span class="p">)</span>
 
     <span class="n">time_0</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-    <span class="n">wait_until_finished</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">estimated_time</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">)</span>
+    <span class="n">return_code</span> <span class="o">=</span> <span class="n">wait_until_finished</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">estimated_time</span><span class="p">,</span> <span class="n">simulation_folder</span><span class="p">)</span>
     <span class="n">delta_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">time_0</span>
 
+    <span class="k">if</span> <span class="n">return_code</span><span class="p">:</span>
+        <span class="n">simulation_hours</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">simulation_hours</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">delphin_entry</span><span class="o">.</span><span class="n">Delphin</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">id_</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">weather</span><span class="p">)</span> <span class="o">*</span> <span class="mi">8760</span>
+
     <span class="n">result_id</span> <span class="o">=</span> <span class="n">delphin_interactions</span><span class="o">.</span><span class="n">upload_results_to_database</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">,</span> <span class="n">id_</span><span class="p">),</span>
-                                                                <span class="n">delete_files</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                                                                <span class="n">delete_files</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">result_length</span><span class="o">=</span><span class="n">simulation_hours</span><span class="p">)</span>
     <span class="n">delphin_interactions</span><span class="o">.</span><span class="n">upload_processed_results</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">,</span> <span class="n">id_</span><span class="p">),</span>
-                                                  <span class="n">id_</span><span class="p">,</span> <span class="n">result_id</span><span class="p">)</span>
+                                                  <span class="n">id_</span><span class="p">,</span> <span class="n">result_id</span><span class="p">,</span> <span class="n">return_code</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_code</span><span class="p">:</span>
+        <span class="n">delphin_interactions</span><span class="o">.</span><span class="n">set_exceeding_time_limit</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span>
+        <span class="n">delphin_interactions</span><span class="o">.</span><span class="n">upload_restart_data</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">,</span> <span class="n">id_</span><span class="p">)</span>
 
     <span class="n">simulation_interactions</span><span class="o">.</span><span class="n">set_simulated</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span>
     <span class="n">simulation_interactions</span><span class="o">.</span><span class="n">set_simulation_time</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">delta_time</span><span class="p">)</span>
     <span class="n">simulation_interactions</span><span class="o">.</span><span class="n">clean_simulation_folder</span><span class="p">(</span><span class="n">simulation_folder</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{thread_name}</span><span class="s1"> finished solving </span><span class="si">{id_}</span><span class="s1">. Simulation duration: </span><span class="si">{delta_time}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Finished solving </span><span class="si">{id_}</span><span class="s1">. Simulation duration: </span><span class="si">{delta_time}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="simulation_worker"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.simulation_worker">[docs]</a><span class="k">def</span> <span class="nf">simulation_worker</span><span class="p">(</span><span class="n">sim_location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">thread_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="simulation_worker"><a class="viewcode-back" href="../../../simulation_worker.html#delphin_6_automation.backend.simulation_worker.simulation_worker">[docs]</a><span class="k">def</span> <span class="nf">simulation_worker</span><span class="p">(</span><span class="n">sim_location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s1">&#39;H:/ribuild&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Solves Delphin projects in the database until interrupted&quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">id_</span> <span class="o">=</span> <span class="n">simulation_interactions</span><span class="o">.</span><span class="n">find_next_sim_in_queue</span><span class="p">()</span>
+
             <span class="k">if</span> <span class="n">id_</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">sim_location</span> <span class="o">==</span> <span class="s1">&#39;local&#39;</span><span class="p">:</span>
                     <span class="n">local_worker</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">))</span>
+
                 <span class="k">elif</span> <span class="n">sim_location</span> <span class="o">==</span> <span class="s1">&#39;hpc&#39;</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="n">hpc_worker</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">),</span> <span class="n">thread_name</span><span class="p">)</span>
+                        <span class="n">hpc_worker</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">),</span> <span class="n">folder</span><span class="p">)</span>
+
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                         <span class="n">simulation_interactions</span><span class="o">.</span><span class="n">set_simulating</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;failed&#39;</span><span class="p">)):</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;failed&#39;</span><span class="p">))</span>
+
+                        <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">)),</span>
+                                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;failed&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">)))</span>
                         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
                         <span class="k">pass</span>
 
@@ -348,6 +417,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Available actions:&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[a] Simulate locally&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[b] Simulate on DTU HPC&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[c] Simulate exceeded simulations on DTU HPC&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[x] Exit&quot;</span><span class="p">)</span>
 
     <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;&gt; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -358,13 +428,13 @@
 
     <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Simulation on DTU HPC Chosen</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="n">n_threads</span> <span class="o">=</span> <span class="mi">28</span>
+        <span class="n">n_threads</span> <span class="o">=</span> <span class="mi">84</span>
         <span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_threads</span><span class="p">):</span>
             <span class="n">t_name</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;Worker_</span><span class="si">{n}</span><span class="s2">&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Created thread with name: </span><span class="si">{t_name}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">simulation_worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;hpc&#39;</span><span class="p">,</span> <span class="n">t_name</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Created thread with name: </span><span class="si">{t_name}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">simulation_worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;hpc&#39;</span><span class="p">,</span> <span class="p">))</span>
             <span class="n">thread</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">t_name</span>
             <span class="n">thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -375,11 +445,15 @@
         <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
             <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
+    <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
     <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Goodbye&quot;</span><span class="p">)</span>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -412,8 +486,8 @@
       &copy;2018, Christian Kongsgaard, Thomas Perkov.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 
