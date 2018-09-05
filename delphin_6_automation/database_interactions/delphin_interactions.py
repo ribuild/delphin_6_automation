@@ -138,7 +138,7 @@ def upload_results_to_database(path_: str, delete_files: bool = True, result_len
 
     entry.geometry_file = geometry_dict
     entry.results.put(bson.BSON.encode(result_dict))
-    last_meta = result_dict[list(result_dict.keys())[0]]['meta']
+    last_meta: dict = result_dict[list(result_dict.keys())[0]]['meta']
     entry.simulation_started = last_meta['created']
     entry.geometry_file_hash = last_meta['geo_file_hash']
     entry.save()
