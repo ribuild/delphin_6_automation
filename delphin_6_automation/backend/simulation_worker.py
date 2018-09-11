@@ -24,6 +24,7 @@ from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import general_interactions
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
 try:
     from delphin_6_automation.database_interactions.auth import hpc
 except ModuleNotFoundError:
@@ -31,6 +32,7 @@ except ModuleNotFoundError:
 
 # Logger
 logger = ribuild_logger(__name__)
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION WORKER, DELPHIN SOLVER,
@@ -130,7 +132,7 @@ def get_average_computation_time(sim_id: str) -> int:
                                                                       simulation_time__exists=True)]
 
     if sim_time:
-        avg_time = int(np.ceil(np.mean(sim_time)/60))
+        avg_time = int(np.ceil(np.mean(sim_time) / 60))
         logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
         return avg_time
 
@@ -215,6 +217,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
     finished = False
     start_time = None
+    consecutive_errors = 0
 
     while not start_time:
         if os.path.exists(f"{simulation_folder}/{sim_id}"):
@@ -232,6 +235,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
         elif datetime.datetime.now() > simulation_ends + datetime.timedelta(seconds=10):
             estimated_run_time, start_time = simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id)
+            consecutive_errors = 0
 
         elif datetime.datetime.now() > time_limit:
             finished = True
@@ -244,8 +248,15 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
                     log_data = logfile.readlines()
 
                 if len(log_data) > 1:
-                    start_time = critical_error_occurred(log_data, sim_id, simulation_folder,
-                                                         estimated_run_time, start_time)
+                    start_time, consecutive_errors = critical_error_occurred(log_data, sim_id, simulation_folder,
+                                                                             estimated_run_time, start_time,
+                                                                             consecutive_errors)
+
+                    if consecutive_errors >= 3:
+                        finished = True
+                        logger.warning(f'Simulation with ID: {sim_id} encountered 3 consecutive errors and has '
+                                       f'therefore been terminated.')
+                        return 'consecutive errors'
 
                 else:
                     time.sleep(60)
@@ -255,7 +266,6 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
 
 def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id):
-
     files_in_folder = len(os.listdir(simulation_folder))
     estimated_run_time = min(int(estimated_run_time * 1.5), 1440)
     submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
@@ -270,8 +280,7 @@ def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id):
     return estimated_run_time, start_time
 
 
-def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_time, start_time):
-
+def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_time, start_time, consecutive_errors):
     if "Critical error, simulation aborted." in log_data[-1]:
         submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
         files_in_folder = len(os.listdir(simulation_folder))
@@ -284,14 +293,17 @@ def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_t
                        f'\nRerunning failed simulation with new estimated run '
                        f'time of: {estimated_run_time}')
 
-        return start_time
+        consecutive_errors += 1
+        logger.debug(f'Simulation with ID: {sim_id} encountered an critical error. Raising the number of '
+                     f'consecutive errors to: {consecutive_errors}')
+
+        return start_time, consecutive_errors
 
     else:
-        return start_time
+        return start_time, consecutive_errors
 
 
 def new_files_in_simulation_folder(simulation_folder, files_in_folder, sim_id):
-
     while True:
         logger.debug(f'Simulation with ID: {sim_id} is waiting to get simulated.')
         if files_in_folder < len(os.listdir(simulation_folder)):
@@ -396,7 +408,6 @@ def print_header():
 
 
 def menu():
-
     print('')
     print('------------------- SIMULATION MENU ---------------------')
     print('')
@@ -420,7 +431,7 @@ def menu():
         for n in range(n_threads):
             t_name = f"Worker_{n}"
             logger.info(f'Created thread with name: {t_name}\n')
-            thread = threading.Thread(target=simulation_worker, args=('hpc', ))
+            thread = threading.Thread(target=simulation_worker, args=('hpc',))
             thread.name = t_name
             thread.daemon = True
             thread.start()

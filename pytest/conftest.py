@@ -15,6 +15,7 @@ import numpy as np
 import time
 import pandas as pd
 import datetime
+import random
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -541,3 +542,21 @@ def mock_clean_simulation_folder(monkeypatch):
         return None
 
     monkeypatch.setattr(simulation_interactions, 'clean_simulation_folder', mock_return)
+
+
+@pytest.fixture()
+def mock_wait_consecutive_errors(monkeypatch, tmpdir):
+    tmpdir.mkdir('Test_ID').mkdir('log')
+    log_folder = os.path.join(tmpdir, 'Test_ID', 'log')
+
+    with open(os.path.join(log_folder, 'screenlog.txt'), 'w') as file:
+        file.write('Test Critical Errors\n')
+        file.write('Test Critical Errors\n')
+        file.write('Test Critical Errors\n')
+
+    def mock_return(log_data, sim_id, simulation_folder, estimated_run_time, start_time, consecutive_errors):
+
+        consecutive_errors += random.randint(0, 1)
+        return start_time, consecutive_errors
+
+    monkeypatch.setattr(simulation_worker, 'critical_error_occurred', mock_return)

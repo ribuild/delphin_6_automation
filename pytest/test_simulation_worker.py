@@ -148,3 +148,9 @@ def test_exceeding_time_limit(mock_hpc_worker_time_limit, test_folder):
 
     assert delphin_doc
     assert delphin_doc.exceeded_time_limit
+
+
+def test_consecutive_errors(mock_wait_consecutive_errors, tmpdir):
+    return_code = simulation_worker.wait_until_finished('Test_ID', 5, tmpdir)
+
+    assert return_code == 'consecutive errors'
