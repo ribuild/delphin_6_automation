@@ -26,10 +26,13 @@ class Delphin(mongoengine.Document):
     simulated = mongoengine.DateTimeField()
     simulating = mongoengine.BooleanField(default=False)
     simulation_time = mongoengine.FloatField()
-    exceeded_time_limit = mongoengine.BooleanField()
     queue_priority = mongoengine.IntField(default=1)
     sample_data = mongoengine.DictField()
     restart_data = mongoengine.DictField()
+
+    # Failures
+    exceeded_time_limit = mongoengine.BooleanField()
+    critical_error = mongoengine.BooleanField()
 
     # References
     dimensions = mongoengine.IntField(required=True)

@@ -619,3 +619,13 @@ def download_restart_data(folder: str, delphin_id: str) -> None:
     delphin_parser.restart_data_to_file(folder, restart_dict)
 
     return None
+
+
+def set_critical_error(sim_id: delphin_db.Delphin.id) -> str:
+
+    entry = delphin_db.Delphin.objects(id=sim_id).first()
+
+    entry.update(set__critical_error=True)
+    logger.debug(f'Simulation with ID: {sim_id} got flagged with critical errors.')
+
+    return entry.id
