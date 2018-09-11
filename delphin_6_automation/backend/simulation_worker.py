@@ -300,6 +300,7 @@ def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_t
         return start_time, consecutive_errors
 
     else:
+        consecutive_errors = 0
         return start_time, consecutive_errors
 
 
