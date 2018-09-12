@@ -395,6 +395,34 @@ def simulation_worker(sim_location: str, folder='H:/ribuild') -> None:
         return
 
 
+def docker_worker(sim_location: str, folder='H:/ribuild') -> None:
+    """Solves Delphin projects in the database until interrupted"""
+
+    id_ = simulation_interactions.find_next_sim_in_queue()
+
+    if id_:
+        if sim_location == 'local':
+            local_worker(str(id_))
+
+        elif sim_location == 'hpc':
+            try:
+                hpc_worker(str(id_), folder)
+
+            except Exception as err:
+                simulation_interactions.set_simulating(str(id_), False)
+                logger.exception(err)
+
+                if not os.path.isdir(os.path.join(folder, 'failed')):
+                    os.mkdir(os.path.join(folder, 'failed'))
+
+                shutil.copytree(os.path.join(folder, str(id_)),
+                                os.path.join(folder, 'failed', str(id_)))
+                raise RuntimeError
+
+    else:
+        return None
+
+
 def main():
     print_header()
     menu()
