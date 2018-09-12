@@ -5,8 +5,9 @@ LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
 
 WORKDIR /app
 
-COPY ../delphin_6_automation /app
+COPY ../../delphin_6_automation /app
+COPY ../../requirements.txt /app/requirements.txt
 
-ENTRYPOINT ["python"]
+RUN pip install -r requirements.txt
 
-CMD ["docker_simulation_hpc.py"]
+CMD ["python", "docker_simulation_hpc.py"]

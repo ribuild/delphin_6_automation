@@ -1,12 +1,13 @@
 FROM python:3.6.5-slim
 
 LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
-      description="RIBuild HPC Simulation Image"
+      description="RIBuild Sampling Image"
 
 WORKDIR /app
 
-COPY ../delphin_6_automation /app
+COPY ../../delphin_6_automation /app
+COPY ../../requirements.txt /app/requirements.txt
 
-ENTRYPOINT ["python"]
+RUN pip install -r requirements.txt
 
-CMD ["docker_simulation_hpc.py"]
+CMD ["python", "docker_sampling.py"]
