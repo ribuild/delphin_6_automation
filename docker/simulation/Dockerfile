@@ -5,8 +5,8 @@ LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
 
 WORKDIR /app
 
-COPY ../../delphin_6_automation /app
-COPY ../../requirements.txt /app/requirements.txt
+ADD ../../delphin_6_automation /app
+ADD ../../requirements.txt /app/requirements.txt
 
 RUN pip install -r requirements.txt
 
