@@ -24,9 +24,12 @@ from delphin_6_automation.backend import simulation_worker
 if __name__ == "__main__":
 
     # Setup connection
-    mongo_setup.global_init(auth_dict)
+    #mongo_setup.global_init(auth_dict)
     logger = ribuild_logger(__name__)
 
-    simulation_worker.docker_worker('hpc', '.')
+    #simulation_worker.docker_worker('hpc', '.')
 
-    mongo_setup.global_end_ssh(auth_dict)
+    #mongo_setup.global_end_ssh(auth_dict)
+
+    logger.info('This is a info test')
+    logger.debug('This is a debug test')
