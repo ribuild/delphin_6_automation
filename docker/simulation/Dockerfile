@@ -10,6 +10,8 @@ ADD ././requirements.txt /app/requirements.txt
 
 RUN pip install -r requirements.txt
 
+VOLUME /app/data
+
 WORKDIR /app/delphin_6_automation
 
 CMD ["python", "docker_simulation_hpc.py"]

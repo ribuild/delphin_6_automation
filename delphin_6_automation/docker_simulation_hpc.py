@@ -32,6 +32,11 @@ if __name__ == "__main__":
 
     #mongo_setup.global_end_ssh(auth_dict)
 
+    file_ = '/app/data/test.txt'
+    with open(file_, 'r') as f:
+        f.write('TEST TEST\n')
+        f.write('TEST TEST\n')
+
     while True:
         logger.info('This is a info test')
         logger.debug('This is a debug test')

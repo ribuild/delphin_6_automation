@@ -5,7 +5,15 @@ services:
   simulation:
     image:
     volumes:
-      -
+      - type: volume
+        source: ocni@transfer.gbar.dtu.dk:/home/ocni/ribuild
+        target: /app/data
+    secrets:
+      - db_auth
+      - ssh_key
 
   sampling:
     image:
+
+    secrets:
+    - db_auth
