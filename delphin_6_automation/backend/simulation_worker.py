@@ -395,7 +395,7 @@ def simulation_worker(sim_location: str, folder='H:/ribuild') -> None:
         return
 
 
-def docker_worker(sim_location: str, folder='H:/ribuild') -> None:
+def docker_worker(sim_location: str, folder='/app/data') -> None:
     """Solves Delphin projects in the database until interrupted"""
 
     id_ = simulation_interactions.find_next_sim_in_queue()
