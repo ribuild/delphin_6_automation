@@ -1,4 +1,4 @@
-FROM python:3.6.5-slim
+FROM ribuild_base:latest
 
 LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
       description="RIBuild HPC Simulation Image"
