@@ -3,17 +3,11 @@ version: '0'
 services:
 
   simulation:
-    image:
+    image: hpc_simulator:latest
     volumes:
       - type: volume
-        source: ocni@transfer.gbar.dtu.dk:/home/ocni/ribuild
+        source: ribuild_volume
         target: /app/data
-    secrets:
-      - db_auth
-      - ssh_key
 
   sampling:
-    image:
-
-    secrets:
-    - db_auth
+    image: sampler:latest
