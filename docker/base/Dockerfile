@@ -1,4 +1,4 @@
-FROM python:3.7.0-alpine
+FROM python:3.7.0-slim
 
 LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
       description="RIBuild Python Base Image"
@@ -6,8 +6,8 @@ LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
 WORKDIR /app
 
 ADD ././delphin_6_automation /app/delphin_6_automation
-ADD ././requirements.txt /app/requirements.txt
+ADD ././requirements.txt /app/requirements_docker.txt
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements_docker.txt
 
 RUN mkdir /app/data

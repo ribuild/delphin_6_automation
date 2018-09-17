@@ -1,0 +1,11 @@
+pandas
+paramiko
+mongoengine
+lxml
+xmltodict
+numpy
+scipy
+notifiers
+scikit-learn
+sshtunnel
+xlrd
