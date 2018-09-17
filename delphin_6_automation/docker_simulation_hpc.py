@@ -16,9 +16,6 @@ from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.backend import simulation_worker
-from delphin_6_automation.database_interactions import simulation_interactions
-from delphin_6_automation.database_interactions import general_interactions
-from delphin_6_automation.database_interactions.db_templates import delphin_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -31,23 +28,7 @@ if __name__ == "__main__":
     logger = ribuild_logger(__name__)
 
     folder = '/app/data'
-    id_ = str(delphin_entry.Delphin.objects(simulating=False, simulated=None).order_by('-queue_priority').first().id)
-    simulation_folder = os.path.join(folder, id_)
 
-    if not os.path.isdir(simulation_folder):
-        os.mkdir(simulation_folder)
-    else:
-        simulation_interactions.clean_simulation_folder(simulation_folder)
-        os.mkdir(simulation_folder)
-
-    # Download, solve, upload
-    logger.info(f'Downloads project with ID: {id_}')
-
-    general_interactions.download_full_project_from_database(id_, simulation_folder)
-    estimated_time = simulation_worker.get_average_computation_time(id_)
-    submit_file = simulation_worker.create_submit_file(id_, simulation_folder, estimated_time)
-    logger.info('Done')
-
-    #simulation_worker.docker_worker('hpc')
+    simulation_worker.docker_worker('hpc', folder)
 
     mongo_setup.global_end_ssh(auth_dict)

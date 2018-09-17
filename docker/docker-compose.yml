@@ -8,6 +8,5 @@ services:
       - type: volume
         source: ribuild_volume
         target: /app/data
-
-  sampling:
-    image: sampler:latest
+    deploy:
+      replicas: 5
