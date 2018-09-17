@@ -18,6 +18,7 @@ from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.backend import simulation_worker
 from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import general_interactions
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     logger = ribuild_logger(__name__)
 
     folder = '/app/data'
-    id_ = simulation_interactions.find_next_sim_in_queue()
+    id_ = delphin_entry.Delphin.objects(simulating=False, simulated=None).order_by('-queue_priority').first().id
     simulation_folder = os.path.join(folder, id_)
 
     if not os.path.isdir(simulation_folder):
