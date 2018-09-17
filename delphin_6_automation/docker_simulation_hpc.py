@@ -31,7 +31,7 @@ if __name__ == "__main__":
     logger = ribuild_logger(__name__)
 
     folder = '/app/data'
-    id_ = delphin_entry.Delphin.objects(simulating=False, simulated=None).order_by('-queue_priority').first().id
+    id_ = str(delphin_entry.Delphin.objects(simulating=False, simulated=None).order_by('-queue_priority').first().id)
     simulation_folder = os.path.join(folder, id_)
 
     if not os.path.isdir(simulation_folder):
