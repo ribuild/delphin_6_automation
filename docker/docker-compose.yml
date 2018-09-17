@@ -5,8 +5,6 @@ services:
   simulation:
     image: hpc_simulator:latest
     volumes:
-      - type: volume
-        source: ribuild_volume
-        target: /app/data
+      - ribuild_volume:/app/data
     deploy:
       replicas: 5
