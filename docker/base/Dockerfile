@@ -1,4 +1,4 @@
-FROM python:3.7.0-slim
+FROM python:3.7.0-alpine
 
 LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
       description="RIBuild Python Base Image"
