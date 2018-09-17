@@ -5,13 +5,6 @@ LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
 
 WORKDIR /app
 
-ADD ././delphin_6_automation /app/delphin_6_automation
-ADD ././requirements.txt /app/requirements.txt
-
-RUN pip install -r requirements.txt
-
-RUN mkdir /app/data
-
 VOLUME /app/data
 
 WORKDIR /app/delphin_6_automation
