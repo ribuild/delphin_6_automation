@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     #mongo_setup.global_end_ssh(auth_dict)
 
-    folder = os.path.dirname(os.path.dirname(__file__))
+    folder = os.path.dirname(os.path.dirname(__name__))
     file_ = os.path.join(folder, 'data', 'test.txt')
     with open(file_, 'r') as f:
         f.write('TEST TEST\n')
