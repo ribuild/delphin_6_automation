@@ -8,3 +8,7 @@ services:
       - ribuild_volume:/app/data
     deploy:
       replicas: 5
+
+
+volumes:
+  ribuild_volume: -d vieux/sshfs -o sshcmd=ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586
