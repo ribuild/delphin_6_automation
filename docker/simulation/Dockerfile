@@ -16,4 +16,4 @@ VOLUME /app/data
 
 WORKDIR /app/delphin_6_automation
 
-CMD ["python", "docker_simulation_hpc.py"]
+#CMD ["python", "docker_simulation_hpc.py"]
