@@ -55,13 +55,13 @@ def setup_database():
                      "name": "test",
                      "ssh": False}
 
-    mongo_setup.global_init(auth_dict)
+    server = mongo_setup.global_init(auth_dict)
 
     yield
 
     db = get_connection('local')
     db.drop_database('test')
-    mongo_setup.global_end_ssh(auth_dict)
+    mongo_setup.global_end_ssh(server)
 
 
 @pytest.fixture(scope='function')

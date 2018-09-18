@@ -23,7 +23,7 @@ from delphin_6_automation.backend.simulation_worker import main
 
 if __name__ == "__main__":
     # Setup connection
-    mongo_setup.global_init(auth_dict)
+    server = mongo_setup.global_init(auth_dict)
     logger = ribuild_logger(__name__)
 
     try:
@@ -31,3 +31,6 @@ if __name__ == "__main__":
 
     except Exception as err:
         logger.exception('Error in main')
+
+    finally:
+        mongo_setup.global_end_ssh(server)

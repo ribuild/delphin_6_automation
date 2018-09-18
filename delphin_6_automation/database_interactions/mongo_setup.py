@@ -7,13 +7,14 @@ __license__ = 'MIT'
 # Modules:
 from sshtunnel import SSHTunnelForwarder
 import mongoengine
+import typing
 
 # RiBuild Modules:
 # -------------------------------------------------------------------------------------------------------------------- #
 # MONGO SETUP:
 
 
-def global_init(auth_dict):
+def global_init(auth_dict: dict) -> typing.Optional[SSHTunnelForwarder]:
     if auth_dict['ssh']:
 
         server = SSHTunnelForwarder(
@@ -34,6 +35,8 @@ def global_init(auth_dict):
             password=auth_dict['password']
         )
 
+        return server
+
     else:
         mongoengine.register_connection(
             alias=auth_dict['alias'],
@@ -43,15 +46,10 @@ def global_init(auth_dict):
         )
 
 
-def global_end_ssh(auth_dict):
-    if auth_dict['ssh']:
-        server = SSHTunnelForwarder(
-            (auth_dict['ssh_ip'], auth_dict['ssh_port']),
-            ssh_username=auth_dict['ssh_user'],
-            ssh_password=auth_dict['ssh_password'],
-            remote_bind_address=('localhost', 27017)
-        )
+def global_end_ssh(server: typing.Optional[SSHTunnelForwarder]) -> None:
 
+    if server:
+        server._transport.close()
         server.stop()
 
     print('Connection ended.')

@@ -25,10 +25,10 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 if __name__ == "__main__":
 
     # Setup connection
-    mongo_setup.global_init(auth_dict)
+    server = mongo_setup.global_init(auth_dict)
     logger = ribuild_logger(__name__)
 
     strategy_id = sample_entry.Strategy.objects().first().id
     sampling_worker.sampling_worker(strategy_id)
 
-    mongo_setup.global_end_ssh(auth_dict)
+    mongo_setup.global_end_ssh(server)

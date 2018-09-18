@@ -24,11 +24,11 @@ from delphin_6_automation.backend import simulation_worker
 if __name__ == "__main__":
 
     # Setup connection
-    mongo_setup.global_init(auth_dict)
+    server = mongo_setup.global_init(auth_dict)
     logger = ribuild_logger(__name__)
 
     folder = '/app/data'
 
     simulation_worker.docker_worker('hpc', folder)
 
-    mongo_setup.global_end_ssh(auth_dict)
+    mongo_setup.global_end_ssh(server)
