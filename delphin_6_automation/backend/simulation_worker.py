@@ -189,12 +189,11 @@ def submit_job(submit_file: str, sim_id: str) -> None:
     if system == 'Windows':
         key = paramiko.RSAKey.from_private_key_file(hpc['key_path'], password=hpc['key_pw'])
     elif system == 'Linux':
-        key_path = '/run/secrets/id_rsa'
+        key_path = '/run/secrets/ssh_key'
         key = paramiko.RSAKey.from_private_key_file(key_path)
     else:
         logger.error('OS not supported')
         raise NameError('OS not supported')
-
 
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
