@@ -14,4 +14,4 @@ volumes:
   ribuild_volume:
     driver: vieux/sshfs:latest
     driver_opts:
-      sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586
+      sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild
