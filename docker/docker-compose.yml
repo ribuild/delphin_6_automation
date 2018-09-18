@@ -20,4 +20,4 @@ volumes:
 
 secrets:
   ssh_key:
-    file: .ssh/id_rsa
+    file: /home/ocni/.ssh/id_rsa
