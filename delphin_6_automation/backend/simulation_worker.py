@@ -405,10 +405,12 @@ def docker_worker(sim_location: str, folder='/app/data') -> None:
             local_worker(str(id_))
 
         elif sim_location == 'hpc':
+            logger.info('Starting at HPC')
             try:
                 hpc_worker(str(id_), folder)
 
             except Exception as err:
+                logger.info('Error encountered')
                 simulation_interactions.set_simulating(str(id_), False)
                 logger.exception(err)
 
@@ -420,6 +422,7 @@ def docker_worker(sim_location: str, folder='/app/data') -> None:
                 raise RuntimeError
 
     else:
+        logger.info('No ID found')
         return None
 
 
