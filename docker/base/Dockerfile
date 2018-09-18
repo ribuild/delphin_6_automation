@@ -5,7 +5,6 @@ LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
 
 WORKDIR /app
 
-ADD ././delphin_6_automation /app/delphin_6_automation
 ADD ././requirements.txt /app/requirements_docker.txt
 
 RUN pip install -r requirements_docker.txt

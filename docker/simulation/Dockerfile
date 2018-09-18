@@ -5,6 +5,8 @@ LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
 
 WORKDIR /app
 
+ADD ././delphin_6_automation /app/delphin_6_automation
+
 VOLUME /app/data
 
 WORKDIR /app/delphin_6_automation
