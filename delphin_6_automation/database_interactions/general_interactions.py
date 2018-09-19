@@ -20,7 +20,7 @@ from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL INTERACTIONS

@@ -10,7 +10,13 @@ services:
       replicas: 1
     secrets:
       - ssh_key
+      - db_ait
+      - hpc_ocni
 
+  sampling:
+    image: sampler:latest
+    secrets:
+      - db_ait
 
 volumes:
   ribuild_volume:
@@ -21,3 +27,7 @@ volumes:
 secrets:
   ssh_key:
     file: /home/ocni/.ssh/id_rsa
+  db_ait:
+    file: /home/ocni/.ssh/db_ait.json
+  hpc_ocni:
+    file: /home/ocni/.ssh/hpc_ait.json

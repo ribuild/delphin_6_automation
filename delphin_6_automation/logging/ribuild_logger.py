@@ -21,14 +21,14 @@ except ModuleNotFoundError:
 # LOGGERS
 
 
-def ribuild_logger(name):
+def ribuild_logger(name: str='delphin_6_automation'):
 
     source_folder = os.environ.get("_MEIPASS2", os.path.abspath("."))
 
     # create logger
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(threadName)s - %(funcName)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(message)s')
 
     # create console handler and set level to debug
     if os.path.exists(f'{source_folder}/{name}.log'):
@@ -55,8 +55,7 @@ def ribuild_logger(name):
 
     # Stream Handler
     sh = logging.StreamHandler()
-    stream_formatter = logging.Formatter('%(threadName)s: %(message)s')
-    sh.setFormatter(stream_formatter)
+    sh.setFormatter(formatter)
     sh.setLevel(logging.INFO)
     logger.addHandler(sh)
 

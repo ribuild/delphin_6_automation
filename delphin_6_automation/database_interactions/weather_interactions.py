@@ -17,7 +17,7 @@ import delphin_6_automation.database_interactions.db_templates.weather_entry as 
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # WEATHER INTERACTIONS

@@ -16,6 +16,7 @@ import threading
 import paramiko
 import typing
 import shutil
+import json
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -25,13 +26,8 @@ from delphin_6_automation.database_interactions import general_interactions
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
-try:
-    from delphin_6_automation.database_interactions.auth import hpc
-except ModuleNotFoundError:
-    pass
-
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -185,21 +181,8 @@ def submit_job(submit_file: str, sim_id: str) -> None:
 
     terminal_call = f"cd ~/ribuild/{sim_id}\n", f"bsub < {submit_file}\n"
 
-    system = platform.system()
-    if system == 'Windows':
-        key = paramiko.RSAKey.from_private_key_file(hpc['key_path'], password=hpc['key_pw'])
-    elif system == 'Linux':
-        key_path = '/run/secrets/ssh_key'
-        key = paramiko.RSAKey.from_private_key_file(key_path)
-    else:
-        logger.error('OS not supported')
-        raise NameError('OS not supported')
-
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
+    client = connect_to_hpc()
     logger.debug(f'Connecting to HPC to upload simulation with ID: {sim_id}')
-    client.connect(hostname=hpc['ip'], username=hpc['user'], port=hpc['port'], pkey=key)
 
     channel = client.invoke_shell()
     channel_data = ''
@@ -216,6 +199,34 @@ def submit_job(submit_file: str, sim_id: str) -> None:
 
     channel.close()
     client.close()
+
+
+def connect_to_hpc() -> paramiko.SSHClient:
+    system = platform.system()
+
+    if system == 'Windows':
+        from delphin_6_automation.database_interactions.auth import hpc
+        key = paramiko.RSAKey.from_private_key_file(hpc['key_path'], password=hpc['key_pw'])
+
+    elif system == 'Linux':
+        secret_path = '/run/secrets'
+        key_path = os.path.join(secret_path, 'ssh_key')
+        key = paramiko.RSAKey.from_private_key_file(key_path)
+        hpc_path = os.path.join(secret_path, 'hpc_ocni')
+
+        with open(hpc_path, 'r') as file:
+            hpc = json.load(file)
+
+    else:
+        logger.error('OS not supported')
+        raise NameError('OS not supported')
+
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    client.connect(hostname=hpc['ip'], username=hpc['user'], port=hpc['port'], pkey=key)
+
+    return client
 
 
 def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder: str):

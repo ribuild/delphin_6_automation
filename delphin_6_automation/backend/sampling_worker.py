@@ -7,8 +7,12 @@ __license__ = 'MIT'
 # Modules
 import sys
 import os
-import matplotlib.pyplot as plt
 import numpy as np
+
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError:
+    pass
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
@@ -17,7 +21,7 @@ from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
