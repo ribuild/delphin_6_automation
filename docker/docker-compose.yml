@@ -52,4 +52,4 @@ secrets:
   db_ait:
     file: /home/ocni/.ssh/db_ait.json
   hpc_ocni:
-    file: /home/ocni/.ssh/hpc_ait.json
+    file: /home/ocni/.ssh/hpc_ocni.json
