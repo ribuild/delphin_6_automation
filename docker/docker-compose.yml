@@ -18,6 +18,7 @@ services:
       driver: fluentd
       options:
         fluentd-address: localhost:24224
+        tag: tag: docker.{{.Name}}
 
 
   logger:
