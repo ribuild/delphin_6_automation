@@ -20,7 +20,7 @@ services:
     image: fluent/fluentd:latest
     volumes:
       - /home/ocni/delphin_6_automation/docker/fluent:/fluentd/etc
-      - /home/ocni/delphin_6_automation/docker/fluent/logs:/fluentd/log fluent/fluentd
+      - /home/ocni/delphin_6_automation/docker/fluent/logs:/fluentd/log
     environment:
       - FLUENTD_CONF=fluent.conf
     ports:
