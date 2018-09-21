@@ -15,8 +15,6 @@ services:
 
     logging:
       driver: fluentd
-    ports:
-      - "24224:24224"
 
   logger:
     image: fluent/fluentd:latest
