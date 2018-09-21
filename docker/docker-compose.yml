@@ -33,15 +33,15 @@ services:
 
   visualizer:
     image: dockersamples/visualizer:stable
-      ports:
-        - "8080:8080"
-      volumes:
-        - "/var/run/docker.sock:/var/run/docker.sock"
-      deploy:
-        placement:
-          constraints: [node.role == manager]
-      networks:
-        - delphin_net
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - delphin_net
 
 volumes:
   ribuild_volume:
