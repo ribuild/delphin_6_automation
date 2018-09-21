@@ -12,8 +12,7 @@ services:
       - ssh_key
       - db_ait
       - hpc_ocni
-    networks:
-      - delphin_net
+
     logging:
       driver: fluentd
     ports:
@@ -28,8 +27,7 @@ services:
     ports:
       - "24224:24224/udp"
       - "24224:24224"
-    networks:
-      - delphin_net
+
 
   visualizer:
     image: dockersamples/visualizer:stable
@@ -40,8 +38,7 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
-    networks:
-      - delphin_net
+
 
 volumes:
   ribuild_volume:
@@ -56,6 +53,3 @@ secrets:
     file: /home/ocni/.ssh/db_ait.json
   hpc_ocni:
     file: /home/ocni/.ssh/hpc_ait.json
-
-networks:
-  delphin_net
