@@ -18,7 +18,7 @@ RUN apk --no-cache --update add sudo && \
 RUN apk update && apk add openssh
 RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
-    ssh-keyscan -t rsa bygadm@130.226.55.42 -p 22 >> /root/.ssh/known_hosts
+    ssh-keyscan -t rsa 130.226.55.42 >> /root/.ssh/known_hosts
 
 EXPOSE 24284
 
