@@ -22,10 +22,11 @@ services:
 
 
   logger:
-    image: fluent/fluentd:latest
+    image: fluent_mongodb:v0
     volumes:
       - /home/ocni/delphin_6_automation/docker/fluent:/fluentd/etc
       - /home/ocni/delphin_6_automation/docker/fluent/logs:/fluentd/log
+    command: ssh -i /run/secrets/ssh_key bygadm@130.226.55.42 -p 22 -Nf -L 27018:localhost:27017
     environment:
       - FLUENTD_CONF=fluent.conf
     ports:
