@@ -16,9 +16,9 @@ RUN apk --no-cache --update add sudo && \
     apk del sudo build-base ruby-dev && rm -rf /var/cache/apk/*
 
 RUN apk update && apk add openssh
-RUN mkdir -p /root/.ssh && \
-    chmod 0700 /root/.ssh && \
-    ssh-keyscan -t rsa 130.226.55.42 >> /root/.ssh/known_hosts
+RUN mkdir -p ~/.ssh && \
+    chmod 0700 ~/.ssh && \
+    ssh-keyscan -t rsa 130.226.55.42 >> ~/.ssh/known_hosts
 
 EXPOSE 24284
 
