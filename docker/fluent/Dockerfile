@@ -1,7 +1,7 @@
-FROM fluent/fluentd:latest
+FROM fluent/fluentd:v0.12.28-onbuild
 
 LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
-      description="RIBuild MongDB Logs"
+      description="RIBuild MongoDB Logs"
 
 
 WORKDIR /home/fluent
