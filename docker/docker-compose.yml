@@ -27,13 +27,13 @@ services:
       - /home/ocni/delphin_6_automation/docker/fluent:/fluentd/etc
       - /home/ocni/delphin_6_automation/docker/fluent/logs:/fluentd/log
     entrypoint: ["sh", "-c", "sleep 2073600"]
-    #command: ssh -i /run/secrets/ssh_key bygadm@130.226.55.42 -Nf -L 27018:localhost:27017
+    #command: ssh -i /run/secrets/ssh_key bygadm@130.226.55.42 -L 27017:localhost:27017 -Nf
     environment:
       - FLUENTD_CONF=fluent.conf
     ports:
       - "24224:24224/udp"
       - "24224:24224"
-      - "27017:27018"
+      - "27017:27017"
     secrets:
       - ssh_key
 

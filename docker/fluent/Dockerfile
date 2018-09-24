@@ -18,6 +18,7 @@ RUN apk --no-cache --update add sudo && \
 RUN apk update && apk add openssh
 
 EXPOSE 24284
+EXPOSE 27017
 
 USER fluent
 RUN mkdir -p ~/.ssh && \
