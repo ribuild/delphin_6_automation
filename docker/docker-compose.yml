@@ -12,8 +12,6 @@ services:
       - ssh_key
       - db_ait
       - hpc_ocni
-    links:
-      - logger
     logging:
       driver: fluentd
       options:
