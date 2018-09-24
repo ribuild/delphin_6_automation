@@ -35,7 +35,7 @@ services:
       - "24224:24224"
       - "27017:27018"
     secrets:
-    - ssh_key
+      - ssh_key
 
 
   visualizer:
