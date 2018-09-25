@@ -9,7 +9,10 @@ import pytest
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import auth_dict
+try:
+    from delphin_6_automation.database_interactions.auth import auth_dict
+except ImportError:
+    pass
 from delphin_6_automation.backend import result_extraction
 
 # -------------------------------------------------------------------------------------------------------------------- #
