@@ -24,4 +24,5 @@ USER fluent
 RUN mkdir -p ~/.ssh && \
     chmod 0700 ~/.ssh && \
     ssh-keyscan -t rsa 130.226.55.42 >> ~/.ssh/known_hosts
+
 CMD exec fluentd -c /fluentd/etc/$FLUENTD_CONF -p /fluentd/plugins $FLUENTD_OPT

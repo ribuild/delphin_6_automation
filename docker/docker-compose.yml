@@ -31,7 +31,6 @@ services:
     ports:
       - "24224:24224/udp"
       - "24224:24224"
-      - "27017:27017"
     secrets:
       - ssh_key
 
