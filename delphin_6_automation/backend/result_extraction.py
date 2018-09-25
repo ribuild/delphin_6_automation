@@ -14,7 +14,7 @@ from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
