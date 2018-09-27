@@ -1,5 +1,3 @@
-from delphin_6_automation.database_interactions.general_interactions import compute_simulation_time
-
 __author__ = 'Christian Kongsgaard, Thomas Perkov'
 __license__ = 'MIT'
 
@@ -320,7 +318,7 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     logger.info(f'Downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(id_, simulation_folder)
-    estimated_time = compute_simulation_time(id_)
+    estimated_time = general_interactions.compute_simulation_time(id_)
     submit_file = create_submit_file(id_, simulation_folder, estimated_time)
     submit_job(submit_file, id_)
 
