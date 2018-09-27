@@ -56,3 +56,4 @@ class Strategy(mongoengine.Document):
     samples_raw = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=SampleRaw))
     standard_error = mongoengine.DictField()
     strategy = mongoengine.DictField(required=True)
+    time_prediction_model = mongoengine.BinaryField()

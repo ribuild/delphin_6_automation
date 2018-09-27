@@ -13,6 +13,8 @@ from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.neighbors import KNeighborsRegressor
+import pickle
+from bson import Binary
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
@@ -131,4 +133,6 @@ def create_time_prediction_model() ->KNeighborsRegressor:
 
 
 def upload_model(model: KNeighborsRegressor, sample_strategy: sample_entry.Strategy):
-    pass
+    pickled_model = pickle.dumps(model)
+
+    sample_strategy.update(set__time_prediction_model=Binary(pickled_model))
