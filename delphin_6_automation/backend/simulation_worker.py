@@ -1,3 +1,5 @@
+from delphin_6_automation.database_interactions.general_interactions import compute_simulation_time
+
 __author__ = 'Christian Kongsgaard, Thomas Perkov'
 __license__ = 'MIT'
 
@@ -10,7 +12,6 @@ import platform
 from pathlib import Path
 import subprocess
 import datetime
-import numpy as np
 import time
 import threading
 import paramiko
@@ -110,35 +111,6 @@ def github_updates():
         return True
     """
     raise NotImplementedError
-
-
-def get_average_computation_time(sim_id: str) -> int:
-    """
-    Get the average time for this type of construction (2D or 1D)
-
-    :param sim_id: Delphin entry id from database
-    :return: Average simulation time in minutes
-    """
-
-    sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
-    dimension = sim_obj.dimensions
-
-    sim_time = [simulation_entry.simulation_time
-                for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension,
-                                                                      simulation_time__exists=True)]
-
-    if sim_time:
-        avg_time = int(np.ceil(np.mean(sim_time) / 60))
-        logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
-        return avg_time
-
-    elif dimension == 2:
-        logger.debug(f'No previous simulations found. Setting time to 180min for a 2D simulation')
-        return 240
-
-    else:
-        logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
-        return 120
 
 
 def create_submit_file(sim_id: str, simulation_folder: str, computation_time: int, restart=False) -> str:
@@ -348,7 +320,7 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     logger.info(f'Downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(id_, simulation_folder)
-    estimated_time = get_average_computation_time(id_)
+    estimated_time = compute_simulation_time(id_)
     submit_file = create_submit_file(id_, simulation_folder, estimated_time)
     submit_job(submit_file, id_)
 

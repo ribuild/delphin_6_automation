@@ -1,3 +1,7 @@
+import numpy as np
+
+from delphin_6_automation.backend.simulation_worker import logger
+
 __author__ = "Christian Kongsgaard"
 __license__ = "MIT"
 
@@ -6,11 +10,10 @@ __license__ = "MIT"
 
 # Modules:
 import os
-import subprocess
-#import github
+import pickle
 
 # RiBuild Modules:
-from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
+from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db, delphin_entry
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry as result_db
 from delphin_6_automation.database_interactions.db_templates import weather_entry as weather_db
 from delphin_6_automation.database_interactions.db_templates import material_entry as material_db
@@ -207,13 +210,39 @@ def does_simulation_exists(sim_id: str) -> bool:
         return False
 
 
-"""
-def get_github_version():
-    gh = github.Github()
-    rp = gh.get_repo('ribuild/delphin_6_automation')
-    return rp.get_commits()[0].sha
+def compute_simulation_time(sim_id: str) -> int:
+    """
+    Get the average time for this type of construction (2D or 1D)
+
+    :param sim_id: Delphin entry id from database
+    :return: Average simulation time in minutes
+    """
+
+    sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
+    dimension = sim_obj.dimensions
+
+    sim_time = [simulation_entry.simulation_time
+                for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension,
+                                                                      simulation_time__exists=True)]
+
+    if sim_time:
+        avg_time = int(np.ceil(np.mean(sim_time) / 60))
+        logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
+        return avg_time
+
+    elif dimension == 2:
+        logger.debug(f'No previous simulations found. Setting time to 180min for a 2D simulation')
+        return 240
+
+    else:
+        logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
+        return 120
 
 
-def get_git_revision_hash():
-    return subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode()
-"""
+def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin) -> int:
+
+    inputs = delphin_doc.sample_data
+    time_model = pickle.load(open(os.path.join(os.path.dirname(__file__), 'sim_time_model.sav'), 'rb'))
+    sim_time_secs = time_model.predict()
+
+    return sim_time_secs / 60

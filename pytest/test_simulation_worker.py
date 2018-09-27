@@ -1,3 +1,5 @@
+import delphin_6_automation.database_interactions.general_interactions
+
 __author__ = "Christian Kongsgaard"
 __license__ = 'MIT'
 
@@ -95,7 +97,7 @@ def test_get_average_computation_time(db_one_project, sim_time):
         delta_time = datetime.timedelta(minutes=3)
         simulation_interactions.set_simulation_time(delphin_id, delta_time)
 
-    computation_time = simulation_worker.get_average_computation_time(delphin_id)
+    computation_time = delphin_6_automation.database_interactions.general_interactions.compute_simulation_time(delphin_id)
 
     assert computation_time
     assert isinstance(computation_time, int)
