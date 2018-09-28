@@ -117,14 +117,15 @@ def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) 
 
     logger.debug(f'Columns to delete: {col_del}')
 
-    clean_col = x_data.columns[[c not in col_del for c in x_data.columns.tolist()]]
+    clean_col = x_data.columns[[c not in col_del
+                                for c in x_data.columns.tolist()]]
     cleaned_data = x_data.loc[:, clean_col]
     clean_scores = cross_val_score(knn, scaler.fit_transform(cleaned_data), y_data, cv=shufflesplit, scoring='r2')
 
     return clean_scores
 
 
-def create_time_prediction_model() ->KNeighborsRegressor:
+def create_time_prediction_model() -> KNeighborsRegressor:
 
     simulation_data = get_time_prediction_data()
     x_data, y_data = process_time_data(simulation_data)
@@ -136,3 +137,4 @@ def upload_model(model: KNeighborsRegressor, sample_strategy: sample_entry.Strat
     pickled_model = pickle.dumps(model)
 
     sample_strategy.update(set__time_prediction_model=Binary(pickled_model))
+    logger.info(f'Updated time prediction model for Sample Strategy with ID {sample_strategy.id}')

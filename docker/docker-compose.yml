@@ -24,8 +24,8 @@ services:
     volumes:
       - /home/ocni/delphin_6_automation/docker/fluent:/fluentd/etc
       - /home/ocni/delphin_6_automation/docker/fluent/logs:/fluentd/log
-    entrypoint: ["sh", "-c", "sleep 2073600"]
-    #command: ssh -i /run/secrets/ssh_key bygadm@130.226.55.42 -L 27017:localhost:27017 -Nf
+    #entrypoint: ["sh", "-c", "sleep 2073600"]
+    command: ssh -i /run/secrets/ssh_key bygadm@130.226.55.42 -L 27017:localhost:27017 -Nf
     environment:
       - FLUENTD_CONF=fluent.conf
     ports:
@@ -33,6 +33,8 @@ services:
       - "24224:24224"
     secrets:
       - ssh_key
+    networks:
+      - host
 
 
   visualizer:
@@ -59,3 +61,6 @@ secrets:
     file: /home/ocni/.ssh/db_ait.json
   hpc_ocni:
     file: /home/ocni/.ssh/hpc_ocni.json
+
+networks:
+  - host
