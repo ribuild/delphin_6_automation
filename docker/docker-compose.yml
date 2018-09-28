@@ -34,7 +34,7 @@ services:
     secrets:
       - ssh_key
     networks:
-      - outside
+      hostnet: {}
 
 
   visualizer:
@@ -63,5 +63,6 @@ secrets:
     file: /home/ocni/.ssh/hpc_ocni.json
 
 networks:
-  outside:
-      name: "host"
+  hostnet:
+    external: true
+    name: "host"
