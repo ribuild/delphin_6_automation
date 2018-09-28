@@ -15,7 +15,7 @@ RUN apk --no-cache --update add sudo && \
     apk del sudo build-base ruby-dev && rm -rf /var/cache/apk/*
 
 RUN apk update && apk add openssh-client && apk add iptables
-RUN iptables -P FORWARD ACCEPT
+RUN sudo -u root iptables -P FORWARD ACCEPT
 
 EXPOSE 24284
 EXPOSE 27017
