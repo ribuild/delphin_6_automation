@@ -64,5 +64,4 @@ secrets:
 
 networks:
   outside:
-    external:
       name: "host"
