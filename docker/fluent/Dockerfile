@@ -11,11 +11,11 @@ USER root
 RUN apk --no-cache --update add sudo && \
 
     sudo -u fluent gem install fluent-plugin-mongo -v 0.7.15 && \
-
     rm -rf /home/fluent/.gem/ruby/2.3.0/cache/*.gem && sudo -u fluent gem sources -c && \
     apk del sudo build-base ruby-dev && rm -rf /var/cache/apk/*
 
 RUN apk update && apk add openssh-client && apk add iptables
+RUN iptables -P FORWARD ACCEPT
 
 EXPOSE 24284
 EXPOSE 27017
