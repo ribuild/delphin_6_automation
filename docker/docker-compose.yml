@@ -17,7 +17,8 @@ services:
       options:
         fluentd-address: localhost:24224
         tag: docker.{{.Name}}
-
+    networks:
+      - default
 
   logger:
     image: fluent_mongodb:v0
@@ -31,11 +32,12 @@ services:
     ports:
       - "24224:24224/udp"
       - "24224:24224"
-      - target: 27017
-        published: 27017
-        mode: host
+      - "27017"
     secrets:
       - ssh_key
+    networks:
+      - hostnet
+      - default
 
 
   visualizer:
@@ -47,7 +49,8 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
-
+    networks:
+      - default
 
 volumes:
   ribuild_volume:
