@@ -18,7 +18,7 @@ services:
         fluentd-address: localhost:24224
         tag: docker.{{.Name}}
     networks:
-      - delphin_net
+      - default
 
   logger:
     image: fluent_mongodb:v0
@@ -32,11 +32,11 @@ services:
     ports:
       - "24224:24224/udp"
       - "24224:24224"
-      - "27017"
+      - "27017:27017"
     secrets:
       - ssh_key
     networks:
-      - delphin_net
+      - default
 
 
   visualizer:
@@ -49,7 +49,7 @@ services:
       placement:
         constraints: [node.role == manager]
     networks:
-      - delphin_net
+      - default
 
 volumes:
   ribuild_volume:
@@ -69,5 +69,3 @@ networks:
   hostnet:
     external: true
     name: "host"
-  delphin_net:
-    driver: overlay

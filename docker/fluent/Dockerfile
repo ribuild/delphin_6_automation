@@ -15,7 +15,7 @@ RUN apk --no-cache --update add sudo && \
     rm -rf /home/fluent/.gem/ruby/2.3.0/cache/*.gem && sudo -u fluent gem sources -c && \
     apk del sudo build-base ruby-dev && rm -rf /var/cache/apk/*
 
-RUN apk update && apk add openssh-client
+RUN apk update && apk add openssh-client && apk add iptables
 
 EXPOSE 24284
 EXPOSE 27017
