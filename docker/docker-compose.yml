@@ -33,8 +33,7 @@ services:
       - "24224:24224"
     secrets:
       - ssh_key
-    networks:
-      - host
+    networks_mode: host
 
 
   visualizer:
@@ -61,6 +60,3 @@ secrets:
     file: /home/ocni/.ssh/db_ait.json
   hpc_ocni:
     file: /home/ocni/.ssh/hpc_ocni.json
-
-networks:
-  - host
