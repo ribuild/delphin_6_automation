@@ -34,7 +34,8 @@ services:
     secrets:
       - ssh_key
     networks:
-      hostnet: {}
+      - hostnet
+      - default
 
 
   visualizer:
