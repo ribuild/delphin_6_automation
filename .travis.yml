@@ -7,6 +7,8 @@ install:
   - pip install -r requirements.txt
 
 script:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then xvfb-run make check; fi
+  - make clean
   - python -m pytest --cov-config .coveragerc --cov=delphin_6_automation pytest/
 
 services:
