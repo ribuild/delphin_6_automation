@@ -1,7 +1,3 @@
-import numpy as np
-
-from delphin_6_automation.backend.simulation_worker import logger
-
 __author__ = "Christian Kongsgaard"
 __license__ = "MIT"
 
@@ -11,6 +7,7 @@ __license__ = "MIT"
 # Modules:
 import os
 import pickle
+import numpy as np
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db, delphin_entry
