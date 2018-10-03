@@ -14,12 +14,13 @@ services:
       - hpc_ocni
 
   logger:
-    image: sendgridlabs/loggly-docker
+    image: iamatypeofwalrus/logspout-loggly
     environment:
-      - TOKEN=2cb6ff7e-c529-446e-b7a7-193ea64de90f
-      - TAG=DOCKER
-    ports:
-      - "514:514/udp"
+      - LOGGLY_TOKEN=2cb6ff7e-c529-446e-b7a7-193ea64de90f
+      - LOGGLY_TAG=DOCKER
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+
 
 
   visualizer:
