@@ -26,6 +26,3 @@ def try_create_time_prediction_model():
     sim_time_prediction.create_time_prediction_model()
 
     mongo_setup.global_end_ssh(server)
-
-
-#try_create_time_prediction_model()
