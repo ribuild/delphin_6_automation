@@ -18,7 +18,7 @@ services:
         fluentd-address: localhost:24224
         tag: docker.{{.Name}}
     networks:
-      - default
+      - ribuild
 
   logger:
     image: fluent_mongodb:v0
@@ -32,12 +32,14 @@ services:
     ports:
       - "24224:24224/udp"
       - "24224:24224"
-      - "27017:27017"
+      - target: 27017
+        published: 27017
+        protocol: tcp
+        mode: host
     secrets:
       - ssh_key
     networks:
-      - default
-
+      - ribuild
 
   visualizer:
     image: dockersamples/visualizer:stable
@@ -49,7 +51,7 @@ services:
       placement:
         constraints: [node.role == manager]
     networks:
-      - default
+      - ribuild
 
 volumes:
   ribuild_volume:
@@ -66,6 +68,6 @@ secrets:
     file: /home/ocni/.ssh/hpc_ocni.json
 
 networks:
-  hostnet:
-    external: true
-    name: "host"
+  ribuild:
+    driver: overlay
+
