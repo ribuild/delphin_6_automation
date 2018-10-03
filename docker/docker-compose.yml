@@ -21,8 +21,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
 
-
-
   visualizer:
     image: dockersamples/visualizer:stable
     ports:
