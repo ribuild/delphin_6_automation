@@ -12,37 +12,16 @@ services:
       - ssh_key
       - db_ait
       - hpc_ocni
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: docker.{{.Name}}
-    ports:
-    - "24224:24224/udp"
-    - "24224:24224"
-    networks:
-      - ribuild
 
   logger:
-    image: fluent_mongodb:v0
-    volumes:
-      - /home/ocni/delphin_6_automation/docker/fluent:/fluentd/etc
-      - /home/ocni/delphin_6_automation/docker/fluent/logs:/fluentd/log
-    entrypoint: ["sh", "-c", "sleep 2073600"]
-    #command: ssh -i /run/secrets/ssh_key bygadm@130.226.55.42 -L 27017:localhost:27017 -Nf
+    image: brodsky/loggly-docker
     environment:
-      - FLUENTD_CONF=fluent.conf
+      - TOKEN: 2cb6ff7e-c529-446e-b7a7-193ea64de90f
+      - TAG: DOCKER
     ports:
-      - "24224:24224/udp"
-      - "24224:24224"
-      - target: 27017
-        published: 27017
-        protocol: tcp
-        mode: host
+      - "514:514/udp"
     secrets:
       - ssh_key
-    networks:
-      - ribuild
 
   visualizer:
     image: dockersamples/visualizer:stable
@@ -53,8 +32,7 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
-    networks:
-      - ribuild
+
 
 volumes:
   ribuild_volume:
@@ -69,8 +47,3 @@ secrets:
     file: /home/ocni/.ssh/db_ait.json
   hpc_ocni:
     file: /home/ocni/.ssh/hpc_ocni.json
-
-networks:
-  ribuild:
-    driver: overlay
-
