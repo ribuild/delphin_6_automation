@@ -17,6 +17,9 @@ services:
       options:
         fluentd-address: localhost:24224
         tag: docker.{{.Name}}
+    ports:
+    - "24224:24224/udp"
+    - "24224:24224"
     networks:
       - ribuild
 
