@@ -1,7 +1,5 @@
 language: python
 python: 3.6
-#dist: xenial
-#sudo: required
 
 install:
   - pip install -r requirements_test.txt
@@ -18,3 +16,8 @@ before_script:
 after_success:
   - coverage report
   - coveralls
+
+ notifications:
+    slack:
+      rooms:
+       - ribuild:hPxFItmNi9Xg97DZnypdEhez#travis-ci
