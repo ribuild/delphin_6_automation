@@ -7,7 +7,8 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - python -m pytest --cov-config .coveragerc --cov=delphin_6_automation pytest/
+  #- python -m pytest --cov-config .coveragerc --cov=delphin_6_automation pytest/
+  - python -m pytest pytest/test_general_interactions.py::test_download_full_project_from_database
 
 services:
   - mongodb

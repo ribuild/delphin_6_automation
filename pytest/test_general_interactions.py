@@ -30,7 +30,7 @@ def test_download_full_project_from_database(db_one_project, tmpdir):
 
     delphin_doc = delphin_entry.Delphin.objects().first()
 
-    #general_interactions.download_full_project_from_database(delphin_doc.id, folder)
+    general_interactions.download_full_project_from_database(delphin_doc.id, folder)
 
     weather = ['indoor_relative_humidity.ccd', 'indoor_temperature.ccd', 'long_wave_radiation.ccd',
                'relative_humidity.ccd', 'short_wave_radiation.ccd', 'temperature.ccd',
