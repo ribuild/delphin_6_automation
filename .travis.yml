@@ -4,7 +4,7 @@ python: 3.6
 #sudo: required
 
 install:
-  - pip install -r requirements.txt
+  - pip install -r requirements_test.txt
 
 script:
   - python -m pytest --cov-config .coveragerc --cov=delphin_6_automation pytest/
