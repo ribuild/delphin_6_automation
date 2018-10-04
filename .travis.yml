@@ -17,7 +17,7 @@ after_success:
   - coverage report
   - coveralls
 
- notifications:
-    slack:
-      rooms:
-        - ribuild:hPxFItmNi9Xg97DZnypdEhez#travis-ci
+notifications:
+   slack:
+     rooms:
+       - ribuild:hPxFItmNi9Xg97DZnypdEhez#travis-ci
