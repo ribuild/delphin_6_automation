@@ -12,7 +12,7 @@ from sklearn import linear_model
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.neighbors import KNeighborsRegressor
-import pickle
+from sklearn.externals import joblib
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
@@ -183,5 +183,5 @@ print('R-squared train score: {:.5f}'.format(knn_reg3_dis.score(X_train, y_train
 print('R-squared test score: {:.5f}'.format(knn_reg3_dis.score(X_test, y_test)))
 
 # Save final model
-#filename_kn = 'k_nearest_3_model.sav'
-#pickle.dump(knn_reg3, open(filename_kn, 'wb'))
+filename_kn = 'k_nearest_3_model.joblib'
+#joblib.dump(knn_reg3_uni, filename_kn)

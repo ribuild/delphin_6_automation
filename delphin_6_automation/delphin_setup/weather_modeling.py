@@ -6,8 +6,8 @@ __license__ = 'MIT'
 
 # Modules:
 import numpy as np
+from sklearn.externals import joblib
 import os
-import pickle
 import typing
 
 # RiBuild Modules:
@@ -157,7 +157,8 @@ def driving_rain(precipitation: list, wind_direction: list, wind_speed: list, wa
     wind_speed = np.asarray(wind_speed)
 
     # Load catch ratio and catch ratio parameters
-    catch_ratio_model = pickle.load(open(os.path.join(os.path.dirname(__file__), 'k_nearest_3_model.sav'), 'rb'))
+    model_path = os.path.join(os.path.dirname(__file__), 'k_nearest_3_model.joblib')
+    catch_ratio_model = joblib.load(model_path)
 
     # Convert deg to rad
     orientation = np.deg2rad(orientation)
