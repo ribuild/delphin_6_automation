@@ -2,6 +2,7 @@ language: python
 python: 3.6
 #dist: xenial
 #sudo: required
+cache: pip
 
 install:
   - pip install -r requirements.txt
