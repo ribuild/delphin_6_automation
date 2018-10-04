@@ -137,9 +137,9 @@ def download_full_project_from_database(document_id: str, folder: str) -> bool:
 
     delphin_document = delphin_db.Delphin.objects(id=document_id).first()
 
-    material_interactions.download_materials(delphin_document, os.path.join(folder, 'materials'))
-    weather_interactions.download_weather(delphin_document, os.path.join(folder, 'weather'))
-    delphin_interactions.download_delphin_entry(delphin_document, folder)
+    #material_interactions.download_materials(delphin_document, os.path.join(folder, 'materials'))
+    #weather_interactions.download_weather(delphin_document, os.path.join(folder, 'weather'))
+    #delphin_interactions.download_delphin_entry(delphin_document, folder)
 
     logger.debug(f'Download Delphin project with ID: {document_id} from database with weather and materials.')
 
