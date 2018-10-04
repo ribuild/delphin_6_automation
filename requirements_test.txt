@@ -8,5 +8,8 @@ sshtunnel
 mongoengine
 lxml
 xmltodict
+pytest
+pytest-cov
 notifiers
 xlrd
+coveralls
