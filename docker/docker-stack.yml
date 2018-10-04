@@ -2,16 +2,22 @@ version: '3.7'
 
 services:
 
-  simulation:
-    image: hpc_simulator:latest
+  simulation_ocni:
+    image: ocni/hpc_simulator:latest
     volumes:
-      - ribuild_volume:/app/data
+      - ocni_volume:/app/data
     deploy:
       replicas: 2
     secrets:
       - ssh_key
       - db_ait
-      - hpc_ocni
+      - source: hpc_ocni
+        target: hpc_access
+
+  sampling:
+    image: ocni/hpc_sampler:latest
+    secrets:
+      - db_ait
 
   logger:
     image: iamatypeofwalrus/logspout-loggly
@@ -33,7 +39,7 @@ services:
 
 
 volumes:
-  ribuild_volume:
+  ocni_volume:
     driver: vieux/sshfs:latest
     driver_opts:
       sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild

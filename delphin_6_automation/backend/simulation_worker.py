@@ -182,7 +182,7 @@ def connect_to_hpc() -> paramiko.SSHClient:
         secret_path = '/run/secrets'
         key_path = os.path.join(secret_path, 'ssh_key')
         key = paramiko.RSAKey.from_private_key_file(key_path)
-        hpc_path = os.path.join(secret_path, 'hpc_ocni')
+        hpc_path = os.path.join(secret_path, 'hpc_access')
 
         with open(hpc_path, 'r') as file:
             hpc = json.load(file)
