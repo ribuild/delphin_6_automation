@@ -6,7 +6,7 @@ __license__ = "MIT"
 
 # Modules:
 import os
-import pickle
+from sklearn.externals import joblib
 import numpy as np
 
 # RiBuild Modules:
@@ -217,29 +217,37 @@ def compute_simulation_time(sim_id: str) -> int:
 
     sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
     dimension = sim_obj.dimensions
+    predicted_time = sim_obj.estimated_simulation_time
 
-    sim_time = [simulation_entry.simulation_time
-                for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension,
-                                                                      simulation_time__exists=True)]
-
-    if sim_time:
-        avg_time = int(np.ceil(np.mean(sim_time) / 60))
-        logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
-        return avg_time
-
-    elif dimension == 2:
-        logger.debug(f'No previous simulations found. Setting time to 180min for a 2D simulation')
-        return 240
+    if predicted_time:
+        logger.debug(f'Predicted simulation time for Delphin project in {dimension}D: {predicted_time}min')
+        return predicted_time
 
     else:
-        logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
-        return 120
+
+        sim_time = [simulation_entry.simulation_time
+                    for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension,
+                                                                          simulation_time__exists=True)]
+
+        if sim_time:
+            avg_time = int(np.ceil(np.mean(sim_time) / 60))
+            logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
+            return avg_time
+
+        elif dimension == 2:
+            logger.debug(f'No previous simulations found. Setting time to 180min for a 2D simulation')
+            return 240
+
+        else:
+            logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
+            return 120
 
 
 def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin) -> int:
 
     inputs = delphin_doc.sample_data
-    time_model = pickle.load(open(os.path.join(os.path.dirname(__file__), 'sim_time_model.sav'), 'rb'))
+    model_path = os.path.join(os.path.dirname(__file__), 'sim_time_model.joblib')
+    time_model = joblib.load(model_path)
     sim_time_secs = time_model.predict()
 
     return sim_time_secs / 60

@@ -129,6 +129,17 @@ def set_simulation_time(sim_id: str, computation_time: datetime.timedelta) -> st
     return sim_id
 
 
+def set_simulation_time_estimate(sim_id: str, computation_time: int) -> str:
+    """Sets the estimate simulation time for a Delphin project"""
+
+    delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_entry.update(set__estimated_simulation_time=computation_time)
+    logger.debug(f'For Delphin project with ID: {sim_id}, '
+                 f'simulation time was changed to: {computation_time}')
+
+    return sim_id
+
+
 def wait_until_simulated(delphin_ids: list) -> bool:
     """
     Wait until all simulations in the given list is simulated.
