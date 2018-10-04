@@ -1,4 +1,4 @@
-FROM ribuild_base:latest
+FROM ocni/ribuild_base:latest
 
 LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
       description="RIBuild HPC Simulation Image"
