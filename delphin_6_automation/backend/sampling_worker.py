@@ -109,7 +109,7 @@ def sampling_worker(strategy_id: str) -> None:
             logger.info('Creating new samples')
             new_samples = sampling.create_samples(strategy_doc, used_samples_per_set)
             sample_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
-            delphin_ids = sampling.create_delphin_projects(strategy_doc.strategy, new_samples)
+            delphin_ids = sampling.create_delphin_projects(strategy_doc, new_samples)
             sampling_interactions.add_delphin_to_sampling(sample_id, delphin_ids)
             sampling_interactions.add_sample_to_strategy(strategy_id, sample_id)
 

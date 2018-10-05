@@ -11,6 +11,7 @@ from datetime import datetime
 # RiBuild Modules
 import delphin_6_automation.database_interactions.database_collections as collections
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
+from delphin_6_automation.database_interactions.db_templates import time_model_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -56,4 +57,4 @@ class Strategy(mongoengine.Document):
     samples_raw = mongoengine.ListField(field=mongoengine.ReferenceField(document_type=SampleRaw))
     standard_error = mongoengine.DictField()
     strategy = mongoengine.DictField(required=True)
-    time_prediction_model = mongoengine.BinaryField()
+    time_prediction_model = mongoengine.ReferenceField(document_type=time_model_entry.TimeModel)

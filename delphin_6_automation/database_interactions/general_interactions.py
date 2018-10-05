@@ -14,6 +14,7 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry as result_db
 from delphin_6_automation.database_interactions.db_templates import weather_entry as weather_db
 from delphin_6_automation.database_interactions.db_templates import material_entry as material_db
+from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
@@ -241,13 +242,3 @@ def compute_simulation_time(sim_id: str) -> int:
         else:
             logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
             return 120
-
-
-def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin) -> int:
-
-    inputs = delphin_doc.sample_data
-    model_path = os.path.join(os.path.dirname(__file__), 'sim_time_model.joblib')
-    time_model = joblib.load(model_path)
-    sim_time_secs = time_model.predict()
-
-    return sim_time_secs / 60

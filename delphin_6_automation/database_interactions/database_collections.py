@@ -1,15 +1,6 @@
 __author__ = "Christian Kongsgaard"
 
 # -------------------------------------------------------------------------------------------------------------------- #
-# IMPORTS
-
-# Modules:
-
-
-# RiBuild Modules:
-
-
-# -------------------------------------------------------------------------------------------------------------------- #
 # DATABASE COLLECTIONS
 
 material_db = {'db_alias': 'local',
@@ -38,3 +29,6 @@ sample_raw_db = {'db_alias': 'local',
 
 strategy_db = {'db_alias': 'local',
                'collection': 'sampling_strategy'}
+
+time_model_db = {'db_alias': 'local',
+                 'collection': 'time_model'}

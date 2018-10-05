@@ -9,8 +9,7 @@ import copy
 import pandas as pd
 import numpy as np
 import typing
-from sklearn.model_selection import ShuffleSplit
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import ShuffleSplit, cross_val_score
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.neighbors import KNeighborsRegressor
 import pickle
@@ -20,6 +19,7 @@ from bson import Binary
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
+from delphin_6_automation.database_interactions.db_templates import time_model_entry
 
 # Logger
 logger = ribuild_logger()
@@ -31,20 +31,20 @@ logger = ribuild_logger()
 def get_time_prediction_data() -> pd.DataFrame:
     entries = delphin_entry.Delphin.objects(simulation_time__exists=True)
 
-    col = ['time', ] + list(entries[0].sample_data.keys())[:-1] + list(entries[0].sample_data['design_option'].keys())
+    col = ['time', ] + list(entries[0].sample_data.keys()) + list(entries[0].sample_data['design_option'].keys())
     frames = []
 
     for i in range(len(entries)):
         entry = entries[i]
         data = copy.deepcopy(entry.sample_data)
-        del data['sequence']
-        del data['design_option']
         data.update(entry.sample_data['design_option'])
         data['time'] = entry.simulation_time
 
         frames.append(pd.DataFrame(columns=col, data=data, index=[i, ]))
 
     data_frame = pd.concat(frames)
+    data_frame = data_frame.loc[:, data_frame.columns != 'design_option']
+    data_frame = data_frame.loc[:, data_frame.columns != 'sequence']
 
     return data_frame
 
@@ -75,7 +75,13 @@ def transform_weather(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
-    data.loc[data.loc[:, 'system_name'] == 'ClimateBoard', 'system_name'] = 1.0
+    sys_names = list(set(data.loc[:, 'system_name'])).sort()
+
+    mapper = {}
+    for i, name in enumerate(sys_names):
+        mapper[name] = i
+
+    data = data.map(mapper)
 
     return data
 
@@ -83,7 +89,7 @@ def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
 def compute_model(x_data: pd.DataFrame, y_data: pd.DataFrame):
     ss = ShuffleSplit(n_splits=5, test_size=0.25, random_state=47)
     scaler = MinMaxScaler()
-    best_model = {'score': 0, 'features': [1, 'uniform']}
+    best_model = {'score': 0, 'parameters': [1, 'uniform']}
 
     for nn in [3, 5, 7, 9]:
         for weight in ['uniform', 'distance']:
@@ -93,13 +99,13 @@ def compute_model(x_data: pd.DataFrame, y_data: pd.DataFrame):
 
             if scores.mean() > best_model['score']:
                 best_model['score'] = scores.mean()
-                best_model['features'] = [nn, weight]
-                logger.debug(f'Update best model to: {best_model["features"]} with score: {best_model["score"]}')
+                best_model['parameters'] = [nn, weight]
+                logger.debug(f'Update best model to: {best_model["parameters"]} with score: {best_model["score"]}')
 
-    logger.info(f'KNN with {best_model["features"][0]} neighbors and {best_model["features"][1]} weight is the best '
-                f'model with R2 of {best_model["score"]:.5f}')
+    logger.info(f'KNN with {best_model["parameters"][0]} neighbors and {best_model["parameters"][1]} weight is the '
+                f'best model with R2 of {best_model["score"]:.5f}')
 
-    return KNeighborsRegressor(n_neighbors=best_model['features'][0], weights=best_model['features'][1])
+    return KNeighborsRegressor(n_neighbors=best_model['parameters'][0], weights=best_model['parameters'][1])
 
 
 def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) -> np.ndarray:
@@ -133,8 +139,46 @@ def create_time_prediction_model() -> KNeighborsRegressor:
     return compute_model(x_data, y_data)
 
 
-def upload_model(model: KNeighborsRegressor, sample_strategy: sample_entry.Strategy):
+def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: sample_entry.Strategy):
+
+    time_model_doc = sample_strategy.time_prediction_model
     pickled_model = pickle.dumps(model)
 
-    sample_strategy.update(set__time_prediction_model=Binary(pickled_model))
-    logger.info(f'Updated time prediction model for Sample Strategy with ID {sample_strategy.id}')
+    if time_model_doc:
+        time_model_doc.update(set__model=Binary(pickled_model))
+        time_model_doc.update(set__test_score=model_data['score'])
+        time_model_doc.update(set__model_parameters=model_data['parameters'])
+        time_model_doc.update(set__model_features=model_data['features'])
+    else:
+        time_model_doc = time_model_entry.TimeModel()
+        time_model_doc.model = Binary(pickled_model)
+        time_model_doc.test_score = model_data['score']
+        time_model_doc.model_parameters = model_data['parameters']
+        time_model_doc.model_features = model_data['features']
+        time_model_doc.save()
+
+        sample_strategy.update(set__time_prediction_model=time_model_doc)
+
+    logger.info(f'Updated time prediction model with ID {time_model_doc.id} for Sample Strategy with ID '
+                f'{sample_strategy.id}')
+
+
+def process_inputs(raw_inputs, model_features):
+
+    data = {'time': None}
+    for key in raw_inputs.ekys():
+        if key in model_features:
+            data[key] = raw_inputs[key]
+
+    df = pd.DataFrame(data)
+
+    return process_time_data(df)[0]
+
+
+def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin, model_entry: time_model_entry.TimeModel) -> int:
+
+    time_model = pickle.loads(model_entry.model)
+    inputs = process_inputs(delphin_doc.sample_data, model_entry.model_features)
+    sim_time_secs = time_model.predict(inputs)
+
+    return sim_time_secs / 60

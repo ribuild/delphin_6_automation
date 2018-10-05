@@ -20,12 +20,14 @@ from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import material_interactions
+from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.sampling import sobol_lib
+from delphin_6_automation.sampling import sim_time_prediction
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
@@ -233,11 +235,13 @@ def load_design_options(designs: typing.List[str], folder: str) -> typing.List[d
     return delphin_projects
 
 
-def create_delphin_projects(sampling_strategy: dict, samples: dict,
+def create_delphin_projects(strategy_doc: sample_entry.Strategy, samples: dict,
                             folder=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'input_files/design')) \
         -> typing.List[str]:
     """Generate the Delphin project associated with the given sample"""
 
+    sampling_strategy = strategy_doc.strategy
+    time_model = strategy_doc.time_prediction_model
     delphin_ids = []
     delphin_projects = load_design_options(sampling_strategy['design'], folder)
 
@@ -363,6 +367,10 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
             sample_dict['sequence'] = sequence
 
             delphin_interactions.add_sampling_dict(delphin_id, sample_dict)
+
+            if time_model:
+                time_estimate = sim_time_prediction.simulation_time_prediction_ml(delphin_id, time_model)
+                simulation_interactions.set_simulation_time_estimate(delphin_id, time_estimate)
 
             delphin_ids.append(delphin_id)
 
