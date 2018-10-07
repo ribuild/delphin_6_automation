@@ -24,7 +24,7 @@ class TimeModel(mongoengine.Document):
     # Model Data
     model = mongoengine.BinaryField(required=True)
     test_score = mongoengine.FloatField(required=True)
-    model_parameters = mongoengine.DictField(required=True)
+    model_parameters = mongoengine.ListField(required=True)
     model_features = mongoengine.ListField(required=True)
 
     # References

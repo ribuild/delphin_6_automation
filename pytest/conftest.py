@@ -183,7 +183,9 @@ def add_results(db_one_project, tmpdir, test_folder):
 def add_sampling_strategy(empty_database, add_three_years_weather, tmpdir, mock_design_options):
     test_dir = tmpdir.mkdir('test')
     strategy = sampling.create_sampling_strategy(test_dir)
-    sampling_interactions.upload_sampling_strategy(strategy)
+    strategy_id = sampling_interactions.upload_sampling_strategy(strategy)
+
+    return strategy_id
 
 
 @pytest.fixture()
@@ -597,7 +599,7 @@ def add_delphin_for_time_estimation(empty_database, delphin_file_path, add_two_m
                                    'interior_climate': climate_class}
                     delphin_interactions.add_sampling_dict(sim_id, sample_dict)
                     simulation_interactions.set_simulation_time(sim_id,
-                                                                datetime.timedelta(minutes=random.randint(5, 50)))
+                                                                datetime.timedelta(minutes=10))
 
     delphin_doc = delphin_entry.Delphin.objects().first()
     del delphin_doc

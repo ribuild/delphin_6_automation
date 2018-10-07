@@ -49,12 +49,12 @@ def get_time_prediction_data() -> pd.DataFrame:
     return data_frame
 
 
-def process_time_data(data_frame: pd.DataFrame) -> typing.Tuple[pd.DataFrame, pd.DataFrame]:
+def process_time_data(data_frame: pd.DataFrame) -> typing.Tuple[pd.DataFrame, pd.Series]:
     y_data = data_frame['time']
 
     x_data = data_frame.loc[:, data_frame.columns != 'time']
-    x_data = transform_weather(x_data)
     x_data = x_data.fillna(0.0)
+    x_data = transform_weather(x_data)
     x_data = transform_interior_climate(x_data)
     x_data = transform_system_names(x_data)
 
@@ -69,24 +69,30 @@ def transform_interior_climate(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def transform_weather(data: pd.DataFrame) -> pd.DataFrame:
-    data.loc[:, 'exterior_climate'] = np.ones(len(data['exterior_climate']))
-
-    return data
-
-
-def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
-    sys_names = list(set(data.loc[:, 'system_name'])).sort()
+    sys_names = set(data.loc[:, 'exterior_climate'])
 
     mapper = {}
     for i, name in enumerate(sys_names):
         mapper[name] = i
 
-    data = data.map(mapper)
+    data.loc[:, 'exterior_climate'] = data.loc[:, 'exterior_climate'].map(mapper)
 
     return data
 
 
-def compute_model(x_data: pd.DataFrame, y_data: pd.DataFrame):
+def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
+    sys_names = set(data.loc[data.loc[:, 'system_name'] != 0, 'system_name'])
+
+    mapper = {0: 0}
+    for i, name in enumerate(sys_names, 1):
+        mapper[name] = i
+
+    data.loc[:, 'system_name'] = data.loc[:, 'system_name'].map(mapper)
+
+    return data
+
+
+def compute_model(x_data: pd.DataFrame, y_data: pd.Series):
     ss = ShuffleSplit(n_splits=5, test_size=0.25, random_state=47)
     scaler = MinMaxScaler()
     best_model = {'score': 0, 'parameters': [1, 'uniform']}
@@ -118,7 +124,7 @@ def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) 
         test_scores = cross_val_score(knn, scaler.fit_transform(feature_less_data), y_data,
                                       cv=shufflesplit, scoring='r2')
         feature_scores.append((feat, test_scores.mean()))
-        if test_scores.mean() >= basis_score.mean():
+        if test_scores.mean() > basis_score.mean():
             col_del.append(feat)
 
     logger.debug(f'Columns to delete: {col_del}')
@@ -155,6 +161,7 @@ def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: 
         time_model_doc.test_score = model_data['score']
         time_model_doc.model_parameters = model_data['parameters']
         time_model_doc.model_features = model_data['features']
+        time_model_doc.sample_strategy = sample_strategy
         time_model_doc.save()
 
         sample_strategy.update(set__time_prediction_model=time_model_doc)
