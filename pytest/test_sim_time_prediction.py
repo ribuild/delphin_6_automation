@@ -8,11 +8,13 @@ __license__ = 'MIT'
 import pytest
 import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
+from bson.objectid import ObjectId
 
 # RiBuild Modules
 from delphin_6_automation.sampling import sim_time_prediction
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import time_model_entry
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -69,14 +71,11 @@ def test_transform_system_names(time_prediction_data):
 
 def test_compute_model(time_prediction_data):
     x_data, y_data = sim_time_prediction.process_time_data(time_prediction_data)
-    model = sim_time_prediction.compute_model(x_data, y_data)
+    model, model_data = sim_time_prediction.compute_model(x_data, y_data)
 
     assert isinstance(model, KNeighborsRegressor)
-
-
-def test_create_time_prediction_model(add_delphin_for_time_estimation):
-    model = sim_time_prediction.create_time_prediction_model()
-    assert isinstance(model, KNeighborsRegressor)
+    assert isinstance(model_data, dict)
+    assert set(model_data.keys()) == {'score', 'parameters', 'features'}
 
 
 def test_upload_model(add_sampling_strategy):
@@ -104,9 +103,28 @@ def test_upload_model(add_sampling_strategy):
     assert model_entry.model_features == model_data1['features']
 
 
-def test_process_inputs():
-    assert True
+def test_create_upload_time_prediction_model(add_delphin_for_time_estimation, add_sampling_strategy):
+    strategy_doc = sample_entry.Strategy.objects().first()
+    model_id = sim_time_prediction.create_upload_time_prediction_model(strategy_doc)
+
+    assert isinstance(model_id, ObjectId)
+    assert time_model_entry.TimeModel.objects(id=model_id)
 
 
-def test_simulation_time_prediction_ml():
-    assert True
+def test_process_inputs(create_time_model):
+    delphin_doc = delphin_entry.Delphin.objects().first()
+    inputs = delphin_doc.sample_data
+    model = time_model_entry.TimeModel.objects().first()
+    model_data = model.model_features
+    processed_input = sim_time_prediction.process_inputs(inputs, model_data)
+
+    assert not processed_input.empty
+    assert isinstance(processed_input, pd.DataFrame)
+
+
+def test_simulation_time_prediction_ml(create_time_model):
+    delphin_doc = delphin_entry.Delphin.objects().first()
+    model = time_model_entry.TimeModel.objects().first()
+    time = sim_time_prediction.simulation_time_prediction_ml(delphin_doc, model)
+
+    assert time == 10

@@ -181,7 +181,11 @@ def add_results(db_one_project, tmpdir, test_folder):
 
 @pytest.fixture()
 def add_sampling_strategy(empty_database, add_three_years_weather, tmpdir, mock_design_options):
-    test_dir = tmpdir.mkdir('test')
+
+    if not os.path.exists(os.path.join(tmpdir, 'test')):
+        test_dir = tmpdir.mkdir('test')
+    else:
+        test_dir = os.path.join(tmpdir, 'test')
     strategy = sampling.create_sampling_strategy(test_dir)
     strategy_id = sampling_interactions.upload_sampling_strategy(strategy)
 
@@ -608,3 +612,11 @@ def add_delphin_for_time_estimation(empty_database, delphin_file_path, add_two_m
 @pytest.fixture()
 def time_prediction_data(add_delphin_for_time_estimation):
     return sim_time_prediction.get_time_prediction_data()
+
+
+@pytest.fixture()
+def create_time_model(add_delphin_for_time_estimation, add_sampling_strategy):
+    strategy_doc = sample_entry.Strategy.objects().first()
+    model_id = sim_time_prediction.create_upload_time_prediction_model(strategy_doc)
+
+    return model_id

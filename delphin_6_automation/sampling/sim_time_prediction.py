@@ -62,8 +62,14 @@ def process_time_data(data_frame: pd.DataFrame) -> typing.Tuple[pd.DataFrame, pd
 
 
 def transform_interior_climate(data: pd.DataFrame) -> pd.DataFrame:
-    data.loc[data.loc[:, 'interior_climate'] == 'a', 'interior_climate'] = 0.0
-    data.loc[data.loc[:, 'interior_climate'] == 'b', 'interior_climate'] = 1.0
+    if 'interior_climate' in data.columns:
+        if not (data.loc[data.loc[:, 'interior_climate'] == 'a', 'interior_climate']).empty:
+            data.loc[data.loc[:, 'interior_climate'] == 'a', 'interior_climate'] = 0.0
+
+        try:
+            data.loc[data.loc[:, 'interior_climate'] == 'b', 'interior_climate'] = 1.0
+        except TypeError:
+            pass
 
     return data
 
@@ -92,7 +98,7 @@ def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def compute_model(x_data: pd.DataFrame, y_data: pd.Series):
+def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Tuple[KNeighborsRegressor, dict]:
     ss = ShuffleSplit(n_splits=5, test_size=0.25, random_state=47)
     scaler = MinMaxScaler()
     best_model = {'score': 0, 'parameters': [1, 'uniform']}
@@ -101,20 +107,23 @@ def compute_model(x_data: pd.DataFrame, y_data: pd.Series):
         for weight in ['uniform', 'distance']:
             knn_reg = KNeighborsRegressor(n_neighbors=nn, weights=weight)
             scores = cross_val_score(knn_reg, scaler.fit_transform(x_data), y_data, cv=ss)
-            scores = remove_bad_features(x_data, y_data, scores, knn_reg, scaler, ss)
+            scores, features = remove_bad_features(x_data, y_data, scores, knn_reg, scaler, ss)
 
             if scores.mean() > best_model['score']:
                 best_model['score'] = scores.mean()
                 best_model['parameters'] = [nn, weight]
+                best_model['features'] = features
                 logger.debug(f'Update best model to: {best_model["parameters"]} with score: {best_model["score"]}')
 
     logger.info(f'KNN with {best_model["parameters"][0]} neighbors and {best_model["parameters"][1]} weight is the '
                 f'best model with R2 of {best_model["score"]:.5f}')
 
-    return KNeighborsRegressor(n_neighbors=best_model['parameters'][0], weights=best_model['parameters'][1])
+    model = KNeighborsRegressor(n_neighbors=best_model['parameters'][0],
+                                weights=best_model['parameters'][1]).fit(x_data, y_data)
+    return model, best_model
 
 
-def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) -> np.ndarray:
+def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) -> typing.Tuple[np.ndarray, list]:
     features = x_data.columns
 
     col_del = []
@@ -134,15 +143,7 @@ def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) 
     cleaned_data = x_data.loc[:, clean_col]
     clean_scores = cross_val_score(knn, scaler.fit_transform(cleaned_data), y_data, cv=shufflesplit, scoring='r2')
 
-    return clean_scores
-
-
-def create_time_prediction_model() -> KNeighborsRegressor:
-
-    simulation_data = get_time_prediction_data()
-    x_data, y_data = process_time_data(simulation_data)
-
-    return compute_model(x_data, y_data)
+    return clean_scores, list(clean_col)
 
 
 def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: sample_entry.Strategy):
@@ -169,15 +170,29 @@ def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: 
     logger.info(f'Updated time prediction model with ID {time_model_doc.id} for Sample Strategy with ID '
                 f'{sample_strategy.id}')
 
+    return time_model_doc.id
 
-def process_inputs(raw_inputs, model_features):
+
+def create_upload_time_prediction_model(strategy: sample_entry.Strategy) -> str:
+
+    simulation_data = get_time_prediction_data()
+    x_data, y_data = process_time_data(simulation_data)
+    model, model_data = compute_model(x_data, y_data)
+    model_id = upload_model(model, model_data, strategy)
+
+    return model_id
+
+
+def process_inputs(raw_inputs: dict, model_features: dict) -> pd.DataFrame:
 
     data = {'time': None}
-    for key in raw_inputs.ekys():
+    raw_inputs.update(raw_inputs['design_option'])
+    del raw_inputs['design_option']
+    for key in raw_inputs.keys():
         if key in model_features:
-            data[key] = raw_inputs[key]
+            data[key] = [raw_inputs[key], ]
 
-    df = pd.DataFrame(data)
+    df = pd.DataFrame.from_dict(data)
 
     return process_time_data(df)[0]
 
