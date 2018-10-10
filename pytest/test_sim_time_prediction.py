@@ -5,7 +5,6 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
-import pytest
 import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
 from bson.objectid import ObjectId
@@ -128,3 +127,10 @@ def test_simulation_time_prediction_ml(create_time_model):
     time = sim_time_prediction.simulation_time_prediction_ml(delphin_doc, model)
 
     assert time == 10
+
+
+def test_queue_priorities_on_time_prediction(delphin_with_estimated_time):
+    sample_doc = sample_entry.Sample.objects().first()
+    sim_time_prediction.queue_priorities_on_time_prediction(sample_doc)
+
+    assert all([0.0 <= num <= 1.0 for num in [doc.queue_priority for doc in sample_doc.delphin_docs]])

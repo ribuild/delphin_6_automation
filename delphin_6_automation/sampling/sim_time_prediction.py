@@ -14,6 +14,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.neighbors import KNeighborsRegressor
 import pickle
 from bson import Binary
+from bson.objectid import ObjectId
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
@@ -146,7 +147,7 @@ def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) 
     return clean_scores, list(clean_col)
 
 
-def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: sample_entry.Strategy):
+def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: sample_entry.Strategy) -> ObjectId:
 
     time_model_doc = sample_strategy.time_prediction_model
     pickled_model = pickle.dumps(model)
@@ -173,7 +174,7 @@ def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: 
     return time_model_doc.id
 
 
-def create_upload_time_prediction_model(strategy: sample_entry.Strategy) -> str:
+def create_upload_time_prediction_model(strategy: sample_entry.Strategy) -> ObjectId:
 
     simulation_data = get_time_prediction_data()
     x_data, y_data = process_time_data(simulation_data)
@@ -204,3 +205,11 @@ def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin, model_entr
     sim_time_secs = time_model.predict(inputs)
 
     return sim_time_secs / 60
+
+
+def queue_priorities_on_time_prediction(sample_doc: sample_entry.Sample):
+
+    max_time = np.array([doc.estimated_simulation_time
+                         for doc in sample_doc.delphin_docs]).max()
+
+    [doc.update(set__queue_priority=doc.estimated_simulation_time/max_time) for doc in sample_doc.delphin_docs]

@@ -620,3 +620,17 @@ def create_time_model(add_delphin_for_time_estimation, add_sampling_strategy):
     model_id = sim_time_prediction.create_upload_time_prediction_model(strategy_doc)
 
     return model_id
+
+
+@pytest.fixture()
+def delphin_with_estimated_time(add_delphin_for_time_estimation):
+
+    delphin_list = delphin_entry.Delphin.objects()
+    for delphin in delphin_list:
+        delphin.update(set__estimated_simulation_time=random.randint(5, 15))
+
+    sample = sample_entry.Sample()
+    sample.samples = {'test': 0}
+    sample.delphin_docs = delphin_list
+    sample.iteration = 0
+    sample.save()

@@ -10,6 +10,7 @@ import typing
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import sample_entry, delphin_entry
+from delphin_6_automation.sampling import sim_time_prediction
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
@@ -185,3 +186,28 @@ def get_delphin_for_sample(sample: sample_entry.Sample) -> typing.List[str]:
     logger.debug(f'Fetches Delphin document related to sample with ID: {sample.id}')
 
     return [delphin.id for delphin in sample.delphin_docs]
+
+
+def update_queue_priorities(sample_id: str):
+
+    sample_doc = sample_entry.Sample.objects(id=sample_id).first()
+
+    if sample_doc.iteration >= 4:
+        sim_time_prediction.queue_priorities_on_time_prediction(sample_doc)
+        logger.info(f'Updated queue priorities based on the time prediction')
+    else:
+        logger.info(f'The current iteration [{sample_doc.current_iteration}]was below 4, '
+                    f'therefore the queue priorities where not updated.')
+
+
+def update_time_estimation_model(strategy_id: str):
+
+    strategy_doc = sample_entry.Strategy.objects(id=strategy_id).first()
+
+    if strategy_doc.current_iteration >= 3:
+        sim_time_prediction.create_upload_time_prediction_model(strategy_doc)
+        logger.info(f'Updated time prediction model')
+
+    else:
+        logger.info(f'The current iteration [{strategy_doc.current_iteration}]was below 3, '
+                    f'therefore no time prediction model was created.')
