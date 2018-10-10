@@ -12,11 +12,6 @@ import platform
 
 # RiBuild Modules:
 
-try:
-    from delphin_6_automation.database_interactions.auth import slack
-except ModuleNotFoundError:
-    slack = None
-
 # -------------------------------------------------------------------------------------------------------------------- #
 # LOGGERS
 
@@ -52,7 +47,7 @@ def ribuild_logger(name: str='delphin_6_automation'):
 
         # Notification Handler
         message_dict = {'message': f'Fatal Error on {platform.node()}',
-                        'webhook_url': slack}
+                        'webhook_url': 'https://hooks.slack.com/services/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'}
         nh = NotificationHandler('slack', defaults=message_dict)
         nh.setLevel(logging.WARNING)
         nh.setFormatter(formatter)
