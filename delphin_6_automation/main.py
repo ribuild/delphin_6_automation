@@ -20,7 +20,7 @@ from delphin_6_automation.backend.backend import main
 # BACKEND
 
 if __name__ == "__main__":
-    local_logger = ribuild_logger(__name__)
+    local_logger = ribuild_logger()
 
     while True:
         try:

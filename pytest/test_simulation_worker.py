@@ -14,7 +14,6 @@ import shutil
 # RiBuild Modules
 from delphin_6_automation.backend import simulation_worker
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
-from delphin_6_automation.database_interactions import simulation_interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -52,14 +51,6 @@ def test_create_submit_file(tmpdir, db_one_project, restart):
         assert submit_data == expected_submit_file
 
 
-def test_submit_job():
-    assert True
-
-
-def test_wait_until_finished():
-    assert True
-
-
 def test_hpc_worker(tmpdir, db_one_project, mock_submit_job, monkeypatch, test_folder):
     folder = tmpdir.mkdir('test')
     delphin_doc = delphin_entry.Delphin.objects().first()
@@ -84,26 +75,6 @@ def test_hpc_worker(tmpdir, db_one_project, mock_submit_job, monkeypatch, test_f
     assert delphin_doc.result_processed
     assert delphin_doc.simulated
     assert delphin_doc.simulation_time
-
-
-@pytest.mark.parametrize('sim_time',
-                         [False, True])
-def test_get_average_computation_time(db_one_project, sim_time):
-
-    delphin_id = delphin_entry.Delphin.objects().first().id
-    if sim_time:
-        delta_time = datetime.timedelta(minutes=3)
-        simulation_interactions.set_simulation_time(delphin_id, delta_time)
-
-    computation_time = simulation_worker.get_average_computation_time(delphin_id)
-
-    assert computation_time
-    assert isinstance(computation_time, int)
-
-    if sim_time:
-        assert computation_time == 3
-    else:
-        assert computation_time == 120
 
 
 def test_simulation_worker(mock_hpc_worker, mock_find_next_sim_in_queue, capsys):

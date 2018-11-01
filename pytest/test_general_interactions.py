@@ -7,10 +7,13 @@ __license__ = 'MIT'
 # Modules
 import os
 import shutil
+import datetime
+import pytest
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import general_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
+from delphin_6_automation.database_interactions import simulation_interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -68,3 +71,27 @@ def test_download_results_1(add_results, tmpdir, test_folder):
                     'r').readlines()
     del test_d6o[3]
     assert test_d6o == source_d6o
+
+
+@pytest.mark.parametrize('sim_time',
+                         [0, 1, 2])
+def test_get_average_computation_time(db_one_project, sim_time):
+
+    delphin_id = delphin_entry.Delphin.objects().first().id
+    if sim_time == 1:
+        delta_time = datetime.timedelta(minutes=3)
+        simulation_interactions.set_simulation_time(delphin_id, delta_time)
+    elif sim_time == 2:
+        simulation_interactions.set_simulation_time_estimate(delphin_id, 5)
+
+    computation_time = general_interactions.compute_simulation_time(delphin_id)
+
+    assert computation_time
+    assert isinstance(computation_time, int)
+
+    if sim_time == 1:
+        assert computation_time == 3
+    elif sim_time == 2:
+        assert computation_time == 5
+    else:
+        assert computation_time == 120

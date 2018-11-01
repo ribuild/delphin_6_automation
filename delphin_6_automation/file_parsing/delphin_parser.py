@@ -19,7 +19,7 @@ import delphin_6_automation.database_interactions.db_templates.result_raw_entry 
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # DELPHIN FUNCTIONS AND CLASSES

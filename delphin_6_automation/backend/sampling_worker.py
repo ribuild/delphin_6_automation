@@ -7,8 +7,12 @@ __license__ = 'MIT'
 # Modules
 import sys
 import os
-import matplotlib.pyplot as plt
 import numpy as np
+
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError:
+    pass
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
@@ -17,7 +21,7 @@ from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions import sampling_interactions
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -107,7 +111,9 @@ def sampling_worker(strategy_id: str) -> None:
             sample_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
             delphin_ids = sampling.create_delphin_projects(strategy_doc.strategy, new_samples)
             sampling_interactions.add_delphin_to_sampling(sample_id, delphin_ids)
+            sampling_interactions.update_queue_priorities(sample_id)
             sampling_interactions.add_sample_to_strategy(strategy_id, sample_id)
+            sampling_interactions.update_time_estimation_model(strategy_id)
 
         else:
             logger.debug('Found existing sample')

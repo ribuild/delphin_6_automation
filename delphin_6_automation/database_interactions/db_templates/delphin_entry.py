@@ -26,7 +26,8 @@ class Delphin(mongoengine.Document):
     simulated = mongoengine.DateTimeField()
     simulating = mongoengine.BooleanField(default=False)
     simulation_time = mongoengine.FloatField()
-    queue_priority = mongoengine.IntField(default=1)
+    estimated_simulation_time = mongoengine.IntField()
+    queue_priority = mongoengine.FloatField(default=1)
     sample_data = mongoengine.DictField()
     restart_data = mongoengine.DictField()
 

@@ -26,7 +26,7 @@ from delphin_6_automation.file_parsing import weather_parser
 from delphin_6_automation.logging import ribuild_logger
 
 # Logger
-logger = ribuild_logger.ribuild_logger(__name__)
+logger = ribuild_logger.ribuild_logger()
 
 
 # -------------------------------------------------------------------------------------------------------------------- #

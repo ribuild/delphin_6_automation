@@ -6,21 +6,22 @@ __license__ = "MIT"
 
 # Modules:
 import os
-import subprocess
-#import github
+from sklearn.externals import joblib
+import numpy as np
 
 # RiBuild Modules:
-from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db
+from delphin_6_automation.database_interactions.db_templates import delphin_entry as delphin_db, delphin_entry
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry as result_db
 from delphin_6_automation.database_interactions.db_templates import weather_entry as weather_db
 from delphin_6_automation.database_interactions.db_templates import material_entry as material_db
+from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL INTERACTIONS
@@ -207,13 +208,37 @@ def does_simulation_exists(sim_id: str) -> bool:
         return False
 
 
-"""
-def get_github_version():
-    gh = github.Github()
-    rp = gh.get_repo('ribuild/delphin_6_automation')
-    return rp.get_commits()[0].sha
+def compute_simulation_time(sim_id: str) -> int:
+    """
+    Get the average time for this type of construction (2D or 1D)
 
+    :param sim_id: Delphin entry id from database
+    :return: Average simulation time in minutes
+    """
 
-def get_git_revision_hash():
-    return subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode()
-"""
+    sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
+    dimension = sim_obj.dimensions
+    predicted_time = sim_obj.estimated_simulation_time
+
+    if predicted_time:
+        logger.debug(f'Predicted simulation time for Delphin project in {dimension}D: {predicted_time}min')
+        return predicted_time
+
+    else:
+
+        sim_time = [simulation_entry.simulation_time
+                    for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension,
+                                                                          simulation_time__exists=True)]
+
+        if sim_time:
+            avg_time = int(np.ceil(np.mean(sim_time) / 60))
+            logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
+            return avg_time
+
+        elif dimension == 2:
+            logger.debug(f'No previous simulations found. Setting time to 180min for a 2D simulation')
+            return 240
+
+        else:
+            logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
+            return 120

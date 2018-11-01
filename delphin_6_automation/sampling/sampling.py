@@ -20,16 +20,18 @@ from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.database_interactions import weather_interactions
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import material_interactions
+from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
 from delphin_6_automation.sampling import inputs
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.sampling import sobol_lib
+from delphin_6_automation.sampling import sim_time_prediction
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -48,54 +50,51 @@ def create_sampling_strategy(path: str) -> dict:
 
     design = inputs.design_options()
 
-    scenario = {'generic scenario': None}
+    scenario = {'generic_scenario': None}
 
-    distributions = {'exterior climate':
+    distributions = {'exterior_climate':
                          {'type': 'discrete', 'range': list(general_interactions.list_weather_stations().keys())},
 
-                     'exterior heat transfer coefficient slope':
+                     'exterior_heat_transfer_coefficient_slope':
                          {'type': 'uniform', 'range': [1, 4], },
 
-                     'exterior moisture transfer coefficient':
+                     'exterior_moisture_transfer_coefficient':
                          {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], },
 
-                     'solar absorption':
+                     'solar_absorption':
                          {'type': 'uniform', 'range': [0.4, 0.8], },
 
-                     'rain scale factor':
+                     'rain_scale_factor':
                          {'type': 'uniform', 'range': [0, 2], },
 
-                     'interior climate':
+                     'interior_climate':
                          {'type': 'discrete', 'range': ['a', 'b'], },
 
-                     'interior heat transfer coefficient':
+                     'interior_heat_transfer_coefficient':
                          {'type': 'uniform', 'range': [5, 10], },
 
-                     'interior moisture transfer coefficient':
+                     'interior_moisture_transfer_coefficient':
                          {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], },
 
-                     'interior sd value':
+                     'interior_sd_value':
                          {'type': 'uniform', 'range': [0.0, 0.6], },
 
-                     'wall orientation':
+                     'wall_orientation':
                          {'type': 'uniform', 'range': [0, 360], },
 
-                     'wall core width':
+                     'wall_core_width':
                          {'type': 'uniform', 'range': [0.1, 0.9], },
 
-                     'wall core material':
+                     'wall_core_material':
                          {'type': 'discrete', 'range': inputs.wall_core_materials(), },
 
-                     'plaster width':
+                     'plaster_width':
                          {'type': 'uniform', 'range': [0.01, 0.02], },
 
-                     'plaster material':
+                     'plaster_material':
                          {'type': 'discrete', 'range': inputs.plaster_materials(), },
 
-                     'insulation width':
-                         {'type': 'uniform', 'range': [0.01, 0.3], },
-
-                     'start year':
+                     'start_year':
                          {'type': 'discrete', 'range': [i for i in range(2020, 2046)], },
                      }
 
@@ -256,116 +255,116 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
             design_index = sampling_strategy['design'].index(design)
             design_variation = copy.deepcopy(delphin_projects[design_index])
 
-            for parameter in samples[sequence][design]['generic scenario'].keys():
-                if parameter == 'exterior heat transfer coefficient slope':
+            for parameter in samples[sequence][design]['generic_scenario'].keys():
+                if parameter == 'exterior_heat_transfer_coefficient_slope':
                     delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorHeatConduction',
                                                                      'ExchangeSlope',
                                                                      samples[sequence][design][
-                                                                         'generic scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                                                                         'generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'exterior moisture transfer coefficient':
+                elif parameter == 'exterior_moisture_transfer_coefficient':
                     outdoor_moisture_transfer = \
                         delphin_permutations.compute_vapour_diffusion_slope(
-                            samples[sequence][design]['generic scenario'][
-                                'exterior heat transfer coefficient slope'][0],
-                            samples[sequence][design]['generic scenario'][parameter][0])
+                            samples[sequence][design]['generic_scenario'][
+                                'exterior_heat_transfer_coefficient_slope'][0],
+                            samples[sequence][design]['generic_scenario'][parameter][0])
 
                     delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorVaporDiffusion',
                                                                      'ExchangeSlope', outdoor_moisture_transfer[0])
                     delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorVaporDiffusion',
-                                                                     'ExchangeCoefficient', outdoor_moisture_transfer[1])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                                                                     'ExchangeCoefficient',
+                                                                     outdoor_moisture_transfer[1])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'solar absorption':
+                elif parameter == 'solar_absorption':
                     delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorShortWaveRadiation',
                                                                      'SurfaceAbsorptionCoefficient',
                                                                      samples[sequence][design][
-                                                                         'generic scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                                                                         'generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'rain scale factor':
+                elif parameter == 'rain_scale_factor':
                     delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorWindDrivenRain',
                                                                      'ExposureCoefficient',
                                                                      samples[sequence][design][
-                                                                         'generic scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                                                                         'generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'interior heat transfer coefficient':
+                elif parameter == 'interior_heat_transfer_coefficient':
                     delphin_permutations.change_boundary_coefficient(design_variation, 'IndoorHeatConduction',
                                                                      'ExchangeCoefficient',
                                                                      samples[sequence][design][
-                                                                         'generic scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                                                                         'generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'interior moisture transfer coefficient':
-                    indoor_heat_transfer = samples[sequence][design]['generic scenario'][
-                        'interior heat transfer coefficient'][0]
+                elif parameter == 'interior_moisture_transfer_coefficient':
+                    indoor_heat_transfer = samples[sequence][design]['generic_scenario'][
+                        'interior_heat_transfer_coefficient'][0]
                     indoor_moisture_transfer = samples[sequence][design][
-                                                   'generic scenario'][parameter][0] * indoor_heat_transfer
+                                                   'generic_scenario'][parameter][0] * indoor_heat_transfer
                     delphin_permutations.change_boundary_coefficient(design_variation, 'IndoorVaporDiffusion',
                                                                      'ExchangeCoefficient',
                                                                      indoor_moisture_transfer)
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'interior sd value':
+                elif parameter == 'interior_sd_value':
                     delphin_permutations.change_boundary_coefficient(design_variation, 'IndoorVaporDiffusion',
                                                                      'SDValue',
                                                                      samples[sequence][design][
-                                                                         'generic scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                                                                         'generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'wall orientation':
+                elif parameter == 'wall_orientation':
                     delphin_permutations.change_orientation(design_variation, samples[sequence][design][
-                        'generic scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                        'generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'wall core width':
+                elif parameter == 'wall_core_width':
                     delphin_permutations.change_layer_width(design_variation, 'Old Building Brick Dresden ZP [504]',
-                                                            samples[sequence][design]['generic scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                                                            samples[sequence][design]['generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'wall core material':
+                elif parameter == 'wall_core_material':
                     new_material = material_interactions.get_material_info(samples[sequence][design][
-                                                                               'generic scenario'][parameter][0])
+                                                                               'generic_scenario'][parameter][0])
                     delphin_permutations.change_layer_material(design_variation, 'Old Building Brick Dresden ZP [504]',
                                                                new_material)
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'plaster width':
+                elif parameter == 'plaster_width':
                     delphin_permutations.change_layer_width(design_variation, 'Lime cement mortar [717]',
-                                                            samples[sequence][design]['generic scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                                                            samples[sequence][design]['generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'plaster material':
+                elif parameter == 'plaster_material':
                     new_material = material_interactions.get_material_info(samples[sequence][design][
-                                                                               'generic scenario'][parameter][0])
+                                                                               'generic_scenario'][parameter][0])
                     delphin_permutations.change_layer_material(design_variation, 'Lime cement mortar [717]',
                                                                new_material)
-                    sample_dict[parameter] = samples[sequence][design]['generic scenario'][parameter][0]
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
             # Upload project
             delphin_permutations.update_output_locations(design_variation)
             delphin_id = delphin_interactions.upload_delphin_dict_to_database(design_variation, 1)
 
-            start_year = int(samples[sequence][design]['generic scenario']['start year'][0])
+            start_year = int(samples[sequence][design]['generic_scenario']['start_year'][0])
             years = [start_year, ] + [year for year in range(start_year, start_year + 6)]
             weather_interactions.assign_weather_by_name_and_years(delphin_id,
                                                                   samples[sequence][design][
-                                                                      'generic scenario']['exterior climate'][0], years)
+                                                                      'generic_scenario']['exterior_climate'][0], years)
             weather_interactions.assign_indoor_climate_to_project(delphin_id,
                                                                   samples[sequence][design][
-                                                                      'generic scenario']['interior climate'][0])
+                                                                      'generic_scenario']['interior_climate'][0])
             delphin_interactions.change_entry_simulation_length(delphin_id, len(years), 'a')
 
-            sample_dict['start year'] = samples[sequence][design]['generic scenario']['start year'][0]
-            sample_dict['exterior climate'] = samples[sequence][design]['generic scenario']['exterior climate'][0]
-            sample_dict['interior climate'] = samples[sequence][design]['generic scenario']['interior climate'][0]
+            sample_dict['start_year'] = samples[sequence][design]['generic_scenario']['start_year'][0]
+            sample_dict['exterior_climate'] = samples[sequence][design]['generic_scenario']['exterior_climate'][0]
+            sample_dict['interior_climate'] = samples[sequence][design]['generic_scenario']['interior_climate'][0]
             sample_dict['design_option'] = create_design_info(design)
             sample_dict['sequence'] = sequence
 
             delphin_interactions.add_sampling_dict(delphin_id, sample_dict)
-
             delphin_ids.append(delphin_id)
 
     return delphin_ids

@@ -7,8 +7,6 @@ __author__ = "Christian Kongsgaard"
 # Modules:
 from collections import OrderedDict
 import pytest
-import xmltodict
-import os
 
 # RiBuild Modules:
 from delphin_6_automation.delphin_setup import delphin_permutations

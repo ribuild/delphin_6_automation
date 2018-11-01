@@ -34,6 +34,7 @@ from delphin_6_automation.database_interactions.db_templates import result_raw_e
 from delphin_6_automation.sampling import sampling
 from delphin_6_automation.backend import simulation_worker
 from delphin_6_automation.sampling import inputs
+from delphin_6_automation.sampling import sim_time_prediction
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -143,6 +144,13 @@ def add_three_years_weather(setup_database, test_folder):
 
 
 @pytest.fixture()
+def add_two_weather_stations(add_three_years_weather, test_folder):
+    weather_ids = weather_interactions.upload_weather_to_db(test_folder + '/weather/Copenhagen_3_years.WAC')
+
+    return weather_ids
+
+
+@pytest.fixture()
 def db_one_project(empty_database, delphin_file_path, add_single_user, add_two_materials, add_three_years_weather):
     priority = 'high'
     climate_class = 'a'
@@ -173,9 +181,15 @@ def add_results(db_one_project, tmpdir, test_folder):
 
 @pytest.fixture()
 def add_sampling_strategy(empty_database, add_three_years_weather, tmpdir, mock_design_options):
-    test_dir = tmpdir.mkdir('test')
+
+    if not os.path.exists(os.path.join(tmpdir, 'test')):
+        test_dir = tmpdir.mkdir('test')
+    else:
+        test_dir = os.path.join(tmpdir, 'test')
     strategy = sampling.create_sampling_strategy(test_dir)
-    sampling_interactions.upload_sampling_strategy(strategy)
+    strategy_id = sampling_interactions.upload_sampling_strategy(strategy)
+
+    return strategy_id
 
 
 @pytest.fixture()
@@ -560,3 +574,63 @@ def mock_wait_consecutive_errors(monkeypatch, tmpdir):
         return start_time, consecutive_errors
 
     monkeypatch.setattr(simulation_worker, 'critical_error_occurred', mock_return)
+
+
+@pytest.fixture()
+def add_delphin_for_time_estimation(empty_database, delphin_file_path, add_two_materials, add_two_weather_stations,
+                                    test_folder, tmpdir):
+    priority = 'high'
+    climate_classes = ['a', 'b']
+    location_name = ['Aberdeen', 'Copenhagen']
+    years = [2020, 2021, 2022]
+    design_list = ['1d_interior', '1d_interior_CalciumSilicateBoard_39_125_705_25',
+                   '1d_exterior', '1d_exterior_CalciumSilicateBoard_39_125_705_25']
+    folder = tmpdir.mkdir('test')
+    weather_folder = folder.mkdir('weather')
+    shutil.copy(f'{test_folder}/weather/temperature.ccd', f'{weather_folder}/temperature.ccd')
+    shutil.copy(f'{test_folder}/weather/indoor_temperature.ccd', f'{weather_folder}/indoor_temperature.ccd')
+
+    for sequence_index in range(3):
+        for design in design_list:
+            for loc in location_name:
+                for climate_class in climate_classes:
+                    sim_id = general_interactions.add_to_simulation_queue(delphin_file_path, priority)
+                    weather_interactions.assign_indoor_climate_to_project(sim_id, climate_class)
+                    weather_interactions.assign_weather_by_name_and_years(sim_id, loc, years)
+                    delphin_interactions.change_entry_simulation_length(sim_id, len(years), 'a')
+                    sample_dict = {'design_option': sampling.create_design_info(design),
+                                   'sequence': str(sequence_index), 'exterior_climate': loc,
+                                   'interior_climate': climate_class}
+                    delphin_interactions.add_sampling_dict(sim_id, sample_dict)
+                    simulation_interactions.set_simulation_time(sim_id,
+                                                                datetime.timedelta(minutes=10))
+
+    delphin_doc = delphin_entry.Delphin.objects().first()
+    del delphin_doc
+
+
+@pytest.fixture()
+def time_prediction_data(add_delphin_for_time_estimation):
+    return sim_time_prediction.get_time_prediction_data()
+
+
+@pytest.fixture()
+def create_time_model(add_delphin_for_time_estimation, add_sampling_strategy):
+    strategy_doc = sample_entry.Strategy.objects().first()
+    model_id = sim_time_prediction.create_upload_time_prediction_model(strategy_doc)
+
+    return model_id
+
+
+@pytest.fixture()
+def delphin_with_estimated_time(add_delphin_for_time_estimation):
+
+    delphin_list = delphin_entry.Delphin.objects()
+    for delphin in delphin_list:
+        delphin.update(set__estimated_simulation_time=random.randint(5, 15))
+
+    sample = sample_entry.Sample()
+    sample.samples = {'test': 0}
+    sample.delphin_docs = delphin_list
+    sample.iteration = 0
+    sample.save()

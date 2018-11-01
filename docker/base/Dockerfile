@@ -5,8 +5,8 @@ LABEL maintainer="Christian Kongsgaard <ocni@dtu.dk>" \
 
 WORKDIR /app
 
-ADD ././requirements.txt /app/requirements_docker.txt
+ADD ././requirements.txt /app/requirements.txt
 
-RUN pip --no-cache-dir install -r requirements_docker.txt
+RUN pip --no-cache-dir install -r requirements.txt
 
 RUN mkdir /app/data

@@ -10,12 +10,12 @@ import platform
 from pathlib import Path
 import subprocess
 import datetime
-import numpy as np
 import time
 import threading
 import paramiko
 import typing
 import shutil
+import json
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -25,13 +25,8 @@ from delphin_6_automation.database_interactions import general_interactions
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
-try:
-    from delphin_6_automation.database_interactions.auth import hpc
-except ModuleNotFoundError:
-    pass
-
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -116,35 +111,6 @@ def github_updates():
     raise NotImplementedError
 
 
-def get_average_computation_time(sim_id: str) -> int:
-    """
-    Get the average time for this type of construction (2D or 1D)
-
-    :param sim_id: Delphin entry id from database
-    :return: Average simulation time in minutes
-    """
-
-    sim_obj = delphin_entry.Delphin.objects(id=sim_id).first()
-    dimension = sim_obj.dimensions
-
-    sim_time = [simulation_entry.simulation_time
-                for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension,
-                                                                      simulation_time__exists=True)]
-
-    if sim_time:
-        avg_time = int(np.ceil(np.mean(sim_time) / 60))
-        logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
-        return avg_time
-
-    elif dimension == 2:
-        logger.debug(f'No previous simulations found. Setting time to 180min for a 2D simulation')
-        return 240
-
-    else:
-        logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
-        return 120
-
-
 def create_submit_file(sim_id: str, simulation_folder: str, computation_time: int, restart=False) -> str:
     """Create a submit file for the DTU HPC queue system."""
 
@@ -185,21 +151,8 @@ def submit_job(submit_file: str, sim_id: str) -> None:
 
     terminal_call = f"cd ~/ribuild/{sim_id}\n", f"bsub < {submit_file}\n"
 
-    system = platform.system()
-    if system == 'Windows':
-        key = paramiko.RSAKey.from_private_key_file(hpc['key_path'], password=hpc['key_pw'])
-    elif system == 'Linux':
-        key_path = '/run/secrets/ssh_key'
-        key = paramiko.RSAKey.from_private_key_file(key_path)
-    else:
-        logger.error('OS not supported')
-        raise NameError('OS not supported')
-
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
+    client = connect_to_hpc()
     logger.debug(f'Connecting to HPC to upload simulation with ID: {sim_id}')
-    client.connect(hostname=hpc['ip'], username=hpc['user'], port=hpc['port'], pkey=key)
 
     channel = client.invoke_shell()
     channel_data = ''
@@ -216,6 +169,34 @@ def submit_job(submit_file: str, sim_id: str) -> None:
 
     channel.close()
     client.close()
+
+
+def connect_to_hpc() -> paramiko.SSHClient:
+    system = platform.system()
+
+    if system == 'Windows':
+        from delphin_6_automation.database_interactions.auth import hpc
+        key = paramiko.RSAKey.from_private_key_file(hpc['key_path'], password=hpc['key_pw'])
+
+    elif system == 'Linux':
+        secret_path = '/run/secrets'
+        key_path = os.path.join(secret_path, 'ssh_key')
+        key = paramiko.RSAKey.from_private_key_file(key_path)
+        hpc_path = os.path.join(secret_path, 'hpc_access')
+
+        with open(hpc_path, 'r') as file:
+            hpc = json.load(file)
+
+    else:
+        logger.error('OS not supported')
+        raise NameError('OS not supported')
+
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    client.connect(hostname=hpc['ip'], username=hpc['user'], port=hpc['port'], pkey=key)
+
+    return client
 
 
 def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder: str):
@@ -337,7 +318,7 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     logger.info(f'Downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(id_, simulation_folder)
-    estimated_time = get_average_computation_time(id_)
+    estimated_time = general_interactions.compute_simulation_time(id_)
     submit_file = create_submit_file(id_, simulation_folder, estimated_time)
     submit_job(submit_file, id_)
 

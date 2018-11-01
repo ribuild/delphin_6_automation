@@ -20,13 +20,11 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 
 data_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\simtime_prediction\data'
 
-mongo_setup.global_init(auth.auth_dict)
+server = mongo_setup.global_init(auth.auth_dict)
 
 entries = delphin_entry.Delphin.objects(simulation_time__exists=True)
 
-mongo_setup.global_end_ssh(auth.auth_dict)
-
-col = ['time', ] + list(entries[0].sample_data.keys())[:-2] + list(entries[0].sample_data['design_option'].keys())
+col = ['time', ] + list(entries[0].sample_data.keys())[:-1] + list(entries[0].sample_data['design_option'].keys())
 frames = []
 
 for i in range(len(entries)):
@@ -50,3 +48,5 @@ writer = pd.ExcelWriter(os.path.join(data_folder, 'sim_time.xlsx'))
 data_frame.to_excel(writer, 'simtime')
 writer.save()
 print('done')
+
+mongo_setup.global_end_ssh(server)

@@ -17,7 +17,7 @@ from delphin_6_automation.database_interactions import general_interactions as g
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
 # Logger
-logger = ribuild_logger(__name__)
+logger = ribuild_logger()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBUILD SIMULATION FUNCTIONS AND CLASSES
@@ -125,6 +125,17 @@ def set_simulation_time(sim_id: str, computation_time: datetime.timedelta) -> st
     delphin_entry.update(set__simulation_time=computation_time.total_seconds())
     logger.debug(f'For Delphin project with ID: {sim_id}, '
                  f'simulation time was changed to: {computation_time.total_seconds()}')
+
+    return sim_id
+
+
+def set_simulation_time_estimate(sim_id: str, computation_time: int) -> str:
+    """Sets the estimate simulation time for a Delphin project"""
+
+    delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_entry.update(set__estimated_simulation_time=computation_time)
+    logger.debug(f'For Delphin project with ID: {sim_id}, '
+                 f'simulation time was changed to: {computation_time}')
 
     return sim_id
 
