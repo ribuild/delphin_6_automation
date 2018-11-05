@@ -12,6 +12,8 @@ import typing
 from delphin_6_automation.database_interactions.db_templates import sample_entry, delphin_entry
 from delphin_6_automation.sampling import sim_time_prediction
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+from delphin_6_automation.database_interactions import general_interactions
+from delphin_6_automation.database_interactions import simulation_interactions
 
 # Logger
 logger = ribuild_logger()
@@ -189,18 +191,20 @@ def get_delphin_for_sample(sample: sample_entry.Sample) -> typing.List[str]:
 
 
 def update_queue_priorities(sample_id: str):
+    """Updates the queue priorities based on the estimated simulation time."""
 
     sample_doc = sample_entry.Sample.objects(id=sample_id).first()
 
-    if sample_doc.iteration >= 4:
+    if sample_doc.iteration >= 3:
         sim_time_prediction.queue_priorities_on_time_prediction(sample_doc)
         logger.info(f'Updated queue priorities based on the time prediction')
     else:
-        logger.info(f'The current iteration [{sample_doc.current_iteration}]was below 4, '
+        logger.info(f'The current iteration [{sample_doc.current_iteration}]was below 3, '
                     f'therefore the queue priorities where not updated.')
 
 
 def update_time_estimation_model(strategy_id: str):
+    """Updates the machine learning model for simulation time estimations."""
 
     strategy_doc = sample_entry.Strategy.objects(id=strategy_id).first()
 
@@ -211,3 +215,25 @@ def update_time_estimation_model(strategy_id: str):
     else:
         logger.info(f'The current iteration [{strategy_doc.current_iteration}]was below 3, '
                     f'therefore no time prediction model was created.')
+
+
+def predict_simulation_time(delphin_ids: typing.List[str], strategy_id: str) -> None:
+    """
+    Predicts the simulation time of a list of Delphin projects. The time prediction model is updated
+    before it is applied to the Delphin projects.
+    """
+
+    update_time_estimation_model(strategy_id)
+
+    strategy_doc = sample_entry.Strategy.objects(id=strategy_id).first()
+    time_model = strategy_doc.time_prediction_model
+
+    if time_model:
+        for delphin_id in delphin_ids:
+            delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
+            sim_time_prediction.simulation_time_prediction_ml(delphin_doc, time_model)
+
+    else:
+        for delphin_id in delphin_ids:
+            time_estimate = general_interactions.compute_simulation_time(delphin_id)
+            simulation_interactions.set_simulation_time_estimate(delphin_id, time_estimate)

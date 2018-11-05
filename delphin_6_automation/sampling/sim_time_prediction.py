@@ -203,8 +203,10 @@ def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin, model_entr
     time_model = pickle.loads(model_entry.model)
     inputs = process_inputs(delphin_doc.sample_data, model_entry.model_features)
     sim_time_secs = time_model.predict(inputs)
+    sim_time_mins = int(sim_time_secs / 60)
+    delphin_doc.update(set__estimated_simulation_time=sim_time_mins)
 
-    return sim_time_secs / 60
+    return sim_time_mins
 
 
 def queue_priorities_on_time_prediction(sample_doc: sample_entry.Sample):
@@ -212,4 +214,5 @@ def queue_priorities_on_time_prediction(sample_doc: sample_entry.Sample):
     max_time = np.array([doc.estimated_simulation_time
                          for doc in sample_doc.delphin_docs]).max()
 
-    [doc.update(set__queue_priority=doc.estimated_simulation_time/max_time) for doc in sample_doc.delphin_docs]
+    [doc.update(set__queue_priority=doc.estimated_simulation_time/max_time)
+     for doc in sample_doc.delphin_docs]

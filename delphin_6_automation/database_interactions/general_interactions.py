@@ -242,3 +242,4 @@ def compute_simulation_time(sim_id: str) -> int:
         else:
             logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
             return 120
+

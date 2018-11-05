@@ -318,7 +318,7 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     logger.info(f'Downloads project with ID: {id_}')
 
     general_interactions.download_full_project_from_database(id_, simulation_folder)
-    estimated_time = general_interactions.compute_simulation_time(id_)
+    estimated_time = simulation_interactions.get_simulation_time_estimate(id_)
     submit_file = create_submit_file(id_, simulation_folder, estimated_time)
     submit_job(submit_file, id_)
 

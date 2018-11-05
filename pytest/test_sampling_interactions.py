@@ -10,6 +10,7 @@ import pytest
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import sample_entry
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions import sampling_interactions
 from delphin_6_automation.sampling import sampling
 
@@ -154,3 +155,25 @@ def test_upload_sample_std(add_dummy_sample):
     sampling_document.reload()
     assert sampling_document.standard_deviation
     assert isinstance(sampling_document.standard_deviation, dict)
+
+
+def test_predict_simulation_time_1(add_delphin_for_time_estimation, create_time_model):
+    delphin_docs = delphin_entry.Delphin.objects()
+    delphin_ids = [str(doc.id) for doc in delphin_docs]
+    strategy_id = sample_entry.Strategy.objects().first().id
+    sampling_interactions.predict_simulation_time(delphin_ids, strategy_id)
+
+    for doc in delphin_docs:
+        doc.reload()
+        assert doc.estimated_simulation_time == 10
+
+
+def test_predict_simulation_time_2(add_delphin_for_time_estimation, add_sampling_strategy):
+    delphin_docs = delphin_entry.Delphin.objects()
+    delphin_ids = [str(doc.id) for doc in delphin_docs]
+    strategy_id = sample_entry.Strategy.objects().first().id
+    sampling_interactions.predict_simulation_time(delphin_ids, strategy_id)
+
+    for doc in delphin_docs:
+        doc.reload()
+        assert doc.estimated_simulation_time == 10

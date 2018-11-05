@@ -12,7 +12,7 @@ import shutil
 import typing
 
 # RiBuild Modules:
-import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
+from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions import general_interactions as general_interact
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 
@@ -33,13 +33,13 @@ def download_simulation_result(sim_id: str, download_path: str, raw_or_processed
     :return: None
     """
 
-    object_ = delphin_db.Delphin.objects(id=sim_id).first()
+    delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
 
     download_extended_path = download_path + '/' + str(sim_id)
     os.mkdir(download_extended_path)
 
     if raw_or_processed == 'raw':
-        result_id = object_.results_raw
+        result_id = delphin_doc.results_raw
         logger.info(f'Downloads raw result with ID: {result_id} from Delphin project with ID: {sim_id}')
         general_interact.download_raw_result(result_id.id, download_extended_path)
 
@@ -61,7 +61,7 @@ def find_next_sim_in_queue() -> typing.Optional[str]:
     """
 
     try:
-        id_ = delphin_db.Delphin.objects(simulating=False, simulated=None).order_by('-queue_priority').first().id
+        id_ = delphin_entry.Delphin.objects(simulating=False, simulated=None).order_by('-queue_priority').first().id
         set_simulating(str(id_), True)
         logger.debug(f'Found unsimulated Delphin project with ID: {id_}')
         return str(id_)
@@ -81,11 +81,11 @@ def set_simulating(id_: str, set_to: bool) -> str:
     :return: ID of the entry
     """
 
-    simulation = delphin_db.Delphin.objects(id=id_).first()
-    simulation.update(set__simulating=set_to)
+    delphin_doc = delphin_entry.Delphin.objects(id=id_).first()
+    delphin_doc.update(set__simulating=set_to)
     logger.debug(f'For Delphin project with ID: {id_}, simulation was change to: {set_to}')
 
-    return simulation.id
+    return delphin_doc.id
 
 
 def set_simulated(id_: str) -> str:
@@ -96,7 +96,7 @@ def set_simulated(id_: str) -> str:
     :return: ID of the entry
     """
 
-    simulation = delphin_db.Delphin.objects(id=id_).first()
+    simulation = delphin_entry.Delphin.objects(id=id_).first()
     simulation.update(set__simulated=datetime.datetime.now())
     set_simulating(id_, False)
     logger.debug(f'For Delphin project with ID: {id_}, simulated was changed to: {datetime.datetime.now()}')
@@ -121,8 +121,8 @@ def clean_simulation_folder(path: str) -> bool:
 def set_simulation_time(sim_id: str, computation_time: datetime.timedelta) -> str:
     """Sets the time it took to simulate Delphin project"""
 
-    delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
-    delphin_entry.update(set__simulation_time=computation_time.total_seconds())
+    delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
+    delphin_doc.update(set__simulation_time=computation_time.total_seconds())
     logger.debug(f'For Delphin project with ID: {sim_id}, '
                  f'simulation time was changed to: {computation_time.total_seconds()}')
 
@@ -132,12 +132,20 @@ def set_simulation_time(sim_id: str, computation_time: datetime.timedelta) -> st
 def set_simulation_time_estimate(sim_id: str, computation_time: int) -> str:
     """Sets the estimate simulation time for a Delphin project"""
 
-    delphin_entry = delphin_db.Delphin.objects(id=sim_id).first()
-    delphin_entry.update(set__estimated_simulation_time=computation_time)
+    delphin_doc = delphin_entry.Delphin.objects(id=sim_id).first()
+    delphin_doc.update(set__estimated_simulation_time=computation_time)
     logger.debug(f'For Delphin project with ID: {sim_id}, '
                  f'simulation time was changed to: {computation_time}')
 
     return sim_id
+
+
+def get_simulation_time_estimate(delphin_id: str) -> int:
+    """Returns the estimated simulation time of Delphin project, given its ID"""
+
+    delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
+
+    return delphin_doc.estimated_simulation_time
 
 
 def wait_until_simulated(delphin_ids: list) -> bool:
@@ -152,7 +160,7 @@ def wait_until_simulated(delphin_ids: list) -> bool:
 
     while not all(simulated):
         for index, id_ in enumerate(delphin_ids):
-            entry = delphin_db.Delphin.objects(id=id_).first()
+            entry = delphin_entry.Delphin.objects(id=id_).first()
 
             if entry.simulated:
                 simulated[index] = True
