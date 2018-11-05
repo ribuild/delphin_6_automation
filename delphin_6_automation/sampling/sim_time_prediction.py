@@ -30,6 +30,11 @@ logger = ribuild_logger()
 
 
 def get_time_prediction_data() -> pd.DataFrame:
+    """
+    Collects the sample data of the simulated Delphin projects in the database in order to
+    predict the simulation time
+    """
+
     entries = delphin_entry.Delphin.objects(simulation_time__exists=True)
 
     col = ['time', ] + list(entries[0].sample_data.keys()) + list(entries[0].sample_data['design_option'].keys())
@@ -51,6 +56,8 @@ def get_time_prediction_data() -> pd.DataFrame:
 
 
 def process_time_data(data_frame: pd.DataFrame) -> typing.Tuple[pd.DataFrame, pd.Series]:
+    """Processing of sample data for the machine learning model"""
+
     y_data = data_frame['time']
 
     x_data = data_frame.loc[:, data_frame.columns != 'time']
@@ -63,6 +70,8 @@ def process_time_data(data_frame: pd.DataFrame) -> typing.Tuple[pd.DataFrame, pd
 
 
 def transform_interior_climate(data: pd.DataFrame) -> pd.DataFrame:
+    """Transforms the interior climate classes into numerical data."""
+
     if 'interior_climate' in data.columns:
         if not (data.loc[data.loc[:, 'interior_climate'] == 'a', 'interior_climate']).empty:
             data.loc[data.loc[:, 'interior_climate'] == 'a', 'interior_climate'] = 0.0
@@ -76,6 +85,8 @@ def transform_interior_climate(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def transform_weather(data: pd.DataFrame) -> pd.DataFrame:
+    """Transform the weather stations names into numerical data."""
+
     sys_names = set(data.loc[:, 'exterior_climate'])
 
     mapper = {}
@@ -88,6 +99,8 @@ def transform_weather(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
+    """Transforms the insulation system names into numerical data"""
+
     sys_names = set(data.loc[data.loc[:, 'system_name'] != 0, 'system_name'])
 
     mapper = {0: 0}
@@ -100,6 +113,8 @@ def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Tuple[KNeighborsRegressor, dict]:
+    """Generation of the machine learning model"""
+
     ss = ShuffleSplit(n_splits=5, test_size=0.25, random_state=47)
     scaler = MinMaxScaler()
     best_model = {'score': 0, 'parameters': [1, 'uniform']}
@@ -125,6 +140,8 @@ def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Tuple[KNeig
 
 
 def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) -> typing.Tuple[np.ndarray, list]:
+    """Removes the features in the input data, which does not contribute to a good score."""
+
     features = x_data.columns
 
     col_del = []
@@ -148,6 +165,7 @@ def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) 
 
 
 def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: sample_entry.Strategy) -> ObjectId:
+    """Uploads the machine learning model to the database."""
 
     time_model_doc = sample_strategy.time_prediction_model
     pickled_model = pickle.dumps(model)
@@ -175,6 +193,7 @@ def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: 
 
 
 def create_upload_time_prediction_model(strategy: sample_entry.Strategy) -> ObjectId:
+    """Collects data, generates and uploads a simulation time prediction model to the database."""
 
     simulation_data = get_time_prediction_data()
     x_data, y_data = process_time_data(simulation_data)
@@ -185,6 +204,7 @@ def create_upload_time_prediction_model(strategy: sample_entry.Strategy) -> Obje
 
 
 def process_inputs(raw_inputs: dict, model_features: dict) -> pd.DataFrame:
+    """Process the sample inputs so a simulation time estimate can be made."""
 
     data = {'time': None}
     raw_inputs.update(raw_inputs['design_option'])
@@ -199,6 +219,7 @@ def process_inputs(raw_inputs: dict, model_features: dict) -> pd.DataFrame:
 
 
 def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin, model_entry: time_model_entry.TimeModel) -> int:
+    """Predict the simulation time of a Delphin project."""
 
     time_model = pickle.loads(model_entry.model)
     inputs = process_inputs(delphin_doc.sample_data, model_entry.model_features)
@@ -210,6 +231,7 @@ def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin, model_entr
 
 
 def queue_priorities_on_time_prediction(sample_doc: sample_entry.Sample):
+    """Update the queue priorities based on the simulation time predictions."""
 
     max_time = np.array([doc.estimated_simulation_time
                          for doc in sample_doc.delphin_docs]).max()
