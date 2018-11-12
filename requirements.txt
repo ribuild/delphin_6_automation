@@ -5,7 +5,7 @@ matplotlib
 scikit-learn
 paramiko
 sshtunnel
-mongoengine
+mongoengine==0.15.3
 lxml
 xmltodict
 notifiers
