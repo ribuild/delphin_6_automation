@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
 
-  simulation_ocni:
+  simulation_ocni_2d1d:
     image: ocni/hpc_simulator:latest
     volumes:
       - ocni_volume:/app/data
@@ -15,7 +15,7 @@ services:
       - source: hpc_ocni
         target: hpc_access
 
-  sampling:
+  sampling_2d1d:
     image: ocni/hpc_sampler:latest
     secrets:
       - source: db_simon
