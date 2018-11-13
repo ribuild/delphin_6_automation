@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+pandas = "*"
+scipy = "*"
+scikit-learn = "*"
+paramiko = "*"
+sshtunnel = "*"
+mongoengine = "==0.15.3"
+lxml = "*"
+xmltodict = "*"
+notifiers = "*"
+xlrd = "*"
+
+[dev-packages]
+matplotlib = "*"
+coveralls = "*"
+pytest = "*"
+pytest-cov = "*"
+
+[requires]
+python_version = "3.6"
