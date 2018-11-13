@@ -518,23 +518,17 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str,
     elif len(temperature_mould) < len(relative_humidity_mould):
         relative_humidity_mould = relative_humidity_mould[:len(temperature_mould)]
 
-    mould = {'a': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='a'),
-             'b': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='b'),
-             'c': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='c'),
-             'd': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='d'),
-             'e': damage_models.mould_pj(relative_humidity_mould, temperature_mould, aed_group='e')}
+    mould = damage_models.mould_index(relative_humidity_mould, temperature_mould,
+                                      draw_back=1, sensitivity_class=3, surface_quality=0)
 
-    result_entry.mould.put(bson.BSON.encode(mould))
+    result_entry.mould.put(np.asarray(mould).tobytes())
     result_entry.heat_loss.put(np.array(heat_loss).tobytes())
     result_entry.algae.put(np.array(damage_models.algae(relative_humidity_algae, temperature_algae)).tobytes())
     result_entry.u_value = damage_models.u_value(heat_loss,
                                                  exterior_temperature[:len(heat_loss)],
                                                  interior_temperature[:len(heat_loss)])
 
-    result_entry.thresholds = {'mould': max(max(damage_models.mould_pj(relative_humidity_mould,
-                                                                       temperature_mould, aed_group='a')[0]),
-                                            max(damage_models.mould_pj(relative_humidity_mould,
-                                                                       temperature_mould, aed_group='a')[1])),
+    result_entry.thresholds = {'mould': max(mould),
                                'heat_loss': sum(heat_loss)}
 
     result_entry.save()
