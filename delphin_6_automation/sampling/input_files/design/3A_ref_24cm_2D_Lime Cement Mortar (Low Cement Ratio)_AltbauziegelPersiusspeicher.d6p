@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DelphinProject xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de DelphinProject.xsd" fileVersion="6.5">
+	<ProjectInfo created="ti mar 20 10:10:31 2018" lastEdited="sø nov 11 23:38:15 2018">
+		<Comment>&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;RIBuild 2D Validation:&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;24cm&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;scraped joint&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;retrofittet with cement based mortar&lt;/p&gt;</Comment>
+		<VariantBaseProject>4A_ref_24cm_2D.d6p</VariantBaseProject>
+		<VariantDescription>A 3A variant based on project file '4A_ref_24cm_2D'.</VariantDescription>
+	</ProjectInfo>
+	<DirectoryPlaceholders>
+		<Placeholder name="Material Database">C:/Program Files/IBK/Delphin 6.0/resources/DB_materials</Placeholder>
+	</DirectoryPlaceholders>
+	<Init>
+		<SimulationParameter>
+			<BalanceEquationModule>BEHeatMoisture</BalanceEquationModule>
+			<Interval>
+				<IBK:Parameter name="Duration" unit="a">4</IBK:Parameter>
+			</Interval>
+			<StartYear>2018</StartYear>
+		</SimulationParameter>
+	</Init>
+	<Materials>
+		<MaterialReference name="LimeCementMortarLowCementRatio [718]" color="#ff409020" hatchCode="13">${Material Database}/C:\Program Files\IBK\Delphin 6.0\resources\DB_materials\LimeCementMortarLowCementRatio_718.m6</MaterialReference>
+		<MaterialReference name="AltbauziegelPersiusspeicher [536]" color="#ffff1010" hatchCode="13">${Material Database}/C:\Program Files\IBK\Delphin 6.0\resources\DB_materials\AltbauziegelPersiusspeicher_536.m6</MaterialReference>
+		<MaterialReference name="Lime Plaster (historical) [148]" color="#ffffff7f" hatchCode="13">${Material Database}/LimePlasterHist_148.m6</MaterialReference>
+	</Materials>
+	<Discretization>
+		<XSteps unit="m">0.001 0.001 0.0013 0.00169 0.00302 0.00169 0.0013 0.001 0.001 0.0013 0.00169 0.002197 0.0028561 0.00371293 0.00482681 0.00627485 0.00815731 0.0106045 0.0137858 0.0173867 0.0173867 0.0173867 0.0137858 0.0106045 0.00815731 0.00627485 0.00482681 0.00371293 0.0028561 0.002197 0.00169 0.0013 0.001 0.001 0.0013 0.00169 0.002197 0.00221332 0.00221332 0.00221332 0.002197 0.00169 0.0013 0.001 0.001 0.0013 0.00169 0.002197 0.0028561 0.00371293 0.00550294 0.00371293 0.0028561 0.002197 0.00169 0.0013 0.001 0.001 0.001 0.0013 0.00169 0.00302 0.00169 0.0013 0.001 0.001</XSteps>
+		<YSteps unit="m">0.00125 0.00125 0.00125 0.00125 0.001 0.001 0.0013 0.00169 0.002197 0.0028561 0.00371293 0.00381099 0.00381099 0.00381099 0.00381099</YSteps>
+	</Discretization>
+	<Conditions>
+		<Interfaces>
+			<Interface name="Exterior surface" type="Detailed">
+				<IBK:Parameter name="Orientation" unit="Deg">220</IBK:Parameter>
+				<BCReference>OutdoorHeatConduction</BCReference>
+				<BCReference>OutdoorVaporDiffusion</BCReference>
+				<BCReference>OutdoorWindDrivenRain</BCReference>
+				<BCReference>OutdoorShortWaveRadiation</BCReference>
+				<BCReference>OutdoorLongWaveRadiation</BCReference>
+			</Interface>
+			<Interface name="Interior surface" type="Detailed">
+				<BCReference>IndoorHeatConduction</BCReference>
+				<BCReference>IndoorVaporDiffusion</BCReference>
+			</Interface>
+		</Interfaces>
+		<ClimateConditions>
+			<ClimateCondition name="exterior temperature" type="Temperature" kind="TabulatedData">
+				<Filename>C:/Users/ocni/OneDrive/Shared WP6 DTU-SBiAAU/weather/temperature.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="interior temperature" type="Temperature" kind="TabulatedData">
+				<Filename>${Project Directory}/../weather/indoor_temperature.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="exterior relative humidity" type="RelativeHumidity" kind="TabulatedData">
+				<Filename>${Project Directory}/../weather/relative_humidity.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="longwave radiation" type="LWRadiationSkyEmission" kind="TabulatedData">
+				<Filename>${Project Directory}/../Weather/long_wave_radiation.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="wind driven rain" type="RainFluxNormal" kind="TabulatedData">
+				<Filename>${Project Directory}/../weather/wind_driven_rain.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="l/m2s">0</IBK:Parameter>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="interior relative humidity" type="RelativeHumidity" kind="TabulatedData">
+				<Filename>${Project Directory}/../weather/indoor_relative_humidity.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="short wave radiation" type="SWRadiationImposed" kind="TabulatedData">
+				<Filename>${Project Directory}/../weather/short_wave_radiation.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+			<ClimateCondition name="wind speed" type="WindVelocity" kind="TabulatedData">
+				<Filename>C:/Users/ocni/OneDrive/Shared WP6 DTU-SBiAAU/weather/wind_speed.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="m/s">0</IBK:Parameter>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+		</ClimateConditions>
+		<BoundaryConditions>
+			<BoundaryCondition name="OutdoorHeatConduction" type="HeatConduction" kind="ExchangeVelocity">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">4</IBK:Parameter>
+				<IBK:Parameter name="ExchangeSlope" unit="J/m3K">1</IBK:Parameter>
+				<IBK:Parameter name="ExchangeExponent" unit="---">1</IBK:Parameter>
+				<CCReference type="Temperature">exterior temperature</CCReference>
+				<CCReference type="WindVelocity">wind speed</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="OutdoorVaporDiffusion" type="VaporDiffusion" kind="ExchangeVelocity">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">3e-08</IBK:Parameter>
+				<IBK:Parameter name="ExchangeSlope" unit="s2/m2">3e-08</IBK:Parameter>
+				<IBK:Parameter name="ExchangeExponent" unit="---">0</IBK:Parameter>
+				<IBK:Parameter name="SDValue" unit="m">0</IBK:Parameter>
+				<CCReference type="Temperature">exterior temperature</CCReference>
+				<CCReference type="RelativeHumidity">exterior relative humidity</CCReference>
+				<CCReference type="WindVelocity">wind speed</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="OutdoorWindDrivenRain" type="WindDrivenRain" kind="ImposedFlux">
+				<IBK:Parameter name="ExposureCoefficient" unit="-">1</IBK:Parameter>
+				<IBK:Parameter name="MinRainTemperature" unit="C">-2</IBK:Parameter>
+				<CCReference type="Temperature">exterior temperature</CCReference>
+				<CCReference type="RelativeHumidity">exterior relative humidity</CCReference>
+				<CCReference type="RainFluxNormal">wind driven rain</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="OutdoorShortWaveRadiation" type="ShortWaveRadiation" kind="ImposedFlux">
+				<IBK:Parameter name="SurfaceAbsorptionCoefficient" unit="-">0.6</IBK:Parameter>
+				<CCReference type="SWRadiationImposed">short wave radiation</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="OutdoorLongWaveRadiation" type="LongWaveRadiation" kind="LongWaveComponents">
+				<IBK:Parameter name="SurfaceEmissionCoefficient" unit="-">0.9</IBK:Parameter>
+				<CCReference type="LWRadiationSkyEmission">longwave radiation</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="IndoorHeatConduction" type="HeatConduction" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">8</IBK:Parameter>
+				<CCReference type="Temperature">interior temperature</CCReference>
+			</BoundaryCondition>
+			<BoundaryCondition name="IndoorVaporDiffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">3e-08</IBK:Parameter>
+				<IBK:Parameter name="SDValue" unit="m">0</IBK:Parameter>
+				<CCReference type="Temperature">interior temperature</CCReference>
+				<CCReference type="RelativeHumidity">interior relative humidity</CCReference>
+			</BoundaryCondition>
+		</BoundaryConditions>
+	</Conditions>
+	<Outputs>
+		<IBK:Unit name="TimeUnit">h</IBK:Unit>
+		<OutputGrids>
+			<OutputGrid name="Fields and Profiles">
+				<Interval>
+					<IBK:Parameter name="Duration" unit="a">0</IBK:Parameter>
+					<IBK:Parameter name="StepSize" unit="h">1</IBK:Parameter>
+				</Interval>
+			</OutputGrid>
+			<OutputGrid name="Scalars">
+				<Interval>
+					<IBK:Parameter name="Duration" unit="a">0</IBK:Parameter>
+					<IBK:Parameter name="StepSize" unit="h">1</IBK:Parameter>
+				</Interval>
+			</OutputGrid>
+		</OutputGrids>
+		<OutputFiles>
+			<OutputFile name="temperature average 1">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="temperature average 2">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="temperature average 4">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="temperature average 5">
+				<Quantity unit="C">Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="relative humidity average 1">
+				<Quantity unit="%">RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="relative humidity average 2">
+				<Quantity unit="%">RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="relative humidity average 4">
+				<Quantity unit="%">RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="relative humidity average 5">
+				<Quantity unit="%">RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="moisture content average 1">
+				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="moisture content average 2">
+				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="moisture content average 4">
+				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="moisture content average 5">
+				<Quantity unit="kg/m3">MoistureMassDensity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="moisture integral">
+				<Quantity unit="kg">MoistureMassDensity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Integral</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+			<OutputFile name="heat loss">
+				<Quantity unit="W/m2">TotalFluxHeat</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Fields and Profiles</OutputGrid>
+			</OutputFile>
+		</OutputFiles>
+	</Outputs>
+	<Assignments>
+		<Assignment type="Material" location="Element">
+			<Reference>LimeCementMortarLowCementRatio [718]</Reference>
+			<Range>0 0 7 4</Range>
+		</Assignment>
+		<Assignment type="Material" location="Element">
+			<Reference>LimeCementMortarLowCementRatio [718]</Reference>
+			<Range>58 0 65 14</Range>
+		</Assignment>
+		<Assignment type="Material" location="Element">
+			<Reference>Lime Plaster (historical) [148]</Reference>
+			<Range>8 0 57 4</Range>
+		</Assignment>
+		<Assignment type="Material" location="Element">
+			<Reference>AltbauziegelPersiusspeicher [536]</Reference>
+			<Range>0 5 57 14</Range>
+		</Assignment>
+		<Assignment type="Interface" location="Right">
+			<Reference>Interior surface</Reference>
+			<Range>65 0 65 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>temperature average 1</Reference>
+			<Range>0 0 0 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>temperature average 4</Reference>
+			<Range>57 0 57 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>temperature average 5</Reference>
+			<Range>65 0 65 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>relative humidity average 1</Reference>
+			<Range>0 0 0 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>relative humidity average 4</Reference>
+			<Range>57 0 57 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>relative humidity average 5</Reference>
+			<Range>65 0 65 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>moisture content average 1</Reference>
+			<Range>0 0 0 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>moisture content average 4</Reference>
+			<Range>57 0 57 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>moisture content average 5</Reference>
+			<Range>65 0 65 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>moisture integral</Reference>
+			<Range>0 0 65 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Right">
+			<Reference>heat loss</Reference>
+			<Range>65 0 65 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>temperature average 2</Reference>
+			<Range>37 0 38 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>relative humidity average 2</Reference>
+			<Range>37 0 38 14</Range>
+		</Assignment>
+		<Assignment type="Output" location="Element">
+			<Reference>moisture content average 2</Reference>
+			<Range>37 0 38 14</Range>
+		</Assignment>
+		<Assignment type="Interface" location="Left">
+			<Reference>Exterior surface</Reference>
+			<Range>0 0 0 14</Range>
+		</Assignment>
+	</Assignments>
+</DelphinProject>

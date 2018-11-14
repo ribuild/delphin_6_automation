@@ -15,6 +15,7 @@ lxml = "*"
 xmltodict = "*"
 notifiers = "*"
 xlrd = "*"
+requests = "==2.20.1"
 
 [dev-packages]
 matplotlib = "*"
@@ -23,4 +24,4 @@ pytest = "*"
 pytest-cov = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
