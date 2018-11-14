@@ -33,6 +33,7 @@ from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 # Logger
 logger = ribuild_logger()
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
@@ -167,7 +168,6 @@ def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.n
 
     for raw_sample in sampling_strategy.samples_raw:
         if raw_sample.sequence_number == step:
-
             logger.debug(f'Found existing raw sample with sequence #{step}')
 
             return np.array(raw_sample.samples_raw)
@@ -210,7 +210,6 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
     samples = dict()
 
     for step in range(sampling_strategy.strategy['settings']['sequence']):
-
         logger.debug(f'Generates samples for sequence #{step}')
 
         raw_samples = get_raw_samples(sampling_strategy, step)
@@ -373,7 +372,52 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
 def create_design_info(design: str) -> dict:
 
     design_data = design.split('_')
-    if len(design_data) == 7:
+
+    if design_data[0] == '3A':
+        if design_data[1] == 'insu':
+            design_info = {'exterior_plaster': False,
+                           'system_name': 'Calsitherm',
+                           'insulation_material': 571,
+                           'finish_material': 125,
+                           'detail_material': 705,
+                           'insulation_thickness': 10,
+                           }
+        else:
+            design_info = {'exterior_plaster': False,
+                           'system_name': None,
+                           'insulation_material': None,
+                           'finish_material': None,
+                           'detail_material': None,
+                           'insulation_thickness': None,
+                           }
+        if design_data[3] == '1D':
+            design_info['dim'] = '1D'
+        else:
+            design_info['dim'] = '2D'
+
+    elif design_data == '4A':
+        if design_data[1] == 'insu':
+            design_info = {'exterior_plaster': True,
+                           'system_name': 'Calsitherm',
+                           'insulation_material': 571,
+                           'finish_material': 125,
+                           'detail_material': 705,
+                           'insulation_thickness': 10,
+                           }
+        else:
+            design_info = {'exterior_plaster': True,
+                           'system_name': None,
+                           'insulation_material': None,
+                           'finish_material': None,
+                           'detail_material': None,
+                           'insulation_thickness': None,
+                           }
+        if design_data[3] == '1D':
+            design_info['dim'] = '1D'
+        else:
+            design_info['dim'] = '2D'
+
+    elif len(design_data) == 7:
         design_info = {'exterior_plaster': design_data[1] == 'exterior',
                        'system_name': design_data[2],
                        'insulation_material': int(design_data[3]),
@@ -399,6 +443,7 @@ def create_design_info(design: str) -> dict:
                        'detail_material': None,
                        'insulation_thickness': None,
                        }
+
     else:
         error = f'Unknown design string. Given design was: {design}'
         logger.error(error)
@@ -425,7 +470,6 @@ def calculate_error(sample_strategy: sample_entry.Strategy) -> dict:
             heat_loss[design].append(sample.mean[sequence][design]['heat_loss'])
 
     for design in mould.keys():
-
         logger.debug(f'Calculates standard error for design: {design}')
 
         design_standard_error = {'mould': relative_standard_error(mould[design], sequence_length),
@@ -448,7 +492,7 @@ def relative_standard_error(series: list, sequence_length: int) -> float:
     """
 
     series = np.asarray(series)
-    standard_error = np.sqrt(1/(sequence_length * (sequence_length - 1)) * np.sum((series - np.mean(series)) ** 2))
+    standard_error = np.sqrt(1 / (sequence_length * (sequence_length - 1)) * np.sum((series - np.mean(series)) ** 2))
 
     mean_standard_error = standard_error / np.mean(series)
 
@@ -532,7 +576,7 @@ def compute_sampling_distributions(sampling_strategy: dict, samples_raw: np.ndar
     return distributions
 
 
-def sobol(m: int, dimension: int, sets: int=1) -> np.ndarray:
+def sobol(m: int, dimension: int, sets: int = 1) -> np.ndarray:
     """Compute the Sobol sequence"""
 
     design = np.empty([0, dimension])

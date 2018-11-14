@@ -6,6 +6,7 @@ __license__ = 'MIT'
 
 # Modules
 import os
+import json
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
@@ -33,11 +34,15 @@ def upload_weather(folder):
 
 def upload_strategy(folder):
     strategy = os.path.join(folder, 'sampling_strategy.json')
-    sampling_interactions.upload_sampling_strategy(strategy)
+
+    with open(strategy) as file:
+        data = json.load(file)
+
+    sampling_interactions.upload_sampling_strategy(data)
 
 
-# upload_weather(r'C:\Users\ocni\Desktop\1D-2D\weather')
+# upload_weather(r'C:\Users\ocni\OneDrive\Shared WP6 DTU-SBiAAU\weather\WAC')
 # upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
-upload_strategy(r'C:\Users\ocni\Desktop\1D-2D\sampling_strategy')
+upload_strategy(r'C:\Users\ocni\OneDrive\Shared WP6 DTU-SBiAAU\sampling_strategy')
 
 mongo_setup.global_end_ssh(server)

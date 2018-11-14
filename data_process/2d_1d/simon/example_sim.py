@@ -25,7 +25,7 @@ from delphin_6_automation.file_parsing import delphin_parser
 server = mongo_setup.global_init(auth_dict)
 
 
-def create_2d_designs(folder=r'C:\Users\ocni\Desktop\1D-2D\2D'):
+def create_2d_designs(folder):
     bricks = pd.read_excel(os.path.join(folder, 'Brick.xlsx'))
     plasters = pd.read_excel(os.path.join(folder, 'Plaster.xlsx'))
     ref_folder = os.path.join(folder, 'delphin')
@@ -50,7 +50,7 @@ def create_2d_designs(folder=r'C:\Users\ocni\Desktop\1D-2D\2D'):
                                               'w'), pretty=True)
 
 
-def create_1d_designs(folder=r'C:\Users\ocni\Desktop\1D-2D\1D'):
+def create_1d_designs(folder):
     bricks = pd.read_excel(os.path.join(folder, 'Brick.xlsx'))
     plasters = pd.read_excel(os.path.join(folder, 'Plaster.xlsx'))
 
@@ -71,7 +71,7 @@ def create_1d_designs(folder=r'C:\Users\ocni\Desktop\1D-2D\1D'):
                 new_delphin = delphin_permutations.change_layer_material(thick_delphin,
                                                                          'Lime cement mortar [717]',
                                                                          new_material)
-                file_name = '_'.join(file.split('_')[:1]) + f'_{int(thick*100)}cm_1D_{plasters.iloc[p_index, 1]}.d6p'
+                file_name = '_'.join(file.split('_')[:2]) + f'_{int(thick*100)}cm_1D_{plasters.iloc[p_index, 1]}.d6p'
                 xmltodict.unparse(new_delphin,
                                   output=open(os.path.join(temp_folder, file_name),
                                               'w'), pretty=True)
@@ -111,6 +111,9 @@ def create_sampling_strategy(path: str, design_option) -> dict:
                      'exterior_heat_transfer_coefficient_slope':
                          {'type': 'uniform', 'range': [1, 4], },
 
+                     'exterior_moisture_transfer_coefficient':
+                         {'type': 'discrete', 'range': [7.7*10**-9]},
+
                      'solar_absorption':
                          {'type': 'uniform', 'range': [0.4, 0.8], },
 
@@ -146,7 +149,7 @@ def create_sampling_strategy(path: str, design_option) -> dict:
     return combined_dict
 
 
-def copy_designs(folder=r'C:\Users\ocni\Desktop\1D-2D'):
+def copy_designs(folder):
     folder_1d = os.path.join(folder, '1D', 'design')
     folder_2d = os.path.join(folder, '2D', 'design')
     dst_folder = os.path.join(folder, 'designs')
@@ -160,11 +163,17 @@ def copy_designs(folder=r'C:\Users\ocni\Desktop\1D-2D'):
         shutil.copyfile(os.path.join(folder_2d, file2d), os.path.join(dst_folder, file2d))
 
 
-create_1d_designs()
-# create_2d_designs()
-# copy_designs()
+folder_ = r'C:\Users\ocni\OneDrive\Shared WP6 DTU-SBiAAU'
+folder_1d = os.path.join(folder_, '1D')
+folder_2d = os.path.join(folder_, '2D')
+folder_strategy = os.path.join(folder_, 'sampling_strategy')
+folder_design = os.path.join(folder_, 'designs')
 
-design_options = os.listdir(r'C:\Users\ocni\Desktop\1D-2D\designs')
-# create_sampling_strategy(r'C:\Users\ocni\Desktop\1D-2D\sampling_strategy', design_options)
+create_1d_designs(folder_1d)
+#create_2d_designs(folder_2d)
+copy_designs(folder_)
+
+design_options = os.listdir(folder_design)
+create_sampling_strategy(folder_strategy, design_options)
 
 mongo_setup.global_end_ssh(server)
