@@ -5,6 +5,7 @@ matplotlib
 scikit-learn==0.20.0
 paramiko
 sshtunnel
+pymongo==3.7.2
 mongoengine==0.15.3
 lxml
 xmltodict
