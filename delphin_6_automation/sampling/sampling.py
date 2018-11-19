@@ -218,6 +218,8 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
 
         samples[str(step)] = samples_subset
 
+    logger.debug(f'Samples generated. Sequence length was: {len(samples.keys())}')
+
     return samples
 
 

@@ -634,3 +634,91 @@ def delphin_with_estimated_time(add_delphin_for_time_estimation):
     sample.delphin_docs = delphin_list
     sample.iteration = 0
     sample.save()
+
+
+@pytest.fixture()
+def sampling_strategy():
+    design = '1d_exterior', '1d_interior',
+
+    scenario = {'generic_scenario': None}
+
+    distributions = {'exterior_climate':
+                         {'type': 'discrete', 'range': 'KobenhavnTaastrup'},
+
+                     'start_year':
+                         {'type': 'discrete', 'range': [i for i in range(2020, 2046)], },
+                     'interior_climate':
+                         {'type': 'discrete', 'range': ['a'], },
+                     }
+
+    sampling_settings = {'initial samples per set': 1,
+                         'add samples per run': 1,
+                         'max samples': 0,
+                         'sequence': 10,
+                         'standard error threshold': 0.1,
+                         'raw sample size': 2 ** 9}
+
+    combined_dict = {'design': design, 'scenario': scenario,
+                     'distributions': distributions, 'settings': sampling_settings}
+
+    strategy_id = sampling_interactions.upload_sampling_strategy(combined_dict)
+
+    return strategy_id
+
+
+@pytest.fixture()
+def mock_load_design_options(monkeypatch):
+
+    def mock_return(designs, folder):
+        delphin_projects = []
+
+        folder = os.path.join(os.path.dirname(__file__), 'test_files', 'delphin')
+        for design in designs:
+            delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, f'{design}.d6p')))
+
+        return delphin_projects
+
+    monkeypatch.setattr(sampling, 'load_design_options', mock_return)
+
+
+@pytest.fixture()
+def mock_wait_until_simulated_sampling(monkeypatch):
+
+    def mock_return(delphin_ids):
+
+        return None
+
+    monkeypatch.setattr(simulation_interactions, 'wait_until_simulated', mock_return)
+
+
+@pytest.fixture()
+def mock_calculate_sample_output(monkeypatch):
+
+    def mock_return(strategy, sample_id):
+        return None
+
+    monkeypatch.setattr(sampling, 'calculate_sample_output', mock_return)
+
+
+@pytest.fixture()
+def mock_calculate_error(monkeypatch):
+    def mock_return(strategy_doc):
+        return None
+
+    monkeypatch.setattr(sampling, 'calculate_error', mock_return)
+
+
+@pytest.fixture()
+def mock_upload_standard_error(monkeypatch):
+    def mock_return(strategy_doc, current_error):
+        return None
+
+    monkeypatch.setattr(sampling_interactions, 'upload_standard_error', mock_return)
+
+
+@pytest.fixture()
+def mock_check_convergence(monkeypatch):
+    def mock_return(strategy_doc):
+        return None
+
+    monkeypatch.setattr(sampling, 'check_convergence', mock_return)
