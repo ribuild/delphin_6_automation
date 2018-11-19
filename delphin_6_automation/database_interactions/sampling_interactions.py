@@ -63,6 +63,8 @@ def upload_samples(new_samples: dict, sample_iteration: int) -> str:
     :return: Sample Database id
     """
 
+    logger.debug(f'Uploading samples')
+
     sample = sample_entry.Sample()
     sample.samples = new_samples
     sample.iteration = sample_iteration
