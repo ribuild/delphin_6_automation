@@ -1,8 +1,8 @@
-numpy
-pandas
+numpy==1.15.4
+pandas==0.23.4
 scipy
 matplotlib
-scikit-learn
+scikit-learn==0.20.0
 paramiko
 sshtunnel
 mongoengine==0.15.3

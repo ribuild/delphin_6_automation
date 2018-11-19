@@ -4,10 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-numpy = "*"
-pandas = "*"
+numpy = "==1.15.4"
+pandas = "==0.23.4"
 scipy = "*"
-scikit-learn = "*"
+scikit-learn = "==0.20.0"
 paramiko = "*"
 sshtunnel = "*"
 mongoengine = "==0.15.3"
@@ -15,7 +15,7 @@ lxml = "*"
 xmltodict = "*"
 notifiers = "*"
 xlrd = "*"
-requests = "==2.20.1"
+pytest = "==4.0.0"
 
 [dev-packages]
 matplotlib = "*"
