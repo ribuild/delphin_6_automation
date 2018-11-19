@@ -23,16 +23,21 @@ from delphin_6_automation.database_interactions.db_templates import sample_entry
 
 
 if __name__ == "__main__":
-
+    logger = ribuild_logger()
     # Setup connection
     auth_path = '/run/secrets/db_ait'
     with open(auth_path, 'r') as file:
         auth_dict = json.load(file)
 
     server = mongo_setup.global_init(auth_dict)
-    logger = ribuild_logger()
 
-    strategy_id = sample_entry.Strategy.objects().first().id
-    sampling_worker.sampling_worker(strategy_id)
+    try:
 
-    mongo_setup.global_end_ssh(server)
+        strategy_id = sample_entry.Strategy.objects().first().id
+        sampling_worker.sampling_worker(strategy_id)
+
+    except Exception as err:
+        logger.exception('Error in main')
+
+    finally:
+        mongo_setup.global_end_ssh(server)

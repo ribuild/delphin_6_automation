@@ -23,16 +23,22 @@ from delphin_6_automation.backend import simulation_worker
 
 if __name__ == "__main__":
 
+    logger = ribuild_logger()
     # Setup connection
     auth_path = '/run/secrets/db_ait'
     with open(auth_path, 'r') as file:
         auth_dict = json.load(file)
 
     server = mongo_setup.global_init(auth_dict)
-    logger = ribuild_logger()
 
-    folder = '/app/data'
+    try:
 
-    simulation_worker.docker_worker('hpc', folder)
+        folder = '/app/data'
 
-    mongo_setup.global_end_ssh(server)
+        simulation_worker.docker_worker('hpc', folder)
+
+    except Exception as err:
+        logger.exception('Error in main')
+
+    finally:
+        mongo_setup.global_end_ssh(server)
