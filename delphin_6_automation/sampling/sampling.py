@@ -397,7 +397,7 @@ def create_design_info(design: str) -> dict:
         else:
             design_info['dim'] = '2D'
 
-    elif design_data == '4A':
+    elif design_data[0] == '4A':
         if design_data[1] == 'insu':
             design_info = {'exterior_plaster': True,
                            'system_name': 'Calsitherm',
