@@ -677,7 +677,7 @@ def sampling_strategy():
 @pytest.fixture()
 def mock_load_design_options(monkeypatch):
 
-    def mock_return(designs, folder):
+    def mock_return(designs):
         delphin_projects = []
 
         folder = os.path.join(os.path.dirname(__file__), 'test_files', 'delphin')
