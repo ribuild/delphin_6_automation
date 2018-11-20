@@ -151,4 +151,7 @@ def get_material_info(material_id: int) -> dict:
                                   os.path.split(material.material_data['INFO-FILE'])[-1])
                                  )
                                 )
+
+    logger.debug(f'Found material info: {material_dict}')
+
     return material_dict
