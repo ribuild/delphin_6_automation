@@ -148,7 +148,7 @@ def get_material_info(material_id: int) -> dict:
                                  ('@color', str(material.material_data['IDENTIFICATION-COLOUR'])),
                                  ('@hatchCode', str(material.material_data['IDENTIFICATION-HATCHING'])),
                                  ('#text', '${Material Database}/' +
-                                  str(material.material_data['INFO-FILE'].split('/')[-1]))
+                                  os.path.split(material.material_data['INFO-FILE'])[-1])
                                  )
                                 )
     return material_dict
