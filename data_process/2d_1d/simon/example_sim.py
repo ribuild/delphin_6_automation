@@ -126,9 +126,6 @@ def create_sampling_strategy(path: str, design_option: list) -> dict:
                      'wall_orientation':
                          {'type': 'uniform', 'range': [0, 360], },
 
-                     'plaster_material':
-                         {'type': 'discrete', 'range': inputs.plaster_materials(r'C:\Users\ocni\Desktop\1D-2D'), },
-
                      'start_year':
                          {'type': 'discrete', 'range': [i for i in range(2020, 2046)], },
                      }
