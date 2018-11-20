@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DelphinProject xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de DelphinProject.xsd" fileVersion="6.5">
-	<ProjectInfo created="ti mar 20 10:10:31 2018" lastEdited="sø nov 11 23:34:56 2018">
-		<Comment>&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;RIBuild 2D Validation:&lt;/p&gt;
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;24cm&lt;/p&gt;
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;scraped joint&lt;/p&gt;
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;retrofittet with cement based mortar&lt;/p&gt;</Comment>
+	<ProjectInfo created="ti mar 20 10:10:31 2018" lastEdited="ti nov 20 09:35:10 2018">
+		<Comment></Comment>
 		<VariantBaseProject>4A_insu_48cm_2D.d6p</VariantBaseProject>
 		<VariantDescription>A 3A variant based on project file '4A_insu_48cm_2D'.</VariantDescription>
 	</ProjectInfo>

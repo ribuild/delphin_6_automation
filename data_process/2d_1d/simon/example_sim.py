@@ -90,7 +90,7 @@ def create_1d_designs(folder):
                                           'w'), pretty=True)
 
 
-def create_sampling_strategy(path: str, design_option) -> dict:
+def create_sampling_strategy(path: str, design_option: list) -> dict:
     """
     Create a sampling strategy for WP6 Delphin Automation. The sampling strategy will be name 'sampling_strategy.json'
     and be located at the given folder.
@@ -101,7 +101,7 @@ def create_sampling_strategy(path: str, design_option) -> dict:
     :rtype: dict
     """
 
-    design = design_option
+    design = [design_.split('.')[0] for design_ in design_option]
 
     scenario = {'generic_scenario': None}
 
@@ -163,17 +163,17 @@ def copy_designs(folder):
         shutil.copyfile(os.path.join(folder_2d, file2d), os.path.join(dst_folder, file2d))
 
 
-folder_ = r'C:\Users\ocni\OneDrive\Shared WP6 DTU-SBiAAU'
+folder_ = r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU'
 folder_1d = os.path.join(folder_, '1D')
 folder_2d = os.path.join(folder_, '2D')
 folder_strategy = os.path.join(folder_, 'sampling_strategy')
 folder_design = os.path.join(folder_, 'designs')
 
-create_1d_designs(folder_1d)
-#create_2d_designs(folder_2d)
+#create_1d_designs(folder_1d)
+create_2d_designs(folder_2d)
 copy_designs(folder_)
 
 design_options = os.listdir(folder_design)
-create_sampling_strategy(folder_strategy, design_options)
+#create_sampling_strategy(folder_strategy, design_options)
 
 mongo_setup.global_end_ssh(server)
