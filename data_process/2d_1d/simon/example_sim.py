@@ -166,7 +166,7 @@ folder_2d = os.path.join(folder_, '2D')
 folder_strategy = os.path.join(folder_, 'sampling_strategy')
 folder_design = os.path.join(folder_, 'designs')
 
-#create_1d_designs(folder_1d)
+create_1d_designs(folder_1d)
 create_2d_designs(folder_2d)
 copy_designs(folder_)
 

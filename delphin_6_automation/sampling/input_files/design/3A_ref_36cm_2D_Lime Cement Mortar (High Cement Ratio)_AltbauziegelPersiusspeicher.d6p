@@ -18,8 +18,8 @@
 		</SimulationParameter>
 	</Init>
 	<Materials>
-		<MaterialReference name="LimeCementMortarHighCementRatio [717]" color="#ff409020" hatchCode="13">${Material Database}/C:\Program Files\IBK\Delphin 6.0\resources\DB_materials\LimeCementMortarHighCementRatio_717.m6</MaterialReference>
-		<MaterialReference name="AltbauziegelPersiusspeicher [536]" color="#ffff1010" hatchCode="13">${Material Database}/C:\Program Files\IBK\Delphin 6.0\resources\DB_materials\AltbauziegelPersiusspeicher_536.m6</MaterialReference>
+		<MaterialReference name="LimeCementMortarHighCementRatio [717]" color="#ff409020" hatchCode="13">${Material Database}/LimeCementMortarHighCementRatio_717.m6</MaterialReference>
+		<MaterialReference name="AltbauziegelPersiusspeicher [536]" color="#ffff1010" hatchCode="13">${Material Database}/AltbauziegelPersiusspeicher_536.m6</MaterialReference>
 		<MaterialReference name="Lime Plaster (historical) [148]" color="#ffffff7f" hatchCode="13">${Material Database}/LimePlasterHist_148.m6</MaterialReference>
 	</Materials>
 	<Discretization>

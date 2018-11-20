@@ -20,8 +20,8 @@
 		</SimulationParameter>
 	</Init>
 	<Materials>
-		<MaterialReference name="LimeCementMortarHighCementRatio [717]" color="#ff409020" hatchCode="13">${Material Database}/C:\Program Files\IBK\Delphin 6.0\resources\DB_materials\LimeCementMortarHighCementRatio_717.m6</MaterialReference>
-		<MaterialReference name="BrickBernhard [33]" color="#ff404060" hatchCode="13">${Material Database}/C:\Program Files\IBK\Delphin 6.0\resources\DB_materials\BrickBernhard_33.m6</MaterialReference>
+		<MaterialReference name="LimeCementMortarHighCementRatio [717]" color="#ff409020" hatchCode="13">${Material Database}/LimeCementMortarHighCementRatio_717.m6</MaterialReference>
+		<MaterialReference name="BrickBernhard [33]" color="#ff404060" hatchCode="13">${Material Database}/BrickBernhard_33.m6</MaterialReference>
 	</Materials>
 	<Discretization>
 		<XSteps unit="m">0.001 0.0013 0.00169 0.00201 0.00201 0.00169 0.0013 0.001 0.001 0.0013000000000000002 0.0016900000000000003 0.0021970000000000006 0.0028561000000000007 0.003712930000000001 0.004826809000000001 0.006274851700000002 0.008157307210000003 0.010604499373000004 0.013785849184900006 0.01792160394037001 0.02329808512248101 0.030287510659225317 0.03937376385699291 0.025427379906061476 0.03937376385699291 0.030287510659225317 0.02329808512248101 0.01792160394037001 0.013785849184900006 0.010604499373000004 0.008157307210000003 0.006274851700000002 0.004826809000000001 0.003712930000000001 0.0028561000000000007 0.0021970000000000006 0.0016900000000000003 0.0013000000000000002 0.001 0.001 0.0013 0.00169 0.00201 0.00201 0.00169 0.0013 0.001</XSteps>

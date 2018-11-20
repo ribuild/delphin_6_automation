@@ -20,9 +20,9 @@
 		</SimulationParameter>
 	</Init>
 	<Materials>
-		<MaterialReference name="LimePlasterHist [148]" color="#ff409020" hatchCode="13">${Material Database}/C:\Program Files\IBK\Delphin 6.0\resources\DB_materials\LimePlasterHist_148.m6</MaterialReference>
+		<MaterialReference name="LimePlasterHist [148]" color="#ff409020" hatchCode="13">${Material Database}/LimePlasterHist_148.m6</MaterialReference>
 		<MaterialReference name="Climate plaster [125]" color="#ffffaa00" hatchCode="13">${Material Database}/KlimaputzMKKQuickmix_125.m6</MaterialReference>
-		<MaterialReference name="LimeCementMortarLowCementRatio [718]" color="#ff409020" hatchCode="13">${Material Database}/C:\Program Files\IBK\Delphin 6.0\resources\DB_materials\LimeCementMortarLowCementRatio_718.m6</MaterialReference>
+		<MaterialReference name="LimeCementMortarLowCementRatio [718]" color="#ff409020" hatchCode="13">${Material Database}/LimeCementMortarLowCementRatio_718.m6</MaterialReference>
 		<MaterialReference name="Calsitherm KP Glue Mortar [705]" color="#ff8000ff" hatchCode="9">${Material Database}/GlueMortarForClimateBoard_705.m6</MaterialReference>
 		<MaterialReference name="Climate Board (until 2001) [571]" color="#ff10f0f0" hatchCode="13">${Material Database}/CalsithermCalciumsilikatHamstad_571.m6</MaterialReference>
 	</Materials>
