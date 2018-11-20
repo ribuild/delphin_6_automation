@@ -11,11 +11,13 @@ import xmltodict
 from collections import OrderedDict
 import bson
 import numpy as np
+import typing
 
 # RiBuild Modules:
 import delphin_6_automation.database_interactions.db_templates.result_raw_entry as result_db
 import delphin_6_automation.database_interactions.db_templates.delphin_entry as delphin_db
 import delphin_6_automation.database_interactions.db_templates.material_entry as material_db
+from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions.db_templates import result_processed_entry
 from delphin_6_automation.delphin_setup import damage_models
 from delphin_6_automation.database_interactions import material_interactions
@@ -623,3 +625,37 @@ def set_critical_error(sim_id: delphin_db.Delphin.id) -> str:
     logger.debug(f'Simulation with ID: {sim_id} got flagged with critical errors.')
 
     return entry.id
+
+
+def upload_design_file(path: str, strategy_id: typing.Optional[str]) -> bson.ObjectId:
+
+    """
+    Uploads a Delphin file to a database.rst.
+
+    :param path: Path to a Delphin 6 project file
+    :param strategy_id: Strategy ID
+    :return: Database entry id
+    """
+
+    delphin_dict = delphin_parser.dp6_to_dict(path)
+
+    entry = delphin_db.Design()
+
+    if strategy_id:
+        strategy_doc = sample_entry.Strategy.objects(id=strategy_id).first()
+        entry.strategy = strategy_doc
+
+    entry.d6p_file = delphin_dict
+    entry.design_name = os.path.split(path)[1].split('.')[0]
+    entry.save()
+
+    logger.debug(f'Uploaded Design project with ID: {entry.id} to database')
+
+    return entry.id
+
+
+def get_design_by_name(name: str) -> dict:
+
+    design_doc = delphin_db.Design.objects(design_name=name).first()
+
+    return design_doc.d6p_file

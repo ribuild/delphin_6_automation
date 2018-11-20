@@ -452,6 +452,14 @@ def delphin_design_folder(test_folder, tmpdir):
 
 
 @pytest.fixture()
+def add_designs(delphin_design_folder):
+
+    for file in os.listdir(delphin_design_folder):
+        delphin_interactions.upload_design_file(os.path.join(delphin_design_folder, file), None)
+
+    return delphin_design_folder
+
+@pytest.fixture()
 def mock_insulation_systems(monkeypatch, dummy_systems, delphin_reference_folder, test_folder):
     def mock_return(rows_to_read=None, excel_file=None, folder=None):
         return dummy_systems

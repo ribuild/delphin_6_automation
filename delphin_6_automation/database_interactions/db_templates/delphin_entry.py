@@ -45,3 +45,15 @@ class Delphin(mongoengine.Document):
     indoor_climate = mongoengine.StringField()
 
     meta = collections.delphin_db
+
+
+class Design(mongoengine.Document):
+
+    # Meta Data
+    added_date = mongoengine.DateTimeField(default=datetime.now)
+    strategy = mongoengine.GenericReferenceField()
+    meta = collections.design_db
+
+    # File
+    design_name = mongoengine.StringField(required=True)
+    d6p_file = mongoengine.DictField(required=True)

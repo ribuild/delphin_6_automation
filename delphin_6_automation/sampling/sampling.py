@@ -223,7 +223,7 @@ def create_samples(sampling_strategy: sample_entry.Strategy, used_samples_per_se
     return samples
 
 
-def load_design_options(designs: typing.List[str], folder: str) -> typing.List[dict]:
+def load_design_options(designs: typing.List[str]) -> typing.List[dict]:
     """Loads the Delphin files into memory associated with the design options"""
 
     delphin_projects = []
@@ -231,7 +231,7 @@ def load_design_options(designs: typing.List[str], folder: str) -> typing.List[d
     logger.debug(f'Loads {len(designs)} design Delphin projects')
 
     for design in designs:
-        delphin_projects.append(delphin_parser.dp6_to_dict(os.path.join(folder, f'{design}.d6p')))
+        delphin_projects.append(delphin_interactions.get_design_by_name(design))
 
     return delphin_projects
 
@@ -242,7 +242,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
     """Generate the Delphin project associated with the given sample"""
 
     delphin_ids = []
-    delphin_projects = load_design_options(sampling_strategy['design'], folder)
+    delphin_projects = load_design_options(sampling_strategy['design'])
 
     for sequence in samples.keys():
 

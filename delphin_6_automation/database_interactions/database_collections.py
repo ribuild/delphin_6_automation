@@ -32,3 +32,6 @@ strategy_db = {'db_alias': 'local',
 
 time_model_db = {'db_alias': 'local',
                  'collection': 'time_model'}
+
+design_db = {'db_alias': 'local',
+             'collection': 'design'}
