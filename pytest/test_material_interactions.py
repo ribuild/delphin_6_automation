@@ -31,7 +31,7 @@ def test_get_material_info(add_two_materials, material_id):
     assert str(material_id) in material_info['#text']
 
 
-@pytest.mark.skip('Weird error on Travis')
+#@pytest.mark.skip('Weird error on Travis')
 def test_download_materials_1(tmpdir, db_one_project, test_folder):
 
     folder = tmpdir.mkdir('test')
@@ -43,7 +43,7 @@ def test_download_materials_1(tmpdir, db_one_project, test_folder):
         files = []
         for file in ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6', ]:
             file_path = os.path.join(path, file)
-            files.append(codecs.open(file_path, "r", "utf-8").read().splitlines())
+            files.append(open(file_path, "r", encoding="utf-8").read().splitlines())
         return files
 
     # Get files

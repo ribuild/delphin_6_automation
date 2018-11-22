@@ -11,6 +11,10 @@ import re
 import datetime
 
 # RiBuild Modules:
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL PARSER
@@ -148,6 +152,121 @@ def dict_to_m6(material: dict, path: str) -> bool:
                     name = key.split("-")[1]
 
                     if name == 'MODEL':
+                        file.write("\n\n  " + "[MODEL]")
+                        model_exist = True
+                        break
+                try:
+                    if key[3] == "[":
+                        file.write("\n  " + "[MODEL]")
+                except IndexError:
+                    pass
+
+            if not model_exist:
+                file.write('\n')
+
+        #elif group == 'IDENTIFICATION':
+        #    file.write("\n\n" + "[" + group + "]")
+        else:
+            file.write("\n\n" + "[" + group + "]")
+
+        for key, value in material_dict.items():
+            if key.split("-")[0] == group:
+                name = key.split("-")[1]
+
+                # Parameters under "FUNCTION"
+                if name == "FUNCTION" and key.split("-")[-1] == "X" and model is not True:
+
+                    function_value_x = "      "
+                    for v in value:
+                        if len(str(v)) >= 17:
+                            function_value_x += str(v) + '  '
+                        else:
+                            function_value_x += str(v).ljust(17)
+                            if not function_value_x.endswith('  '):
+                                function_value_x += ' '
+
+                    value = material_dict[key.strip("-X") + "-Y"]
+                    function_value_y = "      "
+                    for v in value:
+                        if len(str(v)) >= 17:
+                            function_value_y += str(v) + '  '
+                        else:
+                            function_value_y += str(v).ljust(17)
+                            if not function_value_y.endswith('  '):
+                                function_value_y += ' '
+
+                    value = key.split("-")[2] + "\n" + function_value_x + "\n" + function_value_y
+
+                    file.write("\n" + "  " + name + " = ".ljust(16) + str(value))
+
+                # Parameters under "MODEL"
+                elif name == "MODEL" and model:
+                    name = key.split("-")[-1]
+                    if not isinstance(value, str):
+                        if 'e' in str(value[0]):
+                            value = '{:.0e}'.format(MyNumber(value[0]))
+                        else:
+                            value = "".join([str(element) for element in value])
+                    file.write("\n" + "    " + name.ljust(25) + "= " + str(value))
+
+                elif name in unit_dict:  # parameters with units
+                    value = str(value) + " " + unit_dict[name]
+                    file.write("\n" + "  " + name.ljust(25) + "= " + str(value))
+
+                elif len(key.split("-")) <= 2:
+                    if value == 'AIR_TIGHT':
+                        value += ' '
+                    file.write("\n" + "  " + name.ljust(25) + "= " + str(value))
+
+        if group.endswith('PARAMETERS') or group.endswith('IDENTIFICATION'):
+            file.write("\n")
+
+    # Create file
+    material_data = material['material_data']
+    file_name = os.path.split(material_data['INFO-FILE'])[1]
+    logger.debug(f'Writing Material file with name: {file_name} to {path}')
+    file = open(os.path.join(path, file_name), "w", encoding="utf-8")
+
+    # Write lines
+    file.write(material_data["INFO-MAGIC_HEADER"].strip())
+    write_material_content("IDENTIFICATION", material_data)
+    write_material_content("STORAGE_BASE_PARAMETERS", material_data)
+    write_material_content("TRANSPORT_BASE_PARAMETERS", material_data)
+    write_material_content("MOISTURE_STORAGE", material_data)
+    write_material_content("MOISTURE_STORAGE", material_data, True)
+    write_material_content("MOISTURE_TRANSPORT", material_data)
+    write_material_content("MOISTURE_TRANSPORT", material_data, True)
+    file.write("\n")
+
+    file.close()
+
+    return True
+
+
+def dict_to_m6_old(material: dict, path: str) -> bool:
+    """
+    Takes an material dict and converts it into a .m6 file.
+
+    :param material: material dict
+    :param path: Path to where .m6 should be placed.
+    :return: True
+    """
+
+    def write_material_content(group, material_dict, model=False):
+        unit_dict = {"RHO": "kg/m3", "CE": "J/kgK", "THETA_POR": "m3/m3",
+                     "THETA_EFF": "m3/m3", "THETA_CAP": "m3/m3",
+                     "THETA_80": "m3/m3", "LAMBDA": "W/mK", "LAMBDA_DESIGN": "W/mK",
+                     "AW": "kg/m2s05", "MEW": "-",
+                     "KLEFF": "s", "DLEFF": "m2/s", "KG": "s"}
+
+        if model:
+            model_exist = False
+
+            for key, value in material_dict.items():
+                if key.split("-")[0] == group:
+                    name = key.split("-")[1]
+
+                    if name == 'MODEL':
                         file.write("\r\n\r\n  " + "[MODEL]")
                         model_exist = True
                         break
@@ -220,7 +339,8 @@ def dict_to_m6(material: dict, path: str) -> bool:
     # Create file
     material_data = material['material_data']
     file_name = os.path.split(material_data['INFO-FILE'])[1]
-    file = codecs.open(os.path.join(path, file_name), "w", "utf-8")
+    logger.debug(f'Writing Material file with name: {file_name} to {path}')
+    file = open(os.path.join(path, file_name), "w", encoding="utf-8")
 
     # Write lines
     file.write(material_data["INFO-MAGIC_HEADER"].strip())
