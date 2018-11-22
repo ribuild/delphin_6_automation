@@ -145,7 +145,10 @@ def get_simulation_time_estimate(delphin_id: str) -> int:
 
     delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
 
-    return delphin_doc.estimated_simulation_time
+    if delphin_doc.estimated_simulation_time:
+        return delphin_doc.estimated_simulation_time
+    else:
+        return general_interact.compute_simulation_time(delphin_id)
 
 
 def wait_until_simulated(delphin_ids: list) -> bool:
