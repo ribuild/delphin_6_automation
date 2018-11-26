@@ -43,7 +43,7 @@ def test_download_materials_1(tmpdir, db_one_project, test_folder):
         files = []
         for file in ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6', ]:
             file_path = os.path.join(path, file)
-            files.append(open(file_path, "r", encoding="utf-8").read().splitlines())
+            files.append(open(file_path, "r", encoding="utf-8").readlines())
         return files
 
     # Get files
@@ -51,7 +51,8 @@ def test_download_materials_1(tmpdir, db_one_project, test_folder):
     source_files = get_material_files(source_folder)
 
     # Assert
-    assert test_files == source_files
+    for index in range(len(test_files)):
+        assert test_files[index] == source_files[index]
 
 
 def test_upload_materials_1(test_folder, empty_database):

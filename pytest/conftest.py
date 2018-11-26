@@ -75,12 +75,12 @@ def empty_database(setup_database):
 
 @pytest.fixture()
 def test_folder():
-    return os.path.dirname(os.path.realpath(__file__)) + '/test_files'
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_files')
 
 
 @pytest.fixture()
 def delphin_file_path(test_folder):
-    delphin_file = test_folder + '/delphin/delphin_project_1d.d6p'
+    delphin_file = os.path.join(test_folder, 'delphin', 'delphin_project_1d.d6p')
 
     return delphin_file
 
@@ -90,7 +90,7 @@ def delphin_file_path(test_folder):
                         '1d_interior_plaster_insulated2layers',
                         '1d_interior_plaster_insulated3layers'])
 def delphin_with_insulation(test_folder, request):
-    delphin_file = test_folder + f'/delphin/{request.param}.d6p'
+    delphin_file = os.path.join(test_folder, 'delphin', f'{request.param}.d6p')
 
     return delphin_parser.dp6_to_dict(delphin_file)
 
@@ -107,7 +107,7 @@ def add_two_materials(test_folder, setup_database):
     material_files = ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6', ]
 
     for file in material_files:
-        material_interactions.upload_material_file(test_folder + '/materials/' + file)
+        material_interactions.upload_material_file(os.path.join(test_folder, 'materials', file))
 
     yield
 
@@ -119,7 +119,7 @@ def add_five_materials(test_folder, setup_database):
                       'KlimaputzMKKQuickmix_125.m6']
 
     for file in material_files:
-        material_interactions.upload_material_file(test_folder + '/materials/' + file)
+        material_interactions.upload_material_file(os.path.join(test_folder, 'materials', file))
 
     yield
 
@@ -131,7 +131,7 @@ def add_insulation_materials(test_folder, setup_database):
                       'KlimaputzMKKQuickmix_125.m6', 'AirGapHorizontal50mm_12.m6']
 
     for file in material_files:
-        material_interactions.upload_material_file(test_folder + '/materials/' + file)
+        material_interactions.upload_material_file(os.path.join(test_folder, 'materials', file))
 
     yield
 
