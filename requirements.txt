@@ -3,7 +3,7 @@ pandas==0.23.4
 scipy
 matplotlib
 scikit-learn==0.20.0
-paramiko
+paramiko==2.4.2
 sshtunnel
 pymongo==3.7.2
 mongoengine==0.15.3
