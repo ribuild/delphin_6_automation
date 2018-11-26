@@ -25,7 +25,7 @@ server = mongo_setup.global_init(auth_dict)
 
 def upload_materials(folder):
     for file in os.listdir(folder):
-        material_interactions.upload_material_file(os.path.join(folder, file))
+        material_interactions.upload_material_file(f'{folder}/{file}')
 
 
 def upload_weather(folder):
@@ -50,9 +50,9 @@ def upload_designs(folder):
         delphin_interactions.upload_design_file(os.path.join(folder, file), strategy.id)
 
 
-# upload_weather(r'C:\Users\ocni\OneDrive\Shared WP6 DTU-SBiAAU\weather\WAC')
-# upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
-# upload_strategy(r'C:\Users\ocni\OneDrive\Shared WP6 DTU-SBiAAU\sampling_strategy')
-upload_designs(r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\designs')
+# upload_weather(r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\weather\WAC')
+upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
+upload_strategy(r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\sampling_strategy')
+#upload_designs(r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\designs')
 
 mongo_setup.global_end_ssh(server)

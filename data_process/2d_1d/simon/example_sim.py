@@ -57,7 +57,7 @@ def create_1d_designs(folder):
     ref_folder = os.path.join(folder, 'delphin')
     temp_folder = os.path.join(folder, 'temp')
 
-    thickness = [0.24, 0.36, 0.48]
+    thickness = [0.228, 0.348, 0.468]
 
     for file in os.listdir(ref_folder):
         for thick in thickness:
@@ -65,13 +65,14 @@ def create_1d_designs(folder):
             thick_delphin = delphin_permutations.change_layer_width(delphin_dict,
                                                                     'Old Building Brick Dresden ZP [504]',
                                                                     thick)
+            thick_delphin = delphin_permutations.update_output_locations(thick_delphin)
 
             for p_index, p_id in enumerate(plasters['Material ID']):
                 new_material = material_interactions.get_material_info(p_id)
                 new_delphin = delphin_permutations.change_layer_material(thick_delphin,
                                                                          'Lime cement mortar [717]',
                                                                          new_material)
-                file_name = '_'.join(file.split('_')[:2]) + f'_{int(thick*100)}cm_1D_{plasters.iloc[p_index, 1]}.d6p'
+                file_name = '_'.join(file.split('_')[:2]) + f'_{int((thick+0.012)*100)}cm_1D_{plasters.iloc[p_index, 1]}.d6p'
                 xmltodict.unparse(new_delphin,
                                   output=open(os.path.join(temp_folder, file_name),
                                               'w'), pretty=True)
@@ -94,11 +95,6 @@ def create_sampling_strategy(path: str, design_option: list) -> dict:
     """
     Create a sampling strategy for WP6 Delphin Automation. The sampling strategy will be name 'sampling_strategy.json'
     and be located at the given folder.
-
-    :param path: Folder, where the strategy will be saved.
-    :type path: str
-    :return: Created sampling strategy
-    :rtype: dict
     """
 
     design = [design_.split('.')[0] for design_ in design_option]
@@ -171,6 +167,6 @@ create_2d_designs(folder_2d)
 copy_designs(folder_)
 
 design_options = os.listdir(folder_design)
-#create_sampling_strategy(folder_strategy, design_options)
+create_sampling_strategy(folder_strategy, design_options)
 
 mongo_setup.global_end_ssh(server)
