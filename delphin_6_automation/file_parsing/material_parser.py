@@ -225,7 +225,7 @@ def dict_to_m6(material: dict, path: str) -> bool:
     material_data = material['material_data']
     file_name = os.path.split(material_data['INFO-FILE'])[1]
     logger.debug(f'Writing Material file with name: {file_name} to {path}')
-    file = open(os.path.join(path, file_name), "w", encoding="utf-8")
+    file = open(os.path.join(path, file_name), "w")
 
     # Write lines
     file.write(material_data["INFO-MAGIC_HEADER"].strip())
@@ -351,7 +351,7 @@ def dict_to_m6_old(material: dict, path: str) -> bool:
     write_material_content("MOISTURE_STORAGE", material_data, True)
     write_material_content("MOISTURE_TRANSPORT", material_data)
     write_material_content("MOISTURE_TRANSPORT", material_data, True)
-    file.write("\r\n")
+    file.write("\n")
 
     file.close()
 
