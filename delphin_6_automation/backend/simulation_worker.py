@@ -149,7 +149,7 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
 def submit_job(submit_file: str, sim_id: str) -> None:
     """Submits a job (submit file) to the DTU HPC queue."""
 
-    terminal_call = f"cd ~/ribuild/{sim_id}\n", f"bsub < {submit_file}\n"
+    terminal_call = f"cd ~/ribuild/{sim_id}\n", "pwd\n", f"bsub < {submit_file}\n"
 
     client = connect_to_hpc()
     logger.debug(f'Connecting to HPC to upload simulation with ID: {sim_id}')
@@ -159,6 +159,7 @@ def submit_job(submit_file: str, sim_id: str) -> None:
     time.sleep(0.5)
     channel.send(terminal_call[0])
     channel.send(terminal_call[1])
+    channel.send(terminal_call[2])
     time.sleep(0.5)
     channel_bytes = channel.recv(9999)
     channel_data += channel_bytes.decode("utf-8")
