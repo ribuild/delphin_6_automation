@@ -7,7 +7,7 @@ services:
     volumes:
       - ocni_volume:/app/data
     deploy:
-      replicas: 84
+      replicas: 40
     secrets:
       - ssh_key
       - source: db_simon
