@@ -16,6 +16,7 @@ xmltodict = "*"
 notifiers = "*"
 xlrd = "*"
 pytest = "==4.0.0"
+pyyaml = "*"
 
 [dev-packages]
 matplotlib = "*"

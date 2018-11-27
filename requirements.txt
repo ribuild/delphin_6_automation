@@ -11,3 +11,4 @@ lxml
 xmltodict
 notifiers
 xlrd
+pyyaml
