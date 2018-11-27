@@ -6,7 +6,7 @@ __license__ = "MIT"
 
 # Modules:
 import os
-from sklearn.externals import joblib
+import yaml
 import numpy as np
 
 # RiBuild Modules:
@@ -14,7 +14,6 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 from delphin_6_automation.database_interactions.db_templates import result_raw_entry as result_db
 from delphin_6_automation.database_interactions.db_templates import weather_entry as weather_db
 from delphin_6_automation.database_interactions.db_templates import material_entry as material_db
-from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import delphin_interactions
 from delphin_6_automation.database_interactions import material_interactions
 from delphin_6_automation.database_interactions import weather_interactions
@@ -243,3 +242,18 @@ def compute_simulation_time(sim_id: str) -> int:
             logger.debug(f'No previous simulations found. Setting time to 60min for a 1D simulation')
             return 120
 
+
+def download_sample_data(delphin_id, folder):
+
+    delphin_obj = delphin_db.Delphin.objects(id=delphin_id).first()
+    download_path = os.path.join(folder, str(delphin_id))
+
+    if not os.path.exists(download_path):
+        os.mkdir(download_path)
+
+    sample_data = dict(delphin_obj.sample_data)
+    sample_data['design_option'] = dict(sample_data['design_option'])
+    with open(os.path.join(folder, 'sample_data.txt'), 'w') as file:
+        yaml.dump(sample_data, file)
+
+    return None
