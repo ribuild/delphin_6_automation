@@ -51,8 +51,8 @@ def upload_designs(folder):
 
 
 # upload_weather(r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\weather\WAC')
-upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
+#upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
 upload_strategy(r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\sampling_strategy')
-#upload_designs(r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\designs')
+upload_designs(r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\designs')
 
 mongo_setup.global_end_ssh(server)
