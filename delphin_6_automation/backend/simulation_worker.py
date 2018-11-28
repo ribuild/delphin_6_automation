@@ -158,7 +158,7 @@ def submit_job(submit_file: str, sim_id: str) -> None:
     channel_data = ''
     time.sleep(0.5)
     channel.send(terminal_call[0])
-    time.sleep(0.1)
+    time.sleep(0.5)
     channel.send(terminal_call[1])
     time.sleep(0.5)
     channel_bytes = channel.recv(9999)
