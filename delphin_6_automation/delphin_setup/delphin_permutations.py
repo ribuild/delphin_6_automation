@@ -263,7 +263,7 @@ def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coe
     return delphin_dict
 
 
-def get_layers(delphin_dict: dict) -> dict:
+def get_layers(delphin_dict: dict) -> list:
     """
     Get the layers of a Delphin dict.
 
@@ -273,8 +273,7 @@ def get_layers(delphin_dict: dict) -> dict:
 
     x_list = convert_discretization_to_list(delphin_dict)
 
-    index = 0
-    layers_dict = dict()
+    layers = []
     for assignment in delphin_dict['DelphinProject']['Assignments']['Assignment']:
         if assignment['@type'] == 'Material':
             layer = dict()
@@ -283,10 +282,10 @@ def get_layers(delphin_dict: dict) -> dict:
                       for x in assignment['Range'].split(' ')]
             layer['x_width'] = sum(x_list[range_[0]:range_[2]+1])
             layer['x_index'] = range_[0], range_[2]
-            layers_dict[index] = layer
-            index += 1
+            layers.append(layer)
 
-    return layers_dict
+    layers = sorted(layers, key=lambda x: x['x_index'][0])
+    return layers
 
 
 def convert_discretization_to_list(delphin_dict: dict) -> typing.List[float]:
