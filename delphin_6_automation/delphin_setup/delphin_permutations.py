@@ -39,7 +39,7 @@ def change_layer_width(delphin: dict, original_material: str, new_width: float) 
     return delphin
 
 
-def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
+def identify_layer(layers: list, identifier: typing.Union[str, int]) -> dict:
     """
     Returns a layer given a identifier of that layer. Identifiers can be name of the material or the index of the
     material.
@@ -58,8 +58,8 @@ def identify_layer(layers: dict, identifier: typing.Union[str, int]) -> dict:
             # work around un-strict naming
             id_string = identifier.split('[').pop()[:-1]
 
-            if (layers[layer_]['material'] == identifier) | (id_string in layers[layer_]['material']):
-                return layers[layer_]
+            if (layer_['material'] == identifier) | (id_string in layer_['material']):
+                return layer_
 
         if not found:
             error = f'Could not find material: {identifier} among layers'

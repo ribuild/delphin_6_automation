@@ -1,6 +1,5 @@
 __author__ = "Christian Kongsgaard"
 
-
 # -------------------------------------------------------------------------------------------------------------------- #
 # IMPORTS
 
@@ -12,27 +11,27 @@ import pytest
 from delphin_6_automation.delphin_setup import delphin_permutations
 from delphin_6_automation.file_parsing import delphin_parser
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # TEST
 
 
 def test_get_layers_1(delphin_file_path):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     delphin_layers = delphin_permutations.get_layers(delphin_dict)
 
-    correct_layer_dict = {0: {'material': 'Lime cement mortar [717]',
-                              'x_width': 0.012,
-                              'x_index': (0, 7)},
+    correct_layer_dict = [{'material': 'Lime cement mortar [717]',
+                           'x_width': 0.012,
+                           'x_index': (0, 7)},
 
-                          1: {'material': 'Old Building Brick Dresden ZP [504]',
-                              'x_width': 0.3479997,
-                              'x_index': (8, 38)},
+                          {'material': 'Old Building Brick Dresden ZP [504]',
+                           'x_width': 0.3479997,
+                           'x_index': (8, 38)},
 
-                          2: {'material': 'Lime cement mortar [717]',
-                              'x_width': 0.012,
-                              'x_index': (39, 46)},
-                          }
+                          {'material': 'Lime cement mortar [717]',
+                           'x_width': 0.012,
+                           'x_index': (39, 46)},
+                          ]
     assert delphin_layers == correct_layer_dict
 
 
@@ -53,7 +52,6 @@ def test_change_material_1(delphin_file_path):
 
 @pytest.mark.parametrize('width', [0.1, 0.3, 0.5, 0.75, 1.0])
 def test_change_layer_width(delphin_file_path, width):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     new_delphin = delphin_permutations.change_layer_width(delphin_dict, 'Old Building Brick Dresden ZP [504]', width)
     new_width = delphin_permutations.get_layers(new_delphin)[1]['x_width']
@@ -62,7 +60,6 @@ def test_change_layer_width(delphin_file_path, width):
 
 
 def test_change_weather(test_folder, delphin_file_path):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     weather_path = test_folder + '/weather/temperature.ccd'
     new_delphin = delphin_permutations.change_weather(delphin_dict,
@@ -76,7 +73,6 @@ def test_change_weather(test_folder, delphin_file_path):
 @pytest.mark.parametrize('orientation',
                          [0, 15, 30, 45, 90, 180, 220, 300, 360, 0.3, 23.56])
 def test_change_orientation(delphin_file_path, orientation):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     new_delphin = delphin_permutations.change_orientation(delphin_dict, orientation)
     new_orientation = new_delphin['DelphinProject']['Conditions'][
@@ -89,7 +85,6 @@ def test_change_orientation(delphin_file_path, orientation):
                          [-10, 430])
 @pytest.mark.xfail()
 def test_change_orientation_fail(delphin_file_path, orientation):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     new_delphin = delphin_permutations.change_orientation(delphin_dict, orientation)
     new_orientation = new_delphin['DelphinProject']['Conditions'][
@@ -101,7 +96,6 @@ def test_change_orientation_fail(delphin_file_path, orientation):
 @pytest.mark.parametrize('coefficient',
                          [0.3, 10, 20])
 def test_change_coefficient_1(delphin_file_path, coefficient):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict,
                                                                    'IndoorHeatConduction',
@@ -113,14 +107,13 @@ def test_change_coefficient_1(delphin_file_path, coefficient):
 
 
 @pytest.mark.parametrize('coefficient',
-                         [0.3, 10**-6, 20])
+                         [0.3, 10 ** -6, 20])
 @pytest.mark.parametrize('sd_value',
                          [0.3, 10, 20])
 def test_change_coefficient_2(delphin_file_path, coefficient, sd_value):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     delphin_permutations.change_boundary_coefficient(delphin_dict, 'IndoorVaporDiffusion',
-                                                                   'ExchangeCoefficient', coefficient)
+                                                     'ExchangeCoefficient', coefficient)
     new_delphin = delphin_permutations.change_boundary_coefficient(delphin_dict, 'IndoorVaporDiffusion',
                                                                    'SDValue', sd_value)
 
@@ -131,7 +124,6 @@ def test_change_coefficient_2(delphin_file_path, coefficient, sd_value):
 
 
 def test_get_simulation_length(delphin_file_path):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     length = delphin_permutations.get_simulation_length(delphin_dict)
 
@@ -143,7 +135,6 @@ def test_get_simulation_length(delphin_file_path):
 @pytest.mark.parametrize('value',
                          ['a', 'h'])
 def test_change_simulation_length(delphin_file_path, length, value):
-
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
     modified_dict = delphin_permutations.change_simulation_length(delphin_dict, length, value)
 
@@ -152,7 +143,6 @@ def test_change_simulation_length(delphin_file_path, length, value):
 
 @pytest.mark.parametrize('width', [0.1, 0.3, 0.5])
 def test_update_output_locations(delphin_with_insulation, width, request):
-
     delphin_permutations.change_layer_width(delphin_with_insulation,
                                             'Old Building Brick Dresden ZP [504]',
                                             width)
@@ -168,7 +158,7 @@ def test_update_output_locations(delphin_with_insulation, width, request):
                 assert assignment['IBK:Point3D'] == '0.005 0.034 0'
 
             elif assignment['Reference'] == 'heat loss':
-                assert assignment['Range'] == f'{len(x_steps)-1} 0 {len(x_steps)-1} 0'
+                assert assignment['Range'] == f'{len(x_steps) - 1} 0 {len(x_steps) - 1} 0'
 
             elif assignment['Reference'].endswith('interior surface'):
                 if 'exterior' not in request.node.name:
@@ -216,7 +206,6 @@ def test_update_output_locations(delphin_with_insulation, width, request):
 
 @pytest.mark.parametrize('change_to', [True, False])
 def test_change_kirchhoff_potential(delphin_file_path, change_to):
-
     delphin_project = delphin_parser.dp6_to_dict(delphin_file_path)
     delphin_permutations.change_kirchhoff_potential(delphin_project, change_to)
 
@@ -231,7 +220,6 @@ def test_change_kirchhoff_potential(delphin_file_path, change_to):
 
 @pytest.mark.parametrize('rel_tol', [1e-05, 1e-04, 1e-03])
 def test_change_solver_relative_tolerance(delphin_file_path, rel_tol):
-
     delphin_project = delphin_parser.dp6_to_dict(delphin_file_path)
     delphin_permutations.change_solver_relative_tolerance(delphin_project, rel_tol)
 
