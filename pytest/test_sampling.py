@@ -228,3 +228,14 @@ def test_create_design_info(design_options):
         design_info = sampling.create_design_info(design)
 
         assert isinstance(design_info, dict)
+
+
+@pytest.mark.skip('Only for local testing')
+def test_create_design_info_2d1d():
+
+    folder = r'C:\Users\ocni\OneDrive - Danmarks Tekniske Universitet\Shared WP6 DTU-SBiAAU\designs'
+    design_options = [file.split('.')[0] for file in os.listdir(folder)]
+    for design in design_options:
+        design_info = sampling.create_design_info(design)
+
+        assert isinstance(design_info, dict)

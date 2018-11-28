@@ -383,6 +383,7 @@ def create_design_info(design: str) -> dict:
                            'finish_material': 125,
                            'detail_material': 705,
                            'insulation_thickness': 10,
+                           'wall_core_thickness': int(design_data[2][:-2])
                            }
         else:
             design_info = {'exterior_plaster': False,
@@ -391,6 +392,7 @@ def create_design_info(design: str) -> dict:
                            'finish_material': None,
                            'detail_material': None,
                            'insulation_thickness': None,
+                           'wall_core_thickness': int(design_data[2][:-2])
                            }
         if design_data[3] == '1D':
             design_info['dim'] = '1D'
@@ -405,6 +407,7 @@ def create_design_info(design: str) -> dict:
                            'finish_material': 125,
                            'detail_material': 705,
                            'insulation_thickness': 10,
+                           'wall_core_thickness': int(design_data[2][:-2])
                            }
         else:
             design_info = {'exterior_plaster': True,
@@ -413,6 +416,7 @@ def create_design_info(design: str) -> dict:
                            'finish_material': None,
                            'detail_material': None,
                            'insulation_thickness': None,
+                           'wall_core_thickness': int(design_data[2][:-2])
                            }
         if design_data[3] == '1D':
             design_info['dim'] = '1D'
