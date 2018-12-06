@@ -9,4 +9,4 @@ ADD ././requirements.txt /app/requirements.txt
 
 RUN pip --no-cache-dir install -r requirements.txt
 
-RUN mkdir /app/data
+#RUN mkdir /app/data
