@@ -7,6 +7,7 @@ WORKDIR /app
 
 ADD ././delphin_6_automation /app/delphin_6_automation
 
+RUN mkdir data
 VOLUME /app/data
 
 WORKDIR /app/delphin_6_automation
