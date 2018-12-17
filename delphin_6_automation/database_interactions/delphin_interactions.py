@@ -606,13 +606,17 @@ def upload_restart_data(folder: str, delphin_id: str) -> str:
     return delphin_doc.id
 
 
-def download_restart_data(folder: str, delphin_id: str) -> None:
-
-    delphin_doc = delphin_db.Delphin.objects(id=delphin_id).first()
+def download_restart_data(delphin_doc: delphin_db.Delphin, folder: str) -> None:
 
     restart_dict = delphin_doc.restart_data
 
-    delphin_parser.restart_data_to_file(folder, restart_dict)
+    var_folder = os.path.join(folder, 'var')
+
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+
+    os.mkdir(var_folder)
+    delphin_parser.restart_data_to_file(var_folder, restart_dict)
 
     return None
 

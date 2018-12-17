@@ -6,7 +6,6 @@ __license__ = 'MIT'
 
 # Modules
 from mongoengine.queryset.visitor import Q
-import matplotlib.pyplot as plt
 import numpy as np
 
 # RiBuild Modules
@@ -24,102 +23,172 @@ logger = ribuild_logger()
 def filter_db(config: dict):
     filtered_entries = delphin_entry.Delphin.objects(simulated__exists=True)
 
-    if config['exterior_climate']:
-        filtered_entries = filtered_entries.filter(sample_data__exterior_climate=config['exterior_climate'])
+    try:
+        if config['exterior_climate']:
+            filtered_entries = filtered_entries.filter(sample_data__exterior_climate=config['exterior_climate'])
+    except KeyError:
+        pass
 
-    if config['exterior_heat_transfer_coefficient_slope']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__exterior_heat_transfer_coefficient_slope__gte=config[
-                'exterior_heat_transfer_coefficient_slope'][0])
-            & Q(sample_data__exterior_heat_transfer_coefficient_slope__lte=config[
-                'exterior_heat_transfer_coefficient_slope'][1]))
+    try:
+        if config['exterior_heat_transfer_coefficient_slope']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__exterior_heat_transfer_coefficient_slope__gte=config[
+                    'exterior_heat_transfer_coefficient_slope'][0])
+                & Q(sample_data__exterior_heat_transfer_coefficient_slope__lte=config[
+                    'exterior_heat_transfer_coefficient_slope'][1]))
+    except KeyError:
+        pass
 
-    if config['exterior_moisture_transfer_coefficient']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__exterior_moisture_transfer_coefficient__gte=config['exterior_moisture_transfer_coefficient'][
-                0])
-            & Q(sample_data__exterior_moisture_transfer_coefficient__lte=
-                config['exterior_moisture_transfer_coefficient'][1]))
+    try:
+        if config['exterior_moisture_transfer_coefficient']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__exterior_moisture_transfer_coefficient__gte=config['exterior_moisture_transfer_coefficient'][
+                    0])
+                & Q(sample_data__exterior_moisture_transfer_coefficient__lte=
+                    config['exterior_moisture_transfer_coefficient'][1]))
+    except KeyError:
+        pass
 
-    if config['solar_absorption']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__solar_absorption__gte=config['solar_absorption'][0])
-            & Q(sample_data__solar_absorption__lte=config['solar_absorption'][1]))
+    try:
+        if config['solar_absorption']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__solar_absorption__gte=config['solar_absorption'][0])
+                & Q(sample_data__solar_absorption__lte=config['solar_absorption'][1]))
+    except KeyError:
+        pass
 
-    if config['rain_scale_factor']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__rain_scale_factor__gte=config['rain_scale_factor'][0])
-            & Q(sample_data__rain_scale_factor__lte=config['rain_scale_factor'][1]))
+    try:
+        if config['rain_scale_factor']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__rain_scale_factor__gte=config['rain_scale_factor'][0])
+                & Q(sample_data__rain_scale_factor__lte=config['rain_scale_factor'][1]))
+    except KeyError:
+        pass
 
-    if config['interior_climate']:
-        filtered_entries = filtered_entries.filter(sample_data__interior_climate=config['interior_climate'])
+    try:
+        if config['interior_climate']:
+            filtered_entries = filtered_entries.filter(sample_data__interior_climate=config['interior_climate'])
+    except KeyError:
+        pass
 
-    if config['interior_heat_transfer_coefficient']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__interior_heat_transfer_coefficient__gte=config['interior_heat_transfer_coefficient'][0])
-            & Q(sample_data__interior_heat_transfer_coefficient__lte=config['interior_heat_transfer_coefficient'][1]))
+    try:
+        if config['interior_heat_transfer_coefficient']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__interior_heat_transfer_coefficient__gte=config['interior_heat_transfer_coefficient'][0])
+                & Q(sample_data__interior_heat_transfer_coefficient__lte=config['interior_heat_transfer_coefficient'][1]))
+    except KeyError:
+        pass
 
-    if config['interior_moisture_transfer_coefficient']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__interior_moisture_transfer_coefficient__gte=config['interior_moisture_transfer_coefficient'][
-                0])
-            & Q(sample_data__interior_moisture_transfer_coefficient__lte=
-                config['interior_moisture_transfer_coefficient'][1]))
+    try:
+        if config['interior_moisture_transfer_coefficient']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__interior_moisture_transfer_coefficient__gte=config['interior_moisture_transfer_coefficient'][
+                    0])
+                & Q(sample_data__interior_moisture_transfer_coefficient__lte=
+                    config['interior_moisture_transfer_coefficient'][1]))
+    except KeyError:
+        pass
 
-    if config['interior_sd_value']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__interior_sd_value__gte=config['interior_sd_value'][0])
-            & Q(sample_data__interior_sd_valuen__lte=config['interior_sd_value'][1]))
+    try:
+        if config['interior_sd_value']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__interior_sd_value__gte=config['interior_sd_value'][0])
+                & Q(sample_data__interior_sd_valuen__lte=config['interior_sd_value'][1]))
+    except KeyError:
+        pass
 
-    if config['wall_orientation']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__wall_orientation__gte=config['wall_orientation'][0])
-            & Q(sample_data__wall_orientation__lte=config['wall_orientation'][1]))
+    try:
+        if config['wall_orientation']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__wall_orientation__gte=config['wall_orientation'][0])
+                & Q(sample_data__wall_orientation__lte=config['wall_orientation'][1]))
+    except KeyError:
+        pass
 
-    if config['wall_core_width']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__wall_core_width__gte=config['wall_core_width'][0])
-            & Q(sample_data__wall_core_width__lte=config['wall_core_width'][1]))
+    try:
+        if config['wall_core_width']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__wall_core_width__gte=config['wall_core_width'][0])
+                & Q(sample_data__wall_core_width__lte=config['wall_core_width'][1]))
+    except KeyError:
+        pass
 
-    if config['wall_core_material']:
-        filtered_entries = filtered_entries.filter(sample_data__wall_core_material__all=config['wall_core_material'])
+    try:
+        if config['wall_core_thickness']:
+            filtered_entries = filtered_entries.filter(
+                sample_data__design_option__wall_core_thickness=config['wall_core_thickness'])
+    except KeyError:
+        pass
 
-    if config['plaster_width']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__plaster_width__gte=config['plaster_width'][0])
-            & Q(sample_data__plaster_width__lte=config['plaster_width'][1]))
+    try:
+        if config['wall_core_material']:
+           filtered_entries = filtered_entries.filter(sample_data__wall_core_material__all=config['wall_core_material'])
+    except KeyError:
+        pass
 
-    if config['plaster_material']:
-        filtered_entries = filtered_entries.filter(sample_data__plaster_material__all=config['plaster_material'])
+    try:
+        if config['plaster_width']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__plaster_width__gte=config['plaster_width'][0])
+                & Q(sample_data__plaster_width__lte=config['plaster_width'][1]))
+    except KeyError:
+        pass
 
-    if config['start_year']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__start_year__gte=config['start_year'][0])
-            & Q(sample_data__start_year__lte=config['start_year'][1]))
+    try:
+        if config['plaster_material']:
+          filtered_entries = filtered_entries.filter(sample_data__plaster_material__all=config['plaster_material'])
+    except KeyError:
+        pass
 
-    if config['exterior_plaster']:
-        filtered_entries = filtered_entries.filter(
-            sample_data__design_option__exterior_plaster=config['exterior_plaster'])
+    try:
+        if config['start_year']:
+           filtered_entries = filtered_entries.filter(
+               Q(sample_data__start_year__gte=config['start_year'][0])
+              & Q(sample_data__start_year__lte=config['start_year'][1]))
+    except KeyError:
+        pass
 
-    if config['system_name']:
-        filtered_entries = filtered_entries.filter(sample_data__design_option__system_name__all=config['system_name'])
+    try:
+        if config['exterior_plaster']:
+            filtered_entries = filtered_entries.filter(
+               sample_data__design_option__exterior_plaster=config['exterior_plaster'])
+    except KeyError:
+        pass
 
-    if config['insulation_material']:
-        filtered_entries = filtered_entries.filter(
-            sample_data__design_option__insulation_material__all=config['insulation_material'])
+    try:
+        if config['system_name']:
+            filtered_entries = filtered_entries.filter(sample_data__design_option__system_name=config['system_name'])
+    except KeyError:
+        pass
 
-    if config['finish_material']:
-        filtered_entries = filtered_entries.filter(
-            sample_data__design_option__finish_material__all=config['finish_material'])
+    try:
+        if config['insulation_material']:
+            filtered_entries = filtered_entries.filter(
+                sample_data__design_option__insulation_material__all=config['insulation_material'])
+    except KeyError:
+        pass
 
-    if config['detail_material']:
-        filtered_entries = filtered_entries.filter(
-            sample_data__design_option__detail_material__all=config['detail_material'])
+    try:
+        if config['finish_material']:
+            filtered_entries = filtered_entries.filter(
+                sample_data__design_option__finish_material__all=config['finish_material'])
+    except KeyError:
+        pass
 
-    if config['insulation_thickness']:
-        filtered_entries = filtered_entries.filter(
-            Q(sample_data__design_option__insulation_thickness__gte=config['insulation_thickness'][0])
-            & Q(sample_data__design_option__insulation_thickness__lte=config['insulation_thickness'][1]))
+    try:
+        if config['detail_material']:
+            filtered_entries = filtered_entries.filter(
+                sample_data__design_option__detail_material__all=config['detail_material'])
+    except KeyError:
+        pass
+
+    try:
+        if config['insulation_thickness']:
+            filtered_entries = filtered_entries.filter(
+                Q(sample_data__design_option__insulation_thickness__gte=config['insulation_thickness'][0])
+                & Q(sample_data__design_option__insulation_thickness__lte=config['insulation_thickness'][1]))
+    except KeyError:
+        pass
 
     logger.info(f'{filtered_entries.count()} found based on given query')
     return filtered_entries
@@ -127,10 +196,8 @@ def filter_db(config: dict):
 
 def compute_cdf(delphin_docs: list, quantity: str):
     quantities = [doc.result_processed.thresholds[quantity] for doc in delphin_docs]
-    hist, edges = np.histogram(quantities, density=True)
+    hist, edges = np.histogram(quantities, density=True, bins=50)
     dx = edges[1] - edges[0]
     cdf = np.cumsum(hist) * dx
 
-    plt.figure()
-    plt.plot(edges[1:], cdf)
-    plt.show()
+    return edges[1:], cdf

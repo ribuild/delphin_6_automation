@@ -42,9 +42,10 @@ services:
 
 volumes:
   ocni_volume:
-    driver: vieux/sshfs:latest
+    driver: vieux/sshfs
     driver_opts:
       sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild
+      IdentityFile: /home/ocni/.ssh/id_rsa
 
 secrets:
   ssh_key:

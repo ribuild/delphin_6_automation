@@ -141,6 +141,9 @@ def download_full_project_from_database(document_id: str, folder: str) -> bool:
     weather_interactions.download_weather(delphin_document, os.path.join(folder, 'weather'))
     delphin_interactions.download_delphin_entry(delphin_document, folder)
 
+    if delphin_document.restart_data:
+        delphin_interactions.download_restart_data(delphin_document, os.path.join(folder, document_id))
+
     logger.debug(f'Download Delphin project with ID: {document_id} from database with weather and materials.')
 
     return True

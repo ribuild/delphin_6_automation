@@ -415,6 +415,37 @@ def docker_worker(sim_location: str, folder='/app/data') -> None:
         return None
 
 
+def exceeded_worker(sim_location: str, folder='/app/data') -> None:
+    """Solves Delphin projects in the database which has exceeded the run time limit"""
+
+    id_ = simulation_interactions.find_exceeded()
+
+    if id_:
+        if sim_location == 'local':
+            local_worker(str(id_))
+
+        elif sim_location == 'hpc':
+            logger.info('Starting at HPC')
+            try:
+                hpc_worker(str(id_), folder)
+
+            except Exception as err:
+                logger.info('Error encountered')
+                simulation_interactions.set_simulating(str(id_), False)
+                logger.exception(err)
+
+                if not os.path.isdir(os.path.join(folder, 'failed')):
+                    os.mkdir(os.path.join(folder, 'failed'))
+
+                shutil.copytree(os.path.join(folder, str(id_)),
+                                os.path.join(folder, 'failed', str(id_)))
+                raise RuntimeError
+
+    else:
+        logger.info('No ID found')
+        return None
+
+
 def main():
     print_header()
     menu()
