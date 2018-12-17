@@ -31,7 +31,7 @@ simulated_projects = delphin_entry.Delphin.objects(simulated__exists=True)
 
 print(f'There are currently {len(simulated_projects)} simulated projects in the database')
 print(f'Downloading Projects')
-
+"""
 for project in simulated_projects[:10]:
     project_folder = os.path.join(folder, str(project.id))
 
@@ -47,5 +47,5 @@ for project in simulated_projects[:10]:
 
     else:
         print(f'Skipping Project with ID: {project.id}. Already downloaded.')
-
+"""
 mongo_setup.global_end_ssh(server)
