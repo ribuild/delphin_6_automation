@@ -55,17 +55,19 @@ services:
 
 volumes:
   ocni_volume:
-    driver: vieux/sshfs
+    name: ocni_volume
+    driver: vieux/sshfs:latest
     driver_opts:
       sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild
-      IdentityFile: /home/ocni/.ssh/id_rsa
+      #IdentityFile: /home/ocni/.ssh/id_rsa
       allow_other: ""
 
   thper_volume:
-    driver: vieux/sshfs
+    name: thper_volume
+    driver: vieux/sshfs:latest
     driver_opts:
       sshcmd: thper@transfer.gbar.dtu.dk:/zhome/dc/d/63949/ribuild
-      IdentityFile: /home/ocni/.ssh/id_rsa
+      #IdentityFile: /home/ocni/.ssh/id_rsa
       allow_other: ""
 
 secrets:
