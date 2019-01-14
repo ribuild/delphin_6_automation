@@ -38,8 +38,8 @@ def lookup(projects_):
 
     ori = set(ori)
     rain = set(rain)
-    print(f'Orientations: {ori}')
-    print(f'Rain: {rain}')
+    print(f'Orientations: {sorted(ori)}')
+    print(f'Rain: {sorted(rain)}')
 
 
 lookup(projects)
