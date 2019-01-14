@@ -59,11 +59,14 @@ volumes:
     driver_opts:
       sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild
       IdentityFile: /home/ocni/.ssh/id_rsa
+      allow_other: ""
+
   thper_volume:
     driver: vieux/sshfs
     driver_opts:
       sshcmd: thper@transfer.gbar.dtu.dk:/zhome/dc/d/63949/ribuild
       IdentityFile: /home/ocni/.ssh/id_rsa
+      allow_other: ""
 
 secrets:
   ssh_key:
