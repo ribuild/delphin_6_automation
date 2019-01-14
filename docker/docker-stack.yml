@@ -7,12 +7,25 @@ services:
     volumes:
       - ocni_volume:/app/data
     deploy:
-      replicas: 2
+      replicas: 1
     secrets:
       - ssh_key
       - source: db_simon
         target: db_ait
       - source: hpc_ocni
+        target: hpc_access
+
+  simulation_thper_2d1d:
+    image: ocni/hpc_simulator:latest
+    volumes:
+      - thper_volume:/app/data
+    deploy:
+      replicas: 1
+    secrets:
+      - ssh_key
+      - source: db_simon
+        target: db_ait
+      - source: hpc_thper
         target: hpc_access
 
   sampling_2d1d:
@@ -46,6 +59,11 @@ volumes:
     driver_opts:
       sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild
       IdentityFile: /home/ocni/.ssh/id_rsa
+  thper_volume:
+    driver: vieux/sshfs
+    driver_opts:
+      sshcmd: thper@transfer.gbar.dtu.dk:/zhome/dc/d/63949/ribuild
+      IdentityFile: /home/ocni/.ssh/id_rsa
 
 secrets:
   ssh_key:
@@ -56,3 +74,5 @@ secrets:
     file: /home/ocni/.ssh/db_simon.json
   hpc_ocni:
     file: /home/ocni/.ssh/hpc_ocni.json
+  hpc_thper:
+    file: /home/ocni/.ssh/hpc_thper.json
