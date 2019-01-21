@@ -11,31 +11,28 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_2d_1d as auth_dict
-from delphin_6_automation.database_interactions import general_interactions
+from delphin_6_automation.database_interactions import simulation_interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
 server = mongo_setup.global_init(auth_dict)
 
-sample = sample_entry.Sample.objects()
-sample_projects = []
+samples = sample_entry.Sample.objects(iteration=3)
 
-for s in sample:
-    for delphin in s.delphin_docs:
-        sample_projects.append(delphin.id)
+print(samples.count())
 
-print(f'There is {len(sample_projects)} connected to a sample')
+for sample in samples:
 
-projects = delphin_entry.Delphin.objects()
+    print(f'In sample with ID: {sample.id}')
+    delphin_projects = sample.delphin_docs
 
-print(f'There are currently {len(projects)} projects in the database')
-
-
-for proj in projects:
-    if proj.id not in sample_projects:
-        print(f'Project with ID: {proj.id} is not part of a sample!')
-        proj.delete()
+    for entry in delphin_projects:
+        if delphin_entry.Delphin.objects(id=entry.id):
+            print(f'Deleting project with ID: {entry.id}')
+            #entry.delete()
+        else:
+            print(f'ID: {entry.id} does not exists')
 
 
 mongo_setup.global_end_ssh(server)

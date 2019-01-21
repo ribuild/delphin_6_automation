@@ -40,7 +40,7 @@ def lookup(projects_):
     print(f'Rain: {sorted(rain)}')
 
 
-lookup(projects)
+#lookup(projects)
 x, y = result_extraction.compute_cdf(projects, 'mould')
 a = np.nonzero(x < 2.0)
 print(y[a][-1])
