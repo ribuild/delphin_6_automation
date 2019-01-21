@@ -128,7 +128,7 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
     file.write(f"#BSUB -W {computation_time}\n")
     file.write(f'#BSUB -R "rusage[mem={ram_per_cpu}] span[hosts=1]"\n')
     file.write(f"#BSUB -n {cpus}\n")
-    file.write(f"#BSUB -N\n")
+    #file.write(f"#BSUB -N\n")
     file.write('\n')
     file.write(f"export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n")
     file.write('\n')
