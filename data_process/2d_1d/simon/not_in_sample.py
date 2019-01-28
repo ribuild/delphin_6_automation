@@ -11,7 +11,6 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_2d_1d as auth_dict
-from delphin_6_automation.database_interactions import general_interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -19,23 +18,27 @@ from delphin_6_automation.database_interactions import general_interactions
 server = mongo_setup.global_init(auth_dict)
 
 sample = sample_entry.Sample.objects()
-sample_projects = []
 
-for s in sample:
-    for delphin in s.delphin_docs:
-        sample_projects.append(delphin.id)
+sample_projects = [delphin.id
+                   for s in sample
+                   for delphin in s.delphin_docs]
+
 
 print(f'There is {len(sample_projects)} connected to a sample')
 
-projects = delphin_entry.Delphin.objects()
+for i in range(8):
+    print(f'Running {i} round')
+    projects = delphin_entry.Delphin.objects().limit(20000)
 
-print(f'There are currently {len(projects)} projects in the database')
+    print(f'There are currently {len(projects)} projects in the database')
 
+    print('Starting')
+    for proj in projects:
+        if proj.id not in sample_projects:
+            #print(f'Project with ID: {proj.id} is not part of a sample!')
+            proj.delete()
 
-for proj in projects:
-    if proj.id not in sample_projects:
-        print(f'Project with ID: {proj.id} is not part of a sample!')
-        proj.delete()
-
+    print(f'End of round {i}\n')
+    projects = None
 
 mongo_setup.global_end_ssh(server)
