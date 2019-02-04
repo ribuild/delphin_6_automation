@@ -26,19 +26,15 @@ sample_projects = [delphin.id
 
 print(f'There is {len(sample_projects)} connected to a sample')
 
-for i in range(8):
-    print(f'Running {i} round')
-    projects = delphin_entry.Delphin.objects().limit(20000)
+projects = delphin_entry.Delphin.objects()
 
-    print(f'There are currently {len(projects)} projects in the database')
+print(f'There are currently {len(projects)} projects in the database')
 
-    print('Starting')
-    for proj in projects:
-        if proj.id not in sample_projects:
-            #print(f'Project with ID: {proj.id} is not part of a sample!')
-            proj.delete()
+print('Starting')
+for proj in projects:
+    if proj.id not in sample_projects:
+        #print(f'Project with ID: {proj.id} is not part of a sample!')
+        proj.delete()
 
-    print(f'End of round {i}\n')
-    projects = None
 
 mongo_setup.global_end_ssh(server)
