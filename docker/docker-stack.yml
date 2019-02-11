@@ -7,7 +7,7 @@ services:
     volumes:
       - ocni_volume:/app/data
     deploy:
-      replicas: 2
+      replicas: 0
     secrets:
       - ssh_key
       - source: db_simon
@@ -20,7 +20,7 @@ services:
     volumes:
       - thper_volume:/app/data
     deploy:
-      replicas: 1
+      replicas: 0
     secrets:
       - ssh_key
       - source: db_simon
@@ -33,7 +33,7 @@ services:
     volumes:
       - nicf_volume:/app/data
     deploy:
-      replicas: 1
+      replicas: 0
     secrets:
       - ssh_key
       - source: db_simon
@@ -46,12 +46,26 @@ services:
     volumes:
       - angva_volume:/app/data
     deploy:
-      replicas: 1
+      replicas: 0
     secrets:
       - ssh_key
       - source: db_simon
         target: db_ait
       - source: hpc_angva
+        target: hpc_access
+
+
+  simulation_spbj_2d1d:
+    image: ocni/hpc_simulator:latest
+    volumes:
+      - spbj_volume:/app/data
+    deploy:
+      replicas: 0
+    secrets:
+      - ssh_key
+      - source: db_simon
+        target: db_ait
+      - source: hpc_spbj
         target: hpc_access
 
   sampling_2d1d:
@@ -97,7 +111,15 @@ volumes:
     name: angva_volume
     driver: vieux/sshfs:latest
     driver_opts:
-      sshcmd: angva@transfer.gbar.dtu.dk://zhome/4f/a/68165/ribuild
+      sshcmd: angva@transfer.gbar.dtu.dk:/zhome/4f/a/68165/ribuild
+      #IdentityFile: /home/ocni/.ssh/id_rsa
+      allow_other: ""
+
+  spbj_volume:
+    name: spbj_volume
+    driver: vieux/sshfs:latest
+    driver_opts:
+      sshcmd: spbj@transfer.gbar.dtu.dk://zhome/4f/a/68165/ribuild
       #IdentityFile: /home/ocni/.ssh/id_rsa
       allow_other: ""
 
@@ -116,3 +138,5 @@ secrets:
     file: /home/ocni/.ssh/hpc_nicf.json
   hpc_angva:
     file: /home/ocni/.ssh/hpc_angva.json
+  hpc_spbj:
+    file: /home/ocni/.ssh/hpc_spbj.json
