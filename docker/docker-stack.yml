@@ -8,6 +8,16 @@ services:
       - ocni_volume:/app/data
     deploy:
       replicas: 0
+      update_config:
+        parallelism: 1
+        delay: 5s
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: 650M
+        reservations:
+          cpus: '0.1'
+          memory: 200M
     secrets:
       - ssh_key
       - source: db_simon
@@ -21,6 +31,9 @@ services:
       - thper_volume:/app/data
     deploy:
       replicas: 0
+      update_config:
+        parallelism: 1
+        delay: 5s
     secrets:
       - ssh_key
       - source: db_simon
@@ -34,6 +47,9 @@ services:
       - nicf_volume:/app/data
     deploy:
       replicas: 0
+      update_config:
+        parallelism: 1
+        delay: 5s
     secrets:
       - ssh_key
       - source: db_simon
@@ -47,6 +63,9 @@ services:
       - angva_volume:/app/data
     deploy:
       replicas: 0
+      update_config:
+        parallelism: 1
+        delay: 5s
     secrets:
       - ssh_key
       - source: db_simon
@@ -61,6 +80,9 @@ services:
       - spbj_volume:/app/data
     deploy:
       replicas: 0
+      update_config:
+        parallelism: 1
+        delay: 5s
     secrets:
       - ssh_key
       - source: db_simon
@@ -79,6 +101,14 @@ services:
     environment:
       - LOGGLY_TOKEN=2cb6ff7e-c529-446e-b7a7-193ea64de90f
       - LOGGLY_TAG=DOCKER
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 100M
+        reservations:
+          cpus: '0.1'
+          memory: 30M
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
 
@@ -119,7 +149,7 @@ volumes:
     name: spbj_volume
     driver: vieux/sshfs:latest
     driver_opts:
-      sshcmd: spbj@transfer.gbar.dtu.dk://zhome/4f/a/68165/ribuild
+      sshcmd: spbj@transfer.gbar.dtu.dk:/zhome/25/d/45051/ribuild
       #IdentityFile: /home/ocni/.ssh/id_rsa
       allow_other: ""
 

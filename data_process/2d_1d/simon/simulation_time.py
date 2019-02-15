@@ -57,10 +57,11 @@ print(f'6 users: {24*60/np.quantile(sim_time, 0.50)*60*10*30*6:.01f} simulations
 print('')
 
 plt.figure()
-plt.hist(sim_time, bins='auto')
+plt.hist(sim_time, bins='auto', density=True)
 plt.title('1D Simulation Time')
 plt.xlabel('Simulation Time in Minutes')
 plt.ylabel('Number of Simulations')
+plt.xlim(0, 250)
 plt.show()
 
 mongo_setup.global_end_ssh(server)
