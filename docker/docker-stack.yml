@@ -9,15 +9,8 @@ services:
     deploy:
       replicas: 0
       update_config:
-        parallelism: 1
+        parallelism: 2
         delay: 5s
-      resources:
-        limits:
-          cpus: '0.30'
-          memory: 650M
-        reservations:
-          cpus: '0.1'
-          memory: 200M
     secrets:
       - ssh_key
       - source: db_simon
