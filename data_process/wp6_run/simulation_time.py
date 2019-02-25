@@ -10,8 +10,7 @@ import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import auth_2d_1d as auth_dict
-from delphin_6_automation.backend import result_extraction
+from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 
 # -------------------------------------------------------------------------------------------------------------------- #

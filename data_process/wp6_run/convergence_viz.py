@@ -7,12 +7,11 @@ __license__ = 'MIT'
 # Modules
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import stats
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import auth_2d_1d as auth_dict
+from delphin_6_automation.database_interactions.auth import auth_dict
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild

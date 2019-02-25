@@ -1,0 +1,151 @@
+version: '3.7'
+
+services:
+
+  simulation_ocni_2d1d:
+    image: ocni/hpc_simulator:latest
+    volumes:
+      - ocni_volume:/app/data
+    deploy:
+      replicas: 0
+      update_config:
+        parallelism: 2
+        delay: 5s
+    secrets:
+      - ssh_key
+      - db_ait
+      - source: hpc_ocni
+        target: hpc_access
+
+  simulation_thper_2d1d:
+    image: ocni/hpc_simulator:latest
+    volumes:
+      - thper_volume:/app/data
+    deploy:
+      replicas: 0
+      update_config:
+        parallelism: 2
+        delay: 5s
+    secrets:
+      - ssh_key
+      - db_ait
+      - source: hpc_thper
+        target: hpc_access
+
+  simulation_nicf_2d1d:
+    image: ocni/hpc_simulator:latest
+    volumes:
+      - nicf_volume:/app/data
+    deploy:
+      replicas: 0
+      update_config:
+        parallelism: 2
+        delay: 5s
+    secrets:
+      - ssh_key
+      - db_ait
+      - source: hpc_nicf
+        target: hpc_access
+
+  simulation_angva_2d1d:
+    image: ocni/hpc_simulator:latest
+    volumes:
+      - angva_volume:/app/data
+    deploy:
+      replicas: 0
+      update_config:
+        parallelism: 2
+        delay: 5s
+    secrets:
+      - ssh_key
+      - db_ait
+      - source: hpc_angva
+        target: hpc_access
+
+
+  simulation_spbj_2d1d:
+    image: ocni/hpc_simulator:latest
+    volumes:
+      - spbj_volume:/app/data
+    deploy:
+      replicas: 0
+      update_config:
+        parallelism: 2
+        delay: 5s
+    secrets:
+      - ssh_key
+      - db_ait
+      - source: hpc_spbj
+        target: hpc_access
+
+  sampling_2d1d:
+    image: ocni/hpc_sampler:latest
+    secrets:
+      - db_ait
+
+  logger:
+    image: iamatypeofwalrus/logspout-loggly
+    environment:
+      - LOGGLY_TOKEN=2cb6ff7e-c529-446e-b7a7-193ea64de90f
+      - LOGGLY_TAG=DOCKER
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+
+volumes:
+  ocni_volume:
+    name: ocni_volume
+    driver: vieux/sshfs:latest
+    driver_opts:
+      sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild
+      #IdentityFile: /home/ocni/.ssh/id_rsa
+      allow_other: ""
+
+  thper_volume:
+    name: thper_volume
+    driver: vieux/sshfs:latest
+    driver_opts:
+      sshcmd: thper@transfer.gbar.dtu.dk:/zhome/dc/d/63949/ribuild
+      #IdentityFile: /home/ocni/.ssh/id_rsa
+      allow_other: ""
+
+  nicf_volume:
+    name: nicf_volume
+    driver: vieux/sshfs:latest
+    driver_opts:
+      sshcmd: nicf@transfer.gbar.dtu.dk:/zhome/40/8/123145/ribuild
+      #IdentityFile: /home/ocni/.ssh/id_rsa
+      allow_other: ""
+
+  angva_volume:
+    name: angva_volume
+    driver: vieux/sshfs:latest
+    driver_opts:
+      sshcmd: angva@transfer.gbar.dtu.dk:/zhome/4f/a/68165/ribuild
+      #IdentityFile: /home/ocni/.ssh/id_rsa
+      allow_other: ""
+
+  spbj_volume:
+    name: spbj_volume
+    driver: vieux/sshfs:latest
+    driver_opts:
+      sshcmd: spbj@transfer.gbar.dtu.dk:/zhome/25/d/45051/ribuild
+      #IdentityFile: /home/ocni/.ssh/id_rsa
+      allow_other: ""
+
+secrets:
+  ssh_key:
+    file: /home/ocni/.ssh/id_rsa
+  db_ait:
+    file: /home/ocni/.ssh/db_ait.json
+  db_simon:
+    file: /home/ocni/.ssh/db_simon.json
+  hpc_ocni:
+    file: /home/ocni/.ssh/hpc_ocni.json
+  hpc_thper:
+    file: /home/ocni/.ssh/hpc_thper.json
+  hpc_nicf:
+    file: /home/ocni/.ssh/hpc_nicf.json
+  hpc_angva:
+    file: /home/ocni/.ssh/hpc_angva.json
+  hpc_spbj:
+    file: /home/ocni/.ssh/hpc_spbj.json
