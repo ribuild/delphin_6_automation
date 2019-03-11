@@ -117,7 +117,7 @@ def sampling_worker(strategy_id: str) -> None:
             sampling_interactions.add_sample_to_strategy(strategy_id, sample_id)
 
         else:
-            logger.debug('Found existing sample')
+            logger.info('Found existing sample')
             delphin_ids = sampling_interactions.get_delphin_for_sample(existing_sample)
             sample_id = existing_sample.id
 

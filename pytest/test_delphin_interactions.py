@@ -148,6 +148,7 @@ def test_upload_restart_data(db_one_project, test_folder, number, tmpdir):
 def test_download_restart_data(project_with_restart, tmpdir):
     folder = tmpdir.mkdir('test')
 
-    delphin_interactions.download_restart_data(folder, project_with_restart)
+    project = delphin_entry.Delphin.objects(id=project_with_restart).first()
+    delphin_interactions.download_restart_data(project, folder)
 
-    assert os.path.exists(os.path.join(folder, 'restart.bin'))
+    assert os.path.exists(os.path.join(folder, 'var', 'restart.bin'))

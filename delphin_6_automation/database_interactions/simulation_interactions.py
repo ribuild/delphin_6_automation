@@ -174,3 +174,23 @@ def wait_until_simulated(delphin_ids: list) -> bool:
 
     logger.debug('All projects are simulated')
     return True
+
+
+def find_exceeded() -> typing.Optional[str]:
+    """
+    Finds a Delphin project which has exceeded the simulation run time limit.
+
+    :return: If a entry is found the id will be returned otherwise None.
+    """
+
+    try:
+        id_ = delphin_entry.Delphin.objects(simulating=False,
+                                            exceeded_time_limit=True).order_by('-queue_priority').first().id
+        set_simulating(str(id_), True)
+        logger.debug(f'Found exceeded Delphin project with ID: {id_}')
+        return str(id_)
+
+    except AttributeError:
+        logger.info('No exceeded Delphin Projects in the database!')
+        time.sleep(60)
+        return None

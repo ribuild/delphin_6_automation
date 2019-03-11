@@ -56,7 +56,7 @@ def ribuild_logger(name: str='delphin_6_automation'):
         # Stream Handler
         sh = logging.StreamHandler()
         sh.setFormatter(formatter)
-        sh.setLevel(logging.DEBUG)
+        sh.setLevel(logging.INFO)
         logger.addHandler(sh)
         loggers[name] = logger
 

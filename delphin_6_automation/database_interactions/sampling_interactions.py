@@ -135,7 +135,7 @@ def add_delphin_to_sampling(sample_id: str, delphin_ids: list) -> None:
         delphin_doc = delphin_entry.Delphin.objects(id=delphin_id).first()
         sample_document.update(push__delphin_docs=delphin_doc)
 
-    logger.debug(f'Added Delphin IDs: {delphin_ids} to sample with ID: {sample_id}')
+    logger.info(f'Added Delphin IDs: {delphin_ids} to sample with ID: {sample_id}')
 
 
 def add_sample_to_strategy(strategy_id: str, sample_id: str) -> None:
@@ -145,7 +145,7 @@ def add_sample_to_strategy(strategy_id: str, sample_id: str) -> None:
     strategy_document = sample_entry.Strategy.objects(id=strategy_id).first()
     strategy_document.update(push__samples=sample_document)
 
-    logger.debug(f'Added samples with ID: {sample_id} to strategy with ID: {strategy_id}')
+    logger.info(f'Added samples with ID: {sample_id} to strategy with ID: {strategy_id}')
 
 
 def upload_sample_mean(sample_id: str, sample_mean: dict) -> None:
