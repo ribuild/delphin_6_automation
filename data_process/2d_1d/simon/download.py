@@ -5,9 +5,11 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
+
 import getpass
 import os
 import pathlib
+import pandas as pd
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -18,10 +20,11 @@ from delphin_6_automation.database_interactions import general_interactions
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
+print("---> in download script")
 
 user = getpass.getuser()
 
-folder = os.path.join('C:\\', 'Users', user, 'Desktop', '2D-1D', 'Simulated')
+folder = 'D:\\WP6_1d2d_simulated'
 
 if not os.path.exists(folder):
     pathlib.Path(folder).mkdir(parents=True)
@@ -29,10 +32,18 @@ if not os.path.exists(folder):
 server = mongo_setup.global_init(auth_dict)
 simulated_projects = delphin_entry.Delphin.objects(simulated__exists=True)
 
+#pd.Series(simulated_projects).to_csv('C:\\Users\\sbj\\Documents\\WP6 Study 2D_1D\\simulated.txt')
+
 print(f'There are currently {len(simulated_projects)} simulated projects in the database')
 print(f'Downloading Projects')
 
-for project in simulated_projects[:10]:
+range_start = int(pd.read_csv('range.txt').columns[1])
+#print('Current start: ', range_start)
+# fejl ...8c71 og 8c79 og 8caf og 8d08
+#range_start = 0
+
+for project in simulated_projects[range_start:]:
+
     project_folder = os.path.join(folder, str(project.id))
 
     if not os.path.exists(project_folder):
@@ -49,3 +60,5 @@ for project in simulated_projects[:10]:
         print(f'Skipping Project with ID: {project.id}. Already downloaded.')
 
 mongo_setup.global_end_ssh(server)
+
+
