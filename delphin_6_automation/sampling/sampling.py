@@ -96,7 +96,7 @@ def create_sampling_strategy(path: str) -> dict:
                          {'type': 'discrete', 'range': inputs.plaster_materials(), },
 
                      'start_year':
-                         {'type': 'discrete', 'range': [i for i in range(2020, 2046)], },
+                         {'type': 'discrete', 'range': [i for i in range(2020, 2045)], },
                      }
 
     sampling_settings = {'initial samples per set': 1,
@@ -316,6 +316,18 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                                                                          'generic_scenario'][parameter][0])
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
+                elif parameter == 'initial_temperature':
+                    delphin_permutations.change_initial_condition(design_variation, 'Temperature',
+                                                                  samples[sequence][design][
+                                                                      'generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                elif parameter == 'initial_relhum':
+                    delphin_permutations.change_initial_condition(design_variation, 'RelativeHumidity',
+                                                                  samples[sequence][design][
+                                                                      'generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
                 elif parameter == 'wall_orientation':
                     delphin_permutations.change_orientation(design_variation, samples[sequence][design][
                         'generic_scenario'][parameter][0])
@@ -350,7 +362,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
             delphin_id = delphin_interactions.upload_delphin_dict_to_database(design_variation, 1)
 
             start_year = int(samples[sequence][design]['generic_scenario']['start_year'][0])
-            years = [start_year, ] + [year for year in range(start_year, start_year + 6)]
+            years = [year for year in range(start_year, start_year + 7)]
             weather_interactions.assign_weather_by_name_and_years(delphin_id,
                                                                   samples[sequence][design][
                                                                       'generic_scenario']['exterior_climate'][0], years)
@@ -372,7 +384,6 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
 
 
 def create_design_info(design: str) -> dict:
-
     design_data = design.split('_')
 
     if design_data[0] == '3A':

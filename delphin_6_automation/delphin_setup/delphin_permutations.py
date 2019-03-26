@@ -458,3 +458,20 @@ def change_solver_relative_tolerance(delphin: dict, relative_tolerance: float) -
 
     finally:
         return delphin
+
+
+def change_initial_condition(delphin: dict, condition: str, new_value: float) -> dict:
+
+    initial_conditions = delphin['DelphinProject']['Conditions']['InitialConditions']['InitialCondition']
+
+    if isinstance(initial_conditions, list):
+        for index in range(len(initial_conditions)):
+            if initial_conditions[index]['@type'] == condition:
+                    initial_conditions[index]['IBK:Parameter']['#text'] = str(new_value)
+    else:
+        if initial_conditions['@type'] == condition:
+            initial_conditions['IBK:Parameter']['#text'] = str(new_value)
+
+    logger.debug(f'Changed the initial {condition} to: {new_value}')
+
+    return delphin
