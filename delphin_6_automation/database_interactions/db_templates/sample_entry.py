@@ -31,6 +31,9 @@ class Sample(mongoengine.Document):
 
     meta = collections.sample_db
 
+    def __str__(self):
+        return f'ID: {self.id}'
+
 
 class SampleRaw(mongoengine.Document):
 
@@ -42,6 +45,9 @@ class SampleRaw(mongoengine.Document):
     sequence_number = mongoengine.IntField(required=True)
 
     meta = collections.sample_raw_db
+
+    def __str__(self):
+        return f'ID: {self.id}'
 
 
 class Strategy(mongoengine.Document):
@@ -58,3 +64,6 @@ class Strategy(mongoengine.Document):
     standard_error = mongoengine.DictField()
     strategy = mongoengine.DictField(required=True)
     time_prediction_model = mongoengine.ReferenceField(document_type=time_model_entry.TimeModel)
+
+    def __str__(self):
+        return f'ID: {self.id}'

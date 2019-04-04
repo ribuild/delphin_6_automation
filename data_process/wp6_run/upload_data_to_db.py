@@ -64,9 +64,9 @@ def upload_designs(folder):
         delphin_interactions.upload_design_file(os.path.join(folder, file), strategy.id)
 
 
-# upload_weather(r'U:\RIBuild\Weather Data')
+upload_weather(r'U:\RIBuild\Weather Data')
 #upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
-#create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
+create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
 upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
 upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\design')
 

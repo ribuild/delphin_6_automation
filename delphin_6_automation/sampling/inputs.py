@@ -39,10 +39,17 @@ def wall_core_materials(folder=os.path.dirname(os.path.realpath(__file__)) + '/i
     :return: list of IDs
     """
 
-    bricks = pd.read_excel(folder + '/Brick.xlsx')
-    natural_stones = pd.read_excel(folder + '/Natural Stone.xlsx')
+    brick_path = os.path.join(folder, 'Brick.xlsx')
+    natural_stone_path = os.path.join(folder, 'Natural Stone.xlsx')
+    material_list = []
 
-    material_list = bricks['Material ID'].tolist() + natural_stones['Material ID'].tolist()
+    if os.path.isfile(brick_path):
+        bricks = pd.read_excel(brick_path)
+        material_list.extend(bricks['Material ID'].tolist())
+
+    if os.path.isfile(natural_stone_path):
+        natural_stones = pd.read_excel(natural_stone_path)
+        material_list.extend(natural_stones['Material ID'].tolist())
 
     return material_list
 
@@ -68,7 +75,7 @@ def insulation_type(folder=os.path.dirname(os.path.realpath(__file__)) + '/input
             for sublist in insulation.tolist()]
 
 
-def insulation_systems(folder: str, rows_to_read=2, excel_file='InsulationSystems') -> pd.DataFrame:
+def insulation_systems(folder: str, rows_to_read=11, excel_file='InsulationSystems') -> pd.DataFrame:
     """Reformat insulation DataFrame to different design options DataFrame"""
 
     constructions = pd.read_excel(folder + f'/{excel_file}.xlsx', usecols=[0, 3, 4, 5, 6], nrows=rows_to_read)

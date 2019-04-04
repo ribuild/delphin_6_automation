@@ -7,12 +7,11 @@ __license__ = 'MIT'
 # Modules
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import stats
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import auth_2d_1d as auth_dict
+from delphin_6_automation.database_interactions.auth import auth_dict
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -22,14 +21,6 @@ strategy = sample_entry.Strategy.objects().first()
 
 mould = []
 heat = []
-
-
-def mm2inch(*tuple_):
-    inch = 25.4
-    if isinstance(tuple_[0], tuple):
-        return tuple(i/inch for i in tuple_[0])
-    else:
-        return tuple(i/inch for i in tuple_)
 
 
 for design in strategy.standard_error:
@@ -47,7 +38,7 @@ heat_min = np.nanmin(heat, axis=0)
 heat_max = np.nanmax(heat, axis=0)
 x = np.arange(0, len(heat_avg))
 
-plt.figure(figsize=(mm2inch(300, 200)))
+plt.figure()
 plt.plot(x, mould_avg, color='firebrick', label='Mould - Average Absolute Error')
 plt.plot(x, mould_min, linestyle='--', color='firebrick', label='Mould - Minimum Absolute Error')
 plt.plot(x, mould_max, linestyle=':', color='firebrick', label='Mould - Maximum Absolute Error')
@@ -75,5 +66,5 @@ print(f'\tMax: {heat_max[-1]:.03f}')
 print(f'\tAvg: {heat_avg[-1]:.03f}')
 print(f'\tMin: {heat_min[-1]:.03f}')
 print()
-print(f'\tAbove 0.1: {np.sum(heat[:, -1] > 0.1):.01f}')
+
 mongo_setup.global_end_ssh(server)

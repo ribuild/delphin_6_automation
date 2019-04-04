@@ -6,11 +6,10 @@ __license__ = 'MIT'
 
 # Modules
 import matplotlib.pyplot as plt
-import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import auth_2d_1d as auth_dict
+from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.backend import result_extraction
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -41,12 +40,9 @@ def lookup(projects_):
 
 
 #lookup(projects)
-x, y = result_extraction.compute_cdf(projects, 'mould')
-a = np.nonzero(x < 2.0)
-print(f'Mould under 2: {y[a][-1]}')
-
-b = np.nonzero(x < 1.0)
-print(f'Mould under 1: {y[b][-1]}')
+x, y = result_extraction.compute_cdf(projects, 'heat_loss')
+#a = np.nonzero(x < 2.0)
+#print(y[a][-1])
 plt.figure()
 plt.plot(x, y)
 plt.show()

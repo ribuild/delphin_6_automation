@@ -219,8 +219,38 @@ def ccd_to_list(file_path: str) -> list:
 
     data = []
 
-    for line in lines:
-        if line.startswith(' '):
-            data.append(float(line.split(' ')[-1].strip()))
+    for index, line in enumerate(lines):
+        try:
+            if line.startswith(' '):
+                data.append(float(line.split(' ')[-1].strip()))
+            elif isinstance(int(line[0]), int):
+                split_line = line.split('\t')
+                if len(split_line) > 1:
+                    data.append(float(split_line[-1].strip()))
+                    if split_line[1].startswith('23'):
+                        if int(split_line[0])+1 != int(lines[index+1].split('\t')[0]):
+                            print('DAY\tHOUR\tVALUE')
+                            print(line, lines[index+1])
+                    else:
+                        if int(split_line[1][:2])+1 != int(lines[index+1].split('\t')[1][:2]):
+                            print('\nDAY\tHOUR\t\tVALUE')
+                            print(line.strip())
+                            print(f'--- MISSING DATA UNTIL ---')
+                            print(lines[index+1].strip())
+                else:
+                    split_line = line.strip().split(' ')
+                    data.append(float(split_line[-1]))
+                    if split_line[1].startswith('23'):
+                        if int(split_line[0])+1 != int(lines[index+1].split(' ')[0]):
+                            print('DAY\tHOUR\tVALUE')
+                            print(line, lines[index+1])
+                    else:
+                        if int(split_line[1][:2])+1 != int(lines[index+1].split(' ')[1][:2]):
+                            print('\nDAY\tHOUR\t\tVALUE')
+                            print(line.strip())
+                            print(f'--- MISSING DATA UNTIL ---')
+                            print(lines[index+1].strip())
+        except ValueError:
+            pass
 
     return data

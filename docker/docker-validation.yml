@@ -13,7 +13,8 @@ services:
         delay: 5s
     secrets:
       - ssh_key
-      - db_ait
+      - source: db_validation
+        target: db_ait
       - source: hpc_ocni
         target: hpc_access
 
@@ -24,11 +25,12 @@ services:
     deploy:
       replicas: 0
       update_config:
-        parallelism: 2
+        parallelism: 1
         delay: 5s
     secrets:
       - ssh_key
-      - db_ait
+      - source: db_validation
+        target: db_ait
       - source: hpc_thper
         target: hpc_access
 
@@ -39,11 +41,12 @@ services:
     deploy:
       replicas: 0
       update_config:
-        parallelism: 2
+        parallelism: 1
         delay: 5s
     secrets:
       - ssh_key
-      - db_ait
+      - source: db_validation
+        target: db_ait
       - source: hpc_nicf
         target: hpc_access
 
@@ -54,11 +57,12 @@ services:
     deploy:
       replicas: 0
       update_config:
-        parallelism: 2
+        parallelism: 1
         delay: 5s
     secrets:
       - ssh_key
-      - db_ait
+      - source: db_validation
+        target: db_ait
       - source: hpc_angva
         target: hpc_access
 
@@ -70,24 +74,34 @@ services:
     deploy:
       replicas: 0
       update_config:
-        parallelism: 2
+        parallelism: 1
         delay: 5s
     secrets:
       - ssh_key
-      - db_ait
+      - source: db_validation
+        target: db_ait
       - source: hpc_spbj
         target: hpc_access
 
   sampling:
     image: ocni/hpc_sampler:latest
     secrets:
-      - db_ait
+      - source: db_validation
+        target: db_ait
 
   logger:
     image: iamatypeofwalrus/logspout-loggly
     environment:
       - LOGGLY_TOKEN=2cb6ff7e-c529-446e-b7a7-193ea64de90f
       - LOGGLY_TAG=DOCKER
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 100M
+        reservations:
+          cpus: '0.1'
+          memory: 30M
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
 
@@ -137,8 +151,8 @@ secrets:
     file: /home/ocni/.ssh/id_rsa
   db_ait:
     file: /home/ocni/.ssh/db_ait.json
-  db_simon:
-    file: /home/ocni/.ssh/db_simon.json
+  db_validation:
+    file: /home/ocni/.ssh/db_validation.json
   hpc_ocni:
     file: /home/ocni/.ssh/hpc_ocni.json
   hpc_thper:

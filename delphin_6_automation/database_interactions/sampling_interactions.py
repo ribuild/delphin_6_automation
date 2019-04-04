@@ -143,7 +143,7 @@ def add_sample_to_strategy(strategy_id: str, sample_id: str) -> None:
 
     sample_document = sample_entry.Sample.objects(id=sample_id).first()
     strategy_document = sample_entry.Strategy.objects(id=strategy_id).first()
-    strategy_document.update(push__samples=sample_document)
+    strategy_document.update(push__samples=sample_document.id)
 
     logger.info(f'Added samples with ID: {sample_id} to strategy with ID: {strategy_id}')
 

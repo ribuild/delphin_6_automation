@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<DelphinProject xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de DelphinProject.xsd" fileVersion="6.5">
+	<ProjectInfo created="pon. mar 11 15:11:35 2019" lastEdited="pon. mar 11 15:14:05 2019">
+		<Comment />
+	</ProjectInfo>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Model data, solver settings, general parameters-->
+	<Init>
+		<SimulationParameter>
+			<BalanceEquationModule>BEHeatMoisture</BalanceEquationModule>
+			<Interval>
+				<IBK:Parameter name="Duration" unit="a">2</IBK:Parameter>
+			</Interval>
+			<StartYear>2000</StartYear>
+			<DefaultInitialCondition name="DefaultTemperature" unit="C">8</DefaultInitialCondition>
+			<DefaultInitialCondition name="DefaultRelativeHumidity" unit="%">70</DefaultInitialCondition>
+		</SimulationParameter>
+	</Init>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--List of all materials used in this construction-->
+	<Materials>
+		<MaterialReference name="Exterior plaster" color="#ff808080">${Project Directory}/../../materials/Exterior plaster.m6</MaterialReference>
+		<MaterialReference name="Masonry" color="#ffff8080">${Project Directory}/../../materials/Masonry.m6</MaterialReference>
+		<MaterialReference name="Base plaster (inside)" color="#ffdbdbdb">${Project Directory}/../../materials/Base plaster (inside).m6</MaterialReference>
+		<MaterialReference name="Tectem glue mortar" color="#ff0060bf">${Project Directory}/../../materials/Tectem glue mortar.m6</MaterialReference>
+		<MaterialReference name="Multipor glue mortar" color="#ff00974b">${Project Directory}/../../materials/Multipor glue mortar.m6</MaterialReference>
+		<MaterialReference name="Tectem Insulation panel" color="#ffaad5ff">${Project Directory}/../../materials/Tectem Insulation panel.m6</MaterialReference>
+		<MaterialReference name="Multipor Insulation panel" color="#ffa6ffd2">${Project Directory}/../../materials/Multipor Insulation panel.m6</MaterialReference>
+		<MaterialReference name="TecTem finish" color="#ff0080ff">${Project Directory}/../../materials/TecTem finish.m6</MaterialReference>
+		<MaterialReference name="Multipor finish" color="#ff00ff40">${Project Directory}/../../materials/Multipor finish.m6</MaterialReference>
+		<MaterialReference name="Multipor shell" color="#ff00b92f">${Project Directory}/../../materials/Multipor shell.m6</MaterialReference>
+	</Materials>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Discretization data (grid and sketches)-->
+	<Discretization>
+		<XSteps unit="m">0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.00108102 0.0011686 0.00126329 0.00136564 0.00147628 0.00159589 0.00172519 0.00186497 0.00201607 0.00217941 0.00235598 0.00254687 0.00224053 0.00224053 0.00224053 0.00254687 0.00235598 0.00217941 0.00201607 0.00186497 0.00172519 0.00159589 0.00147628 0.00136564 0.00126329 0.0011686 0.00108102 0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.00108102 0.0011686 0.00126329 0.00136564 0.00108097 0.00108097 0.00108097 0.00136564 0.00126329 0.0011686 0.00108102 0.001 0.001 0.00108102 0.0011686 0.00126329 0.00136564 0.00147628 0.00159589 0.00172519 0.00186497 0.00201607 0.00217941 0.00235598 0.00254687 0.00275321 0.00297628 0.00321742 0.0034781 0.00375989 0.00406452 0.00439383 0.00474982 0.00513465 0.00555066 0.00600038 0.00648653 0.00701207 0.00758019 0.00819434 0.00885825 0.00957595 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.0095821 0.00957595 0.00885825 0.00819434 0.00758019 0.00701207 0.00648653 0.00600038 0.00555066 0.00513465 0.00474982 0.00439383 0.00406452 0.00375989 0.0034781 0.00321742 0.00297628 0.00275321 0.00254687 0.00235598 0.00217941 0.00201607 0.00186497 0.00172519 0.00159589 0.00147628 0.00136564 0.00126329 0.0011686 0.00108102 0.001 0.001 0.00108102 0.0011686 0.00126329 0.00136564 0.00147628 0.00132258 0.00132258 0.00132258 0.00132258 0.00147628 0.00136564 0.00126329 0.0011686 0.00108102 0.001 </XSteps>
+	</Discretization>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Conditions data, specifies how construction interacts with environment-->
+	<Conditions>
+
+		<Interfaces>
+			<Interface name="[0, 0, 0] - [0, 0, 0] : Left" type="Detailed">
+				<BCReference>Inside: Heat conduction</BCReference>
+				<BCReference>Inside: Vapor diffusion</BCReference>
+			</Interface>
+			<Interface name="[144, 0, 0] - [144, 0, 0] : Right" type="Detailed">
+				<BCReference>Outside: Heat conduction</BCReference>
+				<BCReference>Outside: Vapor diffusion</BCReference>
+			</Interface>
+		</Interfaces>
+
+		<ClimateConditions>
+
+			<ClimateCondition name="Monitoring: Outside Surface Temperature" type="Temperature" kind="TabulatedData">
+				<Filename>${Project Directory}/../../monitoring/Ms-24-1/T_Sf_Out.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">true</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Monitoring: Inside Air Temperature" type="Temperature" kind="TabulatedData">
+				<Filename>${Project Directory}/../../monitoring/Ms-24-1/T_Air_In.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">true</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Monitoring: Outside Air Temperature" type="Temperature" kind="TabulatedData">
+				<Filename>${Project Directory}/../../monitoring/Ms-24-1/T_Air_Out.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="K">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">true</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Monitoring: Inside Air Relative humidity" type="RelativeHumidity" kind="TabulatedData">
+				<Filename>${Project Directory}/../../monitoring/Ms-24-1/rH_Air_In.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">true</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Monitoring: Outside Air Relative humidity" type="RelativeHumidity" kind="TabulatedData">
+				<Filename>${Project Directory}/../../monitoring/Ms-24-1/rH_Air_Out.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="%">0</IBK:Parameter>
+				<IBK:Flag name="ExtendData">true</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+		</ClimateConditions>
+
+		<BoundaryConditions>
+
+			<BoundaryCondition name="Inside: Heat conduction" type="HeatConduction" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="W/m2K">8</IBK:Parameter>
+				<CCReference type="Temperature">Monitoring: Inside Air Temperature</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Inside: Vapor diffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">3e-08</IBK:Parameter>
+				<CCReference type="Temperature">Monitoring: Inside Air Temperature</CCReference>
+				<CCReference type="RelativeHumidity">Monitoring: Inside Air Relative humidity</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outside: Heat conduction" type="HeatConduction" kind="SurfaceValue">
+				<CCReference type="Temperature">Monitoring: Outside Surface Temperature</CCReference>
+			</BoundaryCondition>
+
+			<BoundaryCondition name="Outside: Vapor diffusion" type="VaporDiffusion" kind="Exchange">
+				<IBK:Parameter name="ExchangeCoefficient" unit="s/m">2e-06</IBK:Parameter>
+				<CCReference type="Temperature">Monitoring: Outside Air Temperature</CCReference>
+				<CCReference type="RelativeHumidity">Monitoring: Outside Air Relative humidity</CCReference>
+			</BoundaryCondition>
+		</BoundaryConditions>
+	</Conditions>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Contains definitions of output files and schedules for outputs.-->
+	<Outputs>
+		<!--General parameters-->
+		<IBK:Unit name="TimeUnit">d</IBK:Unit>
+		<IBK:Flag name="BinaryFormat">false</IBK:Flag>
+		<!--List of all Output schedules-->
+		<OutputGrids>
+			<OutputGrid name="Hourly">
+				<Interval>
+					<IBK:Parameter name="Duration" unit="d">0</IBK:Parameter>
+					<IBK:Parameter name="StepSize" unit="h">1</IBK:Parameter>
+				</Interval>
+			</OutputGrid>
+			<OutputGrid name="Daily">
+				<Interval>
+					<IBK:Parameter name="Duration" unit="d">0</IBK:Parameter>
+					<IBK:Parameter name="StepSize" unit="d">1</IBK:Parameter>
+				</Interval>
+			</OutputGrid>
+		</OutputGrids>
+		<!--List of all Output files-->
+		<OutputFiles>
+			<OutputFile name="inner construction T">
+				<Quantity>Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+			<OutputFile name="inner construction RH">
+				<Quantity>RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+			<OutputFile name="inside surface T">
+				<Quantity>Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+			<OutputFile name="inside surface RH">
+				<Quantity>RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+			<OutputFile name="outside surface T">
+				<Quantity>Temperature</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+			<OutputFile name="outside surface RH">
+				<Quantity>RelativeHumidity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+			<OutputFile name="inside surface heatflux">
+				<Quantity>FluxHeatConduction</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+			<OutputFile name="inside surface vapflux">
+				<Quantity>FluxVaporDiffusion</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Mean</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+			<OutputFile name="moisture mass integral">
+				<Quantity>MoistureMassDensity</Quantity>
+				<TimeType>None</TimeType>
+				<SpaceType>Integral</SpaceType>
+				<OutputGrid>Hourly</OutputGrid>
+			</OutputFile>
+		</OutputFiles>
+	</Outputs>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--List of all assignments of materials and conditions-->
+	<Assignments>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Exterior plaster</Reference>
+			<Range>129 0 144 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Masonry</Reference>
+			<Range>55 0 128 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Base plaster (inside)</Reference>
+			<Range>42 0 54 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Multipor glue mortar</Reference>
+			<Range>37 0 41 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Multipor Insulation panel</Reference>
+			<Range>8 0 36 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Multipor finish</Reference>
+			<Range>3 0 7 0</Range>
+		</Assignment>
+
+		<Assignment type="Material" location="Element">
+			<Reference>Multipor shell</Reference>
+			<Range>0 0 2 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Element">
+			<Reference>moisture mass integral</Reference>
+			<Range>0 0 144 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Element">
+			<Reference>inner construction T</Reference>
+			<Range>36 0 36 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Element">
+			<Reference>inner construction RH</Reference>
+			<Range>36 0 36 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Element">
+			<Reference>inside surface T</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Element">
+			<Reference>inside surface RH</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Element">
+			<Reference>outside surface T</Reference>
+			<Range>144 0 144 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Element">
+			<Reference>outside surface RH</Reference>
+			<Range>144 0 144 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Left">
+			<Reference>inside surface vapflux</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+
+		<Assignment type="Output" location="Left">
+			<Reference>inside surface heatflux</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+
+		<Assignment type="Interface" location="Left">
+			<Reference>[0, 0, 0] - [0, 0, 0] : Left</Reference>
+			<Range>0 0 0 0</Range>
+		</Assignment>
+
+		<Assignment type="Interface" location="Right">
+			<Reference>[144, 0, 0] - [144, 0, 0] : Right</Reference>
+			<Range>144 0 144 0</Range>
+		</Assignment>
+	</Assignments>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+</DelphinProject>

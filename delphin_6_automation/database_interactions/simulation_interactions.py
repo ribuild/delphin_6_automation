@@ -160,6 +160,7 @@ def wait_until_simulated(delphin_ids: list) -> bool:
     """
 
     simulated = [False] * len(delphin_ids)
+    logger.info(f'Checking if Delphin projects have been simulated')
 
     while not all(simulated):
         for index, id_ in enumerate(delphin_ids):
@@ -172,7 +173,7 @@ def wait_until_simulated(delphin_ids: list) -> bool:
                 logger.debug('Waiting until all projects are simulated')
                 time.sleep(180)
 
-    logger.debug('All projects are simulated')
+    logger.info('All projects are simulated')
     return True
 
 
