@@ -6,6 +6,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - ocni_volume:/app/data
+      - /var/log/ribuild/simulation/ocni:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -22,6 +23,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - thper_volume:/app/data
+      - /var/log/ribuild/simulation/thper:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -38,6 +40,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - nicf_volume:/app/data
+      - /var/log/ribuild/simulation/nicf:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -54,6 +57,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - angva_volume:/app/data
+      - /var/log/ribuild/simulation/angva:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -71,6 +75,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - spbj_volume:/app/data
+      - /var/log/ribuild/sampling:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -83,11 +88,14 @@ services:
       - source: hpc_spbj
         target: hpc_access
 
+
   sampling:
     image: ocni/hpc_sampler:latest
     secrets:
       - source: db_validation
         target: db_ait
+    volumes:
+      - /var/log/ribuild/sampling:/app/delphin_6_automation/delphin_6_automation.log
 
   logger:
     image: iamatypeofwalrus/logspout-loggly
