@@ -57,3 +57,5 @@ class Design(mongoengine.Document):
     # File
     design_name = mongoengine.StringField(required=True)
     d6p_file = mongoengine.DictField(required=True)
+    update_outputs = mongoengine.BooleanField(default=True)
+    measured_indoor_climate = mongoengine.BooleanField(default=False)

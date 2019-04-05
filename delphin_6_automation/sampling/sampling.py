@@ -231,7 +231,7 @@ def load_design_options(designs: typing.List[str]) -> typing.List[dict]:
     logger.debug(f'Loads {len(designs)} design Delphin projects')
 
     for design in designs:
-        delphin_projects.append(delphin_interactions.get_design_by_name(design))
+        delphin_projects.append(delphin_interactions.get_design_by_name(design).d6p_file)
 
     return delphin_projects
 
@@ -358,22 +358,30 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
             # Upload project
-            delphin_permutations.update_output_locations(design_variation)
+            design_doc = delphin_interactions.get_design_by_name(design)
+            if design_doc.update_outputs:
+                delphin_permutations.update_output_locations(design_variation)
+
             delphin_id = delphin_interactions.upload_delphin_dict_to_database(design_variation, 1)
 
             start_year = int(samples[sequence][design]['generic_scenario']['start_year'][0])
-            years = [year for year in range(start_year, start_year + 7)]
+            simulation_length = int(samples[sequence][design]['generic_scenario']['simulation_length'][0])
+            years = [year for year in range(start_year, start_year + simulation_length)]
+
             weather_interactions.assign_weather_by_name_and_years(delphin_id,
                                                                   samples[sequence][design][
                                                                       'generic_scenario']['exterior_climate'][0], years)
-            weather_interactions.assign_indoor_climate_to_project(delphin_id,
-                                                                  samples[sequence][design][
-                                                                      'generic_scenario']['interior_climate'][0])
-            delphin_interactions.change_entry_simulation_length(delphin_id, len(years), 'a')
+            if not design_doc.measured_indoor_climate:
+                weather_interactions.assign_indoor_climate_to_project(delphin_id,
+                                                                      samples[sequence][design][
+                                                                          'generic_scenario']['interior_climate'][0])
+                sample_dict['interior_climate'] = samples[sequence][design]['generic_scenario']['interior_climate'][0]
+            else:
+                sample_dict['interior_climate'] = 'measured data'
 
+            delphin_interactions.change_entry_simulation_length(delphin_id, len(years), 'a')
             sample_dict['start_year'] = samples[sequence][design]['generic_scenario']['start_year'][0]
             sample_dict['exterior_climate'] = samples[sequence][design]['generic_scenario']['exterior_climate'][0]
-            sample_dict['interior_climate'] = samples[sequence][design]['generic_scenario']['interior_climate'][0]
             sample_dict['design_option'] = create_design_info(design)
             sample_dict['sequence'] = sequence
 
@@ -460,7 +468,8 @@ def create_design_info(design: str) -> dict:
                        'detail_material': None,
                        'insulation_thickness': None,
                        }
-
+    elif design.endswith('DWD Weimar'):
+        design_info = {'design': design}
     else:
         error = f'Unknown design string. Given design was: {design}'
         logger.error(error)

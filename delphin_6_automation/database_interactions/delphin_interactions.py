@@ -631,7 +631,8 @@ def set_critical_error(sim_id: delphin_db.Delphin.id) -> str:
     return entry.id
 
 
-def upload_design_file(path: str, strategy_id: typing.Optional[str]) -> bson.ObjectId:
+def upload_design_file(path: str, strategy_id: typing.Optional[str], update_outputs: bool = True,
+                       measured_indoor_climate: bool = False) -> bson.ObjectId:
 
     """
     Uploads a Delphin file to a database.rst.
@@ -651,6 +652,8 @@ def upload_design_file(path: str, strategy_id: typing.Optional[str]) -> bson.Obj
 
     entry.d6p_file = delphin_dict
     entry.design_name = os.path.split(path)[1].split('.')[0]
+    entry.update_outputs = update_outputs
+    entry.measured_indoor_climate = measured_indoor_climate
     entry.save()
 
     logger.debug(f'Uploaded Design project with ID: {entry.id} to database')
@@ -658,8 +661,8 @@ def upload_design_file(path: str, strategy_id: typing.Optional[str]) -> bson.Obj
     return entry.id
 
 
-def get_design_by_name(name: str) -> dict:
+def get_design_by_name(name: str) -> delphin_db.Design:
 
     design_doc = delphin_db.Design.objects(design_name=name).first()
 
-    return design_doc.d6p_file
+    return design_doc

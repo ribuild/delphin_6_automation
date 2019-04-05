@@ -15,6 +15,7 @@ from delphin_6_automation.file_parsing import weather_parser
 from delphin_6_automation.delphin_setup import weather_modeling
 import delphin_6_automation.database_interactions.db_templates.weather_entry as weather_db
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+from delphin_6_automation.delphin_setup import delphin_permutations
 
 # Logger
 logger = ribuild_logger()
@@ -106,6 +107,7 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
                     'vertical_rain': [], 'wind_direction': [],
                     'wind_speed': [], 'long_wave_radiation': [],
                     'diffuse_radiation': [], 'direct_radiation': [],
+                    'indoor_temperature': [], 'indoor_relative_humidity': [],
                     'year': [], 'location_name': [], 'altitude': []}
     sim_id = delphin_document.id
 
@@ -117,14 +119,17 @@ def concatenate_weather(delphin_document: delphin_db.Delphin) -> dict:
             if weather_key in ['temperature', 'vertical_rain',
                                'wind_direction', 'wind_speed',
                                'long_wave_radiation', 'diffuse_radiation',
-                               'direct_radiation']:
+                               'direct_radiation', 'indoor_temperature']:
 
                 weather_dict[weather_key].extend(weather_document_as_dict[weather_key])
 
-            elif weather_key == 'relative_humidity':
-                relhum = [rh * 100
-                          for rh in weather_document_as_dict[weather_key]]
-                weather_dict[weather_key].extend(relhum)
+            elif weather_key.endswith('relative_humidity'):
+                if reloaded_delphin.weather[index].units['relative_humidity'] == '-':
+                    relhum = [rh * 100
+                              for rh in weather_document_as_dict[weather_key]]
+                    weather_dict[weather_key].extend(relhum)
+                else:
+                    weather_dict[weather_key].extend(weather_document_as_dict[weather_key])
 
         weather_dict['year'].append(reloaded_delphin.weather[index].year)
         weather_dict['location_name'].append(reloaded_delphin.weather[index].location_name)
@@ -187,15 +192,22 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
     """Download the weather associated with a Delphin project in the database"""
 
     weather = concatenate_weather(delphin_document)
-    weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
-        weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
-                                                           delphin_document.indoor_climate)
-    orientation = float(delphin_document.dp6_file['DelphinProject']['Conditions']['Interfaces'][
-                          'Interface'][0]['IBK:Parameter']['#text'])
-    wall_location = {'height': 5, 'width': 5}
-    weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],
-                                                                weather['wind_speed'], wall_location, orientation,
-                                                                inclination=90, catch_ratio=1)
+
+    # If there is not already given indoor climate data, then generate them for the standard
+    if not weather.get('indoor_temperature') and not weather.get('indoor_relative_humidity'):
+        weather['indoor_temperature'], weather['indoor_relative_humidity'] = \
+            weather_modeling.convert_weather_to_indoor_climate(weather['temperature'],
+                                                               delphin_document.indoor_climate)
+
+    orientation = delphin_permutations.get_orientation(delphin_document.dp6_file)
+
+    # Compute the wind driven rain, if wind and rain are given
+    if weather.get('vertical_rain') and weather.get('wind_direction') and weather.get('wind_speed'):
+
+        wall_location = {'height': 5, 'width': 5}
+        weather['wind_driven_rain'] = weather_modeling.driving_rain(weather['vertical_rain'], weather['wind_direction'],
+                                                                    weather['wind_speed'], wall_location, orientation,
+                                                                    inclination=90, catch_ratio=1)
 
     delphin_document.reload()
     latitude = delphin_document.weather[0].location[0]

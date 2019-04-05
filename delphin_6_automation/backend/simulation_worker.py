@@ -44,38 +44,45 @@ def local_worker(id_: str) -> typing.Optional[bool]:
     # Find paths
     system = platform.system()
     if system == 'Windows':
-        delphin_path = r'C:/ribuild'
+        folder = r'C:/ribuild'
         exe_path = r'C:/Program Files/IBK/Delphin 6.0/DelphinSolver.exe'
     elif system == 'Linux':
         home = str(Path.home())
-        delphin_path = home + '/ribuild'
+        folder = home + '/ribuild'
         exe_path = ''
     else:
         logger.error('OS not supported')
         raise NameError('OS not supported')
 
-    if not os.path.isdir(delphin_path):
-        os.mkdir(delphin_path)
+    simulation_folder = os.path.join(folder, id_)
+
+    if not os.path.isdir(simulation_folder):
+        os.mkdir(simulation_folder)
+    else:
+        simulation_interactions.clean_simulation_folder(simulation_folder)
+        os.mkdir(simulation_folder)
 
     # Download, solve, upload
     time_0 = datetime.datetime.now()
 
     logger.info(f'Downloads project with ID: {id_}')
 
-    general_interactions.download_full_project_from_database(str(id_), delphin_path)
-    solve_delphin(delphin_path + '/' + id_ + '.d6p', delphin_exe=exe_path, verbosity_level=0)
-    id_result = delphin_interactions.upload_results_to_database(delphin_path + '/' + id_)
+    general_interactions.download_full_project_from_database(str(id_), simulation_folder)
+    solve_delphin(os.path.join(simulation_folder, f'{id_}.d6p'), delphin_exe=exe_path, verbosity_level=0)
+    result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_), delete_files=False)
+    delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
+                                                  id_, result_id)
 
     delta_time = datetime.datetime.now() - time_0
 
     # Check if uploaded:
-    test_doc = result_db.Result.objects(id=id_result).first()
+    test_doc = result_db.Result.objects(id=result_id).first()
 
     simulation_interactions.set_simulated(id_)
     simulation_interactions.set_simulation_time(id_, delta_time)
 
     if test_doc:
-        simulation_interactions.clean_simulation_folder(delphin_path)
+        simulation_interactions.clean_simulation_folder(simulation_folder)
         logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}')
         return True
     else:

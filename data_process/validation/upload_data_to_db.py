@@ -71,11 +71,11 @@ def upload_weather(folder):
 
         for file in os.listdir(weather_folder):
             if file.startswith('rH') and file.endswith('In.ccd'):
-                key = 'relative_humidity_indoor'
+                key = 'indoor_relative_humidity'
             elif file.startswith('rH') and file.endswith('Out.ccd'):
                 key = 'relative_humidity'
             elif file.startswith('T') and file.endswith('In.ccd'):
-                key = 'temperature_indoor'
+                key = 'indoor_temperature'
             elif file.startswith('T') and file.endswith('Out.ccd'):
                 key = 'temperature'
 
@@ -121,7 +121,7 @@ def upload_weather(folder):
             yearly_weather_entry.source = {'comment': 'TU Dresden', 'url': None, 'file': 'multiple'}
 
             yearly_weather_entry.units = {'temperature': 'C',
-                                          'relative_humidity': '-',
+                                          'relative_humidity': '%',
                                           'long_wave_radiation': 'W/m2',
                                           'diffuse_radiation': 'W/m2',
                                           'direct_radiation': 'W/m2'
@@ -135,10 +135,10 @@ def upload_weather(folder):
                 'relative_humidity': weather_dict['relative_humidity'][
                                      accumulated_hours[year_index - 1]:
                                      accumulated_hours[year_index]],
-                'temperature_indoor': weather_dict['temperature_indoor'][
+                'indoor_temperature': weather_dict['indoor_temperature'][
                                       accumulated_hours[year_index - 1]:
                                       accumulated_hours[year_index]],
-                'relative_humidity_indoor': weather_dict['relative_humidity_indoor'][
+                'indoor_relative_humidity': weather_dict['indoor_relative_humidity'][
                                             accumulated_hours[year_index - 1]:
                                             accumulated_hours[year_index]],
                 'long_wave_radiation': weather_dict['long_wave_radiation'][
@@ -163,7 +163,7 @@ def upload_weather(folder):
 
 
 def create_strategy(folder):
-    design = []
+    design = ['Ms-11-5-DWD Weimar', ]
 
     scenario = {'generic_scenario': None}
 
@@ -177,7 +177,7 @@ def create_strategy(folder):
                          {'type': 'uniform', 'range': [5, 10], },
 
                      'interior_moisture_transfer_coefficient':
-                         {'type': 'uniform', 'range': [1*10 ** -8, 3*10 ** -8], },
+                         {'type': 'uniform', 'range': [1 * 10 ** -8, 3 * 10 ** -8], },
 
                      'wall_orientation':
                          {'type': 'uniform', 'range': [135, 225], },
@@ -194,6 +194,16 @@ def create_strategy(folder):
                      'exterior_climate': {
                          'type': 'discrete',
                          'range': ['Ms-11-5']
+                         },
+
+                     'start_year': {
+                         'type': 'discrete',
+                         'range': [2017]
+                         },
+
+                     'simulation_length': {
+                         'type': 'discrete',
+                         'range': [2]
                          }
                      }
 
@@ -223,12 +233,12 @@ def upload_strategy(folder):
 def upload_designs(folder):
     strategy = sample_entry.Strategy.objects().first()
 
-    #for file in os.listdir(folder):
+    # for file in os.listdir(folder):
     file = 'Ms-11-5-DWD Weimar.d6p'
-    delphin_interactions.upload_design_file(os.path.join(folder, file), strategy.id)
+    delphin_interactions.upload_design_file(os.path.join(folder, file), strategy.id, False, True)
 
 
-# upload_weather(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\weather')
+#upload_weather(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\weather')
 # upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')

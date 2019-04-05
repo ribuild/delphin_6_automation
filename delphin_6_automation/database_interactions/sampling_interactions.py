@@ -201,7 +201,7 @@ def update_queue_priorities(sample_id: str):
         sim_time_prediction.queue_priorities_on_time_prediction(sample_doc)
         logger.info(f'Updated queue priorities based on the time prediction')
     else:
-        logger.info(f'The current iteration [{sample_doc.iteration}]was below 3, '
+        logger.info(f'The current iteration > {sample_doc.iteration} < was below 3, '
                     f'therefore the queue priorities where not updated.')
 
 

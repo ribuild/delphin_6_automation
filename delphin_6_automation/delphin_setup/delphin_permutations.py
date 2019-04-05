@@ -226,12 +226,42 @@ def change_orientation(delphin_dict: dict, new_orientation: int) -> dict:
 
     for index in range(len(interfaces)):
         try:
-            interfaces[index]['IBK:Parameter']['#text'] = str(new_orientation)
+            if isinstance(interfaces[index]['IBK:Parameter'], list):
+                for ibk_param in interfaces[index]['IBK:Parameter']:
+                    if ibk_param['@name'] == 'Orientation':
+                        ibk_param['#text'] = str(new_orientation)
+                        break
+            else:
+                interfaces[index]['IBK:Parameter']['#text'] = str(new_orientation)
         except KeyError:
             pass
 
     logger.debug(f'Changed orientation to {new_orientation} degrees from North')
+
     return delphin_dict
+
+
+def get_orientation(delphin_dict: dict) -> float:
+    """
+    Changes the orientation of the Delphin project.
+
+    :param delphin_dict: Delphin dict to look in.
+    :return: Orientation
+    """
+
+    # Find current orientation
+    interfaces = delphin_dict['DelphinProject']['Conditions']['Interfaces']['Interface']
+
+    for index in range(len(interfaces)):
+        try:
+            if isinstance(interfaces[index]['IBK:Parameter'], list):
+                for ibk_param in interfaces[index]['IBK:Parameter']:
+                    if ibk_param['@name'] == 'Orientation':
+                        return float(ibk_param['#text'])
+            else:
+                return float(interfaces[index]['IBK:Parameter']['#text'])
+        except KeyError:
+            pass
 
 
 def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coefficient: str, new_value: float) \

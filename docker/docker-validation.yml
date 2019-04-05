@@ -6,7 +6,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - ocni_volume:/app/data
-      - /home/ocni/delphin_6_automation/logging/simulation/ocni:/app/delphin_6_automation/delphin_6_automation.log
+      #- /home/ocni/delphin_6_automation/logging/simulation/ocni:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -23,7 +23,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - thper_volume:/app/data
-      - /home/ocni/delphin_6_automation/logging/simulation/thper:/app/delphin_6_automation/delphin_6_automation.log
+      #- /home/ocni/delphin_6_automation/logging/simulation/thper:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -40,7 +40,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - nicf_volume:/app/data
-      - /home/ocni/delphin_6_automation/logging/simulation/nicf:/app/delphin_6_automation/delphin_6_automation.log
+      #- /home/ocni/delphin_6_automation/logging/simulation/nicf:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -57,7 +57,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - angva_volume:/app/data
-      - /home/ocni/delphin_6_automation/logging/simulation/angva:/app/delphin_6_automation/delphin_6_automation.log
+      #- /home/ocni/delphin_6_automation/logging/simulation/angva:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -75,7 +75,7 @@ services:
     image: ocni/hpc_simulator:latest
     volumes:
       - spbj_volume:/app/data
-      - /home/ocni/delphin_6_automation/logging/sampling:/app/delphin_6_automation/delphin_6_automation.log
+      #- /home/ocni/delphin_6_automation/logging/sampling:/app/delphin_6_automation/delphin_6_automation.log
     deploy:
       replicas: 0
       update_config:
@@ -94,8 +94,8 @@ services:
     secrets:
       - source: db_validation
         target: db_ait
-    volumes:
-      - /home/ocni/delphin_6_automation/logging/sampling:/app/delphin_6_automation/delphin_6_automation.log
+    #volumes:
+    #  - /home/ocni/delphin_6_automation/logging/sampling:/app/delphin_6_automation/delphin_6_automation.log
 
   logger:
     image: iamatypeofwalrus/logspout-loggly
@@ -131,7 +131,8 @@ volumes:
       allow_other: ""
 
   nicf_volume:
-    name: nicf_volume
+    name: nicf_volume4320lejre
+
     driver: vieux/sshfs:latest
     driver_opts:
       sshcmd: nicf@transfer.gbar.dtu.dk:/zhome/40/8/123145/ribuild

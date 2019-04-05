@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <DelphinProject xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de DelphinProject.xsd" fileVersion="6.5">
-	<ProjectInfo created="pon. mar 11 15:02:28 2019" lastEdited="on apr 3 16:00:19 2019">
-		<Comment />
+	<ProjectInfo created="pon. mar 11 15:02:28 2019" lastEdited="fr apr 5 09:46:42 2019">
+		<Comment>&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</Comment>
 	</ProjectInfo>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--DirectoryPlaceholders section defines strings to be substituted with directories-->
+	<DirectoryPlaceholders>
+		<Placeholder name="Material Database">C:/Program Files/IBK/Delphin 6.0/resources/DB_materials</Placeholder>
+	</DirectoryPlaceholders>
 
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
@@ -13,8 +20,11 @@
 			<Interval>
 				<IBK:Parameter name="Duration" unit="a">2</IBK:Parameter>
 			</Interval>
-			<ClimateDataFilePath>E:/TU Dresden/ACCESS/master theasis/09_Weimar_Simulation/climate DWD/Weimar_2016.epw</ClimateDataFilePath>
+			<IBK:Parameter name="Longitude" unit="Deg">13.4</IBK:Parameter>
+			<IBK:Parameter name="Latitude" unit="Deg">51.3</IBK:Parameter>
 			<StartYear>2000</StartYear>
+			<TimeZone>0</TimeZone>
+			<IBK:Flag name="UseCustomLocation">true</IBK:Flag>
 			<DefaultInitialCondition name="DefaultTemperature" unit="C">8</DefaultInitialCondition>
 			<DefaultInitialCondition name="DefaultRelativeHumidity" unit="%">70</DefaultInitialCondition>
 		</SimulationParameter>
@@ -24,13 +34,13 @@
 
 	<!--List of all materials used in this construction-->
 	<Materials>
-		<MaterialReference name="Exterior plaster" color="#ff808080">${Project Directory}/../../materials/Exterior plaster.m6</MaterialReference>
-		<MaterialReference name="Old Building Brick Dresden ZP [504]" color="#ffff8080">${Project Directory}/../materials/Masonry_3.m6</MaterialReference>
-		<MaterialReference name="Base plaster (inside)" color="#ffdbdbdb">${Project Directory}/../../materials/Base plaster (inside).m6</MaterialReference>
-		<MaterialReference name="Multipor glue mortar" color="#ff00974b">${Project Directory}/../../materials/Multipor glue mortar.m6</MaterialReference>
-		<MaterialReference name="Multipor Insulation panel" color="#ffa6ffd2">${Project Directory}/../../materials/Multipor Insulation panel.m6</MaterialReference>
-		<MaterialReference name="Multipor finish" color="#ff00ff40">${Project Directory}/../../materials/Multipor finish.m6</MaterialReference>
-		<MaterialReference name="Multipor shell" color="#ff00b92f">${Project Directory}/../../materials/Multipor shell.m6</MaterialReference>
+		<MaterialReference name="Exterior plaster" color="#ff808080">${Material Database}/Exterior plaster_2.m6</MaterialReference>
+		<MaterialReference name="Old Building Brick Dresden ZP [504]" color="#ffff8080">${Material Database}/Masonry_3.m6</MaterialReference>
+		<MaterialReference name="Base plaster (inside)" color="#ffdbdbdb">${Material Database}/Base plaster (inside)_1.m6</MaterialReference>
+		<MaterialReference name="Multipor glue mortar" color="#ff00974b">${Material Database}/Multipor glue mortar_5.m6</MaterialReference>
+		<MaterialReference name="Multipor Insulation panel" color="#ffa6ffd2">${Material Database}/Multipor Insulation panel_6.m6</MaterialReference>
+		<MaterialReference name="Multipor finish" color="#ff00ff40">${Material Database}/Multipor finish_4.m6</MaterialReference>
+		<MaterialReference name="Multipor shell" color="#ff00b92f">${Material Database}/Multipor shell_7.m6</MaterialReference>
 	</Materials>
 
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
@@ -52,7 +62,6 @@
 			</Interface>
 			<Interface name="Wall (vertical, facing south)" type="Detailed">
 				<IBK:Parameter name="Orientation" unit="Deg">180</IBK:Parameter>
-				<IBK:Parameter name="OutdoorAdsorptionCoefficient" unit="-">0.6</IBK:Parameter>
 				<BCReference>Outside: Heat conduction</BCReference>
 				<BCReference>Outside: Vapor diffusion</BCReference>
 				<BCReference>Outside: Short wave radiation</BCReference>
@@ -90,24 +99,16 @@
 				<IBK:Flag name="Cyclic">false</IBK:Flag>
 			</ClimateCondition>
 
-			<ClimateCondition name="DWD Weimar: Direct sun radiation (short wave component)" type="SWRadiationDirect" kind="TabulatedData">
-				<Filename>${Project Directory}/../../climate DWD/DWD_Weimar_DirectRadiation.ccd</Filename>
-				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
-				<IBK:Flag name="ExtendData">true</IBK:Flag>
-				<IBK:Flag name="Cyclic">false</IBK:Flag>
-			</ClimateCondition>
-
-			<ClimateCondition name="DWD Weimar: Diffuse sun radiation (short wave component)" type="SWRadiationDiffuse" kind="TabulatedData">
-				<Filename>${Project Directory}/../../climate DWD/DWD_Weimar_DiffuseRadiation.ccd</Filename>
-				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
-				<IBK:Flag name="ExtendData">true</IBK:Flag>
-				<IBK:Flag name="Cyclic">false</IBK:Flag>
-			</ClimateCondition>
-
 			<ClimateCondition name="DWD Weimar: Atmospheric counter radiation" type="LWRadiationSkyEmission" kind="TabulatedData">
 				<Filename>${Project Directory}/../../climate DWD/DWD_Weimar_SkyRadiation.ccd</Filename>
 				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
 				<IBK:Flag name="ExtendData">true</IBK:Flag>
+				<IBK:Flag name="Cyclic">false</IBK:Flag>
+			</ClimateCondition>
+
+			<ClimateCondition name="Imposed Sun Radiation" type="SWRadiationImposed" kind="TabulatedData">
+				<Filename>C:/Users/ocni/PycharmProjects/delphin_6_automation/data_process/validation/inputs/weather/DWD_Weimar_DirectRadiation.ccd</Filename>
+				<IBK:Parameter name="ShiftValue" unit="W/m2">0</IBK:Parameter>
 				<IBK:Flag name="Cyclic">false</IBK:Flag>
 			</ClimateCondition>
 		</ClimateConditions>
@@ -136,8 +137,9 @@
 				<CCReference type="RelativeHumidity">Monitoring: Outside Air Relative humidity</CCReference>
 			</BoundaryCondition>
 
-			<BoundaryCondition name="Outside: Short wave radiation" type="ShortWaveRadiation" kind="StandardRadiationModel">
+			<BoundaryCondition name="Outside: Short wave radiation" type="ShortWaveRadiation" kind="ImposedFlux">
 				<IBK:Parameter name="SurfaceAbsorptionCoefficient" unit="-">0.6</IBK:Parameter>
+				<CCReference type="SWRadiationImposed">Imposed Sun Radiation</CCReference>
 			</BoundaryCondition>
 
 			<BoundaryCondition name="Outside: Long wave radiation" type="LongWaveRadiation" kind="LongWaveComponents">
@@ -145,6 +147,17 @@
 				<CCReference type="LWRadiationSkyEmission">DWD Weimar: Atmospheric counter radiation</CCReference>
 			</BoundaryCondition>
 		</BoundaryConditions>
+
+		<InitialConditions>
+
+			<InitialCondition name="Temperature" type="Temperature">
+				<IBK:Parameter name="Value" unit="C">20</IBK:Parameter>
+			</InitialCondition>
+
+			<InitialCondition name="Relative Humidity" type="RelativeHumidity">
+				<IBK:Parameter name="Value" unit="%">60</IBK:Parameter>
+			</InitialCondition>
+		</InitialConditions>
 	</Conditions>
 
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
@@ -152,7 +165,7 @@
 	<!--Contains definitions of output files and schedules for outputs.-->
 	<Outputs>
 		<!--General parameters-->
-		<IBK:Unit name="TimeUnit">d</IBK:Unit>
+		<IBK:Unit name="TimeUnit">h</IBK:Unit>
 		<IBK:Flag name="BinaryFormat">false</IBK:Flag>
 		<!--List of all Output schedules-->
 		<OutputGrids>
@@ -321,6 +334,16 @@
 		<Assignment type="Interface" location="Right">
 			<Reference>Wall (vertical, facing south)</Reference>
 			<Range>144 0 144 0</Range>
+		</Assignment>
+
+		<Assignment type="InitialCondition" location="Element">
+			<Reference>Temperature</Reference>
+			<Range>0 0 144 0</Range>
+		</Assignment>
+
+		<Assignment type="InitialCondition" location="Element">
+			<Reference>Relative Humidity</Reference>
+			<Range>0 0 144 0</Range>
 		</Assignment>
 	</Assignments>
 
