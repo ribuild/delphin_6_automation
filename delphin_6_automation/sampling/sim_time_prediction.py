@@ -80,6 +80,11 @@ def transform_interior_climate(data: pd.DataFrame) -> pd.DataFrame:
             data.loc[data.loc[:, 'interior_climate'] == 'b', 'interior_climate'] = 1.0
         except TypeError:
             pass
+        else:
+            try:
+                data.loc[data.loc[:, 'interior_climate'] == 'measured data', 'interior_climate'] = 0.0
+            except TypeError:
+                pass
 
     return data
 
@@ -112,7 +117,7 @@ def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Tuple[KNeighborsRegressor, dict]:
+def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Optional[typing.Tuple[KNeighborsRegressor, dict]]:
     """Generation of the machine learning model"""
 
     ss = ShuffleSplit(n_splits=5, test_size=0.25, random_state=47)
@@ -131,12 +136,16 @@ def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Tuple[KNeig
                 best_model['features'] = features
                 logger.debug(f'Update best model to: {best_model["parameters"]} with score: {best_model["score"]}')
 
-    logger.info(f'KNN with {best_model["parameters"][0]} neighbors and {best_model["parameters"][1]} weight is the '
-                f'best model with R2 of {best_model["score"]:.5f}')
+    if best_model['score'] <= 0.6:
+        logger.info(f'No time prediction model with a R2 score above 0.6 could be found. Best model was: {best_model}')
+        return None, None
+    else:
+        logger.info(f'KNN with {best_model["parameters"][0]} neighbors and {best_model["parameters"][1]} weight is the '
+                    f'best model with R2 of {best_model["score"]:.5f}')
 
-    model = KNeighborsRegressor(n_neighbors=best_model['parameters'][0],
-                                weights=best_model['parameters'][1]).fit(x_data, y_data)
-    return model, best_model
+        model = KNeighborsRegressor(n_neighbors=best_model['parameters'][0],
+                                    weights=best_model['parameters'][1]).fit(x_data, y_data)
+        return model, best_model
 
 
 def remove_bad_features(x_data, y_data, basis_score, knn, scaler, shufflesplit) -> typing.Tuple[np.ndarray, list]:
@@ -192,15 +201,21 @@ def upload_model(model: KNeighborsRegressor, model_data: dict, sample_strategy: 
     return time_model_doc.id
 
 
-def create_upload_time_prediction_model(strategy: sample_entry.Strategy) -> ObjectId:
+def create_upload_time_prediction_model(strategy: sample_entry.Strategy) -> typing.Optional[ObjectId]:
     """Collects data, generates and uploads a simulation time prediction model to the database."""
 
     simulation_data = get_time_prediction_data()
     x_data, y_data = process_time_data(simulation_data)
     model, model_data = compute_model(x_data, y_data)
-    model_id = upload_model(model, model_data, strategy)
 
-    return model_id
+    if model and model_data:
+
+        model_id = upload_model(model, model_data, strategy)
+        return model_id
+
+    else:
+        logger.info(f'No time prediction model was added to Sample Strategy with ID {strategy.id}')
+        return None
 
 
 def process_inputs(raw_inputs: dict, model_features: dict) -> pd.DataFrame:

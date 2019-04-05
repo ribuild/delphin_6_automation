@@ -469,7 +469,7 @@ def create_design_info(design: str) -> dict:
                        'insulation_thickness': None,
                        }
     elif design.endswith('DWD Weimar'):
-        design_info = {'design': design}
+        design_info = {'system_name': design}
     else:
         error = f'Unknown design string. Given design was: {design}'
         logger.error(error)
