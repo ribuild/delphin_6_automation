@@ -34,7 +34,7 @@ def upload_materials(folder):
 
     for file in os.listdir(os.path.join(folder, 'materials')):
         print(file)
-        material_interactions.upload_material_file(os.path.join(folder, 'materials', file))
+        material_interactions.upload_material_file(os.path.join(folder, 'materials') + '/' + file)
 
     bricks = pd.read_excel(folder + '/Brick.xlsx')
 
@@ -46,7 +46,7 @@ def upload_materials(folder):
             pass
         else:
             print(name, os.path.exists(os.path.join(delphin_mats, name)))
-            material_interactions.upload_material_file(os.path.join(delphin_mats, name))
+            material_interactions.upload_material_file(delphin_mats + '/' + name)
 
 
 def upload_weather(folder):
@@ -239,9 +239,9 @@ def upload_designs(folder):
 
 
 #upload_weather(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\weather')
-# upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
+#upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
-upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\design')
+#upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\design')
 
 mongo_setup.global_end_ssh(server)
