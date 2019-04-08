@@ -284,11 +284,19 @@ def change_boundary_coefficient(delphin_dict: dict, boundary_condition: str, coe
                 for sub_index in range(len(boundary_conditions[index]['IBK:Parameter'])):
                     if boundary_conditions[index]['IBK:Parameter'][sub_index]['@name'] == coefficient:
                         boundary_conditions[index]['IBK:Parameter'][sub_index]['#text'] = str(new_value)
+
+                        logger.debug(f'Changed the {coefficient} of {boundary_condition} to: {new_value}')
+
+                        return delphin_dict
             else:
                 if boundary_conditions[index]['IBK:Parameter']['@name'] == coefficient:
                     boundary_conditions[index]['IBK:Parameter']['#text'] = str(new_value)
 
-    logger.debug(f'Changed the {coefficient} of {boundary_condition} to: {new_value}')
+                    logger.debug(f'Changed the {coefficient} of {boundary_condition} to: {new_value}')
+
+                    return delphin_dict
+
+    logger.debug(f'Could not find {boundary_condition}. No coefficient was changed')
 
     return delphin_dict
 

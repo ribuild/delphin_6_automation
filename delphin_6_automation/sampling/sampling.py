@@ -289,7 +289,7 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                     elif samples[sequence][design]['generic_scenario'].get('exterior_heat_transfer_coefficient'):
                         outdoor_moisture_transfer = samples[sequence][
                                                         design]['generic_scenario'].get(
-                            'exterior_heat_transfer_coefficient') * samples[sequence][
+                            'exterior_heat_transfer_coefficient')[0] * samples[sequence][
                                                         design]['generic_scenario'][parameter][0]
                         delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorVaporDiffusion',
                                                                          'ExchangeCoefficient',

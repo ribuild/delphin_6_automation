@@ -171,7 +171,7 @@ def create_strategy(folder):
                          {'type': 'uniform', 'range': [5, 35], },
 
                      'exterior_moisture_transfer_coefficient':
-                         {'type': 'uniform', 'discrete': [7.7 * 10 ** -9], },
+                         {'type': 'discrete', 'range': [7.7 * 10 ** -9], },
 
                      'solar_absorption':
                          {'type': 'uniform', 'range': [0.4, 0.8], },
@@ -245,6 +245,6 @@ def upload_designs(folder):
 # upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
-# upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\design')
+#upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\design')
 
 mongo_setup.global_end_ssh(server)
