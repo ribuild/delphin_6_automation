@@ -264,19 +264,37 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                                                                          'generic_scenario'][parameter][0])
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'exterior_moisture_transfer_coefficient':
-                    outdoor_moisture_transfer = \
-                        delphin_permutations.compute_vapour_diffusion_slope(
-                            samples[sequence][design]['generic_scenario'][
-                                'exterior_heat_transfer_coefficient_slope'][0],
-                            samples[sequence][design]['generic_scenario'][parameter][0])
-
-                    delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorVaporDiffusion',
-                                                                     'ExchangeSlope', outdoor_moisture_transfer[0])
-                    delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorVaporDiffusion',
+                elif parameter == 'exterior_heat_transfer_coefficient':
+                    delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorHeatConduction',
                                                                      'ExchangeCoefficient',
-                                                                     outdoor_moisture_transfer[1])
+                                                                     samples[sequence][design][
+                                                                         'generic_scenario'][parameter][0])
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                elif parameter == 'exterior_moisture_transfer_coefficient':
+                    if samples[sequence][design]['generic_scenario'].get('exterior_heat_transfer_coefficient_slope'):
+                        outdoor_moisture_transfer = \
+                            delphin_permutations.compute_vapour_diffusion_slope(
+                                samples[sequence][design]['generic_scenario'][
+                                    'exterior_heat_transfer_coefficient_slope'][0],
+                                samples[sequence][design]['generic_scenario'][parameter][0])
+
+                        delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorVaporDiffusion',
+                                                                         'ExchangeSlope', outdoor_moisture_transfer[0])
+                        delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorVaporDiffusion',
+                                                                         'ExchangeCoefficient',
+                                                                         outdoor_moisture_transfer[1])
+                        sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                    elif samples[sequence][design]['generic_scenario'].get('exterior_heat_transfer_coefficient'):
+                        outdoor_moisture_transfer = samples[sequence][
+                                                        design]['generic_scenario'].get(
+                            'exterior_heat_transfer_coefficient') * samples[sequence][
+                                                        design]['generic_scenario'][parameter][0]
+                        delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorVaporDiffusion',
+                                                                         'ExchangeCoefficient',
+                                                                         outdoor_moisture_transfer)
+                        sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                 elif parameter == 'solar_absorption':
                     delphin_permutations.change_boundary_coefficient(design_variation, 'OutdoorShortWaveRadiation',

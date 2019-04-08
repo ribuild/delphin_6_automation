@@ -17,6 +17,7 @@ notifiers = "*"
 xlrd = "*"
 pytest = "==4.0.0"
 pyyaml = "*"
+openpyxl = "*"
 
 [dev-packages]
 matplotlib = "*"

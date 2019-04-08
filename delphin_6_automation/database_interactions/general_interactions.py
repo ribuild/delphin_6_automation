@@ -249,7 +249,8 @@ def compute_simulation_time(sim_id: str) -> int:
 def download_sample_data(delphin_id, folder):
 
     delphin_obj = delphin_db.Delphin.objects(id=delphin_id).first()
-    download_path = os.path.join(folder, str(delphin_id))
+    #download_path = os.path.join(folder, str(delphin_id))
+    download_path = folder
 
     if not os.path.exists(download_path):
         os.mkdir(download_path)

@@ -167,8 +167,11 @@ def create_strategy(folder):
 
     scenario = {'generic_scenario': None}
 
-    distributions = {'exterior_heat_transfer_coefficient_slope':
-                         {'type': 'uniform', 'range': [1, 4], },
+    distributions = {'exterior_heat_transfer_coefficient':
+                         {'type': 'uniform', 'range': [5, 35], },
+
+                     'exterior_moisture_transfer_coefficient':
+                         {'type': 'uniform', 'discrete': [7.7 * 10 ** -9], },
 
                      'solar_absorption':
                          {'type': 'uniform', 'range': [0.4, 0.8], },
@@ -194,17 +197,17 @@ def create_strategy(folder):
                      'exterior_climate': {
                          'type': 'discrete',
                          'range': ['Ms-11-5']
-                         },
+                     },
 
                      'start_year': {
                          'type': 'discrete',
                          'range': [2017]
-                         },
+                     },
 
                      'simulation_length': {
                          'type': 'discrete',
                          'range': [2]
-                         }
+                     }
                      }
 
     sampling_settings = {'initial samples per set': 1,
@@ -238,10 +241,10 @@ def upload_designs(folder):
     delphin_interactions.upload_design_file(os.path.join(folder, file), strategy.id, False, True)
 
 
-#upload_weather(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\weather')
-#upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
+# upload_weather(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\weather')
+# upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
-#upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\design')
+# upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\design')
 
 mongo_setup.global_end_ssh(server)
