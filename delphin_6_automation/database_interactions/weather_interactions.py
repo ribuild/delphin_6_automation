@@ -212,7 +212,7 @@ def download_weather(delphin_document: delphin_db.Delphin, folder: str) -> bool:
     delphin_document.reload()
     latitude = delphin_document.weather[0].location[0]
     longitude = delphin_document.weather[0].location[1]
-    radiation = np.array(weather['diffuse_radiation']) + np.array(weather['diffuse_radiation'])
+    radiation = np.array(weather['direct_radiation']) + np.array(weather['diffuse_radiation'])
     weather['short_wave_radiation'] = weather_modeling.short_wave_radiation(radiation, longitude,
                                                                             latitude, 0, orientation)
 

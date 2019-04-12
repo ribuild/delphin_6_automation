@@ -163,7 +163,7 @@ def upload_weather(folder):
 
 
 def create_strategy(folder):
-    design = ['Ms-11-5-DWD Weimar', ]
+    design = ['Ms-24-1-DWD Weimar', ]
 
     scenario = {'generic_scenario': None}
 
@@ -196,7 +196,7 @@ def create_strategy(folder):
 
                      'exterior_climate': {
                          'type': 'discrete',
-                         'range': ['Ms-11-5']
+                         'range': ['Ms-24-1']
                      },
 
                      'start_year': {
@@ -237,7 +237,8 @@ def upload_designs(folder):
     strategy = sample_entry.Strategy.objects().first()
 
     # for file in os.listdir(folder):
-    file = 'Ms-11-5-DWD Weimar.d6p'
+    #file = 'Ms-11-5-DWD Weimar.d6p'
+    file = 'Ms-24-1-DWD Weimar.d6p'
     delphin_interactions.upload_design_file(os.path.join(folder, file), strategy.id, False, True)
 
 
@@ -245,6 +246,6 @@ def upload_designs(folder):
 # upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
 upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs')
-#upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\design')
+upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\inputs\design')
 
 mongo_setup.global_end_ssh(server)
