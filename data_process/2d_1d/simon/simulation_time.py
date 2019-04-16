@@ -19,7 +19,7 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
 
 server = mongo_setup.global_init(auth_dict)
 
-filtered_entries = delphin_entry.Delphin.objects(simulated__exists=True).filter(sample_data__design_option__dim='1D')
+filtered_entries = delphin_entry.Delphin.objects(simulated__exists=True).filter(sample_data__design_option__dim='1D').only('simulation_time')
 gt_day = filtered_entries.filter(simulation_time__gt=84000)
 
 
@@ -32,9 +32,12 @@ def get_time(projects):
 
 
 sim_time = get_time(filtered_entries)
+months = 5
+users = 6
 
 print()
 print('STATS')
+print(f'\tCount: {len(sim_time)}')
 print(f'\tMin: {np.min(sim_time):.02f}')
 print(f'\tMean: {np.mean(sim_time):.02f}')
 print(f'\tMax: {np.max(sim_time):.02f}')
@@ -48,21 +51,21 @@ print(f'\tSimulations that takes longer than 1400min: {gt_day.count()} = '
 print('')
 print('PREDICTIONS')
 print('\tAverage:')
-print(f'\t- (24h x 60min) / Simulation Time x 60 parallel x (10 months x 30days): '
-      f'{24*60/np.mean(sim_time)*60*10*30:.01f} simulation per user')
-print(f'\t- 6 users: {24*60/np.mean(sim_time)*60*10*30*6:.04e} simulations')
+print(f'\t- (24h x 60min) / Simulation Time x 60 parallel x ({months} months x 30days): '
+      f'{24*60/np.mean(sim_time)*60*months*30:.01f} simulation per user')
+print(f'\t- {users} users: {24*60/np.mean(sim_time)*60*months*30*users:.04e} simulations')
 print('\n\tMedian:')
-print(f'\t- (24h x 60min) / Simulation Time x 60 parallel x (10 months x 30days): '
-      f'{24*60/np.quantile(sim_time, 0.50)*60*10*30:.01f} simulations per user')
-print(f'\t- 6 users: {24*60/np.quantile(sim_time, 0.50)*60*10*30*6:.04e} simulations')
+print(f'\t- (24h x 60min) / Simulation Time x 60 parallel x ({months} months x 30days): '
+      f'{24*60/np.quantile(sim_time, 0.50)*60*months*30:.01f} simulations per user')
+print(f'\t- {users} users: {24*60/np.quantile(sim_time, 0.50)*60*months*30*users:.04e} simulations')
 print('')
 
-plt.figure()
+plt.figure(figsize=(10, 10))
 plt.hist(sim_time, bins='auto', density=True)
 plt.title('1D Simulation Time')
 plt.xlabel('Simulation Time in Minutes')
 plt.ylabel('Number of Simulations')
-plt.xlim(0, 250)
+plt.xlim(0, 50)
 plt.show()
 
 mongo_setup.global_end_ssh(server)
