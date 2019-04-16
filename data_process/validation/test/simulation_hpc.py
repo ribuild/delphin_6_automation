@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
         folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\data'
 
-        simulation_worker.simulation_worker('local', folder)
+        simulation_worker.docker_worker('local', folder)
 
     except Exception as err:
         logger.exception('Error in main')
