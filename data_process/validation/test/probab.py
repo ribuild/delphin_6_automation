@@ -15,14 +15,10 @@ from delphin_6_automation.file_parsing import delphin_parser
 # RIBuild
 
 
-#folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\Ms-11-5-DWD Weimar\results'
-#folder_dif = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\Ms-11-5-DWD Weimar - Weather\results'
-#folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\5cab2aa329a08e2e20fe4c6f - Dir\5cab2aa329a08e2e20fe4c6f\results'
-#folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\5cab2aa329a08e2e20fe4c6f - BCO\5cab2aa329a08e2e20fe4c6f\results'
-#folder_dif = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\Ms-11-5-DWD Weimar - Weather\results'
-
-folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Error\Probabilistic\results'
-folder_dif = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Error\Determanistic\results'
+#folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\5cab2aa229a08e2e20fe4c6e\5cab2aa229a08e2e20fe4c6e\results'
+#folder_dif = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\5cab2aa329a08e2e20fe4c6f\5cab2aa329a08e2e20fe4c6f\results'
+folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\5cab2aa229a08e2e20fe4c6e - Dir\5cab2aa229a08e2e20fe4c6e\results'
+folder_dif = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\5cab2aa329a08e2e20fe4c6f - Dir\5cab2aa329a08e2e20fe4c6f\results'
 
 temp_mould = 'temperature mould.d6o'
 rh_mould = 'relative humidity mould.d6o'
@@ -59,22 +55,6 @@ plt.title('Heat Loss')
 plt.plot(x, heat, label='Sun: Dir + Dif')
 plt.plot(x, heat_dif, label='Sun: Dif + Dif')
 plt.legend()
-
-
-plt.figure()
-plt.title('Temperature - Difference')
-plt.plot(x, temp - temp_dif)
-
-
-plt.figure()
-plt.title('Relative Humidity - Difference')
-plt.plot(x, rh - rh_dif)
-
-
-plt.figure()
-plt.title('Heat Loss - Difference')
-plt.plot(x, heat - heat_dif)
-
 
 plt.figure()
 plt.title('Heat Loss - Cumulated')

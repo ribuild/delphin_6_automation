@@ -169,10 +169,13 @@ def hans():
     frames = get_excel(folder)
 
     index = 0
-    result_folder = os.path.join(folder_h, 'Ms-11-5-DWD Weimar')
-    frames = append_results(frames, result_folder, index)
+    files = ['Ms-11-5-DWD Weimar', 'Ms-11-5-DWD Weimar - Dif']
+    for f in files:
+        result_folder = os.path.join(folder_h, f)
+        frames = append_results(frames, result_folder, index)
+        index += 1
 
-    save_and_close(frames, folder, 'Hans')
+    save_and_close(frames, folder_h, 'Hans')
 
 
 if __name__ == "__main__":

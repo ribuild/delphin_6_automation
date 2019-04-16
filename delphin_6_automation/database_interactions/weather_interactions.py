@@ -147,15 +147,16 @@ def change_weather_file_location(delphin_document: delphin_db.Delphin):
     delphin_dict = dict(delphin_document.dp6_file)
     climate_conditions = delphin_dict['DelphinProject']['Conditions']['ClimateConditions']['ClimateCondition']
 
+    interior_synonyms = ['indoor', 'interior', 'inside']
     for index in range(0, len(climate_conditions)):
             if climate_conditions[index]['@type'] == 'Temperature':
-                if 'indoor' in climate_conditions[index]['@name'] or 'interior' in climate_conditions[index]['@name']:
+                if any(synonym in climate_conditions[index]['@name'] for synonym in interior_synonyms):
                     climate_conditions[index]['Filename'] = folder + '/indoor_temperature.ccd'
                 else:
                     climate_conditions[index]['Filename'] = folder + '/temperature.ccd'
 
             elif climate_conditions[index]['@type'] == 'RelativeHumidity':
-                if 'indoor' in climate_conditions[index]['@name'] or 'interior' in climate_conditions[index]['@name']:
+                if any(synonym in climate_conditions[index]['@name'] for synonym in interior_synonyms):
                     climate_conditions[index]['Filename'] = folder + '/indoor_relative_humidity.ccd'
                 else:
                     climate_conditions[index]['Filename'] = folder + '/relative_humidity.ccd'
