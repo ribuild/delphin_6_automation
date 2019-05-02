@@ -17,9 +17,9 @@ from delphin_6_automation.database_interactions import mongo_setup
 
 server = mongo_setup.global_init(auth_dict)
 
-folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans'
+folder = r'C:\ribuild'
 
-for project in delphin_entry.Delphin.objects(simulated__exists=True).only('id')[:2]:
+for project in delphin_entry.Delphin.objects(simulated__exists=True).only('id', 'results_raw')[:2]:
     project_id = str(project.id)
     project_folder = os.path.join(folder, str(project_id))
 
@@ -27,5 +27,8 @@ for project in delphin_entry.Delphin.objects(simulated__exists=True).only('id')[
 
     general_interactions.download_full_project_from_database(project_id, project_folder)
     general_interactions.download_sample_data(project_id, project_folder)
+
+    result_doc = project.results_raw
+    general_interactions.download_raw_result(str(result_doc.id), project_folder)
 
 mongo_setup.global_end_ssh(server)

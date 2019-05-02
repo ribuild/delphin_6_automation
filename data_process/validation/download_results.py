@@ -143,24 +143,25 @@ def main():
     folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\output'
     frames = get_excel(folder)
 
-    strategy = sample_entry.Strategy.objects().first()
+    strategies = sample_entry.Strategy.objects()
 
-    design = strategy.strategy['design'][0]
-    design_folder = os.path.join(folder, design)
+    for strategy in strategies:
+        design = strategy.strategy['design'][0]
+        design_folder = os.path.join(folder, design)
 
-    try:
-        os.mkdir(design_folder)
-    except FileExistsError:
-        pass
+        try:
+            os.mkdir(design_folder)
+        except FileExistsError:
+            pass
 
-    index = 0
-    for sample in strategy.samples:
-        for delphin_doc in sample.delphin_docs:
-            result_folder = download_results(delphin_doc, design_folder)
-            frames = append_results(frames, result_folder, index)
-            index += 1
+        index = 0
+        for sample in strategy.samples:
+            for delphin_doc in sample.delphin_docs:
+                result_folder = download_results(delphin_doc, design_folder)
+                frames = append_results(frames, result_folder, index)
+                index += 1
 
-    save_and_close(frames, folder, design)
+        save_and_close(frames, folder, design)
 
 
 def hans():
@@ -169,8 +170,9 @@ def hans():
     frames = get_excel(folder)
 
     index = 0
-    files = ['Ms-11-5-DWD Weimar', 'Ms-11-5-DWD Weimar - Dif']
+    files = ['Ms-11-5-DWD Weimar - DirDif', 'Ms-11-5-DWD Weimar - Dif']
     for f in files:
+        print(f)
         result_folder = os.path.join(folder_h, f)
         frames = append_results(frames, result_folder, index)
         index += 1

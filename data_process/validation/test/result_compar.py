@@ -21,8 +21,10 @@ from delphin_6_automation.file_parsing import delphin_parser
 #folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\5cab2aa329a08e2e20fe4c6f - BCO\5cab2aa329a08e2e20fe4c6f\results'
 #folder_dif = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Hans\Ms-11-5-DWD Weimar - Weather\results'
 
-folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Error\Probabilistic\results'
-folder_dif = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Error\Determanistic\results'
+#folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Error\Probabilistic\results'
+folder = r'C:\ribuild\5cab2aa229a08e2e20fe4c6e\5cb5c00529a08e379485f1e9\results'
+folder_dif = r'C:\ribuild\5cab2aa229a08e2e20fe4c6e\5cb5c00529a08e379485f1e9\results'
+#folder_dif = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\validation\test\Error\Determanistic\results'
 
 temp_mould = 'temperature mould.d6o'
 rh_mould = 'relative humidity mould.d6o'
