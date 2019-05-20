@@ -78,7 +78,7 @@ def insulation_type(folder=os.path.dirname(os.path.realpath(__file__)) + '/input
 def insulation_systems(folder: str, rows_to_read=11, excel_file='InsulationSystems') -> pd.DataFrame:
     """Reformat insulation DataFrame to different design options DataFrame"""
 
-    constructions = pd.read_excel(folder + f'/{excel_file}.xlsx', usecols=[0, 3, 4, 5, 6], nrows=rows_to_read)
+    constructions = pd.read_excel(folder + f'/{excel_file}.xlsx', usecols=[0, 3, 4, 5], nrows=rows_to_read)
 
     systems = pd.DataFrame()
     level_1 = []
@@ -104,8 +104,8 @@ def insulation_systems(folder: str, rows_to_read=11, excel_file='InsulationSyste
         for i, ID in enumerate(material_id_and_dim[0]):
 
             part = pd.DataFrame({'ID': ID,
-                                 'Dimension': material_id_and_dim[i + 1]}
-                                )
+                                 'Dimension': material_id_and_dim[i + 1]})
+
             # each variation title
             for index in part.index:
                 columns.append(elements[i] + str(index).zfill(2))
@@ -219,7 +219,7 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame) -> dict
 
 
 def implement_insulation_widths(delphin_dict: dict, system: pd.DataFrame) -> typing.List[dict]:
-    """Permutate with of system applied materials"""
+    """Permutate width of system applied materials"""
 
     # look up current material assume system
     db_material = get_material_info(system.loc['insulation' + '_00', 'ID'])
@@ -232,6 +232,44 @@ def implement_insulation_widths(delphin_dict: dict, system: pd.DataFrame) -> typ
                                                                 )
 
     return permutated_dicts
+
+
+def implement_interior_paint(delphin_paths: typing.List[str], folder: str, excel_file: str) -> typing.List[str]:
+    """Permutate interior paint"""
+
+    permutated_files = []
+    excel_file = os.path.join(folder, f'{excel_file}.xlsx')
+    system_data = pd.read_excel(excel_file, usecols=[1, 6], nrows=11)
+    system_names = system_data.iloc[:, 0].tolist()
+
+    for file in delphin_paths:
+        if file in ['1d_exterior.d6p', '1d_interior.d6p']:
+            permutated_files.append(file)
+
+        else:
+            system_name = file.split('_')[2]
+            index = system_names.index(system_name)
+            sd_values = system_data.iloc[index, 1]
+
+            if sd_values:
+                sd_values = [float(sd) for sd in sd_values.split(', ')]
+                design = dp6_to_dict(os.path.join(folder, 'design', file))
+
+                for sd in sd_values:
+                    delphin_permutations.change_boundary_coefficient(design, 'IndoorVaporDiffusion', 'SDValue', sd)
+
+                    file_name = file.split('.')[0] + f'_SD{sd}.d6p'
+                    permutated_files.append(file_name)
+                    xmltodict.unparse(design,
+                                      output=open(os.path.join(folder,
+                                                               'design',
+                                                               file_name),
+                                                  'w'), pretty=True)
+
+            else:
+                permutated_files.append(file)
+
+    return permutated_files
 
 
 def construct_design_files(folder: str) -> typing.List[str]:
@@ -295,7 +333,9 @@ def construct_design_files(folder: str) -> typing.List[str]:
                                                            file_name),
                                               'w'), pretty=True)
 
-    return file_names
+    design_files = implement_interior_paint(file_names, folder, excel_file)
+
+    return design_files
 
 
 def design_options(folder=os.path.dirname(os.path.realpath(__file__)) + '/input_files') -> typing.List[str]:

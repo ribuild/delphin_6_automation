@@ -85,12 +85,14 @@ def delphin_file_path(test_folder):
     return delphin_file
 
 
-@pytest.fixture(params=['1d_exterior_interior_plaster_insulated3layers',
-                        '1d_exterior_interior_plaster_insulated2layers',
-                        '1d_interior_plaster_insulated2layers',
-                        '1d_interior_plaster_insulated3layers'])
+@pytest.fixture(params=['1d_exterior_interior_plaster', '1d_exterior_interior_plaster_insulated2layers',
+                        '1d_exterior_interior_plaster_insulated3layers', '1d_exterior_plaster',
+                        '1d_exterior_plaster_insulated2layers', '1d_exterior_plaster_insulated3layers',
+                        '1d_interior_plaster', '1d_interior_plaster_insulated2layers',
+                        '1d_interior_plaster_insulated3layers', '1d_no_plaster',
+                        '1d_no_plaster_insulated2layers', '1d_no_plaster_insulated3layers'])
 def delphin_with_insulation(test_folder, request):
-    delphin_file = os.path.join(test_folder, 'delphin', f'{request.param}.d6p')
+    delphin_file = os.path.join(test_folder, 'delphin', request.param + '.d6p')
 
     return delphin_parser.dp6_to_dict(delphin_file)
 
@@ -181,7 +183,6 @@ def add_results(db_one_project, tmpdir, test_folder):
 
 @pytest.fixture()
 def add_sampling_strategy(empty_database, add_three_years_weather, tmpdir, mock_design_options):
-
     if not os.path.exists(os.path.join(tmpdir, 'test')):
         test_dir = tmpdir.mkdir('test')
     else:
@@ -297,9 +298,7 @@ def mock_submit_job(monkeypatch):
 
 @pytest.fixture()
 def mock_wait_until_finished_time_limit(monkeypatch, tmpdir, test_folder):
-
     def mockreturn(sim_id: str, estimated_run_time: int, simulation_folder: str):
-
         source_folder = os.path.join(test_folder, 'restart', 'var_2')
         dist_folder = os.path.join(simulation_folder, str(sim_id), 'var')
         shutil.copytree(source_folder, dist_folder)
@@ -345,7 +344,6 @@ def mock_hpc_worker_exception(monkeypatch):
 
 @pytest.fixture()
 def mock_hpc_worker_failed_simulation(monkeypatch, tmpdir, db_one_project):
-
     def mockreturn(id_, thread_name, folder=None):
         raise FileNotFoundError
 
@@ -362,7 +360,6 @@ def mock_hpc_worker_failed_simulation(monkeypatch, tmpdir, db_one_project):
 @pytest.fixture()
 def mock_hpc_worker_time_limit(monkeypatch, tmpdir, db_one_project, mock_submit_job,
                                mock_wait_until_finished_time_limit, mock_upload_results):
-
     def mockreturn(days=None, minutes=None, seconds=None):
         return datetime.timedelta(seconds=2)
 
@@ -453,11 +450,11 @@ def delphin_design_folder(test_folder, tmpdir):
 
 @pytest.fixture()
 def add_designs(delphin_design_folder):
-
     for file in os.listdir(delphin_design_folder):
         delphin_interactions.upload_design_file(os.path.join(delphin_design_folder, file), None)
 
     return delphin_design_folder
+
 
 @pytest.fixture()
 def mock_insulation_systems(monkeypatch, dummy_systems, delphin_reference_folder, test_folder):
@@ -479,7 +476,6 @@ def input_sets():
 @pytest.fixture()
 def mock_design_options(monkeypatch):
     def mock_return(folder=None):
-
         return ['1d_exterior', '1d_interior',
                 '1d_exterior_CalciumSilicateBoard_39_125_705_25',
                 '1d_exterior_CalciumSilicateBoard_39_125_705_50',
@@ -530,14 +526,12 @@ def mock_copytree(monkeypatch):
 @pytest.fixture()
 def mock_upload_results(monkeypatch):
     def mock_return_raw(path_: str, delete_files: bool = True, result_length=None) -> str:
-
         return 'No ID'
 
     monkeypatch.setattr(delphin_interactions, 'upload_results_to_database', mock_return_raw)
 
     def mock_return_processed(folder: str, delphin_id: str, raw_result_id: str,
-                             simulation_interrupted: bool=False) -> str:
-
+                              simulation_interrupted: bool = False) -> str:
         return 'No ID'
 
     monkeypatch.setattr(delphin_interactions, 'upload_processed_results', mock_return_processed)
@@ -545,7 +539,6 @@ def mock_upload_results(monkeypatch):
 
 @pytest.fixture()
 def project_with_restart(db_one_project, tmpdir, test_folder):
-
     var_folder = os.path.join(test_folder, 'restart', 'var_0')
     tmpdir.mkdir(str(db_one_project)).mkdir(str(db_one_project))
     tmp_folder = os.path.join(tmpdir, str(db_one_project), str(db_one_project), 'var')
@@ -559,7 +552,6 @@ def project_with_restart(db_one_project, tmpdir, test_folder):
 
 @pytest.fixture()
 def mock_clean_simulation_folder(monkeypatch):
-
     def mock_return(path):
         return None
 
@@ -577,7 +569,6 @@ def mock_wait_consecutive_errors(monkeypatch, tmpdir):
         file.write('Test Critical Errors\n')
 
     def mock_return(log_data, sim_id, simulation_folder, estimated_run_time, start_time, consecutive_errors):
-
         consecutive_errors += random.randint(0, 1)
         return start_time, consecutive_errors
 
@@ -632,7 +623,6 @@ def create_time_model(add_delphin_for_time_estimation, add_sampling_strategy):
 
 @pytest.fixture()
 def delphin_with_estimated_time(add_delphin_for_time_estimation):
-
     delphin_list = delphin_entry.Delphin.objects()
     for delphin in delphin_list:
         delphin.update(set__estimated_simulation_time=random.randint(5, 15))
@@ -676,7 +666,6 @@ def sampling_strategy():
 
 @pytest.fixture()
 def mock_load_design_options(monkeypatch):
-
     def mock_return(designs):
         delphin_projects = []
 
@@ -691,9 +680,7 @@ def mock_load_design_options(monkeypatch):
 
 @pytest.fixture()
 def mock_wait_until_simulated_sampling(monkeypatch):
-
     def mock_return(delphin_ids):
-
         return None
 
     monkeypatch.setattr(simulation_interactions, 'wait_until_simulated', mock_return)
@@ -701,7 +688,6 @@ def mock_wait_until_simulated_sampling(monkeypatch):
 
 @pytest.fixture()
 def mock_calculate_sample_output(monkeypatch):
-
     def mock_return(strategy, sample_id):
         return None
 

@@ -38,7 +38,7 @@ logger = ribuild_logger()
 # RIBuild
 
 
-def create_sampling_strategy(path: str) -> dict:
+def create_sampling_strategy(path: str, design_inputs_folder: str) -> dict:
     """
     Create a sampling strategy for WP6 Delphin Automation. The sampling strategy will be name 'sampling_strategy.json'
     and be located at the given folder.
@@ -49,7 +49,7 @@ def create_sampling_strategy(path: str) -> dict:
     :rtype: dict
     """
 
-    design = inputs.design_options()
+    design = inputs.design_options(design_inputs_folder)
 
     scenario = {'generic_scenario': None}
 
@@ -97,6 +97,9 @@ def create_sampling_strategy(path: str) -> dict:
 
                      'start_year':
                          {'type': 'discrete', 'range': [i for i in range(2020, 2045)], },
+
+                     'simulation_length':
+                         {'type': 'discrete', 'range': [5]},
                      }
 
     sampling_settings = {'initial samples per set': 1,

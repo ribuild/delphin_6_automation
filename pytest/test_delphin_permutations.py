@@ -142,32 +142,116 @@ def test_change_simulation_length(delphin_file_path, length, value):
 
 
 @pytest.mark.parametrize('width', [0.1, 0.3, 0.5])
-def test_update_output_locations(delphin_with_insulation, width, request):
+def test_update_output_locations_afhl(delphin_with_insulation, width):
+    """ Test for algea, frost and heat loss"""
+
     delphin_permutations.change_layer_width(delphin_with_insulation,
                                             'Old Building Brick Dresden ZP [504]',
                                             width)
     delphin_permutations.update_output_locations(delphin_with_insulation)
 
     x_steps = delphin_permutations.convert_discretization_to_list(delphin_with_insulation)
+    missing = ['algae', 'frost', 'heat loss']
     for assignment in delphin_with_insulation['DelphinProject']['Assignments']['Assignment']:
         if assignment['@type'] == 'Output':
             if assignment['Reference'].endswith('algae'):
                 assert assignment['IBK:Point3D'] == '0.0005 0.034 0'
+                missing[0] = None
 
             elif assignment['Reference'].endswith('frost'):
                 assert assignment['IBK:Point3D'] == '0.005 0.034 0'
-
+                missing[1] = None
             elif assignment['Reference'] == 'heat loss':
                 assert assignment['Range'] == f'{len(x_steps) - 1} 0 {len(x_steps) - 1} 0'
+                missing[2] = None
 
-            elif assignment['Reference'].endswith('interior surface'):
+    assert all([m is None for m in missing])
+
+
+@pytest.mark.parametrize('width', [0.1, 0.3, 0.5])
+def test_update_output_locations_mould(delphin_with_insulation, width, request):
+    delphin_permutations.change_layer_width(delphin_with_insulation,
+                                            'Old Building Brick Dresden ZP [504]',
+                                            width)
+    delphin_permutations.update_output_locations(delphin_with_insulation)
+
+    for assignment in delphin_with_insulation['DelphinProject']['Assignments']['Assignment']:
+        if assignment['@type'] == 'Output':
+
+            if assignment['Reference'].endswith('mould'):
                 if 'exterior' not in request.node.name:
+                    if 'insulated' not in request.node.name:
+                        if "no" in request.node.name:
+                            correct_width = width - 0.0005
+                        else:
+                            correct_width = width + 0.0005
+                    else:
+                        if "no" in request.node.name:
+                            if "2layers" in request.node.name:
+                                correct_width = width + 0.0005
+                            else:
+                                correct_width = width + 0.0035
+                        else:
+                            correct_width = width + 0.0115
+
+                elif 'exterior' in request.node.name and 'interior' in request.node.name:
+                    if 'insulated' in request.node.name:
+                        correct_width = width + 0.0235
+                    else:
+                        correct_width = width + 0.0125
+
+                elif 'exterior' in request.node.name and 'interior' not in request.node.name:
+                    if 'insulated' in request.node.name:
+                        if "2layers" in request.node.name:
+                            correct_width = width + 0.0125
+                        else:
+                            correct_width = width + 0.0155
+                    else:
+                        correct_width = width + 0.0115
+                else:
+                    correct_width = width + 0.0115
+
+                found_location = float(assignment['IBK:Point3D'].split(' ')[0])
+                assert correct_width == pytest.approx(found_location)
+
+
+@pytest.mark.parametrize('width', [0.1, 0.3, 0.5])
+def test_update_output_locations_interior_surface(delphin_with_insulation, width, request):
+    delphin_permutations.change_layer_width(delphin_with_insulation,
+                                            'Old Building Brick Dresden ZP [504]',
+                                            width)
+    delphin_permutations.update_output_locations(delphin_with_insulation)
+
+    for assignment in delphin_with_insulation['DelphinProject']['Assignments']['Assignment']:
+        if assignment['@type'] == 'Output':
+
+            if assignment['Reference'].endswith('interior surface'):
+                if 'exterior' not in request.node.name:
+                    if 'insulated' not in request.node.name:
+                        if "no" in request.node.name:
+                            correct_width = width - 0.0005
+                        else:
+                            correct_width = width + 0.0115
+
+                    elif '2' in request.node.name:
+                        if "no" in request.node.name:
+                            correct_width = width + 0.0395
+                        else:
+                            correct_width = width + 0.0515
+                    else:
+                        if "no" in request.node.name:
+                            correct_width = width + 0.0435
+                        else:
+                            correct_width = width + 0.0555
+
+                elif 'exterior' in request.node.name and 'interior' not in request.node.name.split('[')[1]:
                     if 'insulated' not in request.node.name:
                         correct_width = width + 0.0115
                     elif '2' in request.node.name:
                         correct_width = width + 0.0515
                     else:
                         correct_width = width + 0.0555
+
                 else:
                     if 'insulated' not in request.node.name:
                         correct_width = width + 0.0235
@@ -179,26 +263,22 @@ def test_update_output_locations(delphin_with_insulation, width, request):
                 found_location = float(assignment['IBK:Point3D'].split(' ')[0])
                 assert correct_width == pytest.approx(found_location)
 
-            elif assignment['Reference'].endswith('wood rot'):
+
+@pytest.mark.parametrize('width', [0.1, 0.3, 0.5])
+def test_update_output_locations_wood_rot(delphin_with_insulation, width, request):
+    delphin_permutations.change_layer_width(delphin_with_insulation,
+                                            'Old Building Brick Dresden ZP [504]',
+                                            width)
+    delphin_permutations.update_output_locations(delphin_with_insulation)
+
+    for assignment in delphin_with_insulation['DelphinProject']['Assignments']['Assignment']:
+        if assignment['@type'] == 'Output':
+
+            if assignment['Reference'].endswith('wood rot'):
                 if 'exterior' in request.node.name:
                     correct_width = width + 0.012 - 0.05
                 else:
                     correct_width = width - 0.05
-
-                found_location = float(assignment['IBK:Point3D'].split(' ')[0])
-                assert correct_width == pytest.approx(found_location)
-
-            elif assignment['Reference'].endswith('mould'):
-                if 'exterior' not in request.node.name:
-                    if 'insulated' not in request.node.name:
-                        correct_width = width + 0.0005
-                    else:
-                        correct_width = width + 0.0115
-
-                elif 'exterior' in request.node.name and 'insulated' in request.node.name:
-                    correct_width = width + 0.0235
-                else:
-                    correct_width = width + 0.0115
 
                 found_location = float(assignment['IBK:Point3D'].split(' ')[0])
                 assert correct_width == pytest.approx(found_location)

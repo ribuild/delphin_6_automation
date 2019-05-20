@@ -424,12 +424,15 @@ def update_output_locations(delphin: dict) -> dict:
                 assignment['IBK:Point3D'] = '0.005 0.034 0'
 
             elif assignment['Reference'].endswith('wood rot'):
-                if layers[0]["x_width"] > layers[1]["x_width"]:
+                if len(layers) == 1:
                     width = layers[0]["x_width"] - 0.05
-                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+                elif layers[0]["x_width"] > layers[1]["x_width"]:
+                    width = layers[0]["x_width"] - 0.05
                 else:
                     width = layers[0]["x_width"] + layers[1]["x_width"] - 0.05
-                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+                assignment['IBK:Point3D'] = f'{width} 0.034 0'
 
             elif assignment['Reference'] == 'heat loss':
                 assignment['Range'] = f'{len(x_steps)-1} 0 {len(x_steps)-1} 0'
@@ -438,21 +441,37 @@ def update_output_locations(delphin: dict) -> dict:
                 assignment['IBK:Point3D'] = f'{sum(x_steps) - 0.0005} 0.034 0'
 
             elif assignment['Reference'].endswith('mould'):
-                if len(layers) == 2:
+                if len(layers) == 1:
                     width = layers[0]["x_width"] - 0.0005
-                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
 
-                elif len(layers) in [3, 4, 5]:
+                elif len(layers) == 2:
                     if layers[0]["x_width"] > layers[1]["x_width"]:
-                        width = layers[0]["x_width"] + layers[1]["x_width"] - 0.0005
-                        assignment['IBK:Point3D'] = f'{width} 0.034 0'
+                        width = layers[0]["x_width"] + 0.0005
                     else:
+                        width = layers[0]["x_width"] + layers[1]["x_width"] - 0.0005
+
+                elif len(layers) == 3:
+                    if layers[0]["x_width"] < layers[1]["x_width"]:
+                        width = layers[0]["x_width"] + layers[1]["x_width"] + 0.0005
+                    else:
+                        width = layers[0]["x_width"] + 0.0005
+
+                elif len(layers) == 4:
+                    if layers[0]["x_width"] < layers[1]["x_width"]:
+                        width = layers[0]["x_width"] + layers[1]["x_width"] + 0.0005
+                    else:
+                        width = layers[0]["x_width"] + layers[1]["x_width"] - 0.0005
+
+                elif len(layers) == 5:
+                    if layers[0]["x_width"] < layers[1]["x_width"]:
                         width = layers[0]["x_width"] + layers[1]["x_width"] + layers[2]["x_width"] - 0.0005
-                        assignment['IBK:Point3D'] = f'{width} 0.034 0'
+                    else:
+                        width = layers[0]["x_width"] + layers[1]["x_width"] - 0.0005
 
                 elif len(layers) == 6:
                     width = layers[0]["x_width"] + layers[1]["x_width"] + layers[2]["x_width"] - 0.0005
-                    assignment['IBK:Point3D'] = f'{width} 0.034 0'
+
+                assignment['IBK:Point3D'] = f'{width} 0.034 0'
 
     return delphin
 
