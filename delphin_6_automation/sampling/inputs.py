@@ -161,10 +161,14 @@ def construct_delphin_reference(folder: str) -> typing.List[str]:
 
     for file in delphin_templates(folder)[0]:
 
-        if 'exterior' in file:
+        if 'exterior' in file and 'interior' in file:
+            new_name = '1d_exteriorinterior.d6p'
+        elif 'exterior' in file:
             new_name = '1d_exterior.d6p'
-        else:
+        elif 'interior' in file:
             new_name = '1d_interior.d6p'
+        else:
+            new_name = '1d_bare.d6p'
 
         from_file = os.path.join(folder, 'delphin', file)
         to_file = os.path.join(design_folder, new_name)
@@ -186,9 +190,6 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame) -> dict
     material_names = {'insulation': 'CalsithermCalciumsilikatHamstad [571]',
                       'finish': 'KlimaputzMKKQuickmix [125]',
                       'detail': 'Calsitherm KP Glue Mortar [705]'}
-    """material_names = {'insulation': 'TecTem Insulation Board Indoor 50 + 60 mm [659]',
-                      'finish': 'TecTem Clay-based plaster [665]',
-                      'detail': 'TecTem Adhesive Mortar [664]'}"""
 
     # for two layer systems reduce materials
     if not any('detail' in string for string in system.index):
@@ -243,7 +244,7 @@ def implement_interior_paint(delphin_paths: typing.List[str], folder: str, excel
     system_names = system_data.iloc[:, 0].tolist()
 
     for file in delphin_paths:
-        if file in ['1d_exterior.d6p', '1d_interior.d6p']:
+        if file in ['1d_exterior.d6p', '1d_interior.d6p', '1d_exteriorinterior.d6p', '1d_bare.d6p']:
             permutated_files.append(file)
 
         else:
@@ -311,10 +312,14 @@ def construct_design_files(folder: str) -> typing.List[str]:
 
             # write option files (above dicts)
             for i, dim in enumerate(system.loc[insulation_select, 'Dimension']):
-                if 'exterior' in file:
+                if 'exterior' in file and 'interior' in file:
+                    new_name = '1d_exteriorinterior_'
+                elif 'exterior' in file:
                     new_name = '1d_exterior_'
-                else:
+                elif 'interior' in file:
                     new_name = '1d_interior_'
+                else:
+                    new_name = '1d_bare_'
 
                 insulation_name = pd.read_excel(folder + f'/{excel_file}.xlsx', usecols=[1]).loc[system_number, 'Name']
 
@@ -327,6 +332,7 @@ def construct_design_files(folder: str) -> typing.List[str]:
 
                 file_name = new_name + '.d6p'
                 file_names.append(file_name)
+                delphin_permutations.update_output_locations(option_dicts[i])
                 xmltodict.unparse(option_dicts[i],
                                   output=open(os.path.join(folder,
                                                            'design',
