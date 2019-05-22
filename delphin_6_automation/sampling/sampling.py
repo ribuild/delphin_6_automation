@@ -494,6 +494,16 @@ def create_design_info(design: str) -> dict:
         else:
             design_info['dim'] = '2D'
 
+    elif len(design_data) == 8:
+        design_info = {'exterior_plaster': design_data[1] == 'exterior',
+                       'system_name': design_data[2],
+                       'insulation_material': int(design_data[3]),
+                       'finish_material': int(design_data[4]),
+                       'detail_material': int(design_data[5]),
+                       'insulation_thickness': int(design_data[6]),
+                       'sd_value': float('0.' + design_data[7][3:]),
+                       }
+
     elif len(design_data) == 7:
         design_info = {'exterior_plaster': design_data[1] == 'exterior',
                        'system_name': design_data[2],
