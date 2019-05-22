@@ -370,28 +370,44 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                 elif parameter == 'interior_plaster_width':
-                    delphin_permutations.change_layer_width(design_variation, 'Interior Plaster Material [0IP]',
-                                                            samples[sequence][design]['generic_scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+                    try:
+                        delphin_permutations.change_layer_width(design_variation, 'Interior Plaster Material [0IP]',
+                                                                samples[sequence][design]['generic_scenario'][parameter][0])
+                        sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                    except KeyError:
+                        sample_dict[parameter] = None
 
                 elif parameter == 'interior_plaster_material':
-                    new_material = material_interactions.get_material_info(samples[sequence][design][
-                                                                               'generic_scenario'][parameter][0])
-                    delphin_permutations.change_layer_material(design_variation, 'Interior Plaster Material [0IP]',
-                                                               new_material)
-                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+                    try:
+                        new_material = material_interactions.get_material_info(samples[sequence][design][
+                                                                                   'generic_scenario'][parameter][0])
+                        delphin_permutations.change_layer_material(design_variation, 'Interior Plaster Material [0IP]',
+                                                                   new_material)
+                        sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                    except KeyError:
+                        sample_dict[parameter] = None
 
                 elif parameter == 'exterior_plaster_width':
-                    delphin_permutations.change_layer_width(design_variation, 'Exterior Plaster Material [0EP]',
-                                                            samples[sequence][design]['generic_scenario'][parameter][0])
-                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+                    try:
+                        delphin_permutations.change_layer_width(design_variation, 'Exterior Plaster Material [0EP]',
+                                                                samples[sequence][design]['generic_scenario'][parameter][0])
+                        sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                    except KeyError:
+                        sample_dict[parameter] = None
 
                 elif parameter == 'exterior_plaster_material':
-                    new_material = material_interactions.get_material_info(samples[sequence][design][
-                                                                               'generic_scenario'][parameter][0])
-                    delphin_permutations.change_layer_material(design_variation, 'Exterior Plaster Material [0EP]',
-                                                               new_material)
-                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+                    try:
+                        new_material = material_interactions.get_material_info(samples[sequence][design][
+                                                                                   'generic_scenario'][parameter][0])
+                        delphin_permutations.change_layer_material(design_variation, 'Exterior Plaster Material [0EP]',
+                                                                   new_material)
+                        sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                    except KeyError:
+                        sample_dict[parameter] = None
 
             # Upload project
             design_doc = delphin_interactions.get_design_by_name(design)
