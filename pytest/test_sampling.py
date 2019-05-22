@@ -230,6 +230,17 @@ def test_create_design_info(design_options):
         assert isinstance(design_info, dict)
 
 
+def test_create_design_info_wp6():
+
+    design_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\design'
+    files = os.listdir(design_folder)
+    for design in files:
+        design = design.split('.')[0]
+        design_info = sampling.create_design_info(design)
+
+        assert isinstance(design_info, dict)
+
+
 @pytest.mark.skip('Only for local testing')
 def test_create_design_info_2d1d():
 

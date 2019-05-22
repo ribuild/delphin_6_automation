@@ -505,7 +505,7 @@ def create_design_info(design: str) -> dict:
                        }
 
     elif len(design_data) == 7:
-        if 'SD' in design_data:
+        if 'SD' in design:
             design_info = {'exterior_plaster': design_data[1] == 'exterior',
                            'system_name': design_data[2],
                            'insulation_material': int(design_data[3]),
