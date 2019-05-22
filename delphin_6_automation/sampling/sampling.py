@@ -77,9 +77,6 @@ def create_sampling_strategy(path: str, design_inputs_folder: str) -> dict:
                      'interior_moisture_transfer_coefficient':
                          {'type': 'uniform', 'range': [4 * 10 ** -9, 10 ** -8], },
 
-                     'interior_sd_value':
-                         {'type': 'uniform', 'range': [0.0, 0.6], },
-
                      'wall_orientation':
                          {'type': 'uniform', 'range': [0, 360], },
 
@@ -89,14 +86,20 @@ def create_sampling_strategy(path: str, design_inputs_folder: str) -> dict:
                      'wall_core_material':
                          {'type': 'discrete', 'range': inputs.wall_core_materials(), },
 
-                     'plaster_width':
+                     'exterior_plaster_width':
                          {'type': 'uniform', 'range': [0.01, 0.02], },
 
-                     'plaster_material':
+                     'exterior_plaster_material':
+                         {'type': 'discrete', 'range': inputs.plaster_materials(), },
+
+                     'interior_plaster_width':
+                         {'type': 'uniform', 'range': [0.01, 0.02], },
+
+                     'interior_plaster_material':
                          {'type': 'discrete', 'range': inputs.plaster_materials(), },
 
                      'start_year':
-                         {'type': 'discrete', 'range': [i for i in range(2020, 2045)], },
+                         {'type': 'discrete', 'range': [i for i in range(2020, 2046)], },
 
                      'simulation_length':
                          {'type': 'discrete', 'range': [5]},
@@ -106,7 +109,7 @@ def create_sampling_strategy(path: str, design_inputs_folder: str) -> dict:
                          'add samples per run': 1,
                          'max samples': 500,
                          'sequence': 10,
-                         'standard error threshold': 0.1,
+                         'standard error threshold': 0.01,
                          'raw sample size': 2 ** 9}
 
     combined_dict = {'design': design, 'scenario': scenario,
@@ -355,26 +358,38 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                 elif parameter == 'wall_core_width':
-                    delphin_permutations.change_layer_width(design_variation, 'Old Building Brick Dresden ZP [504]',
+                    delphin_permutations.change_layer_width(design_variation, 'Core Material [00C]',
                                                             samples[sequence][design]['generic_scenario'][parameter][0])
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                 elif parameter == 'wall_core_material':
                     new_material = material_interactions.get_material_info(samples[sequence][design][
                                                                                'generic_scenario'][parameter][0])
-                    delphin_permutations.change_layer_material(design_variation, 'Old Building Brick Dresden ZP [504]',
+                    delphin_permutations.change_layer_material(design_variation, 'Core Material [00C]',
                                                                new_material)
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'plaster_width':
-                    delphin_permutations.change_layer_width(design_variation, 'Lime cement mortar [717]',
+                elif parameter == 'interior_plaster_width':
+                    delphin_permutations.change_layer_width(design_variation, 'Interior Plaster Material [0IP]',
                                                             samples[sequence][design]['generic_scenario'][parameter][0])
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
-                elif parameter == 'plaster_material':
+                elif parameter == 'interior_plaster_material':
                     new_material = material_interactions.get_material_info(samples[sequence][design][
                                                                                'generic_scenario'][parameter][0])
-                    delphin_permutations.change_layer_material(design_variation, 'Lime cement mortar [717]',
+                    delphin_permutations.change_layer_material(design_variation, 'Interior Plaster Material [0IP]',
+                                                               new_material)
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                elif parameter == 'exterior_plaster_width':
+                    delphin_permutations.change_layer_width(design_variation, 'Exterior Plaster Material [0EP]',
+                                                            samples[sequence][design]['generic_scenario'][parameter][0])
+                    sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
+
+                elif parameter == 'exterior_plaster_material':
+                    new_material = material_interactions.get_material_info(samples[sequence][design][
+                                                                               'generic_scenario'][parameter][0])
+                    delphin_permutations.change_layer_material(design_variation, 'Exterior Plaster Material [0EP]',
                                                                new_material)
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 

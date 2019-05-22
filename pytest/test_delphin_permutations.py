@@ -53,7 +53,7 @@ def test_change_material_1(delphin_file_path):
 @pytest.mark.parametrize('width', [0.1, 0.3, 0.5, 0.75, 1.0])
 def test_change_layer_width(delphin_file_path, width):
     delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
-    new_delphin = delphin_permutations.change_layer_width(delphin_dict, 'Old Building Brick Dresden ZP [504]', width)
+    new_delphin = delphin_permutations.change_layer_width(delphin_dict, 'Core Material [00C]', width)
     new_width = delphin_permutations.get_layers(new_delphin)[1]['x_width']
 
     assert width == pytest.approx(new_width)

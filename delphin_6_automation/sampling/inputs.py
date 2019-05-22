@@ -187,9 +187,9 @@ def implement_system_materials(delphin_dict: dict, system: pd.DataFrame) -> dict
     """
 
     # general material names (template projects) - in order: insulation, finish, detail
-    material_names = {'insulation': 'CalsithermCalciumsilikatHamstad [571]',
-                      'finish': 'KlimaputzMKKQuickmix [125]',
-                      'detail': 'Calsitherm KP Glue Mortar [705]'}
+    material_names = {'insulation': 'Insulation Material [00I]',
+                      'finish': 'Finish Material [00F]',
+                      'detail': 'Detail Material [00D]'}
 
     # for two layer systems reduce materials
     if not any('detail' in string for string in system.index):
@@ -258,7 +258,7 @@ def implement_interior_paint(delphin_paths: typing.List[str], folder: str, excel
 
                 for sd in sd_values:
                     delphin_permutations.change_boundary_coefficient(design, 'IndoorVaporDiffusion', 'SDValue', sd)
-
+                    sd = str(sd).replace(".", "")
                     file_name = file.split('.')[0] + f'_SD{sd}.d6p'
                     permutated_files.append(file_name)
                     xmltodict.unparse(design,
@@ -270,6 +270,7 @@ def implement_interior_paint(delphin_paths: typing.List[str], folder: str, excel
             else:
                 permutated_files.append(file)
 
+    permutated_files = list(set(delphin_paths).union(set(permutated_files)))
     return permutated_files
 
 
@@ -325,10 +326,10 @@ def construct_design_files(folder: str) -> typing.List[str]:
 
                 if layers == 2:
                     new_name += f'{insulation_name}_{system.loc["insulation_00", "ID"]}_' \
-                                f'{system.loc["finish_00", "ID"]}_{dim}'
+                                f'{system.loc["finish_00", "ID"]}_{int(dim)}'
                 elif layers == 3:
                     new_name += f'{insulation_name}_{system.loc["insulation_00", "ID"]}_' \
-                                f'{system.loc["finish_00", "ID"]}_{system.loc["detail_00", "ID"]}_{dim}'
+                                f'{system.loc["finish_00", "ID"]}_{system.loc["detail_00", "ID"]}_{int(dim)}'
 
                 file_name = new_name + '.d6p'
                 file_names.append(file_name)

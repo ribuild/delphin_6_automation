@@ -47,6 +47,12 @@ def upload_weather(folder):
 def create_strategy(folder):
     sampling.create_sampling_strategy(folder, folder)
 
+    with open(os.path.join(folder, 'sampling_strategy.json'), 'r') as file:
+        data = json.load(file)
+
+    with open(os.path.join(folder, 'pretty_strategy.txt'), 'w') as file:
+        json.dump(data, file, indent=4, sort_keys=True)
+
 
 def upload_strategy(folder):
     strategy = os.path.join(folder, 'sampling_strategy.json')
@@ -67,8 +73,8 @@ def upload_designs(folder):
 #upload_weather(r'U:\RIBuild\Weather Data')
 #upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
 #upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\materials')
-create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
-#upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
-#upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\design')
+#create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
+upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
+upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\design')
 
 mongo_setup.global_end_ssh(server)
