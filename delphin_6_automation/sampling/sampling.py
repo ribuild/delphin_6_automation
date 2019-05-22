@@ -505,13 +505,23 @@ def create_design_info(design: str) -> dict:
                        }
 
     elif len(design_data) == 7:
-        design_info = {'exterior_plaster': design_data[1] == 'exterior',
-                       'system_name': design_data[2],
-                       'insulation_material': int(design_data[3]),
-                       'finish_material': int(design_data[4]),
-                       'detail_material': int(design_data[5]),
-                       'insulation_thickness': int(design_data[6]),
-                       }
+        if 'SD' in design_data:
+            design_info = {'exterior_plaster': design_data[1] == 'exterior',
+                           'system_name': design_data[2],
+                           'insulation_material': int(design_data[3]),
+                           'finish_material': int(design_data[4]),
+                           'detail_material': None,
+                           'insulation_thickness': int(design_data[5]),
+                           'sd_value': float('0.' + design_data[6][3:]),
+                           }
+        else:
+            design_info = {'exterior_plaster': design_data[1] == 'exterior',
+                           'system_name': design_data[2],
+                           'insulation_material': int(design_data[3]),
+                           'finish_material': int(design_data[4]),
+                           'detail_material': int(design_data[5]),
+                           'insulation_thickness': int(design_data[6]),
+                           }
 
     elif len(design_data) == 6:
         design_info = {'exterior_plaster': design_data[1] == 'exterior',
