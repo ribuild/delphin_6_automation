@@ -21,6 +21,7 @@ server = mongo_setup.global_init(auth_dict)
 
 filtered_entries = delphin_entry.Delphin.objects(simulated__exists=True).filter(sample_data__design_option__dim='1D').only('simulation_time')
 gt_day = filtered_entries.filter(simulation_time__gt=84000)
+gt_250 = filtered_entries.filter(simulation_time__gt=15000)
 
 
 def get_time(projects):
@@ -45,7 +46,12 @@ print('')
 print(f'\tQ25: {np.quantile(sim_time, 0.25):.02f}')
 print(f'\tMedian: {np.quantile(sim_time, 0.50):.02f}')
 print(f'\tQ75: {np.quantile(sim_time, 0.75):.02f}')
+print(f'\tQ80: {np.quantile(sim_time, 0.80):.02f}')
+print(f'\tQ85: {np.quantile(sim_time, 0.85):.02f}')
+print(f'\tQ90: {np.quantile(sim_time, 0.90):.02f}')
 print(f'\tQ95: {np.quantile(sim_time, 0.95):.02f}')
+print(f'\tSimulations that takes longer than 250min: {gt_250.count()} = '
+      f'{gt_250.count()/filtered_entries.count()*100:.02f}%')
 print(f'\tSimulations that takes longer than 1400min: {gt_day.count()} = '
       f'{gt_day.count()/filtered_entries.count()*100:.02f}%')
 print('')

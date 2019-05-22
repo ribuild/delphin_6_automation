@@ -221,7 +221,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
         else:
             time.sleep(2)
 
-    time_limit = start_time + datetime.timedelta(days=1)
+    time_limit = start_time + datetime.timedelta(minutes=250)
 
     while not finished:
         simulation_ends = start_time + datetime.timedelta(minutes=estimated_run_time)
@@ -263,7 +263,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
 def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id):
     files_in_folder = len(os.listdir(simulation_folder))
-    estimated_run_time = min(int(estimated_run_time * 1.5), 1440)
+    estimated_run_time = min(int(estimated_run_time * 1.5), 250)
     submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
     submit_job(submit_file, sim_id)
 
