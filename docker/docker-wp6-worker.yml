@@ -78,13 +78,12 @@ services:
       - source: hpc_spbj
         target: hpc_access
 
-  logger:
-    image: iamatypeofwalrus/logspout-loggly
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.1.0
     environment:
-      - LOGGLY_TOKEN=2cb6ff7e-c529-446e-b7a7-193ea64de90f
-      - LOGGLY_TAG=DOCKER
+      - logstash_host=$LH
     volumes:
-      - "/var/run/docker.sock:/tmp/docker.sock"
+      - filebeat:/usr/share/filebeat/
 
 volumes:
   ocni_volume:
