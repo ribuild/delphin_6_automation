@@ -132,8 +132,6 @@ secrets:
     file: /home/ocni/.ssh/id_rsa
   db_ait:
     file: /home/ocni/.ssh/db_ait.json
-  db_simon:
-    file: /home/ocni/.ssh/db_simon.json
   hpc_ocni:
     file: /home/ocni/.ssh/hpc_ocni.json
   hpc_thper:

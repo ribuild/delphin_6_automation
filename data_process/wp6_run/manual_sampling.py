@@ -31,6 +31,8 @@ if __name__ == "__main__":
     existing_sample = sampling.sample_exists(strategy_doc)
 
     logger.info('Found existing sample')
+    new_samples = sampling.create_samples(strategy_doc, used_samples_per_set)
+    sample_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
     delphin_ids = sampling_interactions.get_delphin_for_sample(existing_sample)
     sample_id = existing_sample.id
     simulation_interactions.wait_until_simulated(delphin_ids)
