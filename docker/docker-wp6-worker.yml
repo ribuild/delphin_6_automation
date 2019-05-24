@@ -83,7 +83,7 @@ services:
     environment:
       - logstash_host=$LH
     volumes:
-      - filebeat/:/usr/share/filebeat/
+      - ./filebeat:/usr/share/filebeat/
     command: "./filebeat -e -v"
 
 volumes:
