@@ -1,5 +1,5 @@
 filebeat.inputs:
-- type: sim
+- type: docker
   #combine_partial: true
   containers:
     path: "/usr/share/dockerlogs/data"
