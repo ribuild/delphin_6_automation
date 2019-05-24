@@ -79,12 +79,9 @@ services:
         target: hpc_access
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:7.1.0
+    image: filebeat
     environment:
       - logstash_host=$LH
-    volumes:
-      - ./filebeat:/usr/share/filebeat/
-    command: "./filebeat -e -v"
 
 volumes:
   ocni_volume:
