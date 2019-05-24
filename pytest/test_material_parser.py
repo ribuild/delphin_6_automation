@@ -16,6 +16,7 @@ import pytest
 # RIBuild
 
 
+@pytest.mark.skip('WIP')
 @pytest.mark.parametrize('mat', ['AltbauziegelDresdenZP_504.m6', 'LimeCementMortarHighCementRatio_717.m6'])
 def test_parse_material(test_folder, tmpdir, mat):
     folder = tmpdir
