@@ -199,7 +199,7 @@ def find_exceeded() -> typing.Optional[str]:
 
 
 def check_simulations(auth_file: str) -> None:
-    """Submits a job (submit file) to the DTU HPC queue."""
+    """Checks running simulations on HPC"""
 
     terminal_call = f"bstat\n"
 
@@ -213,7 +213,14 @@ def check_simulations(auth_file: str) -> None:
     channel_bytes = channel.recv(9999)
     channel_data += channel_bytes.decode("utf-8")
 
-    print(channel_data)
+    simulation_data = channel_data.split('hpclogin3')[1]
 
     channel.close()
     client.close()
+
+    # Process string
+    simulation_data = simulation_data.split("\n")[1:]
+
+    for data in simulation_data:
+        if data:
+            logger.info(data.strip())

@@ -5,7 +5,6 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
-import json
 import os
 import time
 import sys
@@ -16,7 +15,6 @@ sys.path.insert(0, source_folder)
 
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
-from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions import simulation_interactions
 
 # Logger
@@ -30,12 +28,13 @@ if __name__ == "__main__":
     logger = ribuild_logger()
 
     auth_path = '/run/secrets'
-
+    #auth_path = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\test\checks'
     # Setup connection
 
     try:
         for file in os.listdir(auth_path):
-            simulation_interactions.check_simulations(file)
+            if file.startswith('hpc_'):
+                simulation_interactions.check_simulations(file)
 
     except Exception as err:
         logger.exception('Error in main')

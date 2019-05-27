@@ -83,6 +83,16 @@ services:
     secrets:
       - db_ait
 
+  checker:
+    image: ocni/hpc_checker:latest
+    secrets:
+      - ssh_key
+      - hpc_spbj
+      - hpc_ocni
+      - hpc_thper
+      - hpc_angva
+      - hpc_nicf
+
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.1.0
     environment:
