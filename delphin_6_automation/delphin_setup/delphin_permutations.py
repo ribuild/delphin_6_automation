@@ -162,14 +162,22 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
     found = False
 
     # Find original material
-    for mat_index in range(0, len(delphin_dict['DelphinProject']['Materials']['MaterialReference'])):
+    if isinstance(delphin_dict['DelphinProject']['Materials']['MaterialReference'], list):
+        for mat_index in range(0, len(delphin_dict['DelphinProject']['Materials']['MaterialReference'])):
 
-        name = delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index]['@name']
+            name = delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index]['@name']
+            if original_material in name:
+                # Replace with new material
+                new_delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index] = new_material
+                found = True
+                break
+
+    elif isinstance(delphin_dict['DelphinProject']['Materials']['MaterialReference'], dict):
+        name = delphin_dict['DelphinProject']['Materials']['MaterialReference']['@name']
         if original_material in name:
             # Replace with new material
-            new_delphin_dict['DelphinProject']['Materials']['MaterialReference'][mat_index] = new_material
+            new_delphin_dict['DelphinProject']['Materials']['MaterialReference'] = new_material
             found = True
-            break
 
     if not found:
         error = f'Could not find material: {original_material} in Delphin file.'

@@ -85,8 +85,8 @@ def delphin_file_path(test_folder):
     return delphin_file
 
 
-@pytest.fixture(params=['1d_exterior_interior_plaster', '1d_exterior_interior_plaster_insulated2layers',
-                        '1d_exterior_interior_plaster_insulated3layers', '1d_exterior_plaster',
+@pytest.fixture(params=['1d_exteriorinterior_plaster', '1d_exteriorinterior_plaster_insulated2layers',
+                        '1d_exteriorinterior_plaster_insulated3layers', '1d_exterior_plaster',
                         '1d_exterior_plaster_insulated2layers', '1d_exterior_plaster_insulated3layers',
                         '1d_interior_plaster', '1d_interior_plaster_insulated2layers',
                         '1d_interior_plaster_insulated3layers', '1d_no_plaster',

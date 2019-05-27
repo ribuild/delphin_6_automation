@@ -7,8 +7,6 @@ __license__ = 'MIT'
 # Modules:
 import logging
 import os
-from notifiers.logging import NotificationHandler
-import platform
 
 # RiBuild Modules:
 
@@ -44,14 +42,6 @@ def ribuild_logger(name: str='delphin_6_automation'):
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
-
-        # Notification Handler
-        message_dict = {'message': f'Fatal Error on {platform.node()}',
-                        'webhook_url': 'https://hooks.slack.com/services/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'}
-        nh = NotificationHandler('slack', defaults=message_dict)
-        nh.setLevel(logging.WARNING)
-        nh.setFormatter(formatter)
-        logger.addHandler(nh)
 
         # Stream Handler
         sh = logging.StreamHandler()

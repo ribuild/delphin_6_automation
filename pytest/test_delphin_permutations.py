@@ -35,19 +35,19 @@ def test_get_layers_1(delphin_file_path):
     assert delphin_layers == correct_layer_dict
 
 
-def test_change_material_1(delphin_file_path):
-    delphin_dict = delphin_parser.dp6_to_dict(delphin_file_path)
+def test_change_material_1(delphin_with_insulation):
 
     new_material = OrderedDict((('@name', 'Aerated Concrete [6]'),
                                 ('@color', '#ff404060'),
                                 ('@hatchCode', '13'),
                                 ('#text', '${Material Database}/AeratedConcrete_6.m6')))
 
-    new_delphin = delphin_permutations.change_layer_material(delphin_dict,
-                                                             'Old Building Brick Dresden ZP [504]',
+    new_delphin = delphin_permutations.change_layer_material(delphin_with_insulation,
+                                                             'Core Material [00C]',
                                                              new_material)
 
-    assert new_delphin['DelphinProject']['Materials']['MaterialReference'][1] == new_material
+    layers = delphin_permutations.get_layers(new_delphin)
+    assert delphin_permutations.identify_layer(layers, 'Aerated Concrete [6]')
 
 
 @pytest.mark.parametrize('width', [0.1, 0.3, 0.5, 0.75, 1.0])
