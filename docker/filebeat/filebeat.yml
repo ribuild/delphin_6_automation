@@ -3,7 +3,7 @@ filebeat.inputs:
   #combine_partial: true
   containers:
     path: "/usr/share/dockerlogs/data"
-    stream: "stdout"
+    stream: "all"
     ids:
       - "*"
   exclude_files: ['\.gz$']

@@ -71,10 +71,10 @@ def upload_designs(folder):
 
 
 #upload_weather(r'U:\RIBuild\Weather Data')
-upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
+#upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
 #upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\materials')
-#create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
-#upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
+create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
+upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs')
 #upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\design')
 
 mongo_setup.global_end_ssh(server)
