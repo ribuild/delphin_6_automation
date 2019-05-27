@@ -222,5 +222,5 @@ def check_simulations(auth_file: str) -> None:
     simulation_data = simulation_data.split("\n")[1:]
 
     for data in simulation_data:
-        if data:
+        if data and data != '~':
             logger.info(data.strip())
