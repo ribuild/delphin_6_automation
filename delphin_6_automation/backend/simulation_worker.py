@@ -69,7 +69,8 @@ def local_worker(id_: str) -> typing.Optional[bool]:
 
     general_interactions.download_full_project_from_database(str(id_), simulation_folder)
     solve_delphin(os.path.join(simulation_folder, f'{id_}.d6p'), delphin_exe=exe_path, verbosity_level=0)
-    result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_), delete_files=False)
+    result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_),
+                                                                delete_files=False)
     delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
                                                   id_, result_id)
 
@@ -135,7 +136,7 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
     file.write(f"#BSUB -W {computation_time}\n")
     file.write(f'#BSUB -R "rusage[mem={ram_per_cpu}] span[hosts=1]"\n')
     file.write(f"#BSUB -n {cpus}\n")
-    #file.write(f"#BSUB -N\n")
+    # file.write(f"#BSUB -N\n")
     file.write('\n')
     file.write(f"export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n")
     file.write('\n')
@@ -177,7 +178,7 @@ def submit_job(submit_file: str, sim_id: str) -> None:
     client.close()
 
 
-def connect_to_hpc() -> paramiko.SSHClient:
+def connect_to_hpc(key_file: str = 'ssh_key') -> paramiko.SSHClient:
     system = platform.system()
 
     if system == 'Windows':
@@ -186,7 +187,7 @@ def connect_to_hpc() -> paramiko.SSHClient:
 
     elif system == 'Linux':
         secret_path = '/run/secrets'
-        key_path = os.path.join(secret_path, 'ssh_key')
+        key_path = os.path.join(secret_path, key_file)
         key = paramiko.RSAKey.from_private_key_file(key_path)
         hpc_path = os.path.join(secret_path, 'hpc_access')
 

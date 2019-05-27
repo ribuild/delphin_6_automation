@@ -30,21 +30,14 @@ logger = ribuild_logger(__name__)
 if __name__ == "__main__":
     logger = ribuild_logger()
 
-
-    auth = {}
     auth_path = '/run/secrets'
-    for file in os.listdir(auth_path):
-        name = file.split('_')[1]
-
-        with open(auth_path, 'r') as f:
-            auth[name] = json.load(f)
 
     # Setup connection
     server = mongo_setup.global_init(auth_dict)
 
     try:
-        for key in auth.keys():
-            simulation_interactions.check_simulations(auth[key])
+        for file in os.listdir(auth_path):
+            simulation_interactions.check_simulations(file)
 
     except Exception as err:
         logger.exception('Error in main')

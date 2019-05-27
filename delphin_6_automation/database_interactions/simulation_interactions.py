@@ -15,6 +15,7 @@ import typing
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions import general_interactions as general_interact
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+from delphin_6_automation.backend import simulation_worker
 
 # Logger
 logger = ribuild_logger()
@@ -197,5 +198,22 @@ def find_exceeded() -> typing.Optional[str]:
         return None
 
 
-def check_simulations(auth: dict) -> None:
-    pass
+def check_simulations(auth_file: str) -> None:
+    """Submits a job (submit file) to the DTU HPC queue."""
+
+    terminal_call = f"bstat\n"
+
+    client = simulation_worker.connect_to_hpc(auth_file)
+
+    channel = client.invoke_shell()
+    channel_data = ''
+    time.sleep(0.5)
+    channel.send(terminal_call)
+    time.sleep(1.0)
+    channel_bytes = channel.recv(9999)
+    channel_data += channel_bytes.decode("utf-8")
+
+    print(channel_data)
+
+    channel.close()
+    client.close()
