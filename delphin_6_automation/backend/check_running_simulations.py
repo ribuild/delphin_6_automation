@@ -17,7 +17,6 @@ sys.path.insert(0, source_folder)
 # RiBuild Modules
 from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.auth import auth_dict
 from delphin_6_automation.database_interactions import simulation_interactions
 
 # Logger
@@ -33,7 +32,6 @@ if __name__ == "__main__":
     auth_path = '/run/secrets'
 
     # Setup connection
-    server = mongo_setup.global_init(auth_dict)
 
     try:
         for file in os.listdir(auth_path):
@@ -43,5 +41,4 @@ if __name__ == "__main__":
         logger.exception('Error in main')
 
     finally:
-        mongo_setup.global_end_ssh(server)
         time.sleep(120)

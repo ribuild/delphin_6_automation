@@ -178,7 +178,7 @@ def submit_job(submit_file: str, sim_id: str) -> None:
     client.close()
 
 
-def connect_to_hpc(key_file: str = 'ssh_key') -> paramiko.SSHClient:
+def connect_to_hpc(key_file: str = 'hpc_access') -> paramiko.SSHClient:
     system = platform.system()
 
     if system == 'Windows':
@@ -187,9 +187,9 @@ def connect_to_hpc(key_file: str = 'ssh_key') -> paramiko.SSHClient:
 
     elif system == 'Linux':
         secret_path = '/run/secrets'
-        key_path = os.path.join(secret_path, key_file)
+        key_path = os.path.join(secret_path, 'ssh_key')
         key = paramiko.RSAKey.from_private_key_file(key_path)
-        hpc_path = os.path.join(secret_path, 'hpc_access')
+        hpc_path = os.path.join(secret_path, key_file)
 
         with open(hpc_path, 'r') as file:
             hpc = json.load(file)
