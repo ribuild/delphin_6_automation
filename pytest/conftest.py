@@ -90,6 +90,18 @@ def delphin_file_path(test_folder):
                         '1d_exterior_plaster_insulated2layers', '1d_exterior_plaster_insulated3layers',
                         '1d_interior_plaster', '1d_interior_plaster_insulated2layers',
                         '1d_interior_plaster_insulated3layers', '1d_no_plaster',
+                        '1d_no_plaster_insulated2layers', '1d_no_plaster_insulated3layers', 'delphin_project_1d'])
+def delphin_file_path2(test_folder, request):
+    delphin_file = os.path.join(test_folder, 'delphin', request.param + '.d6p')
+
+    return delphin_file
+
+
+@pytest.fixture(params=['1d_exteriorinterior_plaster', '1d_exteriorinterior_plaster_insulated2layers',
+                        '1d_exteriorinterior_plaster_insulated3layers', '1d_exterior_plaster',
+                        '1d_exterior_plaster_insulated2layers', '1d_exterior_plaster_insulated3layers',
+                        '1d_interior_plaster', '1d_interior_plaster_insulated2layers',
+                        '1d_interior_plaster_insulated3layers', '1d_no_plaster',
                         '1d_no_plaster_insulated2layers', '1d_no_plaster_insulated3layers'])
 def delphin_with_insulation(test_folder, request):
     delphin_file = os.path.join(test_folder, 'delphin', request.param + '.d6p')

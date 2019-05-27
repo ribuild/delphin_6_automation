@@ -18,6 +18,7 @@ from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 # Logger
 logger = ribuild_logger()
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # DATABASE INTERACTIONS
 
@@ -55,9 +56,13 @@ def list_project_materials(delphin_document: delphin_db.Delphin) -> list:
 
     materials = dict(delphin_document.dp6_file)['DelphinProject']['Materials']['MaterialReference']
 
-    material_list = [(material['#text'].split('/')[-1].split('_')[0],
-                      int(material['#text'].split('/')[-1].split('_')[-1][:-3]))
-                     for material in materials]
+    if isinstance(materials, list):
+        material_list = [(material['#text'].split('/')[-1].split('_')[0],
+                          int(material['#text'].split('/')[-1].split('_')[-1][:-3]))
+                         for material in materials]
+    elif isinstance(materials, dict):
+        material_list = [(materials['#text'].split('/')[-1].split('_')[0],
+                          int(materials['#text'].split('/')[-1].split('_')[-1][:-3])), ]
 
     logger.debug(f'Found the following materials {material_list} related to the '
                  f'Delphin project with ID: {delphin_document.id}')

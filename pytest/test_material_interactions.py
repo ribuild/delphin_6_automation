@@ -68,3 +68,11 @@ def test_upload_materials_1(test_folder, empty_database):
     assert material.material_name == 'AltbauziegelDresdenZP'
     assert material.material_id == 504
     assert isinstance(material.material_data, dict)
+
+
+def test_list_project_materials(db_one_project):
+    delphin_doc = delphin_entry.Delphin.objects().first()
+
+    material_list = material_interactions.list_project_materials(delphin_doc)
+
+    assert isinstance(material_list, list)
