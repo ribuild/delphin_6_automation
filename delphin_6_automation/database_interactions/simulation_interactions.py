@@ -195,3 +195,7 @@ def find_exceeded() -> typing.Optional[str]:
         logger.info('No exceeded Delphin Projects in the database!')
         time.sleep(60)
         return None
+
+
+def check_simulations(auth: dict) -> None:
+    pass
