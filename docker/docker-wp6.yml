@@ -94,11 +94,12 @@ services:
       - hpc_nicf
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:7.1.0
+    image: filebeat
     environment:
       - logstash_host=$LH
     volumes:
-      - filebeat:/usr/share/filebeat/
+      - /var/lib/docker/containers:/usr/share/dockerlogs/data:ro
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   ocni_volume:
