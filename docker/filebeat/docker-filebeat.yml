@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  filebeat:
+    image: filebeat
+    environment:
+      - logstash_host='logstash'
+    volumes:
+      - /var/lib/docker/containers:/usr/share/dockerlogs/data:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - logs_default
+
+networks:
+  logs_default:
+    external: true
