@@ -171,7 +171,9 @@ def wait_until_simulated(delphin_ids: list) -> bool:
                 simulated[index] = True
 
         logger.debug(f'Waiting until all projects are simulated. {sum(simulated)}/{len(simulated)} is simulated')
-        time.sleep(180)
+
+        if not all(simulated):
+            time.sleep(180)
 
     logger.info('All projects are simulated')
     return True
