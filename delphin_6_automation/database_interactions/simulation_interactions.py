@@ -165,14 +165,13 @@ def wait_until_simulated(delphin_ids: list) -> bool:
 
     while not all(simulated):
         for index, id_ in enumerate(delphin_ids):
-            entry = delphin_entry.Delphin.objects(id=id_).first()
+            entry = delphin_entry.Delphin.objects(id=id_).only('simulated').first()
 
             if entry.simulated:
                 simulated[index] = True
 
-            else:
-                logger.debug('Waiting until all projects are simulated')
-                time.sleep(180)
+        logger.debug(f'Waiting until all projects are simulated. {sum(simulated)}/{len(simulated)} is simulated')
+        time.sleep(180)
 
     logger.info('All projects are simulated')
     return True

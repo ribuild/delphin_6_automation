@@ -30,7 +30,7 @@ if __name__ == "__main__":
     (sample_iteration, convergence,
      new_samples_per_set, used_samples_per_set) = sampling.initialize_sampling(strategy_doc)
     existing_sample = sampling.sample_exists(strategy_doc)
-
+    logger.info(f'Existing Sample: {existing_sample}')
     logger.info(f'Running sampling iteration #{sample_iteration}')
     logger.info(f'New Samples per set: {new_samples_per_set}')
     logger.info(f'Used samples per set: {used_samples_per_set}')

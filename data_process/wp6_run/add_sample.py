@@ -7,34 +7,19 @@ __license__ = 'MIT'
 # Modules
 
 # RiBuild Modules
-from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_dict
-
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
-
 server = mongo_setup.global_init(auth_dict)
+sample = sample_entry.Sample.objects(id="5cf51c6f8686fe00018ba8b1").first()
+strategy = sample_entry.Strategy.objects().first()
+print(strategy.samples)
+print(sample)
 
-sample = sample_entry.Sample.objects().only('delphin_docs')
+strategy.update(push__samples=sample.id)
 
-sample_projects = [delphin.id
-                   for s in sample
-                   for delphin in s.delphin_docs]
-
-
-print(f'There is {len(sample_projects)} connected to a sample')
-
-projects = delphin_entry.Delphin.objects().only('id')
-
-print(f'There are currently {len(projects)} projects in the database')
-
-print('Starting')
-for proj in projects:
-    if proj.id not in sample_projects:
-        #print(f'Project with ID: {proj.id} is not part of a sample!')
-        proj.delete()
-
-
+strategy.reload()
+print(strategy.samples)
 mongo_setup.global_end_ssh(server)

@@ -10,6 +10,7 @@ __license__ = 'MIT'
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions.db_templates import sample_entry
 from delphin_6_automation.database_interactions import mongo_setup
+from delphin_6_automation.database_interactions import simulation_interactions
 from delphin_6_automation.database_interactions.auth import auth_dict
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -17,24 +18,22 @@ from delphin_6_automation.database_interactions.auth import auth_dict
 
 server = mongo_setup.global_init(auth_dict)
 
-sample = sample_entry.Sample.objects().only('delphin_docs')
+samples = sample_entry.Sample.objects().only('delphin_docs')
 
-sample_projects = [delphin.id
-                   for s in sample
-                   for delphin in s.delphin_docs]
+for sample in samples:
+    print(sample)
+    delphin_ids = [delp.id for delp in sample.delphin_docs]
 
+    simulated = [False] * len(delphin_ids)
+    print(f'Checking if Delphin projects have been simulated')
 
-print(f'There is {len(sample_projects)} connected to a sample')
+    for index, id_ in enumerate(delphin_ids):
+        entry = delphin_entry.Delphin.objects(id=id_).only('simulated').first()
 
-projects = delphin_entry.Delphin.objects().only('id')
+        if entry.simulated:
+            simulated[index] = True
 
-print(f'There are currently {len(projects)} projects in the database')
-
-print('Starting')
-for proj in projects:
-    if proj.id not in sample_projects:
-        #print(f'Project with ID: {proj.id} is not part of a sample!')
-        proj.delete()
-
+    print(f'Waiting until all projects are simulated. {sum(simulated)}/{len(simulated)} is simulated')
+    print('')
 
 mongo_setup.global_end_ssh(server)
