@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+
+  checker:
+    image: ocni/hpc_checker:latest
+    secrets:
+      - ssh_key
+      - hpc_spbj
+      - hpc_ocni
+      - hpc_thper
+      - hpc_angva
+      - hpc_nicf
