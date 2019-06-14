@@ -30,6 +30,12 @@ services:
       - /var/lib/docker/containers:/usr/share/dockerlogs/data:ro
       - /var/run/docker.sock:/var/run/docker.sock
 
+  checker:
+    image: ocni/hpc_checker:latest
+    secrets:
+      - ssh_key
+      - hpc_ocni
+
 volumes:
   ocni_volume:
     name: ocni_volume

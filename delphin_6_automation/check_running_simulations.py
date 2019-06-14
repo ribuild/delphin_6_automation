@@ -40,4 +40,4 @@ if __name__ == "__main__":
         logger.exception('Error in main')
 
     finally:
-        time.sleep(120)
+        time.sleep(300)

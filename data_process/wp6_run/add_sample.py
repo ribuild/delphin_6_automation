@@ -13,7 +13,7 @@ from delphin_6_automation.database_interactions.auth import auth_dict
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 server = mongo_setup.global_init(auth_dict)
-sample = sample_entry.Sample.objects(id="5cf51c6f8686fe00018ba8b1").first()
+sample = sample_entry.Sample.objects(id="5d00f53d8190100001b17185").first()
 strategy = sample_entry.Strategy.objects().first()
 print(strategy.samples)
 print(sample)
