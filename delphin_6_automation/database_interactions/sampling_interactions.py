@@ -209,6 +209,7 @@ def update_time_estimation_model(strategy_id: str):
     """Updates the machine learning model for simulation time estimations."""
 
     strategy_doc = sample_entry.Strategy.objects(id=strategy_id).first()
+    logger.info('Updating time predictions')
 
     if strategy_doc.current_iteration >= 3:
         sim_time_prediction.create_upload_time_prediction_model(strategy_doc)

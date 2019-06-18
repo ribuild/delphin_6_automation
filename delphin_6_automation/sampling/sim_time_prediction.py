@@ -35,12 +35,13 @@ def get_time_prediction_data() -> pd.DataFrame:
     predict the simulation time
     """
 
-    entries = delphin_entry.Delphin.objects(simulation_time__exists=True)
+    logger.debug('Retrieving time prediction data from Delphin projects')
+    entries = delphin_entry.Delphin.objects(simulation_time__exists=True).only('sample_data', 'simulation_time')
 
     col = ['time', ] + list(entries[0].sample_data.keys()) + list(entries[0].sample_data['design_option'].keys())
     frames = []
 
-    for i in range(len(entries)):
+    for i in range(entries.count()):
         entry = entries[i]
         data = copy.deepcopy(entry.sample_data)
         data.update(entry.sample_data['design_option'])
@@ -120,6 +121,7 @@ def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
 def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Optional[typing.Tuple[KNeighborsRegressor, dict]]:
     """Generation of the machine learning model"""
 
+    logger.debug('Computing ML time prediction model')
     ss = ShuffleSplit(n_splits=5, test_size=0.25, random_state=47)
     scaler = MinMaxScaler()
     best_model = {'score': 0, 'parameters': [1, 'uniform']}
@@ -144,7 +146,7 @@ def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Optional[ty
                     f'best model with R2 of {best_model["score"]:.5f}')
 
         model = KNeighborsRegressor(n_neighbors=best_model['parameters'][0],
-                                    weights=best_model['parameters'][1]).fit(x_data, y_data)
+                                    weights=best_model['parameters'][1]).fit(x_data.loc[:, best_model['features']], y_data)
         return model, best_model
 
 
@@ -221,6 +223,8 @@ def create_upload_time_prediction_model(strategy: sample_entry.Strategy) -> typi
 def process_inputs(raw_inputs: dict, model_features: dict) -> pd.DataFrame:
     """Process the sample inputs so a simulation time estimate can be made."""
 
+    logger.debug('Processing ML inputs')
+
     data = {'time': None}
     raw_inputs.update(raw_inputs['design_option'])
     del raw_inputs['design_option']
@@ -242,12 +246,15 @@ def simulation_time_prediction_ml(delphin_doc: delphin_entry.Delphin, model_entr
     sim_time_mins = int(sim_time_secs / 60)
     delphin_doc.update(set__estimated_simulation_time=sim_time_mins)
 
+    logger.debug(f'Updated expected_simulation_time to: {sim_time_mins}min for project with ID: {delphin_doc.id}')
+
     return sim_time_mins
 
 
 def queue_priorities_on_time_prediction(sample_doc: sample_entry.Sample):
     """Update the queue priorities based on the simulation time predictions."""
 
+    logger.info(f'Updating queue based on time for projects in sample with ID: {sample_doc.id}')
     max_time = np.array([doc.estimated_simulation_time
                          for doc in sample_doc.delphin_docs]).max()
 

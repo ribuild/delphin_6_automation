@@ -8,6 +8,10 @@ __license__ = 'MIT'
 from sshtunnel import SSHTunnelForwarder
 import mongoengine
 import typing
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger()
 
 # RiBuild Modules:
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -24,6 +28,7 @@ def global_init(auth_dict: dict) -> typing.Optional[SSHTunnelForwarder]:
             remote_bind_address=('localhost', 27017)
         )
 
+        logger.debug(f'Starting Connection through SSH')
         server.start()
 
         mongoengine.register_connection(
@@ -35,6 +40,7 @@ def global_init(auth_dict: dict) -> typing.Optional[SSHTunnelForwarder]:
             password=auth_dict['password']
         )
 
+        logger.info(f'Connected to server')
         return server
 
     else:
@@ -52,5 +58,5 @@ def global_end_ssh(server: typing.Optional[SSHTunnelForwarder]) -> None:
         server._transport.close()
         server.stop()
 
-    print('Connection ended.')
+    logger.info('Connection ended.')
     return None
