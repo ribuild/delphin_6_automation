@@ -62,6 +62,7 @@ plt.hist(sim_time, bins=50, density=True,)
 plt.title('Simulation Time')
 plt.xlabel('Simulation Time in Minutes')
 plt.ylabel('Number of Simulations')
+plt.xlim(-5, 260)
 plt.show()
 
 mongo_setup.global_end_ssh(server)
