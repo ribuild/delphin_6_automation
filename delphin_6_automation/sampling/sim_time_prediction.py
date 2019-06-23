@@ -93,15 +93,18 @@ def transform_interior_climate(data: pd.DataFrame) -> pd.DataFrame:
 def transform_weather(data: pd.DataFrame) -> pd.DataFrame:
     """Transform the weather stations names into numerical data."""
 
-    sys_names = set(data.loc[:, 'exterior_climate'])
+    try:
+        sys_names = set(data.loc[:, 'exterior_climate'])
+    except KeyError:
+        return data
+    else:
+        mapper = {}
+        for i, name in enumerate(sys_names):
+            mapper[name] = i
 
-    mapper = {}
-    for i, name in enumerate(sys_names):
-        mapper[name] = i
+        data.loc[:, 'exterior_climate'] = data.loc[:, 'exterior_climate'].map(mapper)
 
-    data.loc[:, 'exterior_climate'] = data.loc[:, 'exterior_climate'].map(mapper)
-
-    return data
+        return data
 
 
 def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:

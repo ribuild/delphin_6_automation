@@ -17,7 +17,7 @@ from delphin_6_automation.database_interactions.auth import auth_dict
 # RIBuild
 
 server = mongo_setup.global_init(auth_dict)
-strategy = sample_entry.Strategy.objects().first()
+strategy = sample_entry.Strategy.objects().only('standard_error').first()
 
 mould = []
 heat = []
@@ -47,7 +47,7 @@ plt.plot(x, heat_avg, color='darkslateblue', label='Heat Loss - Average Absolute
 plt.plot(x, heat_min, linestyle='--', color='darkslateblue', label='Heat Loss - Minimum Absolute Error')
 plt.plot(x, heat_max, linestyle=':', color='darkslateblue', label='Heat Loss - Maximum Absolute Error')
 
-plt.axhline(y=0.1, linestyle=':', color='k', label='Convergence Criteria')
+plt.axhline(y=0.01, linestyle=':', color='k', label='Convergence Criteria')
 plt.ylabel('Absolute Error')
 plt.xlabel('Sample Iteration')
 plt.title('Convergence')

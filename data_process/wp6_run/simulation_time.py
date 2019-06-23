@@ -58,7 +58,7 @@ print(f'\t- (24h x 60min) / Simulation Time x {jobs_par} parallel x ({months} mo
 print('')
 
 plt.figure(figsize=(10, 10))
-plt.hist(sim_time, bins=50, density=True,)
+plt.hist(sim_time, bins=50, )
 plt.title('Simulation Time')
 plt.xlabel('Simulation Time in Minutes')
 plt.ylabel('Number of Simulations')

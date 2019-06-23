@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     sample_doc = sample_entry.Sample.objects().order_by("-added_date").first()
     sample_id = sample_doc.id
-    print('Getting Delphin IDs')
+    print(f'Getting Delphin IDs for sample: {sample_id}')
     delphin_ids = [delphin.id for delphin in sample_doc.delphin_docs]
 
     print('Updating predictions')
