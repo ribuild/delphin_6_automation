@@ -1,0 +1,87 @@
+****************************************************************************
+*                     Welcome to the G-databar at DTU                      *
+*       User information: See G-bar homepage http://www.gbar.dtu.dk/       *
+*                User support: gbar-support@student.dtu.dk                 *
+****************************************************************************
+
+The scheduled service window for the G-Bar and HPC clusters is on a Monday every
+couple of months, between 17 and 07 hours.  During these hours,
+the G-Bar and HPC systems will be inaccessible, as most systems will be rebooted
+and maintenance work will be in progress.
+
+To subscribe to the HPC mailing list, please send an email to:
+
+                hpc-subscribe@lists.cc.dtu.dk
+
+****************************************************************************
+
+*** Dear OpenFoam-Users:                              *** very important ***
+    Please have a look here:             http://www.hpc.dtu.dk/?page_id=1024
+
+*** Dear Users: If you have to deal with large-datasets, please ask for a
+    scratch-directory: support@hpc.dtu.dk
+
+*** Please use transfer.gbar.dtu.dk for transferring files
+*** between the outside world and your home and/or SCRATCH-directory.
+
+----------------------------------------------------------------------------
+If you run into any issues: support@hpc.dtu.dk
+----------------------------------------------------------------------------
+
+This is our new HPC-Setup
+ - LSF 10.1.3
+ - Scientific Linux 7.3
+ - loginnodes: login2.gbar.dtu.dk, login2.hpc.dtu.dk
+
+ - queueing system is still 'without strict limits'
+ - hpc-queue can be used by everyone, if you are part of another queue, then
+   you should have there a higher priority than in the default-hpc-queue
+ - all new Broadwell-nodes have 24 cores and at least 256 GB of memory  (f.e. 'nodestat -F hpc')
+ - all new Skylake-nodes have 24 cores and at least 192GB of memory
+ - all Haswell-nodes have at least 20 cores and 128GB of memory
+ - the cpu-type needs to be specified in a different way - please use
+   the output which you can see from 'nodestat -f'
+ - rusage[mem=XXXX] is 'per SLOT'.
+ - one 'qrsh' / 'linuxsh' node is available for compiling software
+ - there are still some modules which haven't been tested
+ - if you have issues, please report them to support@hpc.dtu.dk
+
+ further documentation:
+        LSF:
+        http://www.hpc.dtu.dk/?page_id=2534
+
+        Accessing the system:
+        http://www.hpc.dtu.dk/?page_id=2501
+
+ Queue-parameters for testing:
+        - max 120 cores per user for 'hpc'
+        - max 512 cores per user for 'compute'
+        - max 480 cores per user for 'elektro' & 'cfu'
+        - 4 days of walltime for queues 'compute', 'elektro'
+        - 3 days of walltime for queue 'hpc'
+
+ You have to specify memory and walltime in your jobscripts - otherwise some
+ very strict limits apply.
+
+ MPI: the modules have been cleaned up a bit. You have to use mpi-modules
+ with a different naming scheme now. Please check yourself: 'module avail mpi'.
+ The old standard-mpi is 'mpi/1.6.5-gcc-4.4.7'.
+
+
+
+*********************************************************************************
+* We are running out of space again under /work3.....
+* If you have a scratch-directory under /work1 or /work3 -
+                                                 please clean up. Thanks a lot. *
+*    *** this is really really important! ***
+*********************************************************************************
+
+FYI: next "long" service window: 12/07/19-14/07/19
+
+
+Loaded module: latex/TeXLive12
+~
+4b86e6f000112bdb9.sh ~/ribuild/5d0f36a4b86e6f000112bdb9 && bsub < submit_5d0f36a
+Job <2947325> is submitted to queue <hpc>.
+~/ribuild/5d0f36a4b86e6f000112bdb9
+hpclogin3(ocni) $

@@ -125,3 +125,11 @@ def test_consecutive_errors(mock_wait_consecutive_errors, tmpdir):
     return_code = simulation_worker.wait_until_finished('Test_ID', 5, tmpdir)
 
     assert return_code == 'consecutive errors'
+
+
+def test_parse_hpc_log(test_folder):
+    with open(os.path.join(test_folder, 'logs', 'hpc_logs.txt')) as file:
+        data = file.read()
+
+    line = simulation_worker.parse_hpc_log(data)
+    assert line == 'Job <2947325> is submitted to queue <hpc>.'

@@ -16,6 +16,7 @@ import paramiko
 import typing
 import shutil
 import json
+import re
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -172,10 +173,19 @@ def submit_job(submit_file: str, sim_id: str) -> None:
 
     logger.debug(channel_data)
 
-    logger.info(f'Submitted job {sim_id}\n')
+    logger.info(f'Submitted job {sim_id}')
+    logger.info(f'HPC response: {parse_hpc_log(channel_data)}')
 
     channel.close()
     client.close()
+
+
+def parse_hpc_log(raw_data: str) -> str:
+    data = raw_data.split('\n')
+    for line in data[::-1]:
+        if re.search(r".*submitted to queue.", line.strip()):
+            return line.strip()
+    return False
 
 
 def connect_to_hpc(key_file: str = 'hpc_access') -> paramiko.SSHClient:

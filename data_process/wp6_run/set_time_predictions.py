@@ -10,7 +10,6 @@ __license__ = 'MIT'
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_dict
-from delphin_6_automation.database_interactions import simulation_interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -18,9 +17,17 @@ from delphin_6_automation.database_interactions import simulation_interactions
 if __name__ == "__main__":
     server = mongo_setup.global_init(auth_dict)
 
-    entries = delphin_entry.Delphin.objects(simulating=True)
+    not_simulated = delphin_entry.Delphin.objects(simulated__exists=False)
+    print(f'Currently {not_simulated.count()} projects')
+    new_time = 10
+    print(f'Setting time to: {new_time}')
+    not_simulated.update(set__estimated_simulation_time=new_time)
 
-    for entry in entries:
-        simulation_interactions.set_simulating(entry.id, False)
+    avg_time = delphin_entry.Delphin.objects(simulated__exists=False,
+                                             estimated_simulation_time__exists=True
+                                             ).average("estimated_simulation_time")
+    print()
+    print(f'Average Estimated Simulation Time for Remaining Projects: {avg_time:.02f} min')
+    print()
 
     mongo_setup.global_end_ssh(server)
