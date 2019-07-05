@@ -221,10 +221,11 @@ def check_simulations(auth_file: str, only_count=False) -> int:
 
     count = 0
     for data in simulation_data:
+        data = data.strip()
         if data and data != '~':
             count += 1
             if not only_count:
-                logger.info(data.strip())
+                logger.info(data)
 
     return count
 
