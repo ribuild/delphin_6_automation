@@ -49,7 +49,7 @@ print(f'\tSimulations that takes longer than 250min: {gt_250.count()} = '
 print('')
 
 months = 4
-jobs_par = 140
+jobs_par = 300
 
 print('PREDICTIONS')
 print('\tAverage:')
@@ -57,11 +57,19 @@ print(f'\t- (24h x 60min) / Simulation Time x {jobs_par} parallel x ({months} mo
       f'{24*60/np.mean(sim_time)*jobs_par*months*30:.01f} simulations')
 print('')
 
+hist, edges = np.histogram(sim_time, density=True, bins=100)
+dx = edges[1] - edges[0]
+cdf = np.cumsum(hist) * dx
+
 plt.figure(figsize=(10, 10))
-plt.hist(sim_time, bins=50, )
+#plt.hist(sim_time, bins=50, )
+plt.plot(edges[1:], cdf)
+plt.axvline(x=np.mean(sim_time), linestyle=':', color='k', label='Mean')
+plt.axvline(x=np.median(sim_time), linestyle='--', color='k', label='Median')
 plt.title('Simulation Time')
 plt.xlabel('Simulation Time in Minutes')
-plt.ylabel('Number of Simulations')
+plt.ylabel('Ratio of Simulations')
+plt.legend()
 plt.xlim(-5, 260)
 plt.show()
 

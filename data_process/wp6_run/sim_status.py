@@ -5,11 +5,13 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
+import os
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_dict
+from delphin_6_automation.database_interactions import simulation_interactions
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
@@ -24,8 +26,13 @@ if __name__ == "__main__":
                                              estimated_simulation_time__exists=True
                                              ).average("estimated_simulation_time")
 
+    auth_path = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\test\checks'
+    file = os.path.join(auth_path, 'ocni.json')
+    bstat = simulation_interactions.check_simulations(file, only_count=True)
+
     print()
     print(f'Projects Currently Simulating: {simulating}')
+    print(f'Projects Running in BSTAT: {bstat}')
     print(f'Simulated Projects: {simulated}')
     print(f'Projects in DB: {projects}')
     print(f'Remaining Projects: {projects - simulated}')

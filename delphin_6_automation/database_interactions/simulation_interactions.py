@@ -199,7 +199,7 @@ def find_exceeded() -> typing.Optional[str]:
         return None
 
 
-def check_simulations(auth_file: str) -> None:
+def check_simulations(auth_file: str, only_count=False) -> int:
     """Checks running simulations on HPC"""
 
     terminal_call = f"bstat\n"
@@ -207,12 +207,9 @@ def check_simulations(auth_file: str) -> None:
     client = simulation_worker.connect_to_hpc(auth_file)
 
     channel = client.invoke_shell()
-    channel_data = ''
     time.sleep(0.5)
     channel.send(terminal_call)
-    time.sleep(1.0)
-    channel_bytes = channel.recv(9999)
-    channel_data += channel_bytes.decode("utf-8")
+    channel_data = get_command_results(channel)
 
     simulation_data = channel_data.split('hpclogin3')[1]
 
@@ -222,6 +219,54 @@ def check_simulations(auth_file: str) -> None:
     # Process string
     simulation_data = simulation_data.split("\n")[1:]
 
+    count = 0
     for data in simulation_data:
         if data and data != '~':
-            logger.info(data.strip())
+            count += 1
+            if not only_count:
+                logger.info(data.strip())
+
+    return count
+
+
+def get_command_results(channel):
+    ## http://joelinoff.com/blog/?p=905
+
+    interval = 0.1
+    maxseconds = 10
+    maxcount = maxseconds / interval
+    bufsize = 1024
+
+    # Poll until completion or timeout
+    # Note that we cannot directly use the stdout file descriptor
+    # because it stalls at 64K bytes (65536).
+    input_idx = 0
+    timeout_flag = False
+    start = datetime.datetime.now()
+    start_secs = time.mktime(start.timetuple())
+    output = ''
+    channel.setblocking(0)
+
+    while True:
+        if channel.recv_ready():
+            data = channel.recv(bufsize).decode('utf-8')
+            output += data
+
+        if channel.exit_status_ready():
+            break
+
+        # Timeout check
+        now = datetime.datetime.now()
+        now_secs = time.mktime(now.timetuple())
+        et_secs = now_secs - start_secs
+        if et_secs > maxseconds:
+            timeout_flag = True
+            break
+
+        rbuffer = output.rstrip(' ')
+        if len(rbuffer) > 0 and (rbuffer[-1] == '#' or rbuffer[-1] == '>'): ## got a Cisco command prompt
+            break
+
+        time.sleep(0.2)
+
+    return output

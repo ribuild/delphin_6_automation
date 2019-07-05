@@ -688,44 +688,55 @@ def sobol(m: int, dimension: int, sets: int = 1) -> np.ndarray:
     return design
 
 
-def calculate_sample_output(sample_strategy: dict, sampling_id: str) -> None:
+def calculate_sample_output(sample_strategy: dict, sampling_id: str, mp=False) -> None:
     """Compute the mean and standard deviation of the simulation results for a given sample"""
 
     sample_mean = dict()
     sample_std = dict()
     sequence = sample_strategy['settings']['sequence']
 
-    for sequence_index in range(sequence):
+    if not mp:
+        for sequence_index in range(sequence):
 
-        logger.debug(f'Calculates the sample output for sequence #{sequence_index}')
-
-        sample_mean[str(sequence_index)] = dict()
-        sample_std[str(sequence_index)] = dict()
-
-        for design in sample_strategy['design']:
-            design_dict = create_design_info(design)
-            projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design_dict,
-                                                                  sample_data__sequence=str(sequence_index))
-            mould = []
-            heat_loss = []
-
-            # TODO - Speed up this with a better query
-            for project in projects_given_design:
-                mould.append(project.result_processed['thresholds']['mould'])
-                heat_loss.append(project.result_processed['thresholds']['heat_loss'])
-
-            sample_mean[str(sequence_index)][design] = {'mould': np.mean(mould),
-                                                        'heat_loss': np.mean(heat_loss)}
-            sample_std[str(sequence_index)][design] = {'mould': np.std(mould),
-                                                       'heat_loss': np.std(heat_loss)}
-
-            logger.debug(f'Sample mean: {sample_mean[str(sequence_index)][design]} for design: {design}')
-            logger.debug(f'Sample std: {sample_std[str(sequence_index)][design]} for design: {design}')
+            mean, std = calculate_sequence_output(sequence_index, sample_strategy)
+            sample_mean[str(sequence_index)] = mean
+            sample_std[str(sequence_index)] = std
+    else:
+        pass
 
     sampling_interactions.upload_sample_mean(sampling_id, sample_mean)
     sampling_interactions.upload_sample_std(sampling_id, sample_std)
 
     return None
+
+
+def calculate_sequence_output(sequence_index, sample_strategy):
+    logger.debug(f'Calculates the sample output for sequence #{sequence_index}')
+
+    sample_mean = dict()
+    sample_std = dict()
+
+    for design in sample_strategy['design']:
+        design_dict = create_design_info(design)
+        projects_given_design = delphin_entry.Delphin.objects(sample_data__design_option=design_dict,
+                                                              sample_data__sequence=str(sequence_index))
+        mould = []
+        heat_loss = []
+
+        # TODO - Speed up this with a better query
+        for project in projects_given_design:
+            mould.append(project.result_processed['thresholds']['mould'])
+            heat_loss.append(project.result_processed['thresholds']['heat_loss'])
+
+        sample_mean[design] = {'mould': np.mean(mould),
+                                                    'heat_loss': np.mean(heat_loss)}
+        sample_std[design] = {'mould': np.std(mould),
+                                                   'heat_loss': np.std(heat_loss)}
+
+        logger.debug(f'Sequence {sequence_index} - Sample Mean: {sample_mean[design]} for design: {design}')
+        logger.debug(f'Sequence {sequence_index} - Sample STD: {sample_std[design]} for design: {design}')
+
+    return sample_mean, sample_std
 
 
 def initialize_sampling(strategy_doc: sample_entry.Strategy) -> tuple:
