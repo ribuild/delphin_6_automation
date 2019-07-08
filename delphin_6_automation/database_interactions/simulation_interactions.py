@@ -223,7 +223,7 @@ def check_simulations(auth_file: str, only_count=False) -> tuple:
     p_count = 0
     for data in simulation_data:
         data = data.strip()
-        if data and data != '~':
+        if data and data != '~' and 'JOBID' not in data:
             if "pend" in data.lower():
                 p_count += 1
             else:
