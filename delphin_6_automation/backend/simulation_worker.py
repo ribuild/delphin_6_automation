@@ -155,7 +155,7 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
     return submit_file
 
 
-def submit_job(submit_file: str, sim_id: str) -> None:
+def submit_job(submit_file: str, sim_id: str) -> typing.Union[str, bool]:
     """Submits a job (submit file) to the DTU HPC queue."""
 
     terminal_call = f"cd ~/ribuild/{sim_id} && bsub < {submit_file}\n"
@@ -163,28 +163,37 @@ def submit_job(submit_file: str, sim_id: str) -> None:
     client = connect_to_hpc()
     logger.debug(f'Connecting to HPC to upload simulation with ID: {sim_id}')
 
+    submitted = False
+    retries = 0
     channel = client.invoke_shell()
-    channel_data = ''
     time.sleep(0.5)
-    channel.send(terminal_call)
-    time.sleep(1.0)
-    channel_bytes = channel.recv(9999)
-    channel_data += channel_bytes.decode("utf-8")
 
-    logger.debug(channel_data)
+    while not submitted and retries < 3:
+        channel.send(terminal_call)
+        response = simulation_interactions.get_command_results(channel)
+        submitted = parse_hpc_log(response)
+        logger.info(f'HPC response: {submitted}')
 
-    logger.info(f'Submitted job {sim_id}')
-    logger.info(f'HPC response: {parse_hpc_log(channel_data)}')
+        if submitted:
+            logger.info(f'Submitted job {sim_id} on {retries}. try')
+
+        retries += 1
+        time.sleep(30)
 
     channel.close()
     client.close()
 
+    return submitted
 
-def parse_hpc_log(raw_data: str) -> str:
+
+def parse_hpc_log(raw_data: str) -> typing.Union[str, bool]:
+    """Parses the output from HPC to check whether or not the job has been submitted"""
+
     data = raw_data.split('\n')
     for line in data[::-1]:
         if re.search(r".*submitted to queue.", line.strip()):
             return line.strip()
+
     return False
 
 
@@ -337,35 +346,44 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     general_interactions.download_full_project_from_database(id_, simulation_folder)
     estimated_time = simulation_interactions.get_simulation_time_estimate(id_)
     submit_file = create_submit_file(id_, simulation_folder, estimated_time)
-    submit_job(submit_file, id_)
+    submitted = submit_job(submit_file, id_)
 
-    time_0 = datetime.datetime.now()
-    return_code = wait_until_finished(id_, estimated_time, simulation_folder)
-    delta_time = datetime.datetime.now() - time_0
+    if submitted:
 
-    if return_code:
-        simulation_hours = None
+        time_0 = datetime.datetime.now()
+        return_code = wait_until_finished(id_, estimated_time, simulation_folder)
+        delta_time = datetime.datetime.now() - time_0
+
+        if return_code:
+            simulation_hours = None
+        else:
+            simulation_hours = len(delphin_entry.Delphin.objects(id=id_).first().weather) * 8760
+
+        result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_),
+                                                                    delete_files=False, result_length=simulation_hours)
+        delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
+                                                      id_, result_id, return_code)
+
+        if return_code == 'time limit reached':
+            delphin_interactions.set_exceeding_time_limit(id_)
+            delphin_interactions.upload_restart_data(simulation_folder, id_)
+
+        elif return_code == 'consecutive errors':
+            delphin_interactions.set_critical_error(id_)
+            delphin_interactions.upload_restart_data(simulation_folder, id_)
+
+        simulation_interactions.set_simulated(id_)
+        simulation_interactions.set_simulation_time(id_, delta_time)
+        simulation_interactions.clean_simulation_folder(simulation_folder)
+
+        logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
+
     else:
-        simulation_hours = len(delphin_entry.Delphin.objects(id=id_).first().weather) * 8760
+        logger.warning(f'Could not submit project with ID: {id_} to HPC.')
+        simulation_interactions.clean_simulation_folder(simulation_folder)
+        simulation_interactions.set_simulating(id_, False)
 
-    result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_),
-                                                                delete_files=False, result_length=simulation_hours)
-    delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
-                                                  id_, result_id, return_code)
 
-    if return_code == 'time limit reached':
-        delphin_interactions.set_exceeding_time_limit(id_)
-        delphin_interactions.upload_restart_data(simulation_folder, id_)
-
-    elif return_code == 'consecutive errors':
-        delphin_interactions.set_critical_error(id_)
-        delphin_interactions.upload_restart_data(simulation_folder, id_)
-
-    simulation_interactions.set_simulated(id_)
-    simulation_interactions.set_simulation_time(id_, delta_time)
-    simulation_interactions.clean_simulation_folder(simulation_folder)
-
-    logger.info(f'Finished solving {id_}. Simulation duration: {delta_time}\n')
 
 
 def simulation_worker(sim_location: str, folder='H:/ribuild') -> None:

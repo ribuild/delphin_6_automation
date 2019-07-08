@@ -17,9 +17,9 @@ from delphin_6_automation.database_interactions.auth import auth_dict
 if __name__ == "__main__":
     server = mongo_setup.global_init(auth_dict)
 
-    not_simulated = delphin_entry.Delphin.objects(simulated__exists=False)
+    not_simulated = delphin_entry.Delphin.objects(simulated__exists=False, estimated_simulation_time__lt=5)
     print(f'Currently {not_simulated.count()} projects')
-    new_time = 10
+    new_time = 5
     print(f'Setting time to: {new_time}')
     not_simulated.update(set__estimated_simulation_time=new_time)
 

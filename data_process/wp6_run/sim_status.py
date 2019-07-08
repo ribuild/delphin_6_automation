@@ -28,11 +28,11 @@ if __name__ == "__main__":
 
     auth_path = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\test\checks'
     file = os.path.join(auth_path, 'ocni.json')
-    bstat = simulation_interactions.check_simulations(file, only_count=False)
+    bstat, pending = simulation_interactions.check_simulations(file, only_count=True)
 
     print()
     print(f'Projects Currently Simulating: {simulating}')
-    print(f'Projects Running in BSTAT: {bstat}')
+    print(f'Projects Running in BSTAT: {bstat} - {pending} Projects Pending')
     print(f'Simulated Projects: {simulated}')
     print(f'Projects in DB: {projects}')
     print(f'Remaining Projects: {projects - simulated}')

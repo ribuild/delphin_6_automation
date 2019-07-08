@@ -199,7 +199,7 @@ def find_exceeded() -> typing.Optional[str]:
         return None
 
 
-def check_simulations(auth_file: str, only_count=False) -> int:
+def check_simulations(auth_file: str, only_count=False) -> tuple:
     """Checks running simulations on HPC"""
 
     terminal_call = f"bstat\n"
@@ -220,14 +220,18 @@ def check_simulations(auth_file: str, only_count=False) -> int:
     simulation_data = simulation_data.split("\n")[1:]
 
     count = 0
+    p_count = 0
     for data in simulation_data:
         data = data.strip()
         if data and data != '~':
-            count += 1
-            if not only_count:
-                logger.info(data)
+            if "pend" in data.lower():
+                p_count += 1
+            else:
+                count += 1
+                if not only_count:
+                    logger.info(data)
 
-    return count
+    return count, p_count
 
 
 def get_command_results(channel):
