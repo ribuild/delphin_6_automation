@@ -37,7 +37,7 @@ if __name__ == "__main__":
     server = mongo_setup.global_init(auth_dict)
 
     try:
-        simulation_interactions.check_simulating_projects()
+        simulation_interactions.check_simulating_projects(True)
 
     except Exception as err:
         logger.exception('Error in main')
