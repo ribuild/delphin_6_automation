@@ -297,5 +297,9 @@ def check_simulating_projects(not_simulating: bool = False) -> None:
 
     logger.info(f'There are {projects.count()} projects, which have exceeded their simulation time.')
 
-    if not_simulating:
+    if not_simulating and projects.count() > 0:
+        logger.info('Setting exceed simulations to not simulating')
         projects.update(simulating=None)
+
+        projects = delphin_entry.Delphin.objects(simulating__lt=expiry_date)
+        logger.info(f'There are {projects.count()} projects, which have exceeded their simulation time.')
