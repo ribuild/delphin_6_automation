@@ -10,6 +10,7 @@ import datetime
 import time
 import shutil
 import typing
+from mongoengine import Q
 
 # RiBuild Modules:
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -287,3 +288,14 @@ def get_command_results(channel):
         time.sleep(0.2)
 
     return output
+
+
+def check_simulating_projects(not_simulating: bool = False) -> None:
+
+    expiry_date = datetime.datetime.now() - datetime.timedelta(minutes=300)
+    projects = delphin_entry.Delphin.objects(simulating__lt=expiry_date)
+
+    logger.info(f'There are {projects.count()} projects, which have exceeded their simulation time.')
+
+    if not_simulating:
+        projects.update(simulating=None)

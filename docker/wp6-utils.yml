@@ -36,6 +36,11 @@ services:
       - ssh_key
       - hpc_ocni
 
+  check_sim:
+    image: ocni/hpc_check_sim:latest
+    secrets:
+      - db_ait
+
 volumes:
   ocni_volume:
     name: ocni_volume
