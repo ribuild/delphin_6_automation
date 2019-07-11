@@ -24,7 +24,7 @@ class Delphin(mongoengine.Document):
     # Meta Data
     added_date = mongoengine.DateTimeField(default=datetime.now)
     simulated = mongoengine.DateTimeField()
-    simulating = mongoengine.BooleanField(default=False)
+    simulating = mongoengine.DateTimeField(default=None, null=True)
     simulation_time = mongoengine.FloatField()
     estimated_simulation_time = mongoengine.IntField()
     queue_priority = mongoengine.FloatField(default=1)
