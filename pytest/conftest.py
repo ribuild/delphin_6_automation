@@ -199,7 +199,7 @@ def add_sampling_strategy(empty_database, add_three_years_weather, tmpdir, mock_
         test_dir = tmpdir.mkdir('test')
     else:
         test_dir = os.path.join(tmpdir, 'test')
-    strategy = sampling.create_sampling_strategy(test_dir)
+    strategy = sampling.create_sampling_strategy(test_dir, 'path')
     strategy_id = sampling_interactions.upload_sampling_strategy(strategy)
 
     return strategy_id
@@ -728,3 +728,12 @@ def mock_check_convergence(monkeypatch):
         return None
 
     monkeypatch.setattr(sampling, 'check_convergence', mock_return)
+
+
+@pytest.fixture()
+def add_samples(add_sampling_strategy, dummy_sample):
+
+    for i in range(3):
+        sample_id = sampling_interactions.upload_samples(dummy_sample, i)
+        strategy = sample_entry.Strategy.objects().first()
+        sampling_interactions.add_sample_to_strategy(strategy.id, sample_id)

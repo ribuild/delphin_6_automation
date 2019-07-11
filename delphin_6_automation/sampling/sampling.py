@@ -140,7 +140,7 @@ def load_strategy(path: str) -> dict:
     return sampling_strategy
 
 
-def load_latest_sample(sampling_strategy_id: str) -> typing.Optional[sample_entry.Sample]:
+def load_latest_sample(sampling_strategy_id: str, iteration: str = None) -> typing.Optional[sample_entry.Sample]:
     """
     Look up the last existing sample entries in the database connected to the strategy
     If there is not previous samples in database return empty dict
@@ -154,9 +154,16 @@ def load_latest_sample(sampling_strategy_id: str) -> typing.Optional[sample_entr
     if strategy.samples:
         samples_list = strategy.samples
 
-        logger.debug(f'Found latest sample with ID: {samples_list[-1].id} for strategy with ID: {sampling_strategy_id}')
+        if not iteration:
+            logger.debug(f'Found latest sample with ID: {samples_list[-1].id} for strategy with ID: {sampling_strategy_id}')
 
-        return samples_list[-1]
+            return samples_list[-1]
+        else:
+            for sample in samples_list:
+                if sample.iteration == iteration:
+                    logger.debug(f'Found sample with ID: {sample.id} and iteration {sample.iteration} '
+                                 f'for strategy with ID: {sampling_strategy_id}')
+                    return sample
 
     else:
         logger.debug(f'No samples found assosiated with strategy with ID: {sampling_strategy_id}')
@@ -192,8 +199,8 @@ def get_raw_samples(sampling_strategy: sample_entry.Strategy, step: int) -> np.n
 def sample_exists(sampling_strategy: sample_entry.Strategy) -> typing.Optional[sample_entry.Sample]:
     """Check whether a sample exists with the same iteration as the current iteration in the sampling strategy"""
 
-    sample = load_latest_sample(sampling_strategy.id)
-    if sample and sample.iteration == sampling_strategy.current_iteration:
+    sample = load_latest_sample(sampling_strategy.id, sampling_strategy.current_iteration)
+    if sample:
 
         logger.info(f'Found existing sample for the current sampling iteration #{sampling_strategy.current_iteration}')
 

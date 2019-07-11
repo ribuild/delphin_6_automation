@@ -250,3 +250,18 @@ def test_create_design_info_2d1d():
         design_info = sampling.create_design_info(design)
 
         assert isinstance(design_info, dict)
+
+
+@pytest.mark.parametrize('iteration', [0, 1, 3])
+def test_sample_exists(add_samples, iteration):
+
+    strategy_doc = sample_entry.Strategy.objects().first()
+    strategy_doc.update(current_iteration=iteration)
+    strategy_doc.reload()
+
+    if iteration == 3:
+        assert not sampling.sample_exists(strategy_doc)
+    else:
+        assert sampling.sample_exists(strategy_doc)
+
+

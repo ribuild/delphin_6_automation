@@ -26,3 +26,16 @@ def test_sampling_worker(add_three_years_weather, add_five_materials, sampling_s
     assert delphin_entry.Delphin.objects()
     assert sample_entry.Sample.objects()
     assert sample_entry.SampleRaw.objects()
+
+
+@pytest.mark.parametrize('iteration', [0, 1, 2])
+def test_is_sampling_ahead(add_samples, iteration):
+
+    strategy_doc = sample_entry.Strategy.objects().first()
+    strategy_doc.update(current_iteration=iteration)
+    strategy_doc.reload()
+
+    if iteration == 2:
+        assert not sampling_worker.is_sampling_ahead(strategy_doc)
+    else:
+        assert sampling_worker.is_sampling_ahead(strategy_doc)

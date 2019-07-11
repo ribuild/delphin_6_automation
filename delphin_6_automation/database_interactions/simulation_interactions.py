@@ -152,7 +152,7 @@ def get_simulation_time_estimate(delphin_id: str) -> int:
         return general_interact.compute_simulation_time(delphin_id)
 
 
-def wait_until_simulated(delphin_ids: list) -> bool:
+def wait_until_simulated(delphin_ids: list, is_sampling_ahead: bool = False) -> bool:
     """
     Wait until all simulations in the given list is simulated.
 
@@ -171,6 +171,14 @@ def wait_until_simulated(delphin_ids: list) -> bool:
                 simulated[index] = True
 
         logger.debug(f'Waiting until all projects are simulated. {sum(simulated)}/{len(simulated)} is simulated')
+
+        if all(simulated):
+            logger.info('All projects are simulated')
+            return True
+
+        if sum(simulated) >= (len(simulated) * 0.9) and not is_sampling_ahead:
+            logger.info('90% of projects are simulated')
+            return False
 
         if not all(simulated):
             time.sleep(180)
