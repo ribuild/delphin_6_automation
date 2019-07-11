@@ -88,7 +88,7 @@ def set_simulating(id_: str, set_to: bool) -> str:
         delphin_doc.update(set__simulating=datetime.datetime.now())
     else:
         delphin_doc.update(set__simulating=None)
-    logger.debug(f'For Delphin project with ID: {id_}, simulation was change to: {set_to}')
+    logger.debug(f'For Delphin project with ID: {id_}, simulating was changed to: {set_to}')
 
     return delphin_doc.id
 
