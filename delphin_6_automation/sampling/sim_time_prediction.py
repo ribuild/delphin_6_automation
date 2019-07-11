@@ -110,15 +110,18 @@ def transform_weather(data: pd.DataFrame) -> pd.DataFrame:
 def transform_system_names(data: pd.DataFrame) -> pd.DataFrame:
     """Transforms the insulation system names into numerical data"""
 
-    sys_names = set(data.loc[data.loc[:, 'system_name'] != 0, 'system_name'])
+    try:
+        sys_names = set(data.loc[data.loc[:, 'system_name'] != 0, 'system_name'])
+    except KeyError:
+        return data
+    else:
+        mapper = {0: 0}
+        for i, name in enumerate(sys_names, 1):
+            mapper[name] = i
 
-    mapper = {0: 0}
-    for i, name in enumerate(sys_names, 1):
-        mapper[name] = i
+        data.loc[:, 'system_name'] = data.loc[:, 'system_name'].map(mapper)
 
-    data.loc[:, 'system_name'] = data.loc[:, 'system_name'].map(mapper)
-
-    return data
+        return data
 
 
 def compute_model(x_data: pd.DataFrame, y_data: pd.Series) -> typing.Optional[typing.Tuple[KNeighborsRegressor, dict]]:
