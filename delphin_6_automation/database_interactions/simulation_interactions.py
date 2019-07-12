@@ -241,8 +241,8 @@ def check_simulations(auth_file: str, only_count=False) -> tuple:
                 p_count += 1
             else:
                 count += 1
-                if not only_count:
-                    logger.info(data)
+            if not only_count:
+                logger.info(data)
 
     return count, p_count
 
