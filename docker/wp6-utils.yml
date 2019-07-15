@@ -2,21 +2,6 @@ version: '3.7'
 
 services:
 
-  simulation_ocni:
-    image: ocni/hpc_simulator:latest
-    volumes:
-      - ocni_volume:/app/data
-    deploy:
-      replicas: 0
-      update_config:
-        parallelism: 2
-        delay: 5s
-    secrets:
-      - ssh_key
-      - db_ait
-      - source: hpc_ocni
-        target: hpc_access
-
   sampling:
     image: ocni/hpc_sampler:latest
     secrets:
@@ -40,14 +25,6 @@ services:
     image: ocni/hpc_check_sim:latest
     secrets:
       - db_ait
-
-volumes:
-  ocni_volume:
-    name: ocni_volume
-    driver: vieux/sshfs:latest
-    driver_opts:
-      sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild
-      allow_other: ""
 
 secrets:
   ssh_key:
