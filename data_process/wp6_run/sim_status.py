@@ -40,6 +40,6 @@ if __name__ == "__main__":
     print(f'Average Estimated Simulation Time for Remaining Projects: {avg_time:.02f} min')
     print()
     print(f'Current Iteration: {strategy.current_iteration}')
-    print(f'Number of Samples in Strategy: {len(strategy.samples)}')
+    #print(f'Number of Samples in Strategy: {len(strategy.samples)}')
     print()
     mongo_setup.global_end_ssh(server)

@@ -155,7 +155,7 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
     return submit_file
 
 
-def submit_job(submit_file: str, sim_id: str) -> typing.Union[str, bool]:
+def submit_job(submit_file: str, sim_id: str) -> bool:
     """Submits a job (submit file) to the DTU HPC queue."""
 
     terminal_call = f"cd ~/ribuild/{sim_id} && bsub < {submit_file}\n"
@@ -176,6 +176,9 @@ def submit_job(submit_file: str, sim_id: str) -> typing.Union[str, bool]:
 
         if submitted:
             logger.info(f'Submitted job {sim_id} on {retries}. try')
+            channel.close()
+            client.close()
+            return True
 
         retries += 1
         time.sleep(30)
@@ -183,7 +186,9 @@ def submit_job(submit_file: str, sim_id: str) -> typing.Union[str, bool]:
     channel.close()
     client.close()
 
-    return submitted
+    logger.debug('No job was submitted')
+
+    return False
 
 
 def parse_hpc_log(raw_data: str) -> typing.Union[str, bool]:
@@ -349,6 +354,7 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
     submitted = submit_job(submit_file, id_)
 
     if submitted:
+        logger.debug('Job successfully submitted. Waiting for completion and processing results.')
 
         time_0 = datetime.datetime.now()
         return_code = wait_until_finished(id_, estimated_time, simulation_folder)
