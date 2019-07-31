@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+
+  filebeat:
+    image: filebeat
+    environment:
+      - logstash_host=$LH
+    volumes:
+      - /var/lib/docker/containers:/usr/share/dockerlogs/data:ro
+      - /var/run/docker.sock:/var/run/docker.sock
