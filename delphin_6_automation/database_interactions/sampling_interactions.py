@@ -226,9 +226,10 @@ def predict_simulation_time(delphin_ids: typing.List[str], strategy_id: str) -> 
     before it is applied to the Delphin projects.
     """
 
+    """
     strategy_doc = sample_entry.Strategy.objects(id=strategy_id).first()
     time_model = strategy_doc.time_prediction_model
-
+    
     if time_model:
         logger.info(f'Using ML model to predict simulation time')
         for delphin_id in delphin_ids:
@@ -240,3 +241,9 @@ def predict_simulation_time(delphin_ids: typing.List[str], strategy_id: str) -> 
         for delphin_id in delphin_ids:
             time_estimate = general_interactions.compute_simulation_time(delphin_id)
             simulation_interactions.set_simulation_time_estimate(delphin_id, time_estimate)
+    """
+
+    logger.info(f'Using guessing estimate for simulation time.')
+    time_estimate = general_interactions.compute_simulation_time(delphin_ids[0])
+    for delphin_id in delphin_ids:
+        simulation_interactions.set_simulation_time_estimate(delphin_id, time_estimate)

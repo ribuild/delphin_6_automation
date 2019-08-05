@@ -154,15 +154,18 @@ def is_sampling_ahead(strategy_doc: sample_entry.Strategy) -> bool:
 
 
 def create_new_samples(strategy_doc, used_samples_per_set, sample_iteration):
+
     logger.info('Creating new samples')
+
     strategy_id = strategy_doc.id
     new_samples = sampling.create_samples(strategy_doc, used_samples_per_set)
     sample_id = sampling_interactions.upload_samples(new_samples, sample_iteration)
     delphin_ids = sampling.create_delphin_projects(strategy_doc.strategy, new_samples)
+
     sampling_interactions.add_delphin_to_sampling(sample_id, delphin_ids)
-    sampling_interactions.update_time_estimation_model(strategy_id)
+    #sampling_interactions.update_time_estimation_model(strategy_id)
     sampling_interactions.predict_simulation_time(delphin_ids, strategy_id)
-    sampling_interactions.update_queue_priorities(sample_id)
+    #sampling_interactions.update_queue_priorities(sample_id)
     sampling_interactions.add_sample_to_strategy(strategy_id, sample_id)
 
     return delphin_ids, sample_id

@@ -22,6 +22,7 @@ from delphin_6_automation.logging.ribuild_logger import ribuild_logger
 # Logger
 logger = ribuild_logger()
 
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # MATERIAL INTERACTIONS
 
@@ -47,7 +48,7 @@ def download_raw_result(result_id: str, download_path: str) -> bool:
     return True
 
 
-def queue_priorities(priority: str)-> int:
+def queue_priorities(priority: str) -> int:
     """
     Generate a queue priority number.
 
@@ -81,7 +82,7 @@ def queue_priorities(priority: str)-> int:
         return priority_number
 
 
-def add_to_simulation_queue(delphin_file: str, priority: str)-> str:
+def add_to_simulation_queue(delphin_file: str, priority: str) -> str:
     """
     Uploads and adds a Delphin project file to the simulation queue.
 
@@ -166,7 +167,6 @@ def list_weather_stations() -> dict:
 
 
 def print_weather_stations_dict(weather_station_dict):
-
     for key in weather_station_dict.keys():
         print(f'Weather Station: {key} at location: {weather_station_dict[key]["location"]} contains '
               f'{len(weather_station_dict[key]["years"])} years.\n'
@@ -186,7 +186,6 @@ def list_materials():
 
 
 def print_material_dict(materials):
-
     for key in materials.keys():
         print(f'Material:\n'
               f'\tName: {key}\n'
@@ -228,12 +227,11 @@ def compute_simulation_time(sim_id: str) -> int:
 
     else:
 
-        sim_time = [simulation_entry.simulation_time
-                    for simulation_entry in delphin_entry.Delphin.objects(dimensions=dimension,
-                                                                          simulation_time__exists=True)]
+        sim_time = delphin_entry.Delphin.objects(dimensions=dimension, simulation_time__exists=True).average(
+            'simulation_time')
 
         if sim_time:
-            avg_time = int(np.ceil(np.mean(sim_time) / 60))
+            avg_time = int(np.ceil(sim_time / 60))
             logger.debug(f'Average simulation time for Delphin projects in {dimension}D: {avg_time}min')
             return avg_time
 
@@ -247,9 +245,8 @@ def compute_simulation_time(sim_id: str) -> int:
 
 
 def download_sample_data(delphin_id, folder):
-
     delphin_obj = delphin_db.Delphin.objects(id=delphin_id).first()
-    #download_path = os.path.join(folder, str(delphin_id))
+    # download_path = os.path.join(folder, str(delphin_id))
     download_path = folder
 
     if not os.path.exists(download_path):
