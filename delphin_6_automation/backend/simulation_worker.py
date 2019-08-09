@@ -290,7 +290,10 @@ def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id):
     files_in_folder = len(os.listdir(simulation_folder))
     estimated_run_time = min(int(estimated_run_time * 1.5), 250)
     submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
-    submit_job(submit_file, sim_id)
+    submitted = submit_job(submit_file, sim_id)
+
+    if not submitted:
+        raise RuntimeError(f'Could not submit job to HPC for simulation with ID: {sim_id}')
 
     new_files_in_simulation_folder(simulation_folder, files_in_folder, sim_id)
 
@@ -305,7 +308,10 @@ def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_t
     if "Critical error, simulation aborted." in log_data[-1]:
         submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
         files_in_folder = len(os.listdir(simulation_folder))
-        submit_job(submit_file, sim_id)
+        submitted = submit_job(submit_file, sim_id)
+
+        if not submitted:
+            raise RuntimeError(f'Could not submit job to HPC for simulation with ID: {sim_id}')
 
         new_files_in_simulation_folder(simulation_folder, files_in_folder, sim_id)
 
