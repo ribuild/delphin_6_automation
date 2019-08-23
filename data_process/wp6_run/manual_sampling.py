@@ -51,7 +51,7 @@ if __name__ == "__main__":
         delphin_ids = sampling_interactions.get_delphin_for_sample(existing_sample)
         sample_id = existing_sample.id
 
-    simulation_interactions.wait_until_simulated(delphin_ids)
+    simulation_interactions.wait_until_simulated(delphin_ids, True)
     sampling.calculate_sample_output(strategy_doc.strategy, sample_id)
     current_error = sampling.calculate_error(strategy_doc)
     sampling_interactions.upload_standard_error(strategy_doc, current_error)
