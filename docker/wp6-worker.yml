@@ -22,7 +22,7 @@ volumes:
     name: ocni_volume
     driver: vieux/sshfs:latest
     driver_opts:
-      sshcmd: ocni@transfer.gbar.dtu.dk:/zhome/ad/9/77586/ribuild
+      sshcmd: ocni@transfer.gbar.dtu.dk:/work3/ocni/ribuild
       allow_other: ""
 
 secrets:
