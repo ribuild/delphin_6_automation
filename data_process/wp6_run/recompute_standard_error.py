@@ -84,9 +84,13 @@ if __name__ == "__main__":
     sequence_length = strategy_doc.strategy['settings']['sequence']
     #strategy_doc.update(set__standard_error=None)
     #strategy_doc.reload()
+    num_errors = len(strategy_doc.standard_error["1d_bare_MineralFoamMulltipor_595_125_77_60"]["mould"])
+    print(f'Current error length: {len(strategy_doc.standard_error["1d_bare_MineralFoamMulltipor_595_125_77_60"]["mould"])}')
+    print(f'Current sample length: {len(strategy_doc.samples)}')
+    print()
 
-    for index, sample in enumerate(strategy_doc.samples):
-        print(f'Current Iteration is: {index}')
+    for index, sample in enumerate(strategy_doc.samples[num_errors:]):
+        print(f'Current Iteration is: {num_errors + index}')
         current_error = calculate_error(sample, sequence_length)
         upload_standard_error(strategy_doc, current_error)
 

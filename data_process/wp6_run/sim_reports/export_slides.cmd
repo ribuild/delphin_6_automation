@@ -1,0 +1,1 @@
+C:\Users\ocni\PycharmProjects\delphin_6_automation\venv\Scripts\activate && jupyter nbconvert C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\sim_reports\report.ipynb --to slides --post serve --TemplateExporter.exclude_input=True

@@ -7,7 +7,7 @@ __license__ = 'MIT'
 # Modules
 import pandas as pd
 import plotly
-
+import plotly.graph_objects as go
 plotly.tools.set_credentials_file(username='thp44', api_key='rbwjjm28va')
 
 
@@ -65,7 +65,9 @@ def stationXY(longitude_list, latitude_list, title_str):  # create plotly plot w
     )
 
     fig = dict(data=data, layout=layout)
-    plotly.offline.plot(fig, filename=str(title_str) + '.html')
+    #plotly.offline.plot(fig, filename=str(title_str) + '.html')
+    figure = go.Figure(fig)
+    figure.write_image(f"{title_str}.pdf")
 
 
 with open(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\weather_stations.txt') as file:
