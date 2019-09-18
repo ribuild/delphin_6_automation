@@ -5,7 +5,7 @@ __license__ = 'MIT'
 # IMPORTS
 
 # Modules
-import os
+import numpy as np
 
 # RiBuild Modules
 from delphin_6_automation.database_interactions.db_templates import delphin_entry
@@ -21,9 +21,11 @@ from delphin_6_automation.database_interactions import simulation_interactions
 if __name__ == "__main__":
     server = mongo_setup.global_init(auth_dict)
 
-    material_id = 286
-    data = material_entry.Material.objects(material_id=material_id).only("material_data.IDENTIFICATION-CATEGORY").first()
+    strategy = sample_entry.Strategy.objects().only('standard_error').first()
 
-    print(data["material_data"]["IDENTIFICATION-CATEGORY"])
+    for design in strategy.standard_error:
+        errors = np.array(strategy.standard_error[design]['heat_loss'])
+        if np.any(errors > 1):
+            print(f'Greater Error than one: {design}')
+
     mongo_setup.global_end_ssh(server)
-
