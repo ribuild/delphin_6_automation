@@ -30,6 +30,7 @@ class Delphin(mongoengine.Document):
     queue_priority = mongoengine.FloatField(default=1)
     sample_data = mongoengine.DictField()
     restart_data = mongoengine.DictField()
+    moved_to_web = mongoengine.BooleanField()
 
     # Failures
     exceeded_time_limit = mongoengine.BooleanField()

@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     for design in strategy.standard_error:
         errors = np.array(strategy.standard_error[design]['heat_loss'])
-        if np.any(errors > 1):
+        if np.any(errors < -1):
             print(f'Greater Error than one: {design}')
 
     mongo_setup.global_end_ssh(server)
