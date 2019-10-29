@@ -417,11 +417,11 @@ def simulation_worker(sim_location: str, folder='H:/ribuild') -> None:
                         simulation_interactions.set_simulating(str(id_), False)
                         logger.exception(err)
 
-                        if not os.path.isdir(os.path.join(folder, 'failed')):
+                        if not os.path.exists(os.path.join(folder, 'failed')):
                             os.mkdir(os.path.join(folder, 'failed'))
 
-                        shutil.copytree(os.path.join(folder, str(id_)),
-                                        os.path.join(folder, 'failed', str(id_)))
+                            shutil.copytree(os.path.join(folder, str(id_)),
+                                            os.path.join(folder, 'failed', str(id_)))
                         time.sleep(5)
                         pass
 
