@@ -158,7 +158,7 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
 def submit_job(submit_file: str, sim_id: str) -> bool:
     """Submits a job (submit file) to the DTU HPC queue."""
 
-    terminal_call = f"cd ~/ribuild/{sim_id} && bsub < {submit_file}\n"
+    terminal_call = f"cd /work3/ocni/ribuild/{sim_id} && bsub < {submit_file}\n"
 
     client = connect_to_hpc()
     logger.debug(f'Connecting to HPC to upload simulation with ID: {sim_id}')
