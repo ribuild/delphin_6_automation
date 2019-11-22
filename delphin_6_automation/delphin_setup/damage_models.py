@@ -166,8 +166,8 @@ def frost_curves(temperature: typing.List[float]):
 
     for temp in temperature:
         f_pu = water_density * (-(enthalpy_water_ice / temperature_kelvin * (temp - temperature_kelvin)) + (
-                    specific_heat_capacity_water - specific_heat_capacity_water_ice) * (
-                                            temp * np.log(temp / temperature_kelvin) - (temp - temperature_kelvin)))
+                specific_heat_capacity_water - specific_heat_capacity_water_ice) * (
+                                        temp * np.log(temp / temperature_kelvin) - (temp - temperature_kelvin)))
         f_phi = np.exp(f_pu / (water_density * gas_constant_vapour * temp)) * 100
         result.append(f_phi)
 
@@ -193,12 +193,12 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
     def delta_alpha(relative_humidity, temperature):
 
         if temperature > 0 and relative_humidity > 0.95:
-            return 1/time_critical(relative_humidity, temperature)
+            return 1 / time_critical(relative_humidity, temperature)
         else:
-            return -1/17520
+            return -1 / 17520
 
     def delta_mass_loss(relative_humidity, temperature):
-        return max(-5.96 * 10**(-2) + 1.96 * 10**(-4) * temperature + 6.25 * 10**(-4) * relative_humidity, 0)
+        return max(-5.96 * 10 ** (-2) + 1.96 * 10 ** (-4) * temperature + 6.25 * 10 ** (-4) * relative_humidity, 0)
 
     alpha = [0.0, ]
     mass_loss = [0.0, ]
@@ -207,7 +207,8 @@ def wood_rot(relative_humidity_list: typing.List[float], temperature_list: typin
         alpha.append(max(alpha[-1] + delta_alpha(relative_humidity_list[i], temperature_list[i]), 0))
 
         if alpha[-1] >= 1:
-            mass_loss.append(min(mass_loss[-1] + delta_mass_loss(relative_humidity_list[i], temperature_list[i]), 100.0))
+            mass_loss.append(
+                min(mass_loss[-1] + delta_mass_loss(relative_humidity_list[i], temperature_list[i]), 100.0))
         else:
             mass_loss.append(mass_loss[-1])
 
@@ -244,51 +245,134 @@ def mould_pj(relative_humidity: typing.List[float], temperature: typing.List[flo
     return difference_crit_low.tolist(), difference_crit_up.tolist()
 
 
-def algae(relative_humidity_list: typing.List[float], temperature_list: typing.List[float], material=dict()):
+def algae(relative_humidity: typing.List[float], temperature: typing.List[float], material_type, porosity, roughness,
+          total_pore_area):
     """Implement UNIVPM Algae Model
     Currently a dummy function!
 
-    :param relative_humidity_list
-    :param temperature_list
+    :param relative_humidity
+    :param temperature
     :param material: dictionary with relevant properties and their values
 
     :return growth: list with eval. values
     """
 
-    def area_ratio_calc(total_porosity, roughness):
-        return 1 - np.exp(-(2.48 * total_porosity + 0.126 * roughness) ** 4)
+    def material_parameters(material):
+        default_parameters = {"alfa": 1, "beta": 1, "gamma": 1, "deltaA": 1, "etaA": 1, "lambdaA": 1, "muA": 1,
+                              "deltaK": 1, "etaK": 1, "lambdaK": 1, "muK": 1}
+        if material == 'sandstone':
+            default_parameters.update({'alfa': 2, "beta": 1.724, "gamma": 0.2})
+        elif material == 'limestone':
+            default_parameters.update({'alfa': 100, "beta": 6.897, "gamma": 1.6})
 
-    # time - the variable (time from simulation start e.g. 3 years? in hours?)
-    time = 1
+        return default_parameters
 
-    # lacking functions depends: Temp, Porosity, Roughness, Total pore area.
-    tau_s = 1
-    tau_k = 1
+    def create_a_parameters(porosity, roughness, material_parameters):
+        A1 = 3.8447E-4
+        A2 = -4.0800E-6
+        A3 = -2.1164E-4
+        B1 = -2.7874E-2
+        B2 = 2.95905E-4
+        B3 = 1.1856E-2
+        C1 = 5.5270E-1
+        C2 = -5.8670E-3
+        C3 = -1.4727E-1
+        D1 = -2.1146
+        D2 = 2.2450E-2
+        D3 = 4.7041E-1
 
-    # lacking functions depends: Porosity, Roughness, Total pore area.
-    rate_coefficient = 1
-    latency_time = 1
+        ra = material_parameters['deltaA'] * (A1 * porosity + A2 * roughness + A3)
+        sa = material_parameters['etaA'] * (B1 * porosity + B2 * roughness + B3)
+        ua = material_parameters['lambdaA'] * (C1 * porosity + C2 * roughness + C3)
+        va = material_parameters['muA'] * (D1 * porosity + D2 * roughness + D3)
 
-    if material == dict():
-        # [-], [my-meter], [m2/g]
-        total_porosity = 0.44
-        roughness = 6e-6
-        total_pore_area = 5
+        return ra, sa, ua, va
 
-    # Growth condition
-    growth = []
-    for rh in relative_humidity_list:
+    def create_k_parameters(porosity, roughness, material_parameters):
+        E1 = 8.3270E-5
+        E2 = 6.7E-7
+        E3 = -1.8459E-4
+        F1 = -6.0378E-3
+        F2 = -4.88E-5
+        F3 = 9.877E-3
+        G1 = 1.1971E-1
+        G2 = 9.69E-4
+        G3 = -1.0759E-1
+        H1 = -4.5803E-1
+        H2 = -3.71E-3
+        H3 = 3.1809E-1
 
-        if rh > 0.98:
-            on_off = 1
-        elif rh <= 0.98:
-            on_off = 0
+        rk = material_parameters['deltaK'] * (E1 * porosity + E2 * roughness + E3)
+        sk = material_parameters['etaK'] * (F1 * porosity + F2 * roughness + F3)
+        uk = material_parameters['lambdaK'] * (G1 * porosity + G2 * roughness + G3)
+        vk = material_parameters['muK'] * (H1 * porosity + H2 * roughness + H3)
 
-        # Growth process
-        growth.append(on_off * tau_s * area_ratio_calc(total_porosity, roughness) * (
-                    1 - np.exp(-(tau_k * rate_coefficient) * (time - latency_time))))
+        return rk, sk, uk, vk
 
-    return growth
+    def initial_t(roughness, gamma):
+        if roughness == 5.02:
+            return 30
+        else:
+            return gamma * (5 / ((roughness - 5.02) ** 2))
+
+    def create_ac_at(alfa, porosity, roughness):
+        ac_at = (1 - np.exp(-alfa * (2.48 * porosity + 0.126 * roughness) ** 4))
+
+        if ac_at < 0:
+            ac_at = 0
+        elif ac_at > 1:
+            ac_at = 1
+
+        return ac_at
+
+    def create_k_rate_coefficient(beta, porosity, total_pore_area):
+        k_rate_coefficient = (1 - np.exp(-beta * ((4.49e-3 * (porosity * total_pore_area) - 5.79e-3) / 2.09) ** 2))
+        k_rate_coefficient = np.max([0.0, k_rate_coefficient])
+
+        return k_rate_coefficient
+
+    def tau_a_func(temp, ra, sa, ua, va):
+        tau_a = ra * temp ** 3 + sa * temp ** 2 + ua * temp + va
+        return float(np.clip(tau_a, 0, 1))
+
+    def tau_k_func(temp, rk, sk, uk, vk):
+        tau_k = rk * temp ** 3 + sk * temp ** 2 + uk * temp + vk
+        return float(np.clip(tau_k, 0, 1))
+
+    def favourable_growth_conditions(rh, temp, time, t1):
+        if rh >= 0.98 and 5 < temp < 40 and time > t1:
+            return True
+        else:
+            return False
+
+    material = material_parameters(material_type)
+    rk, sk, uk, vk = create_k_parameters(porosity, roughness, material)
+    ra, sa, ua, va = create_a_parameters(porosity, roughness, material)
+    t1 = initial_t(roughness, material['gamma'])
+    ac_at = create_ac_at(material['alfa'], porosity, roughness)
+    k_rate_coefficient = create_k_rate_coefficient(material['beta'], porosity, total_pore_area)
+    covered_area = [0, ]
+
+    for time in range(len(temperature)):
+        temp = temperature[time]
+        rh = relative_humidity[time]
+
+        if favourable_growth_conditions(rh, temp, time, t1):
+            tau_a = tau_a_func(temp, ra, sa, ua, va)
+            tau_k = tau_k_func(temp, rk, sk, uk, vk)
+
+            if covered_area[-1] < tau_a * ac_at:
+                delta_t = (-(1 / (tau_k * k_rate_coefficient)) * np.log(1 - (covered_area[-1] / (tau_a * ac_at)))) ** (
+                        1 / 4) - (time - 1 - t1)
+                covered_area.append(
+                    tau_a * ac_at * (1 - np.exp(-tau_k * k_rate_coefficient * (time + delta_t - t1) ** 4)))
+            else:
+                covered_area.append(covered_area[-1])
+
+        else:
+            covered_area.append(covered_area[-1])
+
+    return covered_area
 
 
 def u_value(heat_loss: typing.Union[np.ndarray, list], exterior_temperature: typing.Union[np.ndarray, list],
