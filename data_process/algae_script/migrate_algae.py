@@ -57,7 +57,7 @@ def update_result(project_id, algae_growth):
 
 
 def get_delphin_ids():
-    ids = delphin_entry.Delphin.objects[:5].only('id')
+    ids = delphin_entry.Delphin.objects().only('id')
     logger.info(f'Got {ids.count()} projects')
 
     ids = [project.id for project in ids]

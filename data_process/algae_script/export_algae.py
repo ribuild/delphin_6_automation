@@ -25,7 +25,7 @@ logger = ribuild_logger(__name__)
 
 
 def get_delphin_ids():
-    ids = delphin_entry.Delphin.objects[:2].only('id')
+    ids = delphin_entry.Delphin.objects[:1000].only('id')
     logger.info(f'Got {ids.count()} projects')
 
     ids = [project.id for project in ids]
