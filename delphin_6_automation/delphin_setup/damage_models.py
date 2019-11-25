@@ -245,7 +245,7 @@ def mould_pj(relative_humidity: typing.List[float], temperature: typing.List[flo
     return difference_crit_low.tolist(), difference_crit_up.tolist()
 
 
-def algae(relative_humidity: typing.List[float], temperature: typing.List[float], material_type, porosity, roughness,
+def algae(relative_humidity: typing.List[float], temperature: typing.List[float], material_name, porosity, roughness,
           total_pore_area):
     """Implement UNIVPM Algae Model
     Currently a dummy function!
@@ -257,12 +257,108 @@ def algae(relative_humidity: typing.List[float], temperature: typing.List[float]
     :return growth: list with eval. values
     """
 
-    def material_parameters(material):
+    def extract_material_type(material: str):
+        materials = {
+            "BrickBernhard": "brick",
+            "BrickJoens": "brick",
+            "HistoricalBrickClusterEdge": "brick",
+            "HistoricalBrickCluster4DD": "brick",
+            "HistoricalBrickCluster": "brick",
+            "WienerbergerNormalBrick": "brick",
+            "AltbauziegelDresdenZQ": "brick",
+            "AltbauziegelDresdenZA": "brick",
+            "AltbauziegelDresdenZC": "brick",
+            "AltbauziegelDresdenZD": "brick",
+            "AltbauziegelDresdenZE": "brick",
+            "AltbauziegelDresdenZF": "brick",
+            "AltbauziegelDresdenZG": "brick",
+            "AltbauziegelDresdenZH": "brick",
+            "AltbauziegelDresdenZI": "brick",
+            "AltbauziegelDresdenZJ": "brick",
+            "AltbauziegelDresdenZK": "brick",
+            "AltbauziegelDresdenZL": "brick",
+            "AltbauziegelDresdenZM": "brick",
+            "AltbauziegelDresdenZN": "brick",
+            "AltbauziegelDresdenZO": "brick",
+            "AltbauziegelElbphilharmonie": "brick",
+            "WienerbergerHochlochBrick": "brick",
+            "BrickWienerberger": "brick",
+            "CeramicBrick": "brick",
+            "AltbauklinkerHamburgHolstenkamp": "brick",
+            "AltbauziegelAmWeinbergBerlin": "brick",
+            "AltbauziegelAmWeinbergBerlininside": "brick",
+            "AltbauziegelAussenziegelII": "brick",
+            "AltbauziegelBolonga3enCult": "brick",
+            "AltbauziegelDresdenZb": "brick",
+            "AltbauziegelPersiusspeicher": "brick",
+            "AltbauziegelReithallePotsdamAussenziegel1": "brick",
+            "AltbauziegelReithallePotsdamAussenziegel2": "brick",
+            "AltbauziegelReithallePotsdamAussenziegel3": "brick",
+            "AltbauziegelRoteKasernePotsdamAussenziegel1": "brick",
+            "AltbauziegelRoteKasernePotsdamAussenziegel2": "brick",
+            "AltbauziegelRoteKasernePotsdamInnenziegel1": "brick",
+            "AltbauziegelRoteKasernePotsdamInnenziegel2": "brick",
+            "AltbauziegelSchlossGueterfeldeEGAussenwand1": "brick",
+            "AltbauziegelSchlossGueterfeldeEGAussenwand2": "brick",
+            "AltbauziegelTivoliBerlinAussenziegel1": "brick",
+            "AltbauziegelTivoliBerlinAussenziegel2": "brick",
+            "AltbauziegelTivoliBerlinInnenziegel": "brick",
+            "AltbauziegelUSHauptquartierBerlin": "brick",
+            "ZiegelSchlagmannVollziegel": "brick",
+            "ZiegelSchlagmannWDZZiegelhuelle": "brick",
+            "Brick": "brick",
+            "LehmbausteinUngebrannt": "brick",
+            "DTUBrick": "brick",
+            "LimeSandBrickIndustrial": "brick",
+            "LimeSandBrickTraditional": "brick",
+            "SandstoneCotta": "sandstone",
+            "SandstonePosta": "sandstone",
+            "SandstoneReinhardsdorf": "sandstone",
+            "WeatheredGranite": "sandstone",
+            "BundsandsteinrotHessen": "sandstone",
+            "CarraraMamor": "sandstone",
+            "KrensheimerMuschelkalk": "sandstone",
+            "SandsteinBadBentheim": "sandstone",
+            "SandsteinHildesheim": "sandstone",
+            "SandstoneIndiaNewSaInN": "sandstone",
+            "SandsteinMuehlleiteeisenhaltigeBank": "sandstone",
+            "SandsteinRuethen": "sandstone",
+            "SandsteinVelbke": "sandstone",
+            "Tuffstein": "other",
+            "TuffsteinJapan": "other",
+            "limesandstone": "sandstone",
+            "LimeSandBrick": "limestone",
+            "XellaKalksandstein": "sandstone",
+            "KalksandsteinXellaYtong2002": "other",
+            "KalksandsteinXellaYtong2004": "other",
+            "BundsandsteinIndienHumayunVerwittert": "sandstone",
+            "CarraraMamorSkluptur": "sandstone",
+            "SandstoneArholzen": "sandstone",
+            "SandstoneKarlshafener": "sandstone",
+            "SandstoneKrenzheimer": "sandstone",
+            "SandstoneMonteMerlo": "sandstone",
+            "SandstoneOberkirchner": "sandstone",
+            "SandstoneSander": "sandstone",
+            "SandstoneSchleerither": "sandstone",
+            "LimeSandbrick": "limestone",
+            "Lime Cement Plaster Light": "limestone",
+            "Lime Cement Mortar(High Cement Ratio)": "sandstone",
+            "Lime Cement Mortar(Low Cement Ratio)": "limestone",
+            "DTUMortar": "sandstone",
+            "LimePlasterHist": "limestone"
+        }
+
+        return materials[material]
+
+    def material_parameters(material_name):
+        material_type = extract_material_type(material_name)
         default_parameters = {"alfa": 1, "beta": 1, "gamma": 1, "deltaA": 1, "etaA": 1, "lambdaA": 1, "muA": 1,
                               "deltaK": 1, "etaK": 1, "lambdaK": 1, "muK": 1}
-        if material == 'sandstone':
+
+        if material_type == 'sandstone':
             default_parameters.update({'alfa': 2, "beta": 1.724, "gamma": 0.2})
-        elif material == 'limestone':
+
+        elif material_type == 'limestone':
             default_parameters.update({'alfa': 100, "beta": 6.897, "gamma": 1.6})
 
         return default_parameters
@@ -345,7 +441,7 @@ def algae(relative_humidity: typing.List[float], temperature: typing.List[float]
         else:
             return False
 
-    material = material_parameters(material_type)
+    material = material_parameters(material_name)
     rk, sk, uk, vk = create_k_parameters(porosity, roughness, material)
     ra, sa, ua, va = create_a_parameters(porosity, roughness, material)
     t1 = initial_t(roughness, material['gamma'])

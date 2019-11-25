@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import bson
 
 from delphin_6_automation.database_interactions import mongo_setup
@@ -6,9 +8,14 @@ from delphin_6_automation.database_interactions.db_templates import delphin_entr
     result_processed_entry
 from delphin_6_automation.delphin_setup.damage_models import algae
 from multiprocessing import Pool
+import numpy as np
+from delphin_6_automation.logging.ribuild_logger import ribuild_logger
+
+# Logger
+logger = ribuild_logger()
 
 
-def get_result_data(project_id):
+def get_result_data(project_id) -> Tuple[list, list]:
     result = result_raw_entry.Result.objects(delphin=project_id).first()
     data = bson.BSON.decode(result.results.read())
 
@@ -30,20 +37,28 @@ def get_material_data(project_id):
 def get_porosity_and_type(material):
     material = material_entry.Material.objects(material_id=material).first()
     porosity = material.material_data.get('STORAGE_BASE_PARAMETERS-THETA_POR', 0.5)
-    material_type = material.material_data.get('IDENTIFICATION-CATEGORY', 'brick').lower()
+    material_name = material.material_name
 
-    return material_type, porosity
+    logger.info(f'Material: {material.material_name} - Porosity: {porosity}')
+    return material_name, porosity
 
 
 def update_result(project_id, algae_growth):
     max_algae = max(algae_growth)
+    logger.info(f'Max algae: {max_algae} for project: {project_id}')
 
     result = result_processed_entry.ProcessedResult.objects(delphin=project_id).first()
+    result['thresholds']['algae'] = max_algae
+    result.algae.replace(np.asarray(algae_growth).tobytes())
+
+    result.save()
+
+    logger.info(f'Uploaded algae to result with ID: {result.id}')
 
 
 def get_delphin_ids():
     ids = delphin_entry.Delphin.objects[:5].only('id')
-    print(f'Got {ids.count()} projects')
+    logger.info(f'Got {ids.count()} projects')
 
     ids = [project.id for project in ids]
 
@@ -51,12 +66,15 @@ def get_delphin_ids():
 
 
 def update_project(delphin_id):
+    logger.info(f'Starting on project: {delphin_id}')
     temperature, relative_humidity = get_result_data(delphin_id)
-    material_type, porosity = get_material_data(delphin_id)
+    material_name, porosity = get_material_data(delphin_id)
 
-    algae_growth = algae(relative_humidity, temperature, material_type=material_type, porosity=porosity, roughness=7.5,
+    algae_growth = algae(relative_humidity, temperature, material_name=material_name, porosity=porosity, roughness=7.5,
                          total_pore_area=6.5)
     update_result(delphin_id, algae_growth)
+
+    logger.info(f'Done with project: {delphin_id}')
 
 
 if __name__ == '__main__':
@@ -66,5 +84,5 @@ if __name__ == '__main__':
     # pool = Pool(4)
     # pool.map(update_project, project_ids)
 
-    update_project(project_ids[0])
+    update_project(project_ids[1])
     mongo_setup.global_end_ssh(server)
