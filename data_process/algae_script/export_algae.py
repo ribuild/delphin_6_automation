@@ -10,7 +10,7 @@ __license__ = 'MIT'
 
 # Modules
 import pandas as pd
-
+from multiprocessing import Pool
 # RiBuild Modules
 from delphin_6_automation.database_interactions import mongo_setup
 from delphin_6_automation.database_interactions.auth import auth_dict
@@ -25,7 +25,7 @@ logger = ribuild_logger(__name__)
 
 
 def get_delphin_ids():
-    ids = delphin_entry.Delphin.objects[:1000].only('id')
+    ids = delphin_entry.Delphin.objects[:550].only('id')
     logger.info(f'Got {ids.count()} projects')
 
     ids = [project.id for project in ids]
@@ -35,7 +35,10 @@ def get_delphin_ids():
 
 def get_algae(project_id):
     result = result_processed_entry.ProcessedResult.objects(delphin=project_id).first()
-    algae = result['thresholds']['algae']
+    try:
+        algae = result['thresholds']['algae']
+    except KeyError:
+        algae = None
     logger.info(f'Max algae: {algae} for project: {project_id}')
     return algae
 
@@ -55,6 +58,7 @@ def get_sample_data(project_id):
 def process_data(project_id):
     data = get_sample_data(project_id)
     data['algae'] = get_algae(project_id)
+    data[id] = project_id
 
     return pd.DataFrame(data, index=[0])
 
@@ -63,9 +67,9 @@ if __name__ == '__main__':
     server = mongo_setup.global_init(auth_dict)
     project_ids = get_delphin_ids()
 
-    # pool = Pool(4)
-    # data_frames = pool.map(process_data, input_data)
 
+    #pool = Pool(4)
+    #data_frames = pool.map(process_data, project_ids)
     data_frames = [process_data(id_) for id_ in project_ids]
     mongo_setup.global_end_ssh(server)
     data_frame = None
