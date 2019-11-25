@@ -451,7 +451,10 @@ def algae(relative_humidity: typing.List[float], temperature: typing.List[float]
 
     for time in range(len(temperature)):
         temp = temperature[time]
-        rh = relative_humidity[time]
+        try:
+            rh = relative_humidity[time]
+        except IndexError:
+            break
 
         if favourable_growth_conditions(rh, temp, time, t1):
             tau_a = tau_a_func(temp, ra, sa, ua, va)
