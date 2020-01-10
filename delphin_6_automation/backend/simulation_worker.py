@@ -260,7 +260,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
         elif datetime.datetime.now() > time_limit:
             finished = True
-            logger.warning(f'Simulation with ID: {sim_id} exceeded the simulation time limit of 24 hours.')
+            logger.warning(f'Simulation with ID: {sim_id} exceeded the simulation time limit of 250 minutes.')
             return 'time limit reached'
 
         else:
@@ -286,9 +286,14 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
                 time.sleep(60)
 
 
-def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id):
+def minutes_left(time_limit):
+    seconds_left = (datetime.datetime.now() - time_limit).total_seconds()
+    return int(seconds_left/60)
+
+
+def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id, time_limit):
     files_in_folder = len(os.listdir(simulation_folder))
-    estimated_run_time = min(int(estimated_run_time * 1.5), 250)
+    estimated_run_time = min(int(estimated_run_time * 1.5), minutes_left(time_limit))
     submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
     submitted = submit_job(submit_file, sim_id)
 
@@ -298,13 +303,13 @@ def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id):
     new_files_in_simulation_folder(simulation_folder, files_in_folder, sim_id)
 
     start_time = datetime.datetime.now()
-    logger.debug(f'Rerunning simulation with ID: {sim_id} '
+    logger.info(f'Rerunning simulation with ID: {sim_id} '
                  f'with new estimated run time of: {estimated_run_time}')
 
     return estimated_run_time, start_time
 
 
-def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_time, start_time, consecutive_errors):
+def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_time, start_time, consecutive_errors, time_limit):
     if "Critical error, simulation aborted." in log_data[-1]:
         submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
         files_in_folder = len(os.listdir(simulation_folder))
@@ -394,8 +399,6 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
         logger.warning(f'Could not submit project with ID: {id_} to HPC.')
         simulation_interactions.clean_simulation_folder(simulation_folder)
         simulation_interactions.set_simulating(id_, False)
-
-
 
 
 def simulation_worker(sim_location: str, folder='H:/ribuild') -> None:
