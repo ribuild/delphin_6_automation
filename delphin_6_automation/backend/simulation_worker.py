@@ -137,7 +137,6 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
     file.write(f"#BSUB -W {computation_time}\n")
     file.write(f'#BSUB -R "rusage[mem={ram_per_cpu}] span[hosts=1]"\n')
     file.write(f"#BSUB -n {cpus}\n")
-    # file.write(f"#BSUB -N\n")
     file.write('\n')
     file.write(f"export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC\n")
     file.write('\n')
@@ -309,7 +308,7 @@ def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id, 
     return estimated_run_time, start_time
 
 
-def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_time, start_time, consecutive_errors, time_limit):
+def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_time, start_time, consecutive_errors):
     if "Critical error, simulation aborted." in log_data[-1]:
         submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
         files_in_folder = len(os.listdir(simulation_folder))
