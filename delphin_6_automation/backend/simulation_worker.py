@@ -254,7 +254,8 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
             finished = True
 
         elif datetime.datetime.now() > simulation_ends + datetime.timedelta(seconds=10):
-            estimated_run_time, start_time = simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id)
+            estimated_run_time, start_time = simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id,
+                                                                          time_limit)
             consecutive_errors = 0
 
         elif datetime.datetime.now() > time_limit:
@@ -287,7 +288,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
 def minutes_left(time_limit):
     seconds_left = (datetime.datetime.now() - time_limit).total_seconds()
-    return int(seconds_left/60)
+    return int(seconds_left / 60)
 
 
 def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id, time_limit):
@@ -303,7 +304,7 @@ def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id, 
 
     start_time = datetime.datetime.now()
     logger.info(f'Rerunning simulation with ID: {sim_id} '
-                 f'with new estimated run time of: {estimated_run_time}')
+                f'with new estimated run time of: {estimated_run_time}')
 
     return estimated_run_time, start_time
 
