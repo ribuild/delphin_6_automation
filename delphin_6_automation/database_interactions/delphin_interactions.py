@@ -525,7 +525,7 @@ def upload_processed_results(folder: str, delphin_id: str, raw_result_id: str,
 
     result_entry.mould.put(np.asarray(mould).tobytes())
     result_entry.heat_loss.put(np.array(heat_loss).tobytes())
-    result_entry.algae.put(np.array(damage_models.algae(relative_humidity_algae, temperature_algae)).tobytes())
+    #result_entry.algae.put(np.array(damage_models.algae(relative_humidity_algae, temperature_algae)).tobytes())
     result_entry.u_value = damage_models.u_value(heat_loss,
                                                  exterior_temperature[:len(heat_loss)],
                                                  interior_temperature[:len(heat_loss)])
