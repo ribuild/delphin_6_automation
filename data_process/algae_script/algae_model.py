@@ -171,7 +171,7 @@ def algae(relative_humidity: typing.List[float], temperature: typing.List[float]
         if roughness == 5.02:
             return 30
         else:
-            return gamma * (5 / ((roughness - 5.02) ** 2))
+            return 24 * gamma * (5 / ((roughness - 5.02) ** 2))
 
     def create_ac_at(alfa, porosity, roughness):
         ac_at = (1 - np.exp(-alfa * (2.48 * porosity + 0.126 * roughness) ** 4))

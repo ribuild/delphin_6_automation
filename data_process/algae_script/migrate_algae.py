@@ -57,21 +57,29 @@ def update_result(project_id, algae_growth):
 
 
 def get_delphin_ids():
-    ids = delphin_entry.Delphin.objects().only('id')
+    index = 3900
+    ids = delphin_entry.Delphin.objects[index:5000].only('id')
     logger.info(f'Got {ids.count()} projects')
+    logger.info(f'Starting at index {index}')
 
     ids = [project.id for project in ids]
 
-    return ids
+    return ids, index
 
 
-def update_project(delphin_id):
-    logger.info(f'Starting on project: {delphin_id}')
+def update_project(delphin_id, index):
+    logger.info(f'Starting on project: {delphin_id}. Index: {index}')
     temperature, relative_humidity = get_result_data(delphin_id)
     material_name, porosity = get_material_data(delphin_id)
 
-    algae_growth = algae(relative_humidity, temperature, material_name=material_name, porosity=porosity, roughness=7.5,
-                         total_pore_area=6.5)
+    if 0.19 <= porosity <= 0.44:
+        algae_growth = algae(relative_humidity, temperature, material_name=material_name, porosity=porosity,
+                             roughness=5.5,
+                             total_pore_area=6.5)
+    else:
+        logger.info(
+            f'Project {delphin_id} with material {material_name} has a porosity {porosity} outside the accepted range.')
+        algae_growth = [-1, ]
     update_result(delphin_id, algae_growth)
 
     logger.info(f'Done with project: {delphin_id}')
@@ -79,10 +87,12 @@ def update_project(delphin_id):
 
 if __name__ == '__main__':
     server = mongo_setup.global_init(auth_dict)
-    project_ids = get_delphin_ids()
+    project_ids, i = get_delphin_ids()
 
-    # pool = Pool(4)
-    # pool.map(update_project, project_ids)
+    #pool = Pool(4)
+    #pool.map(update_project, project_ids)
 
-    update_project(project_ids[1])
+    for index, project in enumerate(project_ids):
+        update_project(project, index + i)
+
     mongo_setup.global_end_ssh(server)
