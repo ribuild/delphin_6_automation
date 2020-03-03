@@ -32,6 +32,7 @@ class Delphin(mongoengine.Document):
     restart_data = mongoengine.DictField()
     moved_to_web = mongoengine.BooleanField()
     moved_to_web2 = mongoengine.BooleanField()
+    moved27feb = mongoengine.BooleanField()
 
     # Failures
     exceeded_time_limit = mongoengine.BooleanField()
