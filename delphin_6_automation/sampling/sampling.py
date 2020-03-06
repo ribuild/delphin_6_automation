@@ -155,7 +155,8 @@ def load_latest_sample(sampling_strategy_id: str, iteration: str = None) -> typi
         samples_list = strategy.samples
 
         if not iteration:
-            logger.debug(f'Found latest sample with ID: {samples_list[-1].id} for strategy with ID: {sampling_strategy_id}')
+            logger.debug(
+                f'Found latest sample with ID: {samples_list[-1].id} for strategy with ID: {sampling_strategy_id}')
 
             return samples_list[-1]
         else:
@@ -372,14 +373,16 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                 elif parameter == 'wall_core_material':
                     new_material = material_interactions.get_material_info(samples[sequence][design][
                                                                                'generic_scenario'][parameter][0])
-                    delphin_permutations.change_layer_material(design_variation, 'Core Material [00C]',
-                                                               new_material)
+                    design_variation = delphin_permutations.change_layer_material(design_variation,
+                                                                                  'Core Material [00C]',
+                                                                                  new_material)
                     sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                 elif parameter == 'interior_plaster_width':
                     try:
                         delphin_permutations.change_layer_width(design_variation, 'Interior Plaster Material [0IP]',
-                                                                samples[sequence][design]['generic_scenario'][parameter][0])
+                                                                samples[sequence][design]['generic_scenario'][
+                                                                    parameter][0])
                         sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                     except KeyError:
@@ -389,8 +392,9 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                     try:
                         new_material = material_interactions.get_material_info(samples[sequence][design][
                                                                                    'generic_scenario'][parameter][0])
-                        delphin_permutations.change_layer_material(design_variation, 'Interior Plaster Material [0IP]',
-                                                                   new_material)
+                        design_variation = delphin_permutations.change_layer_material(design_variation,
+                                                                                      'Interior Plaster Material [0IP]',
+                                                                                      new_material)
                         sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                     except KeyError:
@@ -399,7 +403,8 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                 elif parameter == 'exterior_plaster_width':
                     try:
                         delphin_permutations.change_layer_width(design_variation, 'Exterior Plaster Material [0EP]',
-                                                                samples[sequence][design]['generic_scenario'][parameter][0])
+                                                                samples[sequence][design]['generic_scenario'][
+                                                                    parameter][0])
                         sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                     except KeyError:
@@ -409,8 +414,9 @@ def create_delphin_projects(sampling_strategy: dict, samples: dict,
                     try:
                         new_material = material_interactions.get_material_info(samples[sequence][design][
                                                                                    'generic_scenario'][parameter][0])
-                        delphin_permutations.change_layer_material(design_variation, 'Exterior Plaster Material [0EP]',
-                                                                   new_material)
+                        design_variation = delphin_permutations.change_layer_material(design_variation,
+                                                                                      'Exterior Plaster Material [0EP]',
+                                                                                      new_material)
                         sample_dict[parameter] = samples[sequence][design]['generic_scenario'][parameter][0]
 
                     except KeyError:
@@ -704,7 +710,6 @@ def calculate_sample_output(sample_strategy: dict, sampling_id: str, mp=False) -
 
     if not mp:
         for sequence_index in range(sequence):
-
             mean, std = calculate_sequence_output(sequence_index, sample_strategy)
             sample_mean[str(sequence_index)] = mean
             sample_std[str(sequence_index)] = std
@@ -737,9 +742,9 @@ def calculate_sequence_output(sequence_index, sample_strategy):
             heat_loss.append(project.result_processed['thresholds']['heat_loss'])
 
         sample_mean[design] = {'mould': np.mean(mould),
-                                                    'heat_loss': np.mean(heat_loss)}
+                               'heat_loss': np.mean(heat_loss)}
         sample_std[design] = {'mould': np.std(mould),
-                                                   'heat_loss': np.std(heat_loss)}
+                              'heat_loss': np.std(heat_loss)}
 
         logger.debug(f'Sequence {sequence_index} - Sample Mean: {sample_mean[design]} for design: {design}')
         logger.debug(f'Sequence {sequence_index} - Sample STD: {sample_std[design]} for design: {design}')
