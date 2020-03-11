@@ -123,6 +123,16 @@ def github_updates():
 def create_submit_file(sim_id: str, simulation_folder: str, computation_time: int, restart=False) -> str:
     """Create a submit file for the DTU HPC queue system."""
 
+    hpc = os.getenv('HPC_LOCATION')
+    if hpc == 'rtu':
+        return create_rtu_submit_file(sim_id, simulation_folder, computation_time, restart)
+    else:
+        return create_dtu_submit_file(sim_id, simulation_folder, computation_time, restart)
+
+
+def create_dtu_submit_file(sim_id: str, simulation_folder: str, computation_time: int, restart=False) -> str:
+    """Create a submit file for the DTU HPC queue system."""
+
     delphin_path = '~/Delphin-6.0/bin/DelphinSolver'
     cpus = 2
     ram_per_cpu = '14MB'
@@ -154,10 +164,49 @@ def create_submit_file(sim_id: str, simulation_folder: str, computation_time: in
     return submit_file
 
 
+def create_rtu_submit_file(sim_id: str, simulation_folder: str, computation_time: int, restart=False) -> str:
+    """Create a submit file for the RTU HPC queue system."""
+
+    delphin_path = '~/Delphin-6.0/bin/DelphinSolver'
+    cpus = 2
+    ram = 28
+    submit_file = f'submit_{sim_id}.sh'
+
+    file = open(f"{simulation_folder}/{submit_file}", 'w', newline='\n')
+    file.write(f"#!/bin/bash\n")
+    file.write(f"#PBS -N DelphinJob\n")
+    file.write(f"#PBS -o DelphinJob_$PBS_JOBID.out\n")
+    file.write(f"#PBS -e DelphinJob_$PBS_JOBID.err\n")
+    file.write(f"#PBS -q batch\n")
+    file.write(f"#PBS -l feature=centos7\n")
+    file.write(f"#PBS -l walltime=00:{computation_time}:00\n")
+    file.write(f'#PBS -l nodes=1:ppn:{cpus}:pmem={ram}mg\n')
+    file.write(f"#PBS -j oe\n")
+    file.write('\n')
+    file.write(f"export OMP_NUM_THREADS=$PBS_NP\n")
+    file.write('\n')
+
+    if not restart:
+        file.write(f"{delphin_path} {sim_id}.d6p\n")
+    else:
+        file.write(f"{delphin_path} --restart {sim_id}.d6p\n")
+
+    file.write('\n')
+    file.close()
+
+    logger.debug(f'Create a submit file for {sim_id} with restart = {restart}')
+
+    return submit_file
+
+
 def submit_job(submit_file: str, sim_id: str) -> bool:
     """Submits a job (submit file) to the DTU HPC queue."""
 
-    terminal_call = f"cd /work3/ocni/ribuild/{sim_id} && bsub < {submit_file}\n"
+    hpc = os.getenv('HPC_LOCATION', 'dtu')
+    if hpc == 'rtu':
+        terminal_call = f"cd /mnt/ritvars01/ribuild/{sim_id} && qsub  {submit_file}\n"
+    else:
+        terminal_call = f"cd /work3/ocni/ribuild/{sim_id} && bsub < {submit_file}\n"
 
     client = connect_to_hpc()
     logger.debug(f'Connecting to HPC to upload simulation with ID: {sim_id}')
@@ -174,7 +223,7 @@ def submit_job(submit_file: str, sim_id: str) -> bool:
         logger.info(f'HPC response: {submitted}')
 
         if submitted:
-            logger.info(f'Submitted job {sim_id} on {retries}. try')
+            logger.info(f'Submitted {hpc.upper()} job {sim_id} on {retries}. try')
             channel.close()
             client.close()
             return True
