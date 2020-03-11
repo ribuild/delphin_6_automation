@@ -2,10 +2,10 @@ version: '3.7'
 
 services:
 
-  simulation_ocni:
+  simulation_dtu:
     image: ocni/hpc_simulator:latest
     volumes:
-      - ocni_volume:/app/data
+      - dtu_volume:/app/data
     deploy:
       replicas: 0
       update_config:
@@ -17,12 +17,33 @@ services:
       - source: hpc_ocni
         target: hpc_access
 
+  simulation_rtu:
+    image: ocni/hpc_simulator:latest
+    volumes:
+      - rtu_volume:/app/data
+    deploy:
+      replicas: 0
+      update_config:
+        parallelism: 2
+        delay: 5s
+    secrets:
+      - ssh_key
+      - db_ait
+      - source: hpc_ritvars
+        target: hpc_access
+
 volumes:
-  ocni_volume:
-    name: ocni_volume
+  dtu_volume:
+    name: dtu_volume
     driver: vieux/sshfs:latest
     driver_opts:
       sshcmd: ocni@transfer.gbar.dtu.dk:/work3/ocni/ribuild
+      allow_other: ""
+  rtu_volume:
+    name: rtu_volume
+    driver: vieux/sshfs:latest
+    driver_opts:
+      sshcmd: ritvars01@ui-1.hpc.rtu.lv:/mnt/ritvars/ribuild
       allow_other: ""
 
 secrets:
@@ -30,7 +51,5 @@ secrets:
     file: /home/ocni/.ssh/id_rsa
   db_ait:
     file: /home/ocni/.ssh/db_ait.json
-  db_simon:
-    file: /home/ocni/.ssh/db_simon.json
   hpc_ocni:
     file: /home/ocni/.ssh/hpc_ocni.json

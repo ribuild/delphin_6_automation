@@ -7,19 +7,11 @@ services:
     secrets:
       - db_ait
 
-  filebeat:
-    image: filebeat
-    environment:
-      - logstash_host=$LH
-    volumes:
-      - /var/lib/docker/containers:/usr/share/dockerlogs/data:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-
-  checker:
-    image: ocni/hpc_checker:latest
-    secrets:
-      - ssh_key
-      - hpc_ocni
+  #checker:
+  #  image: ocni/hpc_checker:latest
+  #  secrets:
+  #    - ssh_key
+  #    - hpc_ocni
 
   check_sim:
     image: ocni/hpc_check_sim:latest
@@ -31,7 +23,5 @@ secrets:
     file: /home/ocni/.ssh/id_rsa
   db_ait:
     file: /home/ocni/.ssh/db_ait.json
-  db_simon:
-    file: /home/ocni/.ssh/db_simon.json
-  hpc_ocni:
-    file: /home/ocni/.ssh/hpc_ocni.json
+  #hpc_ocni:
+  #  file: /home/ocni/.ssh/hpc_ocni.json
