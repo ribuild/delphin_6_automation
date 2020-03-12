@@ -36,7 +36,6 @@ def test_get_layers_1(delphin_file_path):
 
 
 def test_change_material_1(delphin_with_insulation):
-
     new_material = OrderedDict((('@name', 'Aerated Concrete [6]'),
                                 ('@color', '#ff404060'),
                                 ('@hatchCode', '13'),
@@ -48,6 +47,15 @@ def test_change_material_1(delphin_with_insulation):
 
     layers = delphin_permutations.get_layers(new_delphin)
     assert delphin_permutations.identify_layer(layers, 'Aerated Concrete [6]')
+
+
+def test_eliminate_duplicates(delphin_duplicate_material):
+    delphin_permutations.eliminate_duplicates(delphin_duplicate_material)
+
+    assert delphin_duplicate_material
+    assert len(delphin_duplicate_material['DelphinProject']['Materials']['MaterialReference']) == 2
+    assert delphin_duplicate_material['DelphinProject']['Materials']['MaterialReference'][0] != \
+           delphin_duplicate_material['DelphinProject']['Materials']['MaterialReference'][1]
 
 
 @pytest.mark.parametrize('width', [0.1, 0.3, 0.5, 0.75, 1.0])
@@ -317,6 +325,7 @@ def test_change_initial_condition(delphin_file_path, condition):
         index = 0
     else:
         index = 1
-    initial = float(delphin_project['DelphinProject']['Conditions']['InitialConditions']['InitialCondition'][index]['IBK:Parameter']['#text'])
+    initial = float(delphin_project['DelphinProject']['Conditions']['InitialConditions']['InitialCondition'][index][
+                        'IBK:Parameter']['#text'])
 
     assert 10 == initial

@@ -193,9 +193,21 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
             new_delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] = \
                 new_material['@name']
 
+    eliminate_duplicates(new_delphin_dict)
     logger.debug(f'Changed material {original_material} to {new_material["@name"]}')
 
     return new_delphin_dict
+
+
+def eliminate_duplicates(delphin_dict: dict) -> None:
+    materials = delphin_dict['DelphinProject']['Materials']['MaterialReference']
+    material_names = []
+    for index, material in enumerate(materials):
+        if material['@name'] in material_names:
+            logger.info(f'Found and removed duplicate material: {material["@name"]}')
+            del delphin_dict['DelphinProject']['Materials']['MaterialReference'][index]
+        else:
+            material_names.append(material['@name'])
 
 
 def change_weather(delphin_dict: dict, original_weather: str, new_weather: str) -> dict:

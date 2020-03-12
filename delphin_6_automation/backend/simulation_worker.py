@@ -226,7 +226,7 @@ def submit_job(submit_file: str, sim_id: str) -> bool:
         channel.send(terminal_call)
         logger.info(f"Terminal call: {terminal_call}")
         response = simulation_interactions.get_command_results(channel)
-        logger.info(f'Raw response: {response}')
+        #logger.info(f'Raw response: {response}')
         submitted = parse_hpc_log(response)
         logger.info(f'HPC response: {submitted}')
 
