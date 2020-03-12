@@ -23,11 +23,11 @@ def download_project(project_id: str, index_: int) -> None:
     """Here you can do your download manipulation."""
     print(f'Processing Project with ID: {project_id} and index: {index_}')
 
-    get_materials(project_id)
-    get_result_data(project_id)
-    get_sample_data(project_id)
-    get_weather_data(project_id)
-    #download_to_simulate(project_id)
+    #get_materials(project_id)
+    #get_result_data(project_id)
+    #get_sample_data(project_id)
+    #get_weather_data(project_id)
+    download_to_simulate(project_id)
 
 
 def get_result_data(project_id: str) -> dict:
@@ -101,7 +101,7 @@ def get_weather_data(project_id: str) -> dict:
 def download_to_simulate(project_id: str) -> None:
     """Download everything needed to run a Delphin simulation"""
     print(f'Download full Delphin project for ID: {project_id}')
-    folder = ""
+    folder = r"C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\astrid_2020"
     download_full_project_from_database(project_id, folder)
 
 
@@ -110,8 +110,8 @@ if __name__ == '__main__':
 
     # Here you can set which slices of the database you want to download. Start by setting end_point a bit low.
     # Pulling the data for +275k simulation will take some time.
-    start_point = 0
-    end_point = 500
+    start_point = 5650
+    end_point = 5651
 
     project_ids = get_delphin_ids(start_point, end_point)
 
