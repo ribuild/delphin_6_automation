@@ -47,7 +47,7 @@ volumes:
     name: rtu_volume
     driver: vieux/sshfs:latest
     driver_opts:
-      sshcmd: ritvars01@ui-1.hpc.rtu.lv:/mnt/ritvars/ribuild
+      sshcmd: ritvars01@ui-1.hpc.rtu.lv:/mnt/ritvars01/ribuild
       allow_other: ""
 
 secrets:
