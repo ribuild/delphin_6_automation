@@ -186,7 +186,7 @@ def create_rtu_submit_file(sim_id: str, simulation_folder: str, computation_time
     file.write(f"#PBS -q batch\n")
     file.write(f"#PBS -l feature=centos7\n")
     file.write(f"#PBS -l walltime=00:{computation_time}:00\n")
-    file.write(f'#PBS -l nodes=1:ppn:{cpus}:pmem={ram}mg\n')
+    file.write(f'#PBS -l nodes=1:ppn={cpus}:pmem={ram}mg\n')
     file.write(f"#PBS -j oe\n")
     file.write('\n')
     #file.write(f"export OMP_NUM_THREADS=$PBS_NP\n")
