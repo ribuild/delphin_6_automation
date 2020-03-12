@@ -187,9 +187,9 @@ def create_rtu_submit_file(sim_id: str, simulation_folder: str, computation_time
     file.write('\n')
 
     if not restart:
-        file.write(f"{delphin_path} {sim_id}.d6p\n")
+        file.write(f"{delphin_path} {simulation_folder}/{sim_id}.d6p\n")
     else:
-        file.write(f"{delphin_path} --restart {sim_id}.d6p\n")
+        file.write(f"{delphin_path} --restart {simulation_folder}/{sim_id}.d6p\n")
 
     file.write('\n')
     file.close()
@@ -204,7 +204,7 @@ def submit_job(submit_file: str, sim_id: str) -> bool:
 
     hpc = os.getenv('HPC_LOCATION', 'dtu')
     if hpc == 'rtu':
-        terminal_call = f"cd /mnt/ritvars01/ribuild/{sim_id} && qsub  {submit_file}\n"
+        terminal_call = f"cd /mnt/home/ritvars01/ribuild/{sim_id} && qsub {submit_file}\n"
     else:
         terminal_call = f"cd /work3/ocni/ribuild/{sim_id} && bsub < {submit_file}\n"
 
@@ -246,6 +246,8 @@ def parse_hpc_log(raw_data: str) -> typing.Union[str, bool]:
     for line in data[::-1]:
         if re.search(r".*submitted to queue.", line.strip()):
             return line.strip()
+        elif re.search(r".*rudens", line):
+            return line
 
     return False
 
