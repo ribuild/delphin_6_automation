@@ -171,6 +171,12 @@ def create_rtu_submit_file(sim_id: str, simulation_folder: str, computation_time
     cpus = 2
     ram = 28
     submit_file = f'submit_{sim_id}.sh'
+    hpc = os.getenv('HPC_LOCATION', 'dtu')
+    if hpc == 'rtu':
+        hpc_folder = f"/mnt/home/ritvars01/ribuild/{sim_id}"
+    else:
+        hpc_folder = f"/work3/ocni/ribuild/{sim_id}"
+
 
     file = open(f"{simulation_folder}/{submit_file}", 'w', newline='\n')
     file.write(f"#!/bin/bash\n")
@@ -187,9 +193,9 @@ def create_rtu_submit_file(sim_id: str, simulation_folder: str, computation_time
     file.write('\n')
 
     if not restart:
-        file.write(f"{delphin_path} {simulation_folder}/{sim_id}.d6p\n")
+        file.write(f"{delphin_path} {hpc_folder}/{sim_id}.d6p\n")
     else:
-        file.write(f"{delphin_path} --restart {simulation_folder}/{sim_id}.d6p\n")
+        file.write(f"{delphin_path} --restart {hpc_folder}/{sim_id}.d6p\n")
 
     file.write('\n')
     file.close()
