@@ -34,6 +34,7 @@ if __name__ == "__main__":
     try:
 
         strategy_id = sample_entry.Strategy.objects().first().id
+        logger.info(f'Got Strategy: {strategy_id}')
         sampling_worker.sampling_worker(strategy_id)
 
     except Exception as err:
