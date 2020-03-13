@@ -483,8 +483,13 @@ def simulation_worker(sim_location: str, folder='H:/ribuild') -> None:
                         if not os.path.exists(os.path.join(folder, 'failed')):
                             os.mkdir(os.path.join(folder, 'failed'))
 
-                            shutil.copytree(os.path.join(folder, str(id_)),
-                                            os.path.join(folder, 'failed', str(id_)))
+                            failed_sim_folder = os.path.join(folder, 'failed', str(id_))
+
+                            if os.path.exists(failed_sim_folder):
+                                shutil.rmtree(failed_sim_folder)
+
+                            shutil.copytree(os.path.join(folder, str(id_)), failed_sim_folder)
+
                         time.sleep(5)
                         pass
 
