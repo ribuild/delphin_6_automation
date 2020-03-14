@@ -215,7 +215,7 @@ def submit_job(submit_file: str, sim_id: str) -> bool:
         terminal_call = f"cd /work3/ocni/ribuild/{sim_id} && bsub < {submit_file}\n"
 
     client = connect_to_hpc()
-    logger.debug(f'Connecting to HPC to upload simulation with ID: {sim_id}')
+    logger.info(f'Connecting to HPC to upload simulation with ID: {sim_id}')
 
     submitted = False
     retries = 0
