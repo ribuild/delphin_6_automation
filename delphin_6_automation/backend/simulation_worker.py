@@ -522,8 +522,13 @@ def docker_worker(sim_location: str, folder='/app/data') -> None:
                 if not os.path.isdir(os.path.join(folder, 'failed')):
                     os.mkdir(os.path.join(folder, 'failed'))
 
+                failed_sim_folder = os.path.join(folder, 'failed', str(id_))
+
+                if os.path.exists(failed_sim_folder):
+                    shutil.rmtree(failed_sim_folder)
+
                 shutil.copytree(os.path.join(folder, str(id_)),
-                                os.path.join(folder, 'failed', str(id_)))
+                                failed_sim_folder)
                 raise RuntimeError
 
     else:
