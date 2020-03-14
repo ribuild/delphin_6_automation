@@ -81,11 +81,11 @@ def upload_designs(folder):
 if __name__ == "__main__":
     server = mongo_setup.global_init(auth_dict)
 
-    upload_weather(r'U:\RIBuild\Weather Data')
+    #upload_weather(r'U:\RIBuild\Weather Data')
     #upload_materials(r'C:\Program Files\IBK\Delphin 6.0\resources\DB_materials')
     #upload_materials(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_v2\inputs\materials')
-    #create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_v2\inputs')
-    #upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_v2\inputs')
+    create_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_v2\inputs')
+    upload_strategy(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_v2\inputs')
     #upload_designs(r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_v2\inputs\design')
 
     mongo_setup.global_end_ssh(server)
