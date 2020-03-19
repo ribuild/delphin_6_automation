@@ -25,6 +25,6 @@ class Result(mongoengine.Document):
 
     log = mongoengine.FileField(db_alias=meta['db_alias'], collection_name=meta['collection'])
     results = mongoengine.FileField(required=True, db_alias=meta['db_alias'], collection_name=meta['collection'])
-    geometry_file = mongoengine.DictField(required=True)
-    geometry_file_hash = mongoengine.IntField(required=True)
-    simulation_started = mongoengine.DateTimeField(required=True)
+    geometry_file = mongoengine.DictField(required=False)
+    geometry_file_hash = mongoengine.IntField(required=False)
+    simulation_started = mongoengine.DateTimeField(required=False)
