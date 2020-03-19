@@ -445,8 +445,11 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
 
         result_id = delphin_interactions.upload_results_to_database(os.path.join(simulation_folder, id_),
                                                                     delete_files=False, result_length=simulation_hours)
-        delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
+        try:
+            delphin_interactions.upload_processed_results(os.path.join(simulation_folder, id_),
                                                       id_, result_id, return_code)
+        except FileNotFoundError:
+            pass
 
         if return_code == 'time limit reached':
             delphin_interactions.set_exceeding_time_limit(id_)
@@ -454,7 +457,10 @@ def hpc_worker(id_: str, folder='H:/ribuild'):
 
         elif return_code == 'consecutive errors':
             delphin_interactions.set_critical_error(id_)
-            delphin_interactions.upload_restart_data(simulation_folder, id_)
+            try:
+                delphin_interactions.upload_restart_data(simulation_folder, id_)
+            except FileNotFoundError:
+                pass
 
         simulation_interactions.set_simulated(id_)
         simulation_interactions.set_simulation_time(id_, delta_time)
