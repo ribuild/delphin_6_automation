@@ -116,7 +116,6 @@ def upload_results_to_database(path_: str, delete_files: bool = True, result_len
     delphin_entry = delphin_db.Delphin.objects(id=id_).first()
     result_dict = {}
     result_path = os.path.join(path_, 'results')
-    #log_path = path_ + '/log'
     geometry_dict = {}
 
     for result_file in os.listdir(result_path):
@@ -132,17 +131,17 @@ def upload_results_to_database(path_: str, delete_files: bool = True, result_len
     entry = result_db.Result()
 
     entry.delphin = delphin_entry
-    # log_dict = dict()
-    # log_dict['integrator_cvode_stats'] = delphin_parser.cvode_stats_to_dict(log_path)
-    # log_dict['les_direct_stats'] = delphin_parser.les_stats_to_dict(log_path)
-    # log_dict['progress'] = delphin_parser.progress_to_dict(log_path)
-    # entry.log.put(bson.BSON.encode(log_dict))
 
     entry.geometry_file = geometry_dict
     entry.results.put(bson.BSON.encode(result_dict))
-    last_meta: dict = result_dict[list(result_dict.keys())[0]]['meta']
-    entry.simulation_started = last_meta['created']
-    entry.geometry_file_hash = last_meta['geo_file_hash']
+
+    try:
+        last_meta: dict = result_dict[list(result_dict.keys())[0]]['meta']
+        entry.simulation_started = last_meta['created']
+        entry.geometry_file_hash = last_meta['geo_file_hash']
+    except IndexError:
+        pass
+
     entry.save()
 
     logger.debug(f'Uploaded raw results with ID: {entry.id}')
