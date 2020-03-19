@@ -3,7 +3,7 @@ import numpy as np
 
 from data_process.astrid_2020.auth import auth_dict
 from delphin_6_automation.database_interactions import mongo_setup
-from delphin_6_automation.database_interactions.db_templates import delphin_entry, result_raw_entry
+from delphin_6_automation.database_interactions.db_templates import delphin_entry, result_raw_entry, sample_entry
 from delphin_6_automation.database_interactions.general_interactions import download_full_project_from_database
 from delphin_6_automation.database_interactions.weather_interactions import concatenate_weather
 from delphin_6_automation.delphin_setup import weather_modeling, delphin_permutations
@@ -103,6 +103,16 @@ def download_to_simulate(project_id: str) -> None:
     print(f'Download full Delphin project for ID: {project_id}')
     folder = r"C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\astrid_2020"
     download_full_project_from_database(project_id, folder)
+
+
+def download_strategy():
+    strategy_doc = sample_entry.Strategy.objects().first()
+    print('Got Sampling Strategy')
+
+    # Now you have the sampling strategy.
+    # You have access to all information it contains.
+    # The fields available can be seen: delphin_6_automation/database_interactions/db_templates/sample_entry
+    # What you most likely want is either strategy_doc.strategy (the scheme with the variables) strategy_doc.samples_raw (sobol samples)
 
 
 if __name__ == '__main__':
