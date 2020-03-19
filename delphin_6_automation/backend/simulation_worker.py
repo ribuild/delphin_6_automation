@@ -308,14 +308,17 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
     while not finished:
         simulation_ends = start_time + datetime.timedelta(minutes=estimated_run_time)
+        logger.info(f'Simulation should end at {simulation_ends}')
 
         if os.path.exists(f"{simulation_folder}/{sim_id}/log/summary.txt"):
+            logger.info(f'Found: {simulation_folder}/{sim_id}/log/summary.txt')
             finished = True
 
-        elif datetime.datetime.now() > simulation_ends + datetime.timedelta(seconds=10):
-            estimated_run_time, start_time = simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id,
-                                                                          time_limit)
-            consecutive_errors = 0
+        #elif datetime.datetime.now() > simulation_ends + datetime.timedelta(seconds=10):
+        #    logger.info(f'Simulation exceeded allowed time: {datetime.datetime.now()} > {simulation_ends}')
+        #    estimated_run_time, start_time = simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id,
+        #                                                                  time_limit)
+        #    consecutive_errors = 0
 
         elif datetime.datetime.now() > time_limit:
             finished = True
@@ -328,6 +331,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
                     log_data = logfile.readlines()
 
                 if len(log_data) > 1:
+                    logger.info(f'Checking for critical errors')
                     start_time, consecutive_errors = critical_error_occurred(log_data, sim_id, simulation_folder,
                                                                              estimated_run_time, start_time,
                                                                              consecutive_errors)
@@ -343,6 +347,7 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
 
             else:
                 time.sleep(60)
+    logger.info('Simulation is over')
 
 
 def minutes_left(time_limit):
@@ -370,6 +375,7 @@ def simulation_exceeded_hpc_time(simulation_folder, estimated_run_time, sim_id, 
 
 def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_time, start_time, consecutive_errors):
     if "Critical error, simulation aborted." in log_data[-1]:
+        logger.warning('Critical error found!')
         submit_file = create_submit_file(sim_id, simulation_folder, estimated_run_time, restart=True)
         files_in_folder = len(os.listdir(simulation_folder))
         submitted = submit_job(submit_file, sim_id)
@@ -391,6 +397,7 @@ def critical_error_occurred(log_data, sim_id, simulation_folder, estimated_run_t
         return start_time, consecutive_errors
 
     else:
+        logger.info('No critical error found')
         consecutive_errors = 0
         return start_time, consecutive_errors
 
