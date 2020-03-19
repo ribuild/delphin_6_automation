@@ -2,7 +2,7 @@ import bson
 import numpy as np
 
 from data_process.astrid_2020.auth import auth_dict
-from delphin_6_automation.database_interactions import mongo_setup
+from delphin_6_automation.database_interactions import mongo_setup, delphin_interactions
 from delphin_6_automation.database_interactions.db_templates import delphin_entry, result_raw_entry, sample_entry
 from delphin_6_automation.database_interactions.general_interactions import download_full_project_from_database
 from delphin_6_automation.database_interactions.weather_interactions import concatenate_weather
@@ -26,8 +26,8 @@ def download_project(project_id: str, index_: int) -> None:
     #get_materials(project_id)
     #get_result_data(project_id)
     #get_sample_data(project_id)
-    #get_weather_data(project_id)
-    download_to_simulate(project_id)
+    get_weather_data(project_id)
+    #download_to_simulate(project_id)
 
 
 def get_result_data(project_id: str) -> dict:
@@ -113,6 +113,18 @@ def download_strategy():
     # You have access to all information it contains.
     # The fields available can be seen: delphin_6_automation/database_interactions/db_templates/sample_entry
     # What you most likely want is either strategy_doc.strategy (the scheme with the variables) strategy_doc.samples_raw (sobol samples)
+
+
+def download_designs():
+    print('Getting design files')
+    designs = delphin_entry.Design.objects()
+    folder = ""
+
+    # Now you have the designs. They are Delphin projects
+    # You can download them with:
+    for design in designs:
+        print(f'Downloading design: {design.design_name}')
+        delphin_interactions.download_delphin_entry(design.d6p_file, folder)
 
 
 if __name__ == '__main__':
