@@ -1,3 +1,5 @@
+import datetime
+
 __author__ = "Christian Kongsgaard"
 __license__ = "MIT"
 
@@ -140,7 +142,8 @@ def upload_results_to_database(path_: str, delete_files: bool = True, result_len
         entry.simulation_started = last_meta['created']
         entry.geometry_file_hash = last_meta['geo_file_hash']
     except IndexError:
-        pass
+        entry.simulation_started = datetime.datetime.now()
+        entry.geometry_file_hash = 0
 
     entry.save()
 
