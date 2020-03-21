@@ -341,6 +341,8 @@ def wait_until_finished(sim_id: str, estimated_run_time: int, simulation_folder:
                         logger.warning(f'Simulation with ID: {sim_id} encountered 3 consecutive errors and has '
                                        f'therefore been terminated.')
                         return 'consecutive errors'
+                    if not finished:
+                        time.sleep(60)
 
                 else:
                     time.sleep(60)
