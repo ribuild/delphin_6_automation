@@ -232,9 +232,9 @@ def test_create_design_info(design_options):
 
 def test_create_design_info_wp6():
 
-    design_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_run\inputs\design'
+    design_folder = r'C:\Users\ocni\PycharmProjects\delphin_6_automation\data_process\wp6_v2\inputs\design'
     files = os.listdir(design_folder)
-    for design in files:
+    for design in files[200:300]:
         design = design.split('.')[0]
         design_info = sampling.create_design_info(design)
 
