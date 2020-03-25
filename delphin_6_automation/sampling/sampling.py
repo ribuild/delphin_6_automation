@@ -740,6 +740,7 @@ def calculate_sequence_output(sequence_index, sample_strategy):
     for design in sample_strategy['design']:
         design_dict = create_design_info(design)
         projects_given_design = delphin_entry.Delphin.objects(simulated__exists=True,
+                                                              critical_error__exists=False,
                                                               sample_data__design_option=design_dict,
                                                               sample_data__sequence=str(sequence_index))
         mould = []

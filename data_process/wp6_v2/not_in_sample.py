@@ -15,6 +15,7 @@ from delphin_6_automation.database_interactions.auth import auth_dict
 # -------------------------------------------------------------------------------------------------------------------- #
 # RIBuild
 
+"""
 server = mongo_setup.global_init(auth_dict)
 
 samples = sample_entry.Sample.objects().only('delphin_docs')
@@ -44,3 +45,31 @@ for proj in projects:
 
 
 mongo_setup.global_end_ssh(server)
+"""
+
+
+def correct_sample():
+    samples = sample_entry.Sample.objects()
+
+    for sample in samples:
+        docs = []
+        for ref in sample.delphin_docs:
+            delphin_projects = delphin_entry.Delphin.objects(id=ref.id)
+            if delphin_projects:
+                docs.append(delphin_projects.first())
+            else:
+                print(f'Found non existent project: {ref.id}')
+
+        sample.delphin_docs = docs
+        sample.save()
+
+
+if __name__ == '__main__':
+    server = mongo_setup.global_init(auth_dict)
+
+    correct_sample()
+    mongo_setup.global_end_ssh(server)
+
+
+
+

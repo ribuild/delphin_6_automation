@@ -193,7 +193,7 @@ def change_layer_material(delphin_dict: dict, original_material: str, new_materi
             new_delphin_dict['DelphinProject']['Assignments']['Assignment'][assign_index]['Reference'] = \
                 new_material['@name']
 
-    #new_delphin_dict = eliminate_duplicates(new_delphin_dict)
+    new_delphin_dict = eliminate_duplicates(new_delphin_dict)
     logger.debug(f'Changed material {original_material} to {new_material["@name"]}')
 
     return new_delphin_dict
