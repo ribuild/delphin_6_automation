@@ -158,7 +158,7 @@ def load_latest_sample(sampling_strategy_id: str, iteration: str = None) -> typi
             logger.debug(
                 f'Found latest sample with ID: {samples_list[-1].id} for strategy with ID: {sampling_strategy_id}')
 
-            return samples_list[-1]
+            return samples_list[0]
         else:
             for sample in samples_list:
                 if sample.iteration == iteration:
