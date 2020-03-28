@@ -50,12 +50,12 @@ def test_change_material_1(delphin_with_insulation):
 
 
 def test_eliminate_duplicates(delphin_duplicate_material):
-    delphin_permutations.eliminate_duplicates(delphin_duplicate_material)
+    delphin = delphin_permutations.eliminate_duplicates(delphin_duplicate_material)
 
-    assert delphin_duplicate_material
-    assert len(delphin_duplicate_material['DelphinProject']['Materials']['MaterialReference']) == 2
-    assert delphin_duplicate_material['DelphinProject']['Materials']['MaterialReference'][0] != \
-           delphin_duplicate_material['DelphinProject']['Materials']['MaterialReference'][1]
+    assert delphin
+    assert len(delphin['DelphinProject']['Materials']['MaterialReference']) == 2
+    assert delphin['DelphinProject']['Materials']['MaterialReference'][0] != \
+           delphin['DelphinProject']['Materials']['MaterialReference'][1]
 
 
 @pytest.mark.parametrize('width', [0.1, 0.3, 0.5, 0.75, 1.0])

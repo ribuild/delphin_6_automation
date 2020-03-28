@@ -742,5 +742,6 @@ def add_samples(add_sampling_strategy, dummy_sample):
 @pytest.fixture()
 def delphin_duplicate_material(test_folder):
     delphin_file = os.path.join(test_folder, 'delphin', 'delphin_duplicate_material.d6p')
+    #delphin_file = os.path.join(test_folder, 'delphin', '1d_no_plaster.d6p')
 
     return delphin_parser.dp6_to_dict(delphin_file)

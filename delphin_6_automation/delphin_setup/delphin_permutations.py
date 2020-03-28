@@ -204,6 +204,9 @@ def eliminate_duplicates(delphin_dict: dict) -> dict:
 
     materials = new_delphin_dict['DelphinProject']['Materials']['MaterialReference']
     material_names = []
+    if isinstance(materials, OrderedDict):
+        return new_delphin_dict
+
     for index, material in enumerate(materials):
         if material['@name'] in material_names:
             logger.info(f'Found and removed duplicate material: {material["@name"]}')
