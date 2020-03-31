@@ -207,12 +207,13 @@ def eliminate_duplicates(delphin_dict: dict) -> dict:
     if isinstance(materials, OrderedDict):
         return new_delphin_dict
 
-    for index, material in enumerate(materials):
-        if material['@name'] in material_names:
-            logger.info(f'Found and removed duplicate material: {material["@name"]}')
-            del new_delphin_dict['DelphinProject']['Materials']['MaterialReference'][index]
-        else:
-            material_names.append(material['@name'])
+    elif isinstance(materials, list):
+        for index, material in enumerate(materials):
+            if material['@name'] in material_names:
+                logger.info(f'Found and removed duplicate material: {material["@name"]}')
+                del new_delphin_dict['DelphinProject']['Materials']['MaterialReference'][index]
+            else:
+                material_names.append(material['@name'])
 
     return new_delphin_dict
 
