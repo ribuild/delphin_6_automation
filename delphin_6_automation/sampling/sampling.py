@@ -754,8 +754,11 @@ def calculate_sequence_output(sequence_index, sample_strategy):
 
         # TODO - Speed up this with a better query
         for project in projects_given_design:
-            mould.append(project.result_processed['thresholds']['mould'])
-            heat_loss.append(project.result_processed['thresholds']['heat_loss'])
+            try:
+                mould.append(project.result_processed['thresholds']['mould'])
+                heat_loss.append(project.result_processed['thresholds']['heat_loss'])
+            except TypeError:
+                logger.info(f"Could not get threshold from {project.id}")
 
         sample_mean[design] = {'mould': np.mean(mould),
                                'heat_loss': np.mean(heat_loss)}
