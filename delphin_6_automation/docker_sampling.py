@@ -35,7 +35,8 @@ if __name__ == "__main__":
 
         strategy_id = sample_entry.Strategy.objects().first().id
         logger.info(f'Got Strategy: {strategy_id}')
-        sampling_worker.sampling_worker(strategy_id)
+        #sampling_worker.sampling_worker(strategy_id)
+        sampling_worker.generate_samples(strategy_id)
 
     except Exception as err:
         logger.exception('Error in main')
