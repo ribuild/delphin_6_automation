@@ -149,7 +149,7 @@ def generate_samples(strategy_id):
      new_samples_per_set, used_samples_per_set) = sampling.initialize_sampling(strategy_doc)
 
     # Run loop
-    while not sample_iteration < 50:
+    while sample_iteration < 50:
         logger.info(f'Running sampling iteration #{sample_iteration}')
         logger.info(f'New Samples per set: {new_samples_per_set}')
         logger.info(f'Used samples per set: {used_samples_per_set}')
