@@ -4,6 +4,8 @@ services:
 
   sampling:
     image: ocni/hpc_sampler:latest
+    environment:
+      SAMPLE_ITERATIONS: 75
     secrets:
       - db_ait
 
