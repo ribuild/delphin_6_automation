@@ -149,25 +149,26 @@ def load_latest_sample(sampling_strategy_id: str, iteration: str = None) -> typi
     :return: Return the samples as a dict
     """
 
-    strategy = sample_entry.Strategy.objects(id=sampling_strategy_id).first()
-
-    if strategy.samples:
-        samples_list = strategy.samples
+    #strategy = sample_entry.Strategy.objects(id=sampling_strategy_id).no_dereference().first()
+    samples = sample_entry.Sample.objects().only("iteration")
+    if samples:
 
         if not iteration:
             logger.debug(
-                f'Found latest sample with ID: {samples_list[-1].id} for strategy with ID: {sampling_strategy_id}')
+                f'Found latest sample with ID: {samples[-1].id} for strategy with ID: {sampling_strategy_id}')
 
-            return samples_list[0]
+            return samples[-1]
         else:
-            for sample in samples_list:
-                if sample.iteration == iteration:
-                    logger.debug(f'Found sample with ID: {sample.id} and iteration {sample.iteration} '
-                                 f'for strategy with ID: {sampling_strategy_id}')
-                    return sample
+            sample = sample_entry.Sample.objects(iteration=iteration).no_dereference()
+            if sample:
+                sample = sample.first()
+                logger.debug(f'Found sample with ID: {sample.id} and iteration {sample.iteration} '
+                             f'for strategy with ID: {sampling_strategy_id}')
+                return sample
+            return None
 
     else:
-        logger.debug(f'No samples found assosiated with strategy with ID: {sampling_strategy_id}')
+        logger.debug(f'No samples found associated with strategy with ID: {sampling_strategy_id}')
 
         return None
 
