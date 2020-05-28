@@ -328,6 +328,7 @@ def algae(relative_humidity: typing.List[float], temperature: typing.List[float]
             "TuffsteinJapan": "other",
             "limesandstone": "sandstone",
             "LimeSandBrick": "limestone",
+            "LimeCementMortar": "limestone",
             "XellaKalksandstein": "sandstone",
             "KalksandsteinXellaYtong2002": "other",
             "KalksandsteinXellaYtong2004": "other",
@@ -349,7 +350,8 @@ def algae(relative_humidity: typing.List[float], temperature: typing.List[float]
             "LimePlasterForFineSurfaceCoating": "limestone",
             "SchaeferkalkKalkputzSKKP": "limestone",
             "LimeplasterBolonga3enCult": "limestone",
-            "LimeCementMortarLowCementRatio": 'limestone'
+            "LimeCementMortarLowCementRatio": 'limestone',
+            "LimeCementMortarHighCementRatio": 'limestone'
         }
 
         return materials[material]
