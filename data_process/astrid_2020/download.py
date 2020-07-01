@@ -10,12 +10,13 @@ from delphin_6_automation.delphin_setup import weather_modeling, delphin_permuta
 
 
 def get_delphin_ids(start: int, end: int) -> list:
-    ids = delphin_entry.Delphin.objects[start:end].only('id')
-    print(f'Got {ids.count()} projects')
-    print(f'Starting at index {start}')
+    #ids = delphin_entry.Delphin.objects[start:end].only('id')
+    #print(f'Got {ids.count()} projects')
+    #print(f'Starting at index {start}')
 
-    ids = [project.id for project in ids]
-
+    #ids = [project.id for project in ids]
+    ids = delphin_entry.Delphin.objects(sample_data__design_option__name__in=['1d_bare'])
+    print('IDS', ids.count())
     return ids
 
 
@@ -137,7 +138,7 @@ if __name__ == '__main__':
 
     project_ids = get_delphin_ids(start_point, end_point)
 
-    for index, project in enumerate(project_ids):
-        download_project(project, index + start_point)
+    #for index, project in enumerate(project_ids):
+    #    download_project(project, index + start_point)
 
     mongo_setup.global_end_ssh(server)

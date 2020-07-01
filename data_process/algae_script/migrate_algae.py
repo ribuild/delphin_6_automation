@@ -62,7 +62,7 @@ def get_delphin_ids():
     logger.info(f'Got {ids.count()} projects')
     logger.info(f'Starting at index {index}')
 
-    ids = [project.id for project in ids]
+    ids = [project_.id for project_ in ids]
 
     return ids, index
 

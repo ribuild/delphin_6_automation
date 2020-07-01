@@ -35,3 +35,6 @@ time_model_db = {'db_alias': 'local',
 
 design_db = {'db_alias': 'local',
              'collection': 'design'}
+
+normalized_db = {'db_alias': 'local',
+                 'collection': 'normalized'}

@@ -59,6 +59,21 @@ def correct_sample():
         sample.save()
 
 
+def correct_strategy():
+    strategy = sample_entry.Strategy.objects().first()
+    keep = []
+    for sample in strategy.samples:
+        found_sample = sample_entry.Sample.objects(id=sample.id)
+        if found_sample:
+            keep.append(found_sample.first().id)
+        else:
+            print(f"Sample {sample.id} was not in the DB")
+
+    print(f"Found samples {len(keep)} to keep: {keep}")
+    strategy.samples = keep
+    strategy.save()
+
+
 def modify_sample():
     id_ = "5e7878ce582e3e000172996d"
     sample = sample_entry.Sample.objects(id=id_).first()
@@ -68,11 +83,30 @@ def modify_sample():
     sample.save()
 
 
+def correct_sample2():
+    samples = sample_entry.Sample.objects().only('id')
+    print(f"There is {samples.count()} samples in DB")
+
+    for i in range(samples.count()):
+        samples = sample_entry.Sample.objects(iteration=i).only('id')
+        print(f'There is {samples.count()} with iteration {i}')
+
+        if samples.count() > 1:
+            print(f"There is {samples.count()} samples with iteration {i}")
+            for j, sample in enumerate(samples):
+                if j == 0:
+                    pass
+                else:
+                    print(f'Deleting: {sample.id}')
+                    #sample.delete()
+
 if __name__ == '__main__':
     server = mongo_setup.global_init(auth_dict)
     #modify_sample()
     #correct_sample()
+    #correct_sample2()
     correct_delphin()
+    correct_strategy()
     mongo_setup.global_end_ssh(server)
 
 

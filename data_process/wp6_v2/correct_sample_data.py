@@ -23,60 +23,67 @@ logger = ribuild_logger(__name__)
 
 
 def organize_projects(projects, design_names):
-
+    name_count = 0
     for count, project in enumerate(projects):
         if count % 500 == 0:
             print(f"Running project #{count}\n")
 
-        layers = get_layers(project.dp6_file)
-        materials, system_name = match_insulation(project)
-        thickness = get_thickness(project)
-        sd_value = get_sd_value(project)
+        if not project.sample_data.get("design_option").get("name", None):
+            layers = get_layers(project.dp6_file)
+            materials, system_name = match_insulation(project)
+            thickness = get_thickness(project)
+            sd_value = get_sd_value(project)
 
-        if len(layers) == 6:
-            design_name = f"1d_exteriorinterior_{system_name}_{materials}_{thickness}{sd_value}"
-
-        elif len(layers) == 5:
-            if layers[0]["x_width"] > layers[1]["x_width"]:
-                design_name = f"1d_interior_{system_name}_{materials}_{thickness}{sd_value}"
-            elif len(materials.split("_")) == 2:
+            if len(layers) == 6:
                 design_name = f"1d_exteriorinterior_{system_name}_{materials}_{thickness}{sd_value}"
-            else:
-                design_name = f"1d_exterior_{system_name}_{materials}_{thickness}{sd_value}"
 
-        elif len(layers) == 4:
-            if layers[0]["x_width"] < layers[1]["x_width"]:
-                design_name = f"1d_exterior_{system_name}_{materials}_{thickness}{sd_value}"
-            elif len(materials.split("_")) == 2:
-                design_name = f"1d_interior_{system_name}_{materials}_{thickness}{sd_value}"
+            elif len(layers) == 5:
+                if layers[0]["x_width"] > layers[1]["x_width"]:
+                    design_name = f"1d_interior_{system_name}_{materials}_{thickness}{sd_value}"
+                elif len(materials.split("_")) == 2:
+                    design_name = f"1d_exteriorinterior_{system_name}_{materials}_{thickness}{sd_value}"
+                else:
+                    design_name = f"1d_exterior_{system_name}_{materials}_{thickness}{sd_value}"
+
+            elif len(layers) == 4:
+                if layers[0]["x_width"] < layers[1]["x_width"]:
+                    design_name = f"1d_exterior_{system_name}_{materials}_{thickness}{sd_value}"
+                elif len(materials.split("_")) == 2:
+                    design_name = f"1d_interior_{system_name}_{materials}_{thickness}{sd_value}"
+                else:
+                    design_name = f"1d_bare_{system_name}_{materials}_{thickness}{sd_value}"
+            elif len(layers) == 3:
+                if layers[0]["x_width"] < layers[1]["x_width"]:
+                    design_name = f"1d_exteriorinterior"
+                else:
+                    design_name = f"1d_bare_{system_name}_{materials}_{thickness}{sd_value}"
+            elif len(layers) == 2:
+                if layers[0]["x_width"] > layers[1]["x_width"]:
+                    design_name = f"1d_interior"
+                else:
+                    design_name = f"1d_exterior"
             else:
-                design_name = f"1d_bare_{system_name}_{materials}_{thickness}{sd_value}"
-        elif len(layers) == 3:
-            if layers[0]["x_width"] < layers[1]["x_width"]:
-                design_name = f"1d_exteriorinterior"
-            else:
-                design_name = f"1d_bare_{system_name}_{materials}_{thickness}{sd_value}"
-        elif len(layers) == 2:
-            if layers[0]["x_width"] > layers[1]["x_width"]:
-                design_name = f"1d_interior"
-            else:
-                design_name = f"1d_exterior"
+                design_name = "1d_bare"
+
+            #print(f"{project.id} missing name: {project.sample_data.get('design_option')}")
+            name_count += 1
+            update_design_info(project, design_name, design_names)
         else:
-            design_name = "1d_bare"
-
-        update_design_info(project, design_name, design_names)
+            pass
+    print(f"Num of projects missing names: {name_count}")
 
 
 def update_design_info(project, design_name, design_names):
     #print(f"Got design name: {design_name}")
     if design_name not in design_names:
         print(f'Wrong design name: {design_name}')
-        project.delete()
+        #project.delete()
 
     design_info = create_design_info(design_name)
 
     sample_data = project.sample_data
     sample_data['design_option'] = design_info
+
     project.sample_data = sample_data
     project.save()
 
@@ -130,9 +137,9 @@ if __name__ == '__main__':
     server = mongo_setup.global_init(auth_dict)
 
     projects = delphin_entry.Delphin.objects()
-    remove_empty(projects)
-    #design_names = download_designs()
-    #organize_projects(projects, design_names)
+    #remove_empty(projects)
+    design_names = download_designs()
+    organize_projects(projects, design_names)
 
     mongo_setup.global_end_ssh(server)
 

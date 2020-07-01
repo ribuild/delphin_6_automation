@@ -31,7 +31,7 @@ def check_ids(project):
 
     for project in project:
         sample = sample_entry.Sample.objects(delphin_docs=project).first()
-        print(f"Project: {project.id} with sequence {project.sample_data.get('sequence')} is in sample iteration: {sample.iteration}")
+        print(f"Project: {project.id} with sequence {project.sample_data.get('sequence')} is in sample iteration: {sample.iteration}. Data: {project.sample_data.get('exterior_climate')}")
 
 
 if __name__ == '__main__':
